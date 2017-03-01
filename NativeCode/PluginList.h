@@ -1,0 +1,3 @@
+#if UNITY_OSX | UNITY_LINUX | UNITY_WIN
+DECLARE_EFFECT("Helm", Helm)
+#endif
