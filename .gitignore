@@ -1,6 +1,4 @@
-*.sln
 *.userprefs
-*.csproj
 *.unityproj
 *.pidb
 *.svd
@@ -19,6 +17,7 @@
 /Temp
 ExportedObj/
 Temp/
+xcuserdata
 
 *~
 *.swp
