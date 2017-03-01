@@ -9,10 +9,17 @@ public class HelmNoteTrigger : MonoBehaviour {
     [DllImport("AudioPluginHelm")]
     private static extern void HelmNoteOff(int instance, int note);
 
+    [DllImport("AudioPluginHelm")]
+    private static extern void HelmAllNotesOff(int instance);
+
     public int instance = 0;
     public bool noteOn = false;
     public bool noteOff = false;
     void Start() {
+    }
+
+    void OnDestroy() {
+        HelmAllNotesOff(instance);
     }
 
     void NoteOn() {

@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{18447275-8CBE-2859-763C-BD642DB14899}") = "HelmUnityPlugin", "Assembly-CSharp.csproj", "{178943F1-454F-D2D9-C125-E32A87A73E7F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{178943F1-454F-D2D9-C125-E32A87A73E7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{178943F1-454F-D2D9-C125-E32A87A73E7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{178943F1-454F-D2D9-C125-E32A87A73E7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{178943F1-454F-D2D9-C125-E32A87A73E7F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
