@@ -6,7 +6,7 @@ namespace Helm {
   const int MAX_BUFFER_SAMPLES = 256;
 
   enum Param {
-    kInstance,
+    kChannel,
     kNumParams
   };
 
@@ -28,7 +28,7 @@ namespace Helm {
     int num_plugin_params = kNumParams;
 
     definition.paramdefs = new UnityAudioParameterDefinition[num_synth_parameters + num_plugin_params];
-    RegisterParameter(definition, "Instance", "", 0.0f, 1000.0f, 0.0f, 1.0f, 1.0f, kInstance);
+    RegisterParameter(definition, "Channel", "", 0.0f, 1000.0f, 0.0f, 1.0f, 1.0f, kChannel);
 
     int index = kNumParams;
     for (auto parameter : parameters) {
@@ -71,8 +71,7 @@ namespace Helm {
 
     state->effectdata = effect_data;
     MutexScopeLock mutex_lock(instance_mutex);
-    effect_data->instance_id = instance_counter;
-    effect_data->parameters[kInstance] = instance_counter;
+    effect_data->instance_id = 0;
     instance_map[instance_counter] = effect_data;
     instance_counter++;
     return UNITY_AUDIODSP_OK;
@@ -154,26 +153,30 @@ namespace Helm {
     return UNITY_AUDIODSP_OK;
   }
 
-  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOn(int instance, int note) {
-    if (instance_map.count(instance)) {
-      MutexScopeLock mutex_lock(instance_map[instance]->mutex);
-      instance_map[instance]->synth_engine.noteOn(note);
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOn(int channel, int note) {
+    for (auto synth : instance_map) {
+      if (((int)synth.second->parameters[kChannel]) == channel) {
+        MutexScopeLock mutex_lock(synth.second->mutex);
+        synth.second->synth_engine.noteOn(note);
+      }
     }
   }
 
-  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOff(int instance, int note) {
-
-    if (instance_map.count(instance)) {
-      MutexScopeLock mutex_lock(instance_map[instance]->mutex);
-      instance_map[instance]->synth_engine.noteOff(note);
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOff(int channel, int note) {
+    for (auto synth : instance_map) {
+      if (((int)synth.second->parameters[kChannel]) == channel) {
+        MutexScopeLock mutex_lock(synth.second->mutex);
+        synth.second->synth_engine.noteOff(note);
+      }
     }
   }
 
-  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmAllNotesOff(int instance) {
-
-    if (instance_map.count(instance)) {
-      MutexScopeLock mutex_lock(instance_map[instance]->mutex);
-      instance_map[instance]->synth_engine.allNotesOff();
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmAllNotesOff(int channel) {
+    for (auto synth : instance_map) {
+      if (((int)synth.second->parameters[kChannel]) == channel) {
+        MutexScopeLock mutex_lock(synth.second->mutex);
+        synth.second->synth_engine.allNotesOff();
+      }
     }
   }
 }

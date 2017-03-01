@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
 using System.Runtime.InteropServices;
 
 public class HelmNoteTrigger : MonoBehaviour {
@@ -15,6 +16,8 @@ public class HelmNoteTrigger : MonoBehaviour {
     public int instance = 0;
     public bool noteOn = false;
     public bool noteOff = false;
+
+    public AudioMixer helmSource;
     void Start() {
     }
 
@@ -31,6 +34,7 @@ public class HelmNoteTrigger : MonoBehaviour {
     }
 
     void Update() {
+
         if (noteOn) {
             NoteOn();
             noteOn = false;
