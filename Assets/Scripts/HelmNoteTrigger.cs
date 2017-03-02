@@ -5,15 +5,15 @@ using System.Runtime.InteropServices;
 public class HelmNoteTrigger : MonoBehaviour {
 
     [DllImport("AudioPluginHelm")]
-    private static extern void HelmNoteOn(int instance, int note);
+    private static extern void HelmNoteOn(int channel, int note);
 
     [DllImport("AudioPluginHelm")]
-    private static extern void HelmNoteOff(int instance, int note);
+    private static extern void HelmNoteOff(int channel, int note);
 
     [DllImport("AudioPluginHelm")]
-    private static extern void HelmAllNotesOff(int instance);
+    private static extern void HelmAllNotesOff(int channel);
 
-    public int instance = 0;
+    public int channel = 0;
     public bool noteOn = false;
     public bool noteOff = false;
 
@@ -22,19 +22,18 @@ public class HelmNoteTrigger : MonoBehaviour {
     }
 
     void OnDestroy() {
-        HelmAllNotesOff(instance);
+        HelmAllNotesOff(channel);
     }
 
     void NoteOn() {
-        HelmNoteOn(instance, 70);
+        HelmNoteOn(channel, 70);
     }
 
     void NoteOff() {
-        HelmNoteOff(instance, 70);
+        HelmNoteOff(channel, 70);
     }
 
     void Update() {
-
         if (noteOn) {
             NoteOn();
             noteOn = false;

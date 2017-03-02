@@ -11,6 +11,7 @@ namespace Helm {
   };
 
   struct EffectData {
+    int num_parameters;
     float* parameters;
     mopo::Value** value_lookup;
     int instance_id;
@@ -58,7 +59,9 @@ namespace Helm {
 
   UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK CreateCallback(UnityAudioEffectState* state) {
     EffectData* effect_data = new EffectData;
+    MutexScopeLock mutex_lock(effect_data->mutex);
     int num_parameters = mopo::Parameters::lookup_.getAllDetails().size() + kNumParams;
+    effect_data->num_parameters = num_parameters;
 
     effect_data->parameters = new float[num_parameters];
     InitParametersFromDefinitions(InternalRegisterEffectDefinition, effect_data->parameters);
@@ -70,8 +73,8 @@ namespace Helm {
     effect_data->synth_engine.setSampleRate(state->samplerate);
 
     state->effectdata = effect_data;
-    MutexScopeLock mutex_lock(instance_mutex);
-    effect_data->instance_id = 0;
+    MutexScopeLock mutex_instance_lock(instance_mutex);
+    effect_data->instance_id = instance_counter;
     instance_map[instance_counter] = effect_data;
     instance_counter++;
     return UNITY_AUDIODSP_OK;
@@ -83,6 +86,8 @@ namespace Helm {
 
   UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ReleaseCallback(UnityAudioEffectState* state) {
     EffectData* data = state->GetEffectData<EffectData>();
+    MutexScopeLock mutex_lock(data->mutex);
+    MutexScopeLock mutex_instance_lock(instance_mutex);
     data->synth_engine.allNotesOff();
     clearInstance(data->instance_id);
     delete[] data->parameters;
@@ -94,6 +99,10 @@ namespace Helm {
   UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK SetFloatParameterCallback(
       UnityAudioEffectState* state, int index, float value) {
     EffectData* data = state->GetEffectData<EffectData>();
+
+    if (index < 0 || index >= data->num_parameters)
+      return UNITY_AUDIODSP_ERR_UNSUPPORTED;
+
     data->parameters[index] = value;
 
     if (data->value_lookup[index]) {
@@ -106,6 +115,8 @@ namespace Helm {
   UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK GetFloatParameterCallback(
       UnityAudioEffectState* state, int index, float* value, char *valuestr) {
     EffectData* data = state->GetEffectData<EffectData>();
+    if (index < 0 || index >= data->num_parameters)
+      return UNITY_AUDIODSP_ERR_UNSUPPORTED;
     if (value != NULL)
       *value = data->parameters[index];
     if (valuestr != NULL)
