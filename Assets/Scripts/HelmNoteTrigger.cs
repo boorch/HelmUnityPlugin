@@ -17,7 +17,6 @@ public class HelmNoteTrigger : MonoBehaviour {
     public bool noteOn = false;
     public bool noteOff = false;
 
-    public AudioMixer helmSource;
     void Start() {
     }
 

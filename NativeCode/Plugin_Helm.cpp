@@ -40,7 +40,7 @@ namespace Helm {
       index++;
     }
 
-    return index;
+    return num_synth_parameters + kNumParams;
   }
 
   void initializeValueLookup(mopo::Value** lookup, mopo::control_map& controls) {
