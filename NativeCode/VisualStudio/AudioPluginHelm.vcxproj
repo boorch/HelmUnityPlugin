@@ -1,0 +1,310 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F7CFEF5A-54BD-42E8-A59E-54ABAEB4EA9C}</ProjectGuid>
+    <RootNamespace>AudioPluginHelm</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>AudioPluginHelm</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)build\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)build\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">build\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">build\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)build\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)build\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">build\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">build\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;AudioPluginHelm_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalIncludeDirectories>../helm/src/synthesis;../helm/src/common;../helm/mopo/src</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>kernel32.lib;user32.lib;winmm.lib</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>mkdir ..\..\Assets\Plugins\x86
+copy $(TargetPath) ..\..\Assets\Plugins\x86\$(TargetName).dll
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;AudioPluginHelm_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <AdditionalIncludeDirectories>../helm/src/synthesis;../helm/src/common;../helm/mopo/src</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>kernel32.lib;user32.lib;winmm.lib</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>mkdir ..\..\Assets\Plugins\x86_64
+copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;AudioPluginHelm_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <AdditionalIncludeDirectories>../helm/src/synthesis;../helm/src/common;../helm/mopo/src</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>kernel32.lib;user32.lib;winmm.lib</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>mkdir ..\..\Assets\Plugins\x86
+copy $(TargetPath) ..\..\Assets\Plugins\x86\$(TargetName).dll
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;AudioPluginHelm_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <AdditionalIncludeDirectories>../helm/src/synthesis;../helm/src/common;../helm/mopo/src</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <AdditionalDependencies>kernel32.lib;user32.lib;winmm.lib</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>mkdir ..\..\Assets\Plugins\x86_64
+copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\AudioPluginUtil.cpp" />
+    <ClCompile Include="..\helm\mopo\src\alias.cpp" />
+    <ClCompile Include="..\helm\mopo\src\arpeggiator.cpp" />
+    <ClCompile Include="..\helm\mopo\src\bit_crush.cpp" />
+    <ClCompile Include="..\helm\mopo\src\bypass_router.cpp" />
+    <ClCompile Include="..\helm\mopo\src\delay.cpp" />
+    <ClCompile Include="..\helm\mopo\src\distortion.cpp" />
+    <ClCompile Include="..\helm\mopo\src\envelope.cpp" />
+    <ClCompile Include="..\helm\mopo\src\feedback.cpp" />
+    <ClCompile Include="..\helm\mopo\src\filter.cpp" />
+    <ClCompile Include="..\helm\mopo\src\formant_manager.cpp" />
+    <ClCompile Include="..\helm\mopo\src\linear_slope.cpp" />
+    <ClCompile Include="..\helm\mopo\src\magnitude_lookup.cpp" />
+    <ClCompile Include="..\helm\mopo\src\memory.cpp" />
+    <ClCompile Include="..\helm\mopo\src\midi_lookup.cpp" />
+    <ClCompile Include="..\helm\mopo\src\mono_panner.cpp" />
+    <ClCompile Include="..\helm\mopo\src\operators.cpp" />
+    <ClCompile Include="..\helm\mopo\src\oscillator.cpp" />
+    <ClCompile Include="..\helm\mopo\src\phaser.cpp" />
+    <ClCompile Include="..\helm\mopo\src\portamento_slope.cpp" />
+    <ClCompile Include="..\helm\mopo\src\processor.cpp" />
+    <ClCompile Include="..\helm\mopo\src\processor_router.cpp" />
+    <ClCompile Include="..\helm\mopo\src\resonance_lookup.cpp" />
+    <ClCompile Include="..\helm\mopo\src\reverb.cpp" />
+    <ClCompile Include="..\helm\mopo\src\reverb_all_pass.cpp" />
+    <ClCompile Include="..\helm\mopo\src\reverb_comb.cpp" />
+    <ClCompile Include="..\helm\mopo\src\sample_decay_lookup.cpp" />
+    <ClCompile Include="..\helm\mopo\src\simple_delay.cpp" />
+    <ClCompile Include="..\helm\mopo\src\smooth_filter.cpp" />
+    <ClCompile Include="..\helm\mopo\src\smooth_value.cpp" />
+    <ClCompile Include="..\helm\mopo\src\step_generator.cpp" />
+    <ClCompile Include="..\helm\mopo\src\stutter.cpp" />
+    <ClCompile Include="..\helm\mopo\src\trigger_operators.cpp" />
+    <ClCompile Include="..\helm\mopo\src\value.cpp" />
+    <ClCompile Include="..\helm\mopo\src\voice_handler.cpp" />
+    <ClCompile Include="..\helm\src\common\helm_common.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\dc_filter.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\detune_lookup.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\fixed_point_oscillator.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\fixed_point_wave.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\helm_engine.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\helm_lfo.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\helm_module.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\helm_oscillators.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\helm_voice_handler.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\noise_oscillator.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\resonance_cancel.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\switch.cpp" />
+    <ClCompile Include="..\Plugin_Helm.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\AudioPluginInterface.h" />
+    <ClInclude Include="..\AudioPluginUtil.h" />
+    <ClInclude Include="..\helm\mopo\src\alias.h" />
+    <ClInclude Include="..\helm\mopo\src\arpeggiator.h" />
+    <ClInclude Include="..\helm\mopo\src\bit_crush.h" />
+    <ClInclude Include="..\helm\mopo\src\bypass_router.h" />
+    <ClInclude Include="..\helm\mopo\src\common.h" />
+    <ClInclude Include="..\helm\mopo\src\delay.h" />
+    <ClInclude Include="..\helm\mopo\src\distortion.h" />
+    <ClInclude Include="..\helm\mopo\src\envelope.h" />
+    <ClInclude Include="..\helm\mopo\src\feedback.h" />
+    <ClInclude Include="..\helm\mopo\src\filter.h" />
+    <ClInclude Include="..\helm\mopo\src\formant_manager.h" />
+    <ClInclude Include="..\helm\mopo\src\linear_slope.h" />
+    <ClInclude Include="..\helm\mopo\src\magnitude_lookup.h" />
+    <ClInclude Include="..\helm\mopo\src\memory.h" />
+    <ClInclude Include="..\helm\mopo\src\midi_lookup.h" />
+    <ClInclude Include="..\helm\mopo\src\mono_panner.h" />
+    <ClInclude Include="..\helm\mopo\src\mopo.h" />
+    <ClInclude Include="..\helm\mopo\src\note_handler.h" />
+    <ClInclude Include="..\helm\mopo\src\operators.h" />
+    <ClInclude Include="..\helm\mopo\src\oscillator.h" />
+    <ClInclude Include="..\helm\mopo\src\phaser.h" />
+    <ClInclude Include="..\helm\mopo\src\portamento_slope.h" />
+    <ClInclude Include="..\helm\mopo\src\processor.h" />
+    <ClInclude Include="..\helm\mopo\src\processor_router.h" />
+    <ClInclude Include="..\helm\mopo\src\resonance_lookup.h" />
+    <ClInclude Include="..\helm\mopo\src\reverb.h" />
+    <ClInclude Include="..\helm\mopo\src\reverb_all_pass.h" />
+    <ClInclude Include="..\helm\mopo\src\reverb_comb.h" />
+    <ClInclude Include="..\helm\mopo\src\reverb_tuning.h" />
+    <ClInclude Include="..\helm\mopo\src\sample_decay_lookup.h" />
+    <ClInclude Include="..\helm\mopo\src\simple_delay.h" />
+    <ClInclude Include="..\helm\mopo\src\smooth_filter.h" />
+    <ClInclude Include="..\helm\mopo\src\smooth_value.h" />
+    <ClInclude Include="..\helm\mopo\src\step_generator.h" />
+    <ClInclude Include="..\helm\mopo\src\stutter.h" />
+    <ClInclude Include="..\helm\mopo\src\tick_router.h" />
+    <ClInclude Include="..\helm\mopo\src\trigger_operators.h" />
+    <ClInclude Include="..\helm\mopo\src\utils.h" />
+    <ClInclude Include="..\helm\mopo\src\value.h" />
+    <ClInclude Include="..\helm\mopo\src\voice_handler.h" />
+    <ClInclude Include="..\helm\mopo\src\wave.h" />
+    <ClInclude Include="..\helm\src\common\helm_common.h" />
+    <ClInclude Include="..\helm\src\synthesis\dc_filter.h" />
+    <ClInclude Include="..\helm\src\synthesis\detune_lookup.h" />
+    <ClInclude Include="..\helm\src\synthesis\fixed_point_oscillator.h" />
+    <ClInclude Include="..\helm\src\synthesis\fixed_point_wave.h" />
+    <ClInclude Include="..\helm\src\synthesis\helm_engine.h" />
+    <ClInclude Include="..\helm\src\synthesis\helm_lfo.h" />
+    <ClInclude Include="..\helm\src\synthesis\helm_module.h" />
+    <ClInclude Include="..\helm\src\synthesis\helm_oscillators.h" />
+    <ClInclude Include="..\helm\src\synthesis\helm_voice_handler.h" />
+    <ClInclude Include="..\helm\src\synthesis\noise_oscillator.h" />
+    <ClInclude Include="..\helm\src\synthesis\resonance_cancel.h" />
+    <ClInclude Include="..\helm\src\synthesis\switch.h" />
+    <ClInclude Include="..\PluginList.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\helm\mopo\src\Makefile.am" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,9 +1,10 @@
-#include "AudioPluginUtil.h"
 #include "helm_engine.h"
+#include "AudioPluginUtil.h"
 
 namespace Helm {
 
   const int MAX_BUFFER_SAMPLES = 256;
+  const int MAX_CHARACTERS = 15;
 
   enum Param {
     kChannel,
@@ -34,7 +35,9 @@ namespace Helm {
     int index = kNumParams;
     for (auto parameter : parameters) {
       mopo::ValueDetails& details = parameter.second;
-      RegisterParameter(definition, details.display_name.c_str(), details.display_units.c_str(),
+      std::string name = details.display_name.substr(0, MAX_CHARACTERS);
+      std::string units = details.display_units.substr(0, MAX_CHARACTERS);
+      RegisterParameter(definition, name.c_str(), units.c_str(),
                         details.min, details.max, details.default_value,
                         1.0f, 1.0f, index);
       index++;
