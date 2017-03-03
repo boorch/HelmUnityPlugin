@@ -3,9 +3,7 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 
 namespace Tytel {
-
-    [CustomEditor(typeof(HelmController))]
-    class HelmControllerUI : Editor {
+    public class HelmSynthUI : IAudioEffectPluginGUI {
 
         [DllImport("AudioPluginHelm")]
         private static extern void HelmNoteOn(int channel, int note);
@@ -26,14 +24,26 @@ namespace Tytel {
         bool[] black_keys = new bool[] { false, true, false, true, false,
             false, true, false, true, false, true, false };
 
-        void DoKeyboardEvents(Rect rect) {
+        public override string Name {
+            get { return "Helm"; }
+        }
+
+        public override string Description {
+            get { return "Helm plugin for live audio synthesis in Unity"; }
+        }
+
+        public override string Vendor {
+            get { return "Matt Tytel"; }
+        }
+
+        void DoKeyboardEvents(IAudioEffectPlugin plugin, Rect rect) {
             float channel = 0.0f;
+            plugin.GetFloatParameter("Channel", out channel);
             Event evt = Event.current;
             if (evt.type == EventType.MouseUp) {
                 if (current_key >= 0)
                     HelmNoteOff((int)channel, current_key);
                 current_key = -1;
-                Repaint();
             }
             else if (rect.Contains(evt.mousePosition) &&
                 (evt.type == EventType.MouseDrag || evt.type == EventType.MouseDown)) {
@@ -43,7 +53,6 @@ namespace Tytel {
                         HelmNoteOff((int)channel, current_key);
                     HelmNoteOn((int)channel, hovered);
                     current_key = hovered;
-                    Repaint();
                 }
             }
         }
@@ -103,14 +112,15 @@ namespace Tytel {
                 ;
         }
 
-        public override void OnInspectorGUI() {
+        public override bool OnGUI(IAudioEffectPlugin plugin)  {
             Color prev_color = GUI.backgroundColor;
             GUILayout.Space(5f);
             Rect rect = GUILayoutUtility.GetRect(200, 50, GUILayout.ExpandWidth(true));
-            DoKeyboardEvents(rect);
+            DoKeyboardEvents(plugin, rect);
             DrawKeyboard(rect);
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
+            return true;
         }
     }
 }
