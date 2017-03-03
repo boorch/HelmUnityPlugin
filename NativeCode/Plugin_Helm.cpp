@@ -5,6 +5,8 @@ namespace Helm {
 
   const int MAX_BUFFER_SAMPLES = 256;
   const int MAX_CHARACTERS = 15;
+  const int MAX_CHANNELS = 16;
+  const int MAX_INSTANCES = 128;
 
   enum Param {
     kChannel,
@@ -30,7 +32,7 @@ namespace Helm {
     int num_plugin_params = kNumParams;
 
     definition.paramdefs = new UnityAudioParameterDefinition[num_synth_parameters + num_plugin_params];
-    RegisterParameter(definition, "Channel", "", 0.0f, 1000.0f, 0.0f, 1.0f, 1.0f, kChannel);
+    RegisterParameter(definition, "Channel", "", 0.0f, MAX_CHANNELS, 0.0f, 1.0f, 1.0f, kChannel);
 
     int index = kNumParams;
     for (auto parameter : parameters) {
