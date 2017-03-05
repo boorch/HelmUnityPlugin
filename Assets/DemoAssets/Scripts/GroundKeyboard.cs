@@ -8,45 +8,52 @@ namespace Tytel {
         public HelmController synth;
         public Vector3 keyOffset;
         public float verticalOffset = 0.02f;
-        public int startingKey = 50;
 
-        const int maxKey = 100;
-        const int minKey = 10;
+        public int numKeys = 60;
+        public int startingKey = 24;
 
-        GroundKey[] keys = new GroundKey[maxKey - minKey];
-        HashSet<int> currentKeys = new HashSet<int>();
-        HashSet<int> newKeys = new HashSet<int>();
+        public int[] scale = new int[] { 0, 2, 4, 5, 7, 9, 11 };
+        public int octaveSize = 12;
+
+        GroundKey[] keys;
+        HashSet<int> currentIndices = new HashSet<int>();
+        HashSet<int> newIndices = new HashSet<int>();
+
+        void Start() {
+            keys = new GroundKey[numKeys];
+            for (int i = 0; i < numKeys; ++i)
+                keys[i] = CreateKey(i);
+        }
 
         GroundKey CreateKey(int key) {
             GroundKey groundKey = Instantiate(keyModel, transform) as GroundKey;
-            Vector3 position = (key - startingKey) * keyOffset;
+            Vector3 position = key * keyOffset;
             position.y = transform.position.y + verticalOffset;
             groundKey.transform.position = position;
             return groundKey;
         }
 
-        void Start() {
-            for (int i = minKey; i < maxKey; ++i)
-                keys[i - minKey] = CreateKey(i);
+        int GetKeyFromIndex(int index) {
+            int octave = index / scale.Length;
+            int noteInScale = index % scale.Length;
+            return startingKey + octave * octaveSize + scale[noteInScale];
         }
 
-        void TryNoteOn(int key, Vector3 contactPoint) {
-            int index = key - minKey;
-            if (index >= 0 && index < keys.Length && keys[index].IsInside(contactPoint)) {
+        void TryNoteOn(int index, Vector3 contactPoint) {
+            if (index >= 0 && index < numKeys && keys[index].IsInside(contactPoint)) {
                 if (!keys[index].IsOn()) {
                     if (synth)
-                        synth.NoteOn(key);
+                        synth.NoteOn(GetKeyFromIndex(index));
                     keys[index].SetOn(true);
                 }
-                newKeys.Add(key);
+                newIndices.Add(index);
             }
         }
 
-        void TryNoteOff(int key) {
-            int index = key - minKey;
+        void TryNoteOff(int index) {
             if (keys[index].IsOn()) {
                 if (synth)
-                    synth.NoteOff(key);
+                    synth.NoteOff(GetKeyFromIndex(index));
                 keys[index].SetOn(false);
             }
         }
@@ -54,8 +61,8 @@ namespace Tytel {
         void Impulse(Collision collision, float magnification) {
             foreach (ContactPoint contact in collision.contacts) {
                 float dot = Vector3.Dot(contact.point, keyOffset);
-                int closestKey = (int)Mathf.Round(dot / keyOffset.sqrMagnitude);
-                TryNoteOn(startingKey + closestKey, contact.point);
+                int closestIndex = (int)Mathf.Round(dot / keyOffset.sqrMagnitude);
+                TryNoteOn(closestIndex, contact.point);
             }
         }
 
@@ -70,13 +77,13 @@ namespace Tytel {
         }
 
         void FixedUpdate() {
-            foreach (int key in currentKeys) {
-                if (!newKeys.Contains(key))
-                    TryNoteOff(key);
+            foreach (int index in currentIndices) {
+                if (!newIndices.Contains(index))
+                    TryNoteOff(index);
             }
 
-            currentKeys = newKeys;
-            newKeys = new HashSet<int>();
+            currentIndices = newIndices;
+            newIndices = new HashSet<int>();
         }
     }
 }
