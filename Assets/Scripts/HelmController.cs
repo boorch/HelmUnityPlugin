@@ -4,6 +4,8 @@ using System.Collections;
 using System.Runtime.InteropServices;
 
 namespace Tytel {
+
+    [RequireComponent(typeof(AudioHeartBeat))]
     public class HelmController : MonoBehaviour {
 
         [DllImport("AudioPluginHelm")]
