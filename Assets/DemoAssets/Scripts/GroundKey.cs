@@ -4,9 +4,6 @@ using System.Collections;
 namespace Tytel {
     public class GroundKey : MonoBehaviour {
         public Renderer keyLight;
-        public Material onMaterial;
-        public Material offMaterial;
-
         bool noteOn = false;
 
         public bool IsInside(Vector3 position) {
@@ -20,14 +17,15 @@ namespace Tytel {
         }
 
         public void SetOn(bool isOn) {
-            if (isOn == noteOn)
-                return;
-
             noteOn = isOn;
-            if (noteOn)
-                keyLight.material = onMaterial;
-            else
-                keyLight.material = offMaterial;
+        }
+
+        void Update() {
+            if (noteOn) {
+                MaterialPulse pulse = GetComponent<MaterialPulse>();
+                if (pulse)
+                    pulse.Pulse(1.0f);
+            }
         }
     }
 }

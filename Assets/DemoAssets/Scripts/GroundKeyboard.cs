@@ -39,23 +39,29 @@ namespace Tytel {
             return startingKey + octave * octaveSize + scale[noteInScale];
         }
 
+        void NoteOn(int index) {
+            if (synth)
+                synth.NoteOn(GetKeyFromIndex(index));
+            keys[index].SetOn(true);
+        }
+
+        void NoteOff(int index) {
+            if (synth)
+                synth.NoteOff(GetKeyFromIndex(index));
+            keys[index].SetOn(false);
+        }
+
         void TryNoteOn(int index, Vector3 contactPoint) {
             if (index >= 0 && index < numKeys && keys[index].IsInside(contactPoint)) {
-                if (!keys[index].IsOn()) {
-                    if (synth)
-                        synth.NoteOn(GetKeyFromIndex(index));
-                    keys[index].SetOn(true);
-                }
+                if (!keys[index].IsOn())
+                    NoteOn(index);
                 newIndices.Add(index);
             }
         }
 
         void TryNoteOff(int index) {
-            if (keys[index].IsOn()) {
-                if (synth)
-                    synth.NoteOff(GetKeyFromIndex(index));
-                keys[index].SetOn(false);
-            }
+            if (keys[index].IsOn())
+                NoteOff(index);
         }
 
         void Impulse(Collision collision, float magnification) {
