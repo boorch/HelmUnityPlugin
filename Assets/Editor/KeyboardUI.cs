@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace Tytel {
     public class KeyboardUI {
@@ -92,14 +93,14 @@ namespace Tytel {
             return blackKeys[key % blackKeys.Length];
         }
 
-        Color GetKeyColor(int key) {
+        Color GetKeyColor(int key, bool pressed) {
             if (IsBlackKey(key)) {
-                if (key == currentKey)
+                if (key == currentKey || pressed)
                     return blackPressed;
                 else
                     return blackUnpressed;
             }
-            if (key == currentKey)
+            if (key == currentKey || pressed)
                 return whitePressed;
             return whiteunPressed;
         }
@@ -108,7 +109,7 @@ namespace Tytel {
             return key >= 0 && key < midiSize;
         }
 
-        bool DrawKey(int key, Rect rect) {
+        bool DrawKey(int key, Rect rect, bool pressed) {
             if (!ValidKey(key))
                 return false;
 
@@ -127,7 +128,7 @@ namespace Tytel {
                 return false;
 
             Rect keyRect = new Rect(left, y, right - left + 1, height);
-            GUI.backgroundColor = GetKeyColor(key);
+            GUI.backgroundColor = GetKeyColor(key, pressed);
             GUIStyle style = GUI.skin.box;
             style.padding = new RectOffset(0, 0, 0, 0);
             style.border = new RectOffset(1, 1, 1, 1);
@@ -136,24 +137,26 @@ namespace Tytel {
             return true;
         }
 
-        void DrawKeys(Rect rect, bool blackKeys) {
+        void DrawKeys(Rect rect, bool blackKeys, HashSet<int> pressedNotes) {
             for (int key = middleKey; ValidKey(key); ++key) {
+                bool pressed = pressedNotes != null && pressedNotes.Contains(key);
                 if (blackKeys == IsBlackKey(key))
-                    DrawKey(key, rect);
+                    DrawKey(key, rect, pressed);
             }
 
             for (int key = middleKey - 1; ValidKey(key); --key) {
+                bool pressed = pressedNotes != null && pressedNotes.Contains(key);
                 if (blackKeys == IsBlackKey(key))
-                    DrawKey(key, rect);
+                    DrawKey(key, rect, pressed);
             }
         }
 
-        public void DrawKeyboard(Rect rect) {
+        public void DrawKeyboard(Rect rect, HashSet<int> pressedNotes = null) {
             rect = new Rect(rect.x - leftGrowth, rect.y,
                             rect.width + leftGrowth + rightGrowth, rect.height);
 
-            DrawKeys(rect, false);
-            DrawKeys(rect, true);
+            DrawKeys(rect, false, pressedNotes);
+            DrawKeys(rect, true, pressedNotes);
         }
     }
 }

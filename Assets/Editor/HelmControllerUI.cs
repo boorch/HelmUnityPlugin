@@ -26,7 +26,8 @@ namespace Tytel {
             if (keyboard.DoKeyboardEvents(rect, channel.intValue))
                 Repaint();
 
-            keyboard.DrawKeyboard(rect);
+            HelmController controller = target as HelmController;
+            keyboard.DrawKeyboard(rect, controller.GetPressedNotes());
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 

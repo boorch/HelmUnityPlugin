@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Tytel {
@@ -18,14 +19,19 @@ namespace Tytel {
         private static extern void HelmAllNotesOff(int channel);
 
         public int channel = 0;
-        public bool noteOn = false;
-        public bool noteOff = false;
 
-        void Start() {
-        }
+        HashSet<int> pressedNotes = new HashSet<int>();
 
         void OnDestroy() {
             HelmAllNotesOff(channel);
+        }
+
+        public bool IsNoteOn(int note) {
+            return pressedNotes.Contains(note);
+        }
+
+        public HashSet<int> GetPressedNotes() {
+            return pressedNotes;
         }
 
         public void NoteOn(int note, float length) {
@@ -39,22 +45,13 @@ namespace Tytel {
         }
 
         public void NoteOn(int note) {
+            pressedNotes.Add(note);
             HelmNoteOn(channel, note);
         }
 
         public void NoteOff(int note) {
+            pressedNotes.Remove(note);
             HelmNoteOff(channel, note);
-        }
-
-        void Update() {
-            if (noteOn) {
-                NoteOn(50);
-                noteOn = false;
-            }
-            if (noteOff) {
-                NoteOff(50);
-                noteOff = false;
-            }
         }
     }
 }
