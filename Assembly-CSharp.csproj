@@ -50,10 +50,12 @@
      <Compile Include="Assets\DemoAssets\Scripts\CameraMan.cs" />
      <Compile Include="Assets\DemoAssets\Scripts\ControlJump.cs" />
      <Compile Include="Assets\DemoAssets\Scripts\ControlTorque.cs" />
+     <Compile Include="Assets\DemoAssets\Scripts\DestroyAfterTime.cs" />
      <Compile Include="Assets\DemoAssets\Scripts\GroundKey.cs" />
      <Compile Include="Assets\DemoAssets\Scripts\GroundKeyboard.cs" />
      <Compile Include="Assets\DemoAssets\Scripts\MaterialPulse.cs" />
      <Compile Include="Assets\DemoAssets\Scripts\PlatformCreator.cs" />
+     <Compile Include="Assets\DemoAssets\Scripts\RepetitiveSpawner.cs" />
      <Compile Include="Assets\Scripts\AudioHeartBeat.cs" />
      <Compile Include="Assets\Scripts\HelmController.cs" />
  <Reference Include="UnityEngine.UI">
