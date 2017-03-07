@@ -7,9 +7,11 @@ namespace Tytel
 {
     public class PatchBrowserUI
     {
+        const string patchesPath = "/Helm/Patches/";
+
         void LoadPatch(IAudioEffectPlugin plugin, string name)
         {
-            string patchText = File.ReadAllText(Application.dataPath + "/Resources/" + name);
+            string patchText = File.ReadAllText(Application.dataPath + patchesPath + name);
             HelmPatchFormat patch = JsonUtility.FromJson<HelmPatchFormat>(patchText);
 
             FieldInfo[] fields = typeof(HelmPatchSettings).GetFields();
