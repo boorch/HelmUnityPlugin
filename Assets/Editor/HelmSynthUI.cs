@@ -7,6 +7,7 @@ namespace Tytel
     public class HelmSynthUI : IAudioEffectPluginGUI
     {
         KeyboardUI keyboard = new KeyboardUI();
+        PatchBrowserUI patchBrowser = new PatchBrowserUI();
 
         public override string Name
         {
@@ -25,19 +26,27 @@ namespace Tytel
 
         public override bool OnGUI(IAudioEffectPlugin plugin)
         {
-            float channel = 0.0f;
-            plugin.GetFloatParameter("Channel", out channel);
+            Color prev_color = GUI.backgroundColor;
 
             GUILayout.Space(5.0f);
-            Rect rect = GUILayoutUtility.GetRect(200, 60, GUILayout.ExpandWidth(true));
-            keyboard.DoKeyboardEvents(rect, (int)channel);
+            Rect keyboardRect = GUILayoutUtility.GetRect(200, 60, GUILayout.ExpandWidth(true));
 
-            Color prev_color = GUI.backgroundColor;
-            keyboard.DrawKeyboard(rect);
+            float channel = 0.0f;
+            plugin.GetFloatParameter("Channel", out channel);
+            keyboard.DoKeyboardEvents(keyboardRect, (int)channel);
+            keyboard.DrawKeyboard(keyboardRect);
+
+            GUI.backgroundColor = prev_color;
+            GUILayout.Space(5.0f);
+            Rect browserRect = GUILayoutUtility.GetRect(200, 120, GUILayout.ExpandWidth(true));
+            browserRect.x -= 14.0f;
+            browserRect.width += 18.0f;
+            patchBrowser.DoBrowserEvents(plugin, browserRect);
+            patchBrowser.DrawBrowser(browserRect);
 
             GUILayout.Space(5.0f);
             GUI.backgroundColor = prev_color;
-            return true;
+            return false;
         }
     }
 }

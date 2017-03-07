@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2BC2A8D5144C433D00D5EF79 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC2A8D4144C433D00D5EF79 /* OpenGL.framework */; };
-		3BC406E41AFB7CDF00E92CB9 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC406E31AFB7CDF00E92CB9 /* CoreMIDI.framework */; };
-		8D576314048677EA00EA77CD /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AA1909FFE8422F4C02AAC07 /* CoreFoundation.framework */; };
 		D10098661E662D62003830AE /* dc_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100984E1E662D62003830AE /* dc_filter.cpp */; };
 		D10098671E662D62003830AE /* detune_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098501E662D62003830AE /* detune_lookup.cpp */; };
 		D10098681E662D62003830AE /* fixed_point_oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098521E662D62003830AE /* fixed_point_oscillator.cpp */; };
@@ -59,13 +56,12 @@
 		D10098F91E662DCD003830AE /* trigger_operators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098D11E662DCD003830AE /* trigger_operators.cpp */; };
 		D10098FA1E662DCD003830AE /* value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098D41E662DCD003830AE /* value.cpp */; };
 		D10098FB1E662DCD003830AE /* voice_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098D61E662DCD003830AE /* voice_handler.cpp */; };
-		D10098FE1E662F86003830AE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10098FD1E662F86003830AE /* Accelerate.framework */; };
 		D10099011E6717BD003830AE /* AudioPluginUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098FF1E6717BD003830AE /* AudioPluginUtil.cpp */; };
+		D171C37C1E6F3A6F000987FD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D171C37B1E6F3A6F000987FD /* Accelerate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0AA1909FFE8422F4C02AAC07 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
-		2BC2A8D4144C433D00D5EF79 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		3BC406E31AFB7CDF00E92CB9 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		3D199B6D1858F3E60063EC53 /* PluginList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginList.h; path = ../PluginList.h; sourceTree = "<group>"; };
 		3DA35E0E175F7CA000FA3842 /* AudioPluginInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioPluginInterface.h; path = ../AudioPluginInterface.h; sourceTree = "<group>"; };
@@ -174,9 +170,9 @@
 		D10098D61E662DCD003830AE /* voice_handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = voice_handler.cpp; sourceTree = "<group>"; };
 		D10098D71E662DCD003830AE /* voice_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = voice_handler.h; sourceTree = "<group>"; };
 		D10098D81E662DCD003830AE /* wave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wave.h; sourceTree = "<group>"; };
-		D10098FD1E662F86003830AE /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = ../../../../../System/Library/Frameworks/Accelerate.framework; sourceTree = "<group>"; };
 		D10098FF1E6717BD003830AE /* AudioPluginUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioPluginUtil.cpp; path = ../AudioPluginUtil.cpp; sourceTree = "<group>"; };
 		D10099001E6717BD003830AE /* AudioPluginUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioPluginUtil.h; path = ../AudioPluginUtil.h; sourceTree = "<group>"; };
+		D171C37B1E6F3A6F000987FD /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -184,10 +180,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3BC406E41AFB7CDF00E92CB9 /* CoreMIDI.framework in Frameworks */,
-				D10098FE1E662F86003830AE /* Accelerate.framework in Frameworks */,
-				8D576314048677EA00EA77CD /* CoreFoundation.framework in Frameworks */,
-				2BC2A8D5144C433D00D5EF79 /* OpenGL.framework in Frameworks */,
+				D171C37C1E6F3A6F000987FD /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,6 +195,7 @@
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* External Frameworks and Libraries */,
 				19C28FB6FE9D52B211CA2CBB /* Products */,
+				D171C37A1E6F3A6E000987FD /* Frameworks */,
 			);
 			name = AudioPluginDemo;
 			sourceTree = "<group>";
@@ -209,9 +203,7 @@
 		089C1671FE841209C02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				D10098FD1E662F86003830AE /* Accelerate.framework */,
 				0AA1909FFE8422F4C02AAC07 /* CoreFoundation.framework */,
-				2BC2A8D4144C433D00D5EF79 /* OpenGL.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -397,6 +389,14 @@
 			name = mopo;
 			sourceTree = "<group>";
 		};
+		D171C37A1E6F3A6E000987FD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D171C37B1E6F3A6F000987FD /* Accelerate.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -519,6 +519,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = NO;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(PROJECT_DIR)/../../Assets";
@@ -529,12 +530,14 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Plugins;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = org.tytel.AudioPluginHelm;
 				PRODUCT_NAME = AudioPluginHelm;
 				SDKROOT = macosx10.12;
 				SKIP_INSTALL = NO;
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/AudioUnitExamples/AUPublic/AUBase $(PROJECT_DIR)/AudioUnitExamples/AUPublic/OtherBases $(PROJECT_DIR)/AudioUnitExamples/AUPublic/Utility $(PROJECT_DIR)/AudioUnitExamples/PublicUtility";
+				VALID_ARCHS = "i386 x86_64";
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -543,18 +546,22 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(PROJECT_DIR)/../../Assets";
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Plugins;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = org.tytel.AudioPluginHelm;
 				PRODUCT_NAME = AudioPluginHelm;
 				SDKROOT = macosx10.12;
 				SKIP_INSTALL = NO;
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/AudioUnitExamples/AUPublic/AUBase $(PROJECT_DIR)/AudioUnitExamples/AUPublic/OtherBases $(PROJECT_DIR)/AudioUnitExamples/AUPublic/Utility $(PROJECT_DIR)/AudioUnitExamples/PublicUtility";
+				VALID_ARCHS = "i386 x86_64";
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
