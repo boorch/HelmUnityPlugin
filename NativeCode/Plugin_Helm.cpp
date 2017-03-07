@@ -6,7 +6,6 @@ namespace Helm {
   const int MAX_BUFFER_SAMPLES = 256;
   const int MAX_CHARACTERS = 15;
   const int MAX_CHANNELS = 16;
-  const int MAX_INSTANCES = 128;
 
   enum Param {
     kChannel,
@@ -37,7 +36,7 @@ namespace Helm {
     int index = kNumParams;
     for (auto parameter : parameters) {
       mopo::ValueDetails& details = parameter.second;
-      std::string name = details.display_name.substr(0, MAX_CHARACTERS);
+      std::string name = details.name.substr(0, MAX_CHARACTERS);
       std::string units = details.display_units.substr(0, MAX_CHARACTERS);
       RegisterParameter(definition, name.c_str(), units.c_str(),
                         details.min, details.max, details.default_value,

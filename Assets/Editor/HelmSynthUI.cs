@@ -1,5 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Tytel {
@@ -19,7 +21,21 @@ namespace Tytel {
             get { return "Matt Tytel"; }
         }
 
-        public override bool OnGUI(IAudioEffectPlugin plugin)  {
+        void LoadPatch(IAudioEffectPlugin plugin, string name) {
+            string patchText = File.ReadAllText(Application.dataPath + "/Resources/" + name);
+            HelmPatchFormat patch = JsonUtility.FromJson<HelmPatchFormat>(patchText);
+
+            FieldInfo[] fields = typeof(HelmPatchSettings).GetFields();
+
+            foreach (FieldInfo field in fields) {
+                if (!field.FieldType.IsArray) {
+                    float value = (float)field.GetValue(patch.settings);
+                    plugin.SetFloatParameter(field.Name, value);
+                }
+            }
+        }
+
+        public override bool OnGUI(IAudioEffectPlugin plugin) {
             float channel = 0.0f;
             plugin.GetFloatParameter("Channel", out channel);
 

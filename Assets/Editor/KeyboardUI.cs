@@ -18,7 +18,7 @@ namespace Tytel {
         Color whitePressed = Color.yellow;
 
         const float leftGrowth = 15.0f;
-        const float rightGrowth = 5.0f;
+        const float rightGrowth = 10.0f;
 
         float keyWidth = 20.0f;
         float blackKeyWidthPercent = 0.55f;
