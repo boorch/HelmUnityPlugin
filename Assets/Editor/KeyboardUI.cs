@@ -15,11 +15,10 @@ namespace Tytel
 
         Color blackUnpressed = Color.black;
         Color blackPressed = Color.blue;
+        Color blackHovered = new Color(0.3f, 0.3f, 0.3f);
         Color whiteunPressed = Color.white;
         Color whitePressed = Color.yellow;
-
-        const float leftGrowth = 15.0f;
-        const float rightGrowth = 10.0f;
+        Color whiteHovered = new Color(0.9f, 0.9f, 0.9f);
 
         float keyWidth = 20.0f;
         float blackKeyWidthPercent = 0.55f;
@@ -27,6 +26,7 @@ namespace Tytel
         int middleKey = 60;
         int midiSize = 128;
         int currentKey = -1;
+        int hoveredKey = -1;
 
         int widthsPerOctave = 7;
         float[] xOffsets = new float[] { 0.0f, 0.65f, 1.0f, 1.8f, 2.0f,
@@ -34,9 +34,14 @@ namespace Tytel
         bool[] blackKeys = new bool[] { false, true, false, true, false,
                                          false, true, false, true, false, true, false };
 
+        const float leftGrowth = 15.0f;
+        const float rightGrowth = 10.0f;
+
         public bool DoKeyboardEvents(Rect rect, int channel)
         {
             Event evt = Event.current;
+            hoveredKey = GetHoveredKey(evt.mousePosition, rect);
+
             if (evt.type == EventType.MouseUp)
             {
                 if (currentKey >= 0)
@@ -47,13 +52,12 @@ namespace Tytel
             else if (rect.Contains(evt.mousePosition) &&
                 (evt.type == EventType.MouseDrag || evt.type == EventType.MouseDown))
             {
-                int hovered = GetHoveredKey(evt.mousePosition, rect);
-                if (hovered != currentKey)
+                if (hoveredKey != currentKey)
                 {
                     if (currentKey >= 0)
                         HelmNoteOff(channel, currentKey);
-                    HelmNoteOn(channel, hovered);
-                    currentKey = hovered;
+                    HelmNoteOn(channel, hoveredKey);
+                    currentKey = hoveredKey;
                     return true;
                 }
             }
@@ -62,6 +66,8 @@ namespace Tytel
 
         int GetHoveredKey(Vector2 position, Rect rect)
         {
+            if (!rect.Contains(position))
+                return -1;
             float octaveWidth = widthsPerOctave * keyWidth;
             float octaveOffset = (position.x - rect.center.x) / octaveWidth;
             int octave = (int)(middleKey / xOffsets.Length + octaveOffset);
@@ -70,7 +76,7 @@ namespace Tytel
             float positionOffset = position.x - GetKeyXPosition(octaveKey, rect);
             float keyOffset = positionOffset / keyWidth;
 
-            int key = 0;
+            int key = -100;
             for (int i = 0; i < xOffsets.Length; ++i)
             {
                 float width = 1.0f;
@@ -110,11 +116,15 @@ namespace Tytel
             {
                 if (key == currentKey || pressed)
                     return blackPressed;
+                else if (key == hoveredKey)
+                    return blackHovered;
                 else
                     return blackUnpressed;
             }
             if (key == currentKey || pressed)
                 return whitePressed;
+            else if (key == hoveredKey)
+                return whiteHovered;
             return whiteunPressed;
         }
 
