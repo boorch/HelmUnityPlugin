@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Tytel {
-    public class DestroyAfterTime : MonoBehaviour {
-
+namespace Tytel
+{
+    public class DestroyAfterTime : MonoBehaviour
+    {
         public float time = 10.0f;
 
-        void Start() {
+        void Start()
+        {
             Invoke("Die", time);
         }
 
-        void Die() {
+        void Die()
+        {
             Destroy(gameObject);
         }
     }

@@ -3,9 +3,10 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-namespace Tytel {
-    public class KeyboardUI {
-
+namespace Tytel
+{
+    public class KeyboardUI
+    {
         [DllImport("AudioPluginHelm")]
         private static extern void HelmNoteOn(int channel, int note);
 
@@ -33,18 +34,22 @@ namespace Tytel {
         bool[] blackKeys = new bool[] { false, true, false, true, false,
                                          false, true, false, true, false, true, false };
 
-        public bool DoKeyboardEvents(Rect rect, int channel) {
+        public bool DoKeyboardEvents(Rect rect, int channel)
+        {
             Event evt = Event.current;
-            if (evt.type == EventType.MouseUp) {
+            if (evt.type == EventType.MouseUp)
+            {
                 if (currentKey >= 0)
                     HelmNoteOff(channel, currentKey);
                 currentKey = -1;
                 return true;
             }
             else if (rect.Contains(evt.mousePosition) &&
-                (evt.type == EventType.MouseDrag || evt.type == EventType.MouseDown)) {
+                (evt.type == EventType.MouseDrag || evt.type == EventType.MouseDown))
+            {
                 int hovered = GetHoveredKey(evt.mousePosition, rect);
-                if (hovered != currentKey) {
+                if (hovered != currentKey)
+                {
                     if (currentKey >= 0)
                         HelmNoteOff(channel, currentKey);
                     HelmNoteOn(channel, hovered);
@@ -55,7 +60,8 @@ namespace Tytel {
             return false;
         }
 
-        int GetHoveredKey(Vector2 position, Rect rect) {
+        int GetHoveredKey(Vector2 position, Rect rect)
+        {
             float octaveWidth = widthsPerOctave * keyWidth;
             float octaveOffset = (position.x - rect.center.x) / octaveWidth;
             int octave = (int)(middleKey / xOffsets.Length + octaveOffset);
@@ -65,12 +71,15 @@ namespace Tytel {
             float keyOffset = positionOffset / keyWidth;
 
             int key = 0;
-            for (int i = 0; i < xOffsets.Length; ++i) {
+            for (int i = 0; i < xOffsets.Length; ++i)
+            {
                 float width = 1.0f;
                 if (blackKeys[i])
                     width = blackKeyWidthPercent;
-                if (keyOffset >= xOffsets[i] && keyOffset <= xOffsets[i] + width) {
-                    if (blackKeys[i]) {
+                if (keyOffset >= xOffsets[i] && keyOffset <= xOffsets[i] + width)
+                {
+                    if (blackKeys[i])
+                    {
                         if (position.y <= rect.yMax - verticalStagger)
                             return octaveKey + i;
                     }
@@ -81,7 +90,8 @@ namespace Tytel {
             return octaveKey + key;
         }
 
-        float GetKeyXPosition(int key, Rect rect) {
+        float GetKeyXPosition(int key, Rect rect)
+        {
             float xOffset = xOffsets[key % xOffsets.Length];
             int octave = key / xOffsets.Length - middleKey / xOffsets.Length;
             float octaveOffset = octave * widthsPerOctave * keyWidth;
@@ -89,12 +99,15 @@ namespace Tytel {
             return rect.center.x + offset;
         }
 
-        bool IsBlackKey(int key) {
+        bool IsBlackKey(int key)
+        {
             return blackKeys[key % blackKeys.Length];
         }
 
-        Color GetKeyColor(int key, bool pressed) {
-            if (IsBlackKey(key)) {
+        Color GetKeyColor(int key, bool pressed)
+        {
+            if (IsBlackKey(key))
+            {
                 if (key == currentKey || pressed)
                     return blackPressed;
                 else
@@ -105,11 +118,13 @@ namespace Tytel {
             return whiteunPressed;
         }
 
-        bool ValidKey(int key) {
+        bool ValidKey(int key)
+        {
             return key >= 0 && key < midiSize;
         }
 
-        bool DrawKey(int key, Rect rect, bool pressed) {
+        bool DrawKey(int key, Rect rect, bool pressed)
+        {
             if (!ValidKey(key))
                 return false;
 
@@ -117,7 +132,8 @@ namespace Tytel {
             float height = rect.height;
             float position = GetKeyXPosition(key, rect);
             float y = rect.y;
-            if (IsBlackKey(key)) {
+            if (IsBlackKey(key))
+            {
                 width = keyWidth * blackKeyWidthPercent;
                 height = rect.height - verticalStagger;
             }
@@ -137,21 +153,25 @@ namespace Tytel {
             return true;
         }
 
-        void DrawKeys(Rect rect, bool blackKeys, HashSet<int> pressedNotes) {
-            for (int key = middleKey; ValidKey(key); ++key) {
+        void DrawKeys(Rect rect, bool blackKeys, HashSet<int> pressedNotes)
+        {
+            for (int key = middleKey; ValidKey(key); ++key)
+            {
                 bool pressed = pressedNotes != null && pressedNotes.Contains(key);
                 if (blackKeys == IsBlackKey(key))
                     DrawKey(key, rect, pressed);
             }
 
-            for (int key = middleKey - 1; ValidKey(key); --key) {
+            for (int key = middleKey - 1; ValidKey(key); --key)
+            {
                 bool pressed = pressedNotes != null && pressedNotes.Contains(key);
                 if (blackKeys == IsBlackKey(key))
                     DrawKey(key, rect, pressed);
             }
         }
 
-        public void DrawKeyboard(Rect rect, HashSet<int> pressedNotes = null) {
+        public void DrawKeyboard(Rect rect, HashSet<int> pressedNotes = null)
+        {
             rect = new Rect(rect.x - leftGrowth, rect.y,
                             rect.width + leftGrowth + rightGrowth, rect.height);
 

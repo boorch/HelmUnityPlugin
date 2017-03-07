@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Tytel {
-    public class MaterialPulse : MonoBehaviour {
-
+namespace Tytel
+{
+    public class MaterialPulse : MonoBehaviour
+    {
         public Renderer render;
         public Material defaultMaterial;
         public Material pulseMaterial;
@@ -11,11 +12,13 @@ namespace Tytel {
 
         float progress = 0.0f;
 
-        public void Pulse(float amount) {
+        public void Pulse(float amount)
+        {
             progress = Mathf.Clamp(amount, 0.0f, 1.0f);
         }
 
-        void Update() {
+        void Update()
+        {
             if (progress == 0.0f)
                 return;
 

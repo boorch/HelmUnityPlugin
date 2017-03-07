@@ -1,23 +1,25 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Tytel {
-
+namespace Tytel
+{
     [CustomEditor(typeof(HelmController))]
-    class HelmControllerUI : Editor {
-
+    class HelmControllerUI : Editor
+    {
         private SerializedObject serialized;
         KeyboardUI keyboard = new KeyboardUI();
         SerializedProperty channel;
 
         const int MAX_CHANNELS = 16;
 
-        void OnEnable() {
+        void OnEnable()
+        {
             serialized = new SerializedObject(target);
             channel = serialized.FindProperty("channel");
         }
 
-        public override void OnInspectorGUI() {
+        public override void OnInspectorGUI()
+        {
             serialized.Update();
             Color prev_color = GUI.backgroundColor;
             GUILayout.Space(5f);

@@ -49,6 +49,7 @@
      <Compile Include="Assets\Editor\HelmControllerUI.cs" />
      <Compile Include="Assets\Editor\HelmSynthUI.cs" />
      <Compile Include="Assets\Editor\KeyboardUI.cs" />
+     <Compile Include="Assets\Editor\PatchBrowserUI.cs" />
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Advertisements/Editor/UnityEditor.Advertisements.dll</HintPath>
  </Reference>

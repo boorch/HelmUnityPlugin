@@ -1,18 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Tytel {
-    public class CameraMan : MonoBehaviour {
-
+namespace Tytel
+{
+    public class CameraMan : MonoBehaviour
+    {
         public Transform player;
 
         protected Vector3 diff_;
 
-        void Start() {
+        void Start()
+        {
             diff_ = transform.position - player.position;
         }
 
-        void Update() {
+        void Update()
+        {
             transform.position = player.position + diff_;
         }
     }

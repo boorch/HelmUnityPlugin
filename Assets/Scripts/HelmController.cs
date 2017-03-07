@@ -4,11 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace Tytel {
-
+namespace Tytel
+{
     [RequireComponent(typeof(AudioHeartBeat))]
-    public class HelmController : MonoBehaviour {
-
+    public class HelmController : MonoBehaviour
+    {
         [DllImport("AudioPluginHelm")]
         private static extern void HelmNoteOn(int channel, int note);
 
@@ -22,34 +22,41 @@ namespace Tytel {
 
         HashSet<int> pressedNotes = new HashSet<int>();
 
-        void OnDestroy() {
+        void OnDestroy()
+        {
             HelmAllNotesOff(channel);
         }
 
-        public bool IsNoteOn(int note) {
+        public bool IsNoteOn(int note)
+        {
             return pressedNotes.Contains(note);
         }
 
-        public HashSet<int> GetPressedNotes() {
+        public HashSet<int> GetPressedNotes()
+        {
             return pressedNotes;
         }
 
-        public void NoteOn(int note, float length) {
+        public void NoteOn(int note, float length)
+        {
             NoteOn(note);
             StartCoroutine(WaitNoteOff(note, length));
         }
 
-        IEnumerator WaitNoteOff(int note, float length) {
+        IEnumerator WaitNoteOff(int note, float length)
+        {
             yield return new WaitForSeconds(length);
             NoteOff(note);
         }
 
-        public void NoteOn(int note) {
+        public void NoteOn(int note)
+        {
             pressedNotes.Add(note);
             HelmNoteOn(channel, note);
         }
 
-        public void NoteOff(int note) {
+        public void NoteOff(int note)
+        {
             pressedNotes.Remove(note);
             HelmNoteOff(channel, note);
         }

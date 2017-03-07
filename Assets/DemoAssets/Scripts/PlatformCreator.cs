@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Tytel {
-    public class PlatformCreator : MonoBehaviour {
-
+namespace Tytel
+{
+    public class PlatformCreator : MonoBehaviour
+    {
         public Transform platformModel;
         public float minWidth = 0.1f;
         public List<Transform> allPlatforms = new List<Transform>();
@@ -15,16 +16,20 @@ namespace Tytel {
         Transform currentPlatform;
         Vector2 startPosition;
 
-        void TryInitialize(Vector2 position) {
-            if (Input.GetMouseButtonDown(0)) {
+        void TryInitialize(Vector2 position)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
                 startPosition = position;
                 currentPlatform = Instantiate(platformModel, null);
                 currentPlatform.position = startPosition;
             }
         }
 
-        void TryRelease(Vector2 position) {
-            if (Input.GetMouseButtonUp(0) && currentPlatform) {
+        void TryRelease(Vector2 position)
+        {
+            if (Input.GetMouseButtonUp(0) && currentPlatform)
+            {
                 if ((position - startPosition).sqrMagnitude < minWidth * minWidth)
                     Destroy(currentPlatform.gameObject);
                 else
@@ -33,7 +38,8 @@ namespace Tytel {
             }
         }
 
-        void TryUpdate(Vector2 position) {
+        void TryUpdate(Vector2 position)
+        {
             if (currentPlatform == null)
                 return;
 
@@ -47,14 +53,16 @@ namespace Tytel {
             currentPlatform.localScale = localScale;
         }
 
-        void ClearPlatforms() {
+        void ClearPlatforms()
+        {
             foreach (Transform platform in allPlatforms)
                 Destroy(platform.gameObject);
 
             allPlatforms.Clear();
         }
 
-        void UndoPlatform() {
+        void UndoPlatform()
+        {
             if (allPlatforms.Count == 0)
                 return;
 
@@ -63,7 +71,8 @@ namespace Tytel {
             allPlatforms.RemoveAt(index);
         }
 
-        void Update() {
+        void Update()
+        {
             Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             TryInitialize(position);
             TryUpdate(position);

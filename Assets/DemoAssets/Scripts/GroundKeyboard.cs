@@ -2,8 +2,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Tytel {
-    public class GroundKeyboard : MonoBehaviour {
+namespace Tytel
+{
+    public class GroundKeyboard : MonoBehaviour
+    {
         public GroundKey keyModel;
         public HelmController synth;
         public Vector3 keyOffset;
@@ -19,13 +21,15 @@ namespace Tytel {
         HashSet<int> currentIndices = new HashSet<int>();
         HashSet<int> newIndices = new HashSet<int>();
 
-        void Start() {
+        void Start()
+        {
             keys = new GroundKey[numKeys];
             for (int i = 0; i < numKeys; ++i)
                 keys[i] = CreateKey(i);
         }
 
-        GroundKey CreateKey(int key) {
+        GroundKey CreateKey(int key)
+        {
             GroundKey groundKey = Instantiate(keyModel, transform) as GroundKey;
             Vector3 position = key * keyOffset;
             position.y = transform.position.y + verticalOffset;
@@ -33,57 +37,69 @@ namespace Tytel {
             return groundKey;
         }
 
-        int GetKeyFromIndex(int index) {
+        int GetKeyFromIndex(int index)
+        {
             int octave = index / scale.Length;
             int noteInScale = index % scale.Length;
             return startingKey + octave * octaveSize + scale[noteInScale];
         }
 
-        void NoteOn(int index) {
+        void NoteOn(int index)
+        {
             if (synth)
                 synth.NoteOn(GetKeyFromIndex(index));
             keys[index].SetOn(true);
         }
 
-        void NoteOff(int index) {
+        void NoteOff(int index)
+        {
             if (synth)
                 synth.NoteOff(GetKeyFromIndex(index));
             keys[index].SetOn(false);
         }
 
-        void TryNoteOn(int index, Vector3 contactPoint) {
-            if (index >= 0 && index < numKeys && keys[index].IsInside(contactPoint)) {
+        void TryNoteOn(int index, Vector3 contactPoint)
+        {
+            if (index >= 0 && index < numKeys && keys[index].IsInside(contactPoint))
+            {
                 if (!keys[index].IsOn())
                     NoteOn(index);
                 newIndices.Add(index);
             }
         }
 
-        void TryNoteOff(int index) {
+        void TryNoteOff(int index)
+        {
             if (keys[index].IsOn())
                 NoteOff(index);
         }
 
-        void Impulse(Collision collision, float magnification) {
-            foreach (ContactPoint contact in collision.contacts) {
+        void Impulse(Collision collision, float magnification)
+        {
+            foreach (ContactPoint contact in collision.contacts)
+            {
                 float dot = Vector3.Dot(contact.point, keyOffset);
                 int closestIndex = (int)Mathf.Round(dot / keyOffset.sqrMagnitude);
                 TryNoteOn(closestIndex, contact.point);
             }
         }
 
-        IEnumerator OnCollisionStay(Collision collision) {
+        IEnumerator OnCollisionStay(Collision collision)
+        {
             yield return new WaitForFixedUpdate();
             Impulse(collision, 1.0f);
         }
 
-        IEnumerator OnCollisionEnter(Collision collision) {
+        IEnumerator OnCollisionEnter(Collision collision)
+        {
             yield return new WaitForFixedUpdate();
             Impulse(collision, 1.0f);
         }
 
-        void FixedUpdate() {
-            foreach (int index in currentIndices) {
+        void FixedUpdate()
+        {
+            foreach (int index in currentIndices)
+            {
                 if (!newIndices.Contains(index))
                     TryNoteOff(index);
             }

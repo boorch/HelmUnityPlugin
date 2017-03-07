@@ -1,9 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Tytel {
-    public class ControlTorque : MonoBehaviour {
-
+namespace Tytel
+{
+    public class ControlTorque : MonoBehaviour
+    {
         public float torque = 1.0f;
         public float maxAngularVelocity = 50.0f;
         public Vector3 forward = Vector3.forward;
@@ -11,12 +12,15 @@ namespace Tytel {
 
         public bool wasd = true;
 
-        void Start () {
+        void Start()
+        {
             GetComponent<Rigidbody>().maxAngularVelocity = maxAngularVelocity;
         }
 
-        void Update () {
-            if (wasd) {
+        void Update()
+        {
+            if (wasd)
+            {
                 if (Input.GetKey("w"))
                     GetComponent<Rigidbody>().AddTorque(torque * right);
                 if (Input.GetKey("s"))
@@ -26,7 +30,8 @@ namespace Tytel {
                 if (Input.GetKey("d"))
                     GetComponent<Rigidbody>().AddTorque(-torque * forward);
             }
-            else {
+            else
+            {
                 if (Input.GetKey("up"))
                     GetComponent<Rigidbody>().AddTorque(torque * right);
                 if (Input.GetKey("down"))

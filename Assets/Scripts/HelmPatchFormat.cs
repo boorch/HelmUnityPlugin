@@ -1,17 +1,19 @@
 ﻿using UnityEngine;
 using System;
 
-namespace Tytel {
-
+namespace Tytel
+{
     [Serializable]
-    public class HelmModulationSetting {
+    public class HelmModulationSetting
+    {
         public string source;
         public string destination;
         public float amount;
     }
 
     [Serializable]
-    public class HelmPatchSettings {
+    public class HelmPatchSettings
+    {
         public float amp_attack;
         public float amp_decay;
         public float amp_release;
@@ -148,7 +150,8 @@ namespace Tytel {
     }
 
     [Serializable]
-    public class HelmPatchFormat {
+    public class HelmPatchFormat
+    {
         public string license;
         public string synth_version;
         public string patch_name;
