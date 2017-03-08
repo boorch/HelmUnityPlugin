@@ -10,6 +10,7 @@ namespace Helm {
   const int MAX_CHARACTERS = 15;
   const int MAX_CHANNELS = 16;
   const int MAX_NOTES = 128;
+  const double BPM_TO_SIXTEENTH = 4.0 / 60.0;
 
   enum Param {
     kChannel,
@@ -28,6 +29,7 @@ namespace Helm {
 
   Mutex instance_mutex;
   int instance_counter = 0;
+  double bpm = 120.0;
   std::map<int, EffectData*> instance_map;
 
   Mutex sequencer_mutex;
@@ -142,16 +144,46 @@ namespace Helm {
     return UNITY_AUDIODSP_OK;
   }
 
-  void processSequencerNotes(EffectData* data, int current_sample, int samples) {
-    HelmSequencer* active_sequencer = NULL;
+  double timeToSixteenth(UInt64 sample, int sample_rate) {
+    return (bpm * BPM_TO_SIXTEENTH * sample) / sample_rate;
+  }
 
-    sequencer_mutex.Lock();
+  double wrap(double value, double length) {
+    int wrap = value / length;
+    return value - wrap * length;
+  }
+
+  void processSequencerNotes(EffectData* data, UInt64 current_sample, UInt64 end_sample) {
+    HelmSequencer* active_sequencer = nullptr;
+
+    MutexScopeLock sequencer_lock(sequencer_mutex);
     for (auto sequencer : sequencer_lookup) {
       if (sequencer.first->channel() == data->parameters[kChannel])
         active_sequencer = sequencer.first;
     }
 
-    sequencer_mutex.Unlock();
+    if (active_sequencer == nullptr)
+      return;
+
+    double start = timeToSixteenth(current_sample, data->synth_engine.getSampleRate());
+    start = wrap(start, active_sequencer->length());
+    double end = timeToSixteenth(end_sample, data->synth_engine.getSampleRate());
+    end = wrap(end, active_sequencer->length());
+
+    active_sequencer->getNoteOffs(data->note_events, start, end);
+
+    data->mutex.Lock();
+    for (int i = 0; i < MAX_NOTES && data->note_events[i] > 0; ++i)
+      data->synth_engine.noteOff(data->note_events[i]);
+
+    data->mutex.Unlock();
+
+    active_sequencer->getNoteOns(data->note_events, start, end);
+
+    data->mutex.Lock();
+    for (int i = 0; i < MAX_NOTES && data->note_events[i] > 0; ++i)
+      data->synth_engine.noteOn(data->note_events[i]);
+    data->mutex.Unlock();
   }
 
   void processAudio(mopo::HelmEngine& engine, float* buffer, int channels, int samples, int offset) {
@@ -183,6 +215,7 @@ namespace Helm {
     for (int b = 0; b < num_samples; b += synth_samples) {
       int current_samples = std::min<int>(synth_samples, num_samples - b);
 
+      processSequencerNotes(data, state->currdsptick + b, state->currdsptick + b + current_samples + 1);
       processAudio(data->synth_engine, out_buffer, out_channels, current_samples, b);
     }
 
@@ -269,5 +302,9 @@ namespace Helm {
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeSequencerLength(
       HelmSequencer* sequencer, float length) {
     sequencer->setLength(length);
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void SetBpm(float newBpm) {
+    bpm = newBpm;
   }
 }

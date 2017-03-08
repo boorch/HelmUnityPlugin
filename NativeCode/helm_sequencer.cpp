@@ -51,14 +51,18 @@ namespace Helm {
     auto iter = events.lower_bound(std::pair<double, int>(start, 0));
 
     int note_index = 0;
-    while (iter != events.end() && (start > end || iter->first.first < end))
+    while (iter != events.end() && (start > end || iter->first.first < end) && note_index < kMaxNotes) {
       notes[note_index++] = (*iter).first.second;
+      iter++;
+    }
 
     if (start > end) {
       iter = events.lower_bound(std::pair<double, int>(0.0, 0));
 
-      while (iter != events.end() && iter->first.first < end)
+      while (iter != events.end() && iter->first.first < end && note_index < kMaxNotes) {
         notes[note_index++] = (*iter).first.second;
+        iter++;
+      }
     }
 
     notes[note_index] = -1;

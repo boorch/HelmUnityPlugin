@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 
 namespace Tytel
 {
-    [ExecuteInEditMode]
     public class HelmSequencer : MonoBehaviour
     {
         [DllImport("AudioPluginHelm")]
@@ -19,24 +18,24 @@ namespace Tytel
         [DllImport("AudioPluginHelm")]
         private static extern IntPtr CreateNote(IntPtr sequencer, int note, float start, float end);
 
-        IntPtr sequencer = null;
+        IntPtr sequencer = IntPtr.Zero;
 
         void CreateNativeSequencer()
         {
-            if (sequencer == null)
+            if (sequencer == IntPtr.Zero)
                 sequencer = CreateSequencer();
         }
 
         void DeleteNativeSequencer()
         {
-            if (sequencer != null)
+            if (sequencer != IntPtr.Zero)
                 DeleteSequencer(sequencer);
-            sequencer = null;
+            sequencer = IntPtr.Zero;
         }
 
         void Awake()
         {
-            CreateSequencer();
+            sequencer = CreateSequencer();
         }
 
         void OnDestroy()
@@ -46,21 +45,23 @@ namespace Tytel
 
         void OnEnable()
         {
-            if (sequencer != null)
+            if (sequencer != IntPtr.Zero)
                 EnableSequencer(sequencer, true);
         }
 
         void OnDisable()
         {
-            if (sequencer != null)
+            if (sequencer != IntPtr.Zero)
                 EnableSequencer(sequencer, false);
         }
 
         void Start()
         {
-            CreateNativeSequencer();
-            IntPtr note = Cr eateNote(sequencer, 50, 1, 5);
-            IntPtr note2 = CreateNote(sequencer, 55, 6, 10);
+            if (sequencer != IntPtr.Zero)
+            {
+                IntPtr note = CreateNote(sequencer, 50, 1, 5);
+                IntPtr note2 = CreateNote(sequencer, 55, 6, 10);
+            }
         }
     }
 }

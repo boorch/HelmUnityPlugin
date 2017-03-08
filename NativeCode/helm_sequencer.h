@@ -18,7 +18,7 @@ namespace Helm {
 
       typedef std::map<std::pair<double, int>, Note*> event_map;
 
-      const static int kMaxNotes = 128;
+      const static int kMaxNotes = 127;
 
       HelmSequencer();
       virtual ~HelmSequencer();
