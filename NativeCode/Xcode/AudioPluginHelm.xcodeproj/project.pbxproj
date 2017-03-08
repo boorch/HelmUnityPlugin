@@ -20,7 +20,7 @@
 		D10098701E662D62003830AE /* resonance_cancel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098621E662D62003830AE /* resonance_cancel.cpp */; };
 		D10098711E662D62003830AE /* switch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098641E662D62003830AE /* switch.cpp */; };
 		D10098841E662D88003830AE /* helm_common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098771E662D88003830AE /* helm_common.cpp */; };
-		D100988B1E662DA4003830AE /* Plugin_Helm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100988A1E662DA4003830AE /* Plugin_Helm.cpp */; };
+		D100988B1E662DA4003830AE /* helm_plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100988A1E662DA4003830AE /* helm_plugin.cpp */; };
 		D10098D91E662DCD003830AE /* alias.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100988D1E662DCD003830AE /* alias.cpp */; };
 		D10098DA1E662DCD003830AE /* arpeggiator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100988F1E662DCD003830AE /* arpeggiator.cpp */; };
 		D10098DB1E662DCD003830AE /* bit_crush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098911E662DCD003830AE /* bit_crush.cpp */; };
@@ -58,6 +58,7 @@
 		D10098FB1E662DCD003830AE /* voice_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098D61E662DCD003830AE /* voice_handler.cpp */; };
 		D10099011E6717BD003830AE /* AudioPluginUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098FF1E6717BD003830AE /* AudioPluginUtil.cpp */; };
 		D171C37C1E6F3A6F000987FD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D171C37B1E6F3A6F000987FD /* Accelerate.framework */; };
+		D1CAEEE21E6F74F10053B7E0 /* helm_sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1CAEEE01E6F74F10053B7E0 /* helm_sequencer.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -93,7 +94,7 @@
 		D10098651E662D62003830AE /* switch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = switch.h; sourceTree = "<group>"; };
 		D10098771E662D88003830AE /* helm_common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helm_common.cpp; sourceTree = "<group>"; };
 		D10098781E662D88003830AE /* helm_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helm_common.h; sourceTree = "<group>"; };
-		D100988A1E662DA4003830AE /* Plugin_Helm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Plugin_Helm.cpp; path = ../Plugin_Helm.cpp; sourceTree = "<group>"; };
+		D100988A1E662DA4003830AE /* helm_plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = helm_plugin.cpp; path = ../helm_plugin.cpp; sourceTree = "<group>"; };
 		D100988D1E662DCD003830AE /* alias.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = alias.cpp; sourceTree = "<group>"; };
 		D100988E1E662DCD003830AE /* alias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alias.h; sourceTree = "<group>"; };
 		D100988F1E662DCD003830AE /* arpeggiator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = arpeggiator.cpp; sourceTree = "<group>"; };
@@ -173,6 +174,8 @@
 		D10098FF1E6717BD003830AE /* AudioPluginUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioPluginUtil.cpp; path = ../AudioPluginUtil.cpp; sourceTree = "<group>"; };
 		D10099001E6717BD003830AE /* AudioPluginUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioPluginUtil.h; path = ../AudioPluginUtil.h; sourceTree = "<group>"; };
 		D171C37B1E6F3A6F000987FD /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		D1CAEEE01E6F74F10053B7E0 /* helm_sequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = helm_sequencer.cpp; path = ../helm_sequencer.cpp; sourceTree = "<group>"; };
+		D1CAEEE11E6F74F10053B7E0 /* helm_sequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = helm_sequencer.h; path = ../helm_sequencer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,11 +222,10 @@
 		08FB77AFFE84173DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				D10098FF1E6717BD003830AE /* AudioPluginUtil.cpp */,
-				D100988A1E662DA4003830AE /* Plugin_Helm.cpp */,
-				3DA35E0E175F7CA000FA3842 /* AudioPluginInterface.h */,
-				D10099001E6717BD003830AE /* AudioPluginUtil.h */,
-				3D199B6D1858F3E60063EC53 /* PluginList.h */,
+				D177B5181E705CE3009CC51F /* plugin_interface */,
+				D100988A1E662DA4003830AE /* helm_plugin.cpp */,
+				D1CAEEE01E6F74F10053B7E0 /* helm_sequencer.cpp */,
+				D1CAEEE11E6F74F10053B7E0 /* helm_sequencer.h */,
 				D10098721E662D68003830AE /* helm */,
 				D10098FC1E662DF6003830AE /* mopo */,
 			);
@@ -397,6 +399,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		D177B5181E705CE3009CC51F /* plugin_interface */ = {
+			isa = PBXGroup;
+			children = (
+				3DA35E0E175F7CA000FA3842 /* AudioPluginInterface.h */,
+				D10098FF1E6717BD003830AE /* AudioPluginUtil.cpp */,
+				D10099001E6717BD003830AE /* AudioPluginUtil.h */,
+				3D199B6D1858F3E60063EC53 /* PluginList.h */,
+			);
+			name = plugin_interface;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -475,6 +488,7 @@
 				D10098701E662D62003830AE /* resonance_cancel.cpp in Sources */,
 				D10098E41E662DCD003830AE /* magnitude_lookup.cpp in Sources */,
 				D100986D1E662D62003830AE /* helm_oscillators.cpp in Sources */,
+				D1CAEEE21E6F74F10053B7E0 /* helm_sequencer.cpp in Sources */,
 				D10098DE1E662DCD003830AE /* distortion.cpp in Sources */,
 				D100986E1E662D62003830AE /* helm_voice_handler.cpp in Sources */,
 				D10098DA1E662DCD003830AE /* arpeggiator.cpp in Sources */,
@@ -500,7 +514,7 @@
 				D10098F01E662DCD003830AE /* reverb.cpp in Sources */,
 				D10098661E662D62003830AE /* dc_filter.cpp in Sources */,
 				D100986A1E662D62003830AE /* helm_engine.cpp in Sources */,
-				D100988B1E662DA4003830AE /* Plugin_Helm.cpp in Sources */,
+				D100988B1E662DA4003830AE /* helm_plugin.cpp in Sources */,
 				D10098E91E662DCD003830AE /* operators.cpp in Sources */,
 				D10098EC1E662DCD003830AE /* portamento_slope.cpp in Sources */,
 				D10098F61E662DCD003830AE /* smooth_value.cpp in Sources */,
