@@ -10,7 +10,7 @@ namespace Tytel
     public class HelmController : MonoBehaviour
     {
         [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOn(int channel, int note);
+        private static extern void HelmNoteOn(int channel, int note, float velocity);
 
         [DllImport("AudioPluginHelm")]
         private static extern void HelmNoteOff(int channel, int note);
@@ -37,9 +37,9 @@ namespace Tytel
             return pressedNotes;
         }
 
-        public void NoteOn(int note, float length)
+        public void NoteOn(int note, float velocity, float length)
         {
-            NoteOn(note);
+            NoteOn(note, velocity);
             StartCoroutine(WaitNoteOff(note, length));
         }
 
@@ -49,10 +49,10 @@ namespace Tytel
             NoteOff(note);
         }
 
-        public void NoteOn(int note)
+        public void NoteOn(int note, float velocity = 1.0f)
         {
             pressedNotes.Add(note);
-            HelmNoteOn(channel, note);
+            HelmNoteOn(channel, note, velocity);
         }
 
         public void NoteOff(int note)

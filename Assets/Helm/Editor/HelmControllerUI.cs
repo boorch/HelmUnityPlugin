@@ -10,8 +10,6 @@ namespace Tytel
         KeyboardUI keyboard = new KeyboardUI();
         SerializedProperty channel;
 
-        const int MAX_CHANNELS = 16;
-
         void OnEnable()
         {
             serialized = new SerializedObject(target);
@@ -33,7 +31,7 @@ namespace Tytel
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
-            channel.intValue = EditorGUILayout.IntSlider("Channel", channel.intValue, 0, MAX_CHANNELS - 1);
+            channel.intValue = EditorGUILayout.IntSlider("Channel", channel.intValue, 0, Utils.kMaxChannels - 1);
             serialized.ApplyModifiedProperties();
         }
     }

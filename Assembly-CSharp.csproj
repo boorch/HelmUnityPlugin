@@ -46,23 +46,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Helm\Demos\DemoAssets\Scripts\BounceAudio2d.cs" />
-     <Compile Include="Assets\Helm\Demos\DemoAssets\Scripts\CameraMan.cs" />
-     <Compile Include="Assets\Helm\Demos\DemoAssets\Scripts\ControlJump.cs" />
-     <Compile Include="Assets\Helm\Demos\DemoAssets\Scripts\ControlTorque.cs" />
-     <Compile Include="Assets\Helm\Demos\DemoAssets\Scripts\DestroyAfterTime.cs" />
-     <Compile Include="Assets\Helm\Demos\DemoAssets\Scripts\GroundKey.cs" />
-     <Compile Include="Assets\Helm\Demos\DemoAssets\Scripts\GroundKeyboard.cs" />
-     <Compile Include="Assets\Helm\Demos\DemoAssets\Scripts\MaterialPulse.cs" />
-     <Compile Include="Assets\Helm\Demos\DemoAssets\Scripts\PlatformCreator.cs" />
-     <Compile Include="Assets\Helm\Demos\DemoAssets\Scripts\RepetitiveSpawner.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\BounceAudio2d.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\CameraMan.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\ControlJump.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\ControlTorque.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\DestroyAfterTime.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\GroundKey.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\GroundKeyboard.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\MaterialPulse.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\PlatformCreator.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\RepetitiveSpawner.cs" />
      <Compile Include="Assets\Helm\Scripts\AudioHeartBeat.cs" />
      <Compile Include="Assets\Helm\Scripts\HelmController.cs" />
      <Compile Include="Assets\Helm\Scripts\HelmPatchFormat.cs" />
      <Compile Include="Assets\Helm\Scripts\HelmSequencer.cs" />
- <Reference Include="UnityEngine.Advertisements">
- <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
- </Reference>
+     <Compile Include="Assets\Helm\Scripts\Utils.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
@@ -77,9 +75,6 @@
  </Reference>
  <Reference Include="UnityEngine.HoloLens">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
- </Reference>
- <Reference Include="UnityEngine.Purchasing">
- <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityPurchasing/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.VR">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>

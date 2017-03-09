@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Tytel
@@ -10,13 +11,31 @@ namespace Tytel
         private static extern IntPtr CreateSequencer();
 
         [DllImport("AudioPluginHelm")]
-        private static extern IntPtr DeleteSequencer(IntPtr sequencer);
+        private static extern void DeleteSequencer(IntPtr sequencer);
 
         [DllImport("AudioPluginHelm")]
-        private static extern IntPtr EnableSequencer(IntPtr sequencer, bool enable);
+        private static extern void EnableSequencer(IntPtr sequencer, bool enable);
 
         [DllImport("AudioPluginHelm")]
-        private static extern IntPtr CreateNote(IntPtr sequencer, int note, float start, float end);
+        private static extern IntPtr CreateNote(IntPtr sequencer, int note, float velocity, float start, float end);
+
+        [DllImport("AudioPluginHelm")]
+        private static extern void ChangeSequencerLength(IntPtr sequencer, float length);
+
+        [DllImport("AudioPluginHelm")]
+        private static extern bool ChangeSequencerChannel(IntPtr sequencer, int channel);
+
+        public struct Note
+        {
+            int note;
+            float velocity;
+            float start;
+            float end;
+        }
+
+        public int rows = 127;
+        public int channel = 0;
+        public List<List<Note>> allNotes = new List<List<Note>>();
 
         IntPtr sequencer = IntPtr.Zero;
 
@@ -59,8 +78,10 @@ namespace Tytel
         {
             if (sequencer != IntPtr.Zero)
             {
-                IntPtr note = CreateNote(sequencer, 50, 1, 5);
-                IntPtr note2 = CreateNote(sequencer, 55, 6, 10);
+                for (int i = 0; i < 16; ++i)
+                    CreateNote(sequencer, 24 + i * 3, 1.0f, 0.5f * i, 0.5f + 0.5f);
+
+                ChangeSequencerLength(sequencer, 8.0f);
             }
         }
     }

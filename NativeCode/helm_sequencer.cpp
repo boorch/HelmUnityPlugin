@@ -18,9 +18,10 @@ namespace Helm {
     off_events_.clear();
   }
 
-  HelmSequencer::Note* HelmSequencer::addNote(int midi_note, double start, double end) {
+  HelmSequencer::Note* HelmSequencer::addNote(int midi_note, double velocity, double start, double end) {
     Note* note = new Note();
     note->midi_note = midi_note;
+    note->velocity = velocity;
     note->time_on = start;
     note->time_off = end;
 
@@ -47,12 +48,12 @@ namespace Helm {
     off_events_[std::pair<double, int>(end, note->midi_note)] = note;
   }
 
-  void HelmSequencer::getNoteEvents(int* notes, event_map events, double start, double end) {
+  void HelmSequencer::getNoteEvents(Note** notes, event_map events, double start, double end) {
     auto iter = events.lower_bound(std::pair<double, int>(start, 0));
 
     int note_index = 0;
     while (iter != events.end() && (start > end || iter->first.first < end) && note_index < kMaxNotes) {
-      notes[note_index++] = (*iter).first.second;
+      notes[note_index++] = (*iter).second;
       iter++;
     }
 
@@ -60,19 +61,19 @@ namespace Helm {
       iter = events.lower_bound(std::pair<double, int>(0.0, 0));
 
       while (iter != events.end() && iter->first.first < end && note_index < kMaxNotes) {
-        notes[note_index++] = (*iter).first.second;
+        notes[note_index++] = (*iter).second;
         iter++;
       }
     }
 
-    notes[note_index] = -1;
+    notes[note_index] = nullptr;
   }
 
-  void HelmSequencer::getNoteOns(int* notes, double start, double end) {
+  void HelmSequencer::getNoteOns(Note** notes, double start, double end) {
     getNoteEvents(notes, on_events_, start, end);
   }
 
-  void HelmSequencer::getNoteOffs(int* notes, double start, double end) {
+  void HelmSequencer::getNoteOffs(Note** notes, double start, double end) {
     getNoteEvents(notes, off_events_, start, end);
   }
 }

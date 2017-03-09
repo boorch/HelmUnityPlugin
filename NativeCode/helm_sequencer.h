@@ -12,6 +12,7 @@ namespace Helm {
     public:
       struct Note {
         int midi_note;
+        double velocity;
         double time_on;
         double time_off;
       };
@@ -23,14 +24,14 @@ namespace Helm {
       HelmSequencer();
       virtual ~HelmSequencer();
 
-      Note* addNote(int midi_note, double start, double end);
+      Note* addNote(int midi_note, double velocity, double start, double end);
       void deleteNote(Note* note);
       void changeNoteStart(Note* note, double start);
       void changeNoteEnd(Note* note, double end);
 
-      void getNoteEvents(int* notes, event_map events, double start, double end);
-      void getNoteOns(int notes[kMaxNotes], double start, double end);
-      void getNoteOffs(int notes[kMaxNotes], double start, double end);
+      void getNoteEvents(Note** notes, event_map events, double start, double end);
+      void getNoteOns(Note* notes[kMaxNotes], double start, double end);
+      void getNoteOffs(Note* notes[kMaxNotes], double start, double end);
       double length() { return num_sixteenths_; }
       int channel() { return channel_; }
       void setLength(double length) { num_sixteenths_ = length; }

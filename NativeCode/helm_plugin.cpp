@@ -19,7 +19,7 @@ namespace Helm {
 
   struct EffectData {
     int num_parameters;
-    int note_events[MAX_NOTES];
+    HelmSequencer::Note* note_events[MAX_NOTES];
     float* parameters;
     mopo::Value** value_lookup;
     int instance_id;
@@ -75,7 +75,7 @@ namespace Helm {
     EffectData* effect_data = new EffectData;
     MutexScopeLock mutex_lock(effect_data->mutex);
     int num_parameters = mopo::Parameters::lookup_.getAllDetails().size() + kNumParams;
-    memset(effect_data->note_events, 0, sizeof(int) * MAX_NOTES);
+    memset(effect_data->note_events, 0, sizeof(HelmSequencer::Note*) * MAX_NOTES);
     effect_data->num_parameters = num_parameters;
 
     effect_data->parameters = new float[num_parameters];
@@ -173,16 +173,16 @@ namespace Helm {
     active_sequencer->getNoteOffs(data->note_events, start, end);
 
     data->mutex.Lock();
-    for (int i = 0; i < MAX_NOTES && data->note_events[i] > 0; ++i)
-      data->synth_engine.noteOff(data->note_events[i]);
+    for (int i = 0; i < MAX_NOTES && data->note_events[i]; ++i)
+      data->synth_engine.noteOff(data->note_events[i]->midi_note);
 
     data->mutex.Unlock();
 
     active_sequencer->getNoteOns(data->note_events, start, end);
 
     data->mutex.Lock();
-    for (int i = 0; i < MAX_NOTES && data->note_events[i] > 0; ++i)
-      data->synth_engine.noteOn(data->note_events[i]);
+    for (int i = 0; i < MAX_NOTES && data->note_events[i]; ++i)
+      data->synth_engine.noteOn(data->note_events[i]->midi_note, data->note_events[i]->velocity);
     data->mutex.Unlock();
   }
 
@@ -222,11 +222,11 @@ namespace Helm {
     return UNITY_AUDIODSP_OK;
   }
 
-  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOn(int channel, int note) {
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOn(int channel, int note, float velocity) {
     for (auto synth : instance_map) {
       if (((int)synth.second->parameters[kChannel]) == channel) {
         MutexScopeLock mutex_lock(synth.second->mutex);
-        synth.second->synth_engine.noteOn(note);
+        synth.second->synth_engine.noteOn(note, velocity);
       }
     }
   }
@@ -269,8 +269,8 @@ namespace Helm {
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API HelmSequencer::Note* CreateNote(
-      HelmSequencer* sequencer, int note, float start, float end) {
-    return sequencer->addNote(note, start, end);
+      HelmSequencer* sequencer, int note, float velocity, float start, float end) {
+    return sequencer->addNote(note, velocity, start, end);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void DeleteNote(
@@ -286,6 +286,10 @@ namespace Helm {
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteEnd(
       HelmSequencer* sequencer, HelmSequencer::Note* note, float new_end) {
     sequencer->changeNoteEnd(note, new_end);
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteVelocity(HelmSequencer::Note* note, float new_velocity) {
+    note->velocity = new_velocity;
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API bool ChangeSequencerChannel(
@@ -304,7 +308,7 @@ namespace Helm {
     sequencer->setLength(length);
   }
 
-  extern "C" UNITY_AUDIODSP_EXPORT_API void SetBpm(float newBpm) {
-    bpm = newBpm;
+  extern "C" UNITY_AUDIODSP_EXPORT_API void SetBpm(float new_bpm) {
+    bpm = new_bpm;
   }
 }
