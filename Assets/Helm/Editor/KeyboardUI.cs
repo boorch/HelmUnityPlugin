@@ -16,7 +16,7 @@ namespace Tytel
         Color blackUnpressed = Color.black;
         Color blackPressed = Color.blue;
         Color blackHovered = new Color(0.3f, 0.3f, 0.3f);
-        Color whiteunPressed = Color.white;
+        Color whiteUnPressed = Color.white;
         Color whitePressed = Color.yellow;
         Color whiteHovered = new Color(0.9f, 0.9f, 0.9f);
 
@@ -117,7 +117,7 @@ namespace Tytel
                 return whitePressed;
             else if (key == hoveredKey)
                 return whiteHovered;
-            return whiteunPressed;
+            return whiteUnPressed;
         }
 
         bool ValidKey(int key)

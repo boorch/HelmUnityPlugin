@@ -153,24 +153,13 @@ namespace Helm {
     return value - wrap * length;
   }
 
-  void processSequencerNotes(EffectData* data, UInt64 current_sample, UInt64 end_sample) {
-    HelmSequencer* active_sequencer = nullptr;
-
-    MutexScopeLock sequencer_lock(sequencer_mutex);
-    for (auto sequencer : sequencer_lookup) {
-      if (sequencer.first->channel() == data->parameters[kChannel])
-        active_sequencer = sequencer.first;
-    }
-
-    if (active_sequencer == nullptr)
-      return;
-
+  void processNotes(EffectData* data, HelmSequencer* sequencer, UInt64 current_sample, UInt64 end_sample) {
     double start = timeToSixteenth(current_sample, data->synth_engine.getSampleRate());
-    start = wrap(start, active_sequencer->length());
+    start = wrap(start, sequencer->length());
     double end = timeToSixteenth(end_sample, data->synth_engine.getSampleRate());
-    end = wrap(end, active_sequencer->length());
+    end = wrap(end, sequencer->length());
 
-    active_sequencer->getNoteOffs(data->note_events, start, end);
+    sequencer->getNoteOffs(data->note_events, start, end);
 
     data->mutex.Lock();
     for (int i = 0; i < MAX_NOTES && data->note_events[i]; ++i)
@@ -178,12 +167,20 @@ namespace Helm {
 
     data->mutex.Unlock();
 
-    active_sequencer->getNoteOns(data->note_events, start, end);
+    sequencer->getNoteOns(data->note_events, start, end);
 
     data->mutex.Lock();
     for (int i = 0; i < MAX_NOTES && data->note_events[i]; ++i)
       data->synth_engine.noteOn(data->note_events[i]->midi_note, data->note_events[i]->velocity);
     data->mutex.Unlock();
+  }
+
+  void processSequencerNotes(EffectData* data, UInt64 current_sample, UInt64 end_sample) {
+    MutexScopeLock sequencer_lock(sequencer_mutex);
+    for (auto sequencer : sequencer_lookup) {
+      if (sequencer.second && sequencer.first->channel() == data->parameters[kChannel])
+        processNotes(data, sequencer.first, current_sample, end_sample);
+    }
   }
 
   void processAudio(mopo::HelmEngine& engine, float* buffer, int channels, int samples, int offset) {
@@ -275,6 +272,7 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void DeleteNote(
       HelmSequencer* sequencer, HelmSequencer::Note* note) {
+    HelmNoteOff(sequencer->channel(), note->midi_note);
     sequencer->deleteNote(note);
   }
 
@@ -294,6 +292,7 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API bool ChangeSequencerChannel(
       HelmSequencer* sequencer, int channel) {
+    HelmAllNotesOff(sequencer->channel());
     sequencer->setChannel(channel);
 
     for (auto sequencer : sequencer_lookup) {
