@@ -46,6 +46,7 @@ namespace Tytel
         int numRows = 128;
         int numCols = 16;
         int notesPerBeat = 4;
+        float lastHeight = 0;
         float colWidth = 30.0f;
 
         Vector2 scrollPosition;
@@ -76,7 +77,6 @@ namespace Tytel
                 mode = Mode.kKeyboarding;
                 pressedKey = note;
                 HelmNoteOn(sequencer.channel, pressedKey);
-                Debug.Log(pressedKey);
                 return;
             }
             else if (sequencer.NoteExistsInRange(note, time, time))
@@ -112,6 +112,8 @@ namespace Tytel
                 pressedKey = -1;
                 return;
             }
+
+            Undo.RecordObject(sequencer, "Sequencer Notes");
             dragTime = time;
             float startTime = Mathf.Min(pressTime, dragTime);
             float endTime = Mathf.Max(pressTime, dragTime);
@@ -175,7 +177,7 @@ namespace Tytel
                     keyColor = whiteKeyPressed;
 
                 Rect key = new Rect(0.0f, y, keyboardWidth, rowHeight);
-                Rect row = new Rect(keyboardWidth, y, rect.width, rowHeight);
+                Rect row = new Rect(keyboardWidth, y, rect.width - keyboardWidth, rowHeight);
                 EditorGUI.DrawRect(key, keyColor);
                 EditorGUI.DrawRect(row, rowColor);
                 y += rowHeight;
@@ -247,7 +249,7 @@ namespace Tytel
                 return;
 
             for (int i = 0; i < numRows; ++i)
-                DrawRowNotes(sequencer.allNotes[i]);
+                DrawRowNotes(sequencer.allNotes[i].notes);
         }
 
         void DrawPressedNotes()
@@ -265,8 +267,17 @@ namespace Tytel
         public void DrawSequencer(Rect rect, HelmSequencer sequencer)
         {
             numRows = sequencer.rows;
+            numCols = sequencer.length;
+            colWidth = (rect.width - keyboardWidth - rightPadding) / numCols;
             float scrollableWidth = numCols * colWidth + keyboardWidth + 1;
             float scrollableHeight = numRows * rowHeight;
+
+            if (lastHeight != rect.height)
+            {
+                lastHeight = rect.height;
+                scrollPosition.y = (scrollableHeight - rect.height) / 2.0f;
+            }
+
             Rect scrollableArea = new Rect(0, 0, scrollableWidth, scrollableHeight);
             scrollPosition = GUI.BeginScrollView(rect, scrollPosition, scrollableArea, false, true);
 

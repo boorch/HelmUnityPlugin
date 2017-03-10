@@ -35,7 +35,22 @@ namespace Tytel
             public float start;
             public float end;
             public float velocity;
-            public IntPtr noteRef;
+            public HelmSequencer parent;
+
+            [NonSerialized]
+            public IntPtr noteRef = IntPtr.Zero;
+
+            ~Note()
+            {
+                if (noteRef != IntPtr.Zero && parent.sequencer != IntPtr.Zero)
+                    DeleteNote(parent.sequencer, noteRef);
+            }
+        }
+
+        [System.Serializable]
+        public class NoteRow
+        {
+            public List<Note> notes = new List<Note>();
         }
 
         class NoteComparer : IComparer<Note>
@@ -51,8 +66,9 @@ namespace Tytel
         }
 
         public int rows = Utils.kMidiSize;
+        public int length = 16;
         public int channel = 0;
-        public List<Note>[] allNotes = new List<Note>[Utils.kMidiSize];
+        public NoteRow[] allNotes = new NoteRow[Utils.kMidiSize];
 
         IntPtr sequencer = IntPtr.Zero;
         NoteComparer noteComparer = new NoteComparer();
@@ -72,14 +88,15 @@ namespace Tytel
 
         void Awake()
         {
-            sequencer = CreateSequencer();
+            if (sequencer == IntPtr.Zero)
+                sequencer = CreateSequencer();
             for (int i = 0; i < allNotes.Length; ++i)
             {
                 if (allNotes[i] == null)
-                    allNotes[i] = new List<Note>();
+                    allNotes[i] = new NoteRow();
                 else
                 {
-                    foreach (Note note in allNotes[i])
+                    foreach (Note note in allNotes[i].notes)
                         note.noteRef = CreateNote(sequencer, note.note, note.velocity, note.start, note.end);
                 }
             }
@@ -104,7 +121,7 @@ namespace Tytel
 
         void RemoveNote(Note note)
         {
-            allNotes[note.note].Remove(note);
+            allNotes[note.note].notes.Remove(note);
             DeleteNote(sequencer, note.noteRef);
             note.noteRef = IntPtr.Zero;
         }
@@ -119,7 +136,7 @@ namespace Tytel
         {
             if (note >= rows || note < 0 || allNotes == null || allNotes[note] == null)
                 return false;
-            foreach (Note noteObject in allNotes[note])
+            foreach (Note noteObject in allNotes[note].notes)
             {
                 if (IsNoteInRange(noteObject, start, end))
                     return true;
@@ -133,7 +150,7 @@ namespace Tytel
                 return;
 
             List<Note> toRemove = new List<Note>();
-            foreach (Note noteObject in allNotes[note])
+            foreach (Note noteObject in allNotes[note].notes)
             {
                 if (IsNoteInRange(noteObject, start, end))
                     toRemove.Add(noteObject);
@@ -144,31 +161,31 @@ namespace Tytel
 
         public void AddNote(int note, float start, float end, float velocity = 1.0f)
         {
-            if (sequencer == IntPtr.Zero)
-                return;
-
             Note noteObject = new Note();
             noteObject.note = note;
             noteObject.start = start;
             noteObject.end = end;
             noteObject.velocity = velocity;
-            noteObject.noteRef = CreateNote(sequencer, note, velocity, start, end);
+            noteObject.parent = this;
+            if (sequencer == IntPtr.Zero)
+                noteObject.noteRef = IntPtr.Zero;
+            else
+                noteObject.noteRef = CreateNote(sequencer, note, velocity, start, end);
 
-            allNotes[note].Add(noteObject);
-            allNotes[note].Sort(noteComparer);
+            if (allNotes[note] == null)
+                allNotes[note] = new NoteRow();
+            allNotes[note].notes.Add(noteObject);
+            allNotes[note].notes.Sort(noteComparer);
         }
 
         public void Clear()
         {
             for (int i = 0; i < allNotes.Length; ++i)
             {
-                foreach (Note note in allNotes[i])
-                {
+                foreach (Note note in allNotes[i].notes)
                     DeleteNote(sequencer, note.noteRef);
-                    note.noteRef = IntPtr.Zero;
-                }
 
-                allNotes[i].Clear();
+                allNotes[i].notes.Clear();
             }
         }
 

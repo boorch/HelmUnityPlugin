@@ -8,17 +8,15 @@ namespace Tytel
     {
         private SerializedObject serialized;
         SequencerUI sequencer = new SequencerUI();
+        SerializedProperty allNotes;
         SerializedProperty channel;
 
         void OnEnable()
         {
-            serialized = new SerializedObject(target);
-            channel = serialized.FindProperty("channel");
         }
 
         public override void OnInspectorGUI()
         {
-            serialized.Update();
             Color prev_color = GUI.backgroundColor;
             GUILayout.Space(5f);
 
@@ -28,12 +26,12 @@ namespace Tytel
             if (sequencer.DoSequencerEvents(rect, helmSequencer))
                 Repaint();
 
-            sequencer.DrawSequencer(rect, helmSequencer);
+            if (rect.height == 300)
+                sequencer.DrawSequencer(rect, helmSequencer);
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
-            channel.intValue = EditorGUILayout.IntSlider("Channel", channel.intValue, 0, Utils.kMaxChannels - 1);
-            serialized.ApplyModifiedProperties();
+            helmSequencer.channel = EditorGUILayout.IntSlider("Channel", helmSequencer.channel, 0, Utils.kMaxChannels - 1);
         }
     }
 }
