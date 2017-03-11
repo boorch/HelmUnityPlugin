@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+// Copyright 2017 Matt Tytel
+
+using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections;
 using System.Collections.Generic;

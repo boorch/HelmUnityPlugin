@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+// Copyright 2017 Matt Tytel
+
+using UnityEditor;
 using UnityEngine;
 using System.IO;
 using System.Reflection;

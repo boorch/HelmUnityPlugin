@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+// Copyright 2017 Matt Tytel
+
+using UnityEngine;
 using System;
 
 namespace Tytel

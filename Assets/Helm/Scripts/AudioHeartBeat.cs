@@ -1,3 +1,5 @@
+// Copyright 2017 Matt Tytel
+
 using UnityEngine;
 
 namespace Tytel
