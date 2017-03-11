@@ -28,8 +28,11 @@ namespace Tytel
         [DllImport("AudioPluginHelm")]
         private static extern IntPtr DeleteNote(IntPtr sequencer, IntPtr note);
 
+        [DllImport("AudioPluginHelm")]
+        private static extern void HelmAllNotesOff(int channel);
+
         [System.Serializable]
-        public class Note
+        public class Note : ISerializationCallbackReceiver
         {
             public int note;
             public float start;
@@ -38,12 +41,38 @@ namespace Tytel
             public HelmSequencer parent;
 
             [NonSerialized]
-            public IntPtr noteRef = IntPtr.Zero;
+            public IntPtr noteRef;
+
+            public Note()
+            {
+                noteRef = IntPtr.Zero;
+            }
 
             ~Note()
             {
+                TryDelete();
+            }
+
+            public void TryCreate()
+            {
+                if (noteRef == IntPtr.Zero && parent.sequencer != IntPtr.Zero)
+                    noteRef = CreateNote(parent.sequencer, note, velocity, start, end);
+            }
+
+            public void TryDelete()
+            {
                 if (noteRef != IntPtr.Zero && parent.sequencer != IntPtr.Zero)
                     DeleteNote(parent.sequencer, noteRef);
+                noteRef = IntPtr.Zero;
+            }
+
+            public void OnBeforeSerialize()
+            {
+            }
+
+            public void OnAfterDeserialize()
+            {
+                TryCreate();
             }
         }
 
@@ -65,13 +94,17 @@ namespace Tytel
             }
         }
 
-        public int rows = Utils.kMidiSize;
         public int length = 16;
         public int channel = 0;
+        public int currentSixteenth = 0;
         public NoteRow[] allNotes = new NoteRow[Utils.kMidiSize];
 
+        public const int kRows = Utils.kMidiSize;
+        public const int kMaxLength = 128;
         IntPtr sequencer = IntPtr.Zero;
         NoteComparer noteComparer = new NoteComparer();
+        int currentChannel = -1;
+        int currentLength = -1;
 
         void CreateNativeSequencer()
         {
@@ -97,7 +130,7 @@ namespace Tytel
                 else
                 {
                     foreach (Note note in allNotes[i].notes)
-                        note.noteRef = CreateNote(sequencer, note.note, note.velocity, note.start, note.end);
+                        note.TryCreate();
                 }
             }
         }
@@ -117,13 +150,13 @@ namespace Tytel
         {
             if (sequencer != IntPtr.Zero)
                 EnableSequencer(sequencer, false);
+            HelmAllNotesOff(channel);
         }
 
         void RemoveNote(Note note)
         {
             allNotes[note.note].notes.Remove(note);
-            DeleteNote(sequencer, note.noteRef);
-            note.noteRef = IntPtr.Zero;
+            note.TryDelete();
         }
 
         public static bool IsNoteInRange(Note note, float start, float end)
@@ -134,7 +167,7 @@ namespace Tytel
 
         public bool NoteExistsInRange(int note, float start, float end)
         {
-            if (note >= rows || note < 0 || allNotes == null || allNotes[note] == null)
+            if (note >= kRows || note < 0 || allNotes == null || allNotes[note] == null)
                 return false;
             foreach (Note noteObject in allNotes[note].notes)
             {
@@ -167,10 +200,7 @@ namespace Tytel
             noteObject.end = end;
             noteObject.velocity = velocity;
             noteObject.parent = this;
-            if (sequencer == IntPtr.Zero)
-                noteObject.noteRef = IntPtr.Zero;
-            else
-                noteObject.noteRef = CreateNote(sequencer, note, velocity, start, end);
+            noteObject.TryCreate();
 
             if (allNotes[note] == null)
                 allNotes[note] = new NoteRow();
@@ -183,21 +213,31 @@ namespace Tytel
             for (int i = 0; i < allNotes.Length; ++i)
             {
                 foreach (Note note in allNotes[i].notes)
-                    DeleteNote(sequencer, note.noteRef);
+                    note.TryDelete();
 
                 allNotes[i].notes.Clear();
             }
         }
 
-        void Start()
+        void Update()
         {
-            /*
-            if (sequencer != IntPtr.Zero)
+            float bpm = 120.0f;
+            double sequencerTime = Utils.kBpmToSixteenths * bpm * AudioSettings.dspTime;
+            float position = Mathf.Repeat((float)sequencerTime, length);
+            currentSixteenth = (int)position;
+
+            if (length != currentLength)
             {
-                for (int i = 0; i < 16; ++i)
-                    AddNote(24 + i * 3, 0.5f * i, 0.5f * i + 0.5f, 1.0f);
+                HelmAllNotesOff(currentChannel);
+                ChangeSequencerLength(sequencer, length);
+                currentLength = length;
             }
-            */
+            if (channel != currentChannel)
+            {
+                HelmAllNotesOff(currentChannel);
+                ChangeSequencerChannel(sequencer, channel);
+                currentChannel = channel;
+            }
         }
     }
 }

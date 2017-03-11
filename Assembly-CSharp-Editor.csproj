@@ -51,6 +51,7 @@
      <Compile Include="Assets\Helm\Editor\HelmSynthUI.cs" />
      <Compile Include="Assets\Helm\Editor\KeyboardUI.cs" />
      <Compile Include="Assets\Helm\Editor\PatchBrowserUI.cs" />
+     <Compile Include="Assets\Helm\Editor\SequencerPositionUI.cs" />
      <Compile Include="Assets\Helm\Editor\SequencerUI.cs" />
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Advertisements/Editor/UnityEditor.Advertisements.dll</HintPath>

@@ -22,6 +22,15 @@ namespace Tytel
             kNumModes
         }
 
+        public SequencerUI(float keyboard, float scroll)
+        {
+            keyboardWidth = keyboard;
+            rightPadding = scroll;
+        }
+
+        float keyboardWidth = 20.0f;
+        float rightPadding = 15.0f;
+
         Mode mode = Mode.kWaiting;
         int pressNote = 0;
         float pressTime = 0.0f;
@@ -42,7 +51,6 @@ namespace Tytel
         Color whiteKeyPressed = Color.red;
 
         float rowHeight = 10.0f;
-        float keyboardWidth = 20.0f;
         int numRows = 128;
         int numCols = 16;
         int notesPerBeat = 4;
@@ -52,7 +60,6 @@ namespace Tytel
         Vector2 scrollPosition;
 
         Vector2 mouseBump = new Vector2(0.0f, -3.0f);
-        const float rightPadding = 15.0f;
 
         Vector2 GetSequencerPosition(Rect rect, Vector2 mousePosition)
         {
@@ -266,7 +273,7 @@ namespace Tytel
 
         public void DrawSequencer(Rect rect, HelmSequencer sequencer)
         {
-            numRows = sequencer.rows;
+            numRows = HelmSequencer.kRows;
             numCols = sequencer.length;
             colWidth = (rect.width - keyboardWidth - rightPadding) / numCols;
             float scrollableWidth = numCols * colWidth + keyboardWidth + 1;

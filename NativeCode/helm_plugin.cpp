@@ -292,7 +292,6 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API bool ChangeSequencerChannel(
       HelmSequencer* sequencer, int channel) {
-    HelmAllNotesOff(sequencer->channel());
     sequencer->setChannel(channel);
 
     for (auto sequencer : sequencer_lookup) {

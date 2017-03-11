@@ -14,10 +14,10 @@ namespace Tytel
         private static extern void HelmNoteOff(int channel, int note);
 
         Color blackUnpressed = Color.black;
-        Color blackPressed = Color.blue;
+        Color blackPressed = Color.red;
         Color blackHovered = new Color(0.3f, 0.3f, 0.3f);
         Color whiteUnPressed = Color.white;
-        Color whitePressed = Color.yellow;
+        Color whitePressed = Color.red;
         Color whiteHovered = new Color(0.9f, 0.9f, 0.9f);
 
         float keyWidth = 20.0f;
