@@ -14,7 +14,7 @@ namespace Tytel
 
         public void Pulse(float amount)
         {
-            progress = Mathf.Clamp(amount, 0.0f, 1.0f);
+            progress = Mathf.Max(progress, Mathf.Clamp(amount, 0.0f, 1.0f));
         }
 
         void Update()

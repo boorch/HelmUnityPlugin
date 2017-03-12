@@ -29,7 +29,7 @@ namespace Tytel
 
             MaterialPulse pulse = GetComponent<MaterialPulse>();
             if (pulse)
-                pulse.Pulse(1.0f);
+                pulse.Pulse(noteVelocity);
         }
     }
 }
