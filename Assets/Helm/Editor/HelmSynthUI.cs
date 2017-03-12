@@ -10,6 +10,7 @@ namespace Tytel
     {
         KeyboardUI keyboard = new KeyboardUI();
         PatchBrowserUI patchBrowser = new PatchBrowserUI();
+        bool showOptions = false;
 
         public override string Name
         {
@@ -48,7 +49,9 @@ namespace Tytel
 
             GUILayout.Space(5.0f);
             GUI.backgroundColor = prev_color;
-            return false;
+
+            showOptions = EditorGUILayout.Toggle("Show All Options", showOptions);
+            return showOptions;
         }
     }
 }
