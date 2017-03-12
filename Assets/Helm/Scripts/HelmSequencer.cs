@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Tytel
 {
+    [RequireComponent(typeof(AudioHeartBeat))]
     public class HelmSequencer : MonoBehaviour
     {
         [DllImport("AudioPluginHelm")]
