@@ -45,11 +45,34 @@ namespace Tytel
 
             foreach (FieldInfo field in fields)
             {
-                if (!field.FieldType.IsArray)
+                if (!field.FieldType.IsArray && !field.IsLiteral)
                 {
-                    float value = (float)field.GetValue(patch.settings);
-                    plugin.SetFloatParameter(field.Name, value);
+                    float val = (float)field.GetValue(patch.settings);
+                    string name = HelmPatchSettings.ConvertToPlugin(field.Name);
+                    plugin.SetFloatParameter(name, val);
                 }
+            }
+
+            for (int i = 0; i < HelmPatchSettings.kMaxModulations; ++i)
+                plugin.SetFloatParameter("mod" + i + "value", 0.0f);
+
+            int modulationIndex = 0;
+            foreach (HelmModulationSetting modulation in patch.settings.modulations)
+            {
+                if (modulationIndex >= HelmPatchSettings.kMaxModulations)
+                {
+                    Debug.LogWarning("Only 16 modulations are currently supported in the Helm Unity plugin.");
+                    break;
+                }
+                string prefix = "mod" + modulationIndex;
+
+                float source = HelmPatchSettings.GetSourceIndex(modulation.source);
+                plugin.SetFloatParameter(prefix + "source", source);
+                float dest = HelmPatchSettings.GetDestinationIndex(modulation.destination);
+                plugin.SetFloatParameter(prefix + "dest", dest);
+                plugin.SetFloatParameter(prefix + "value", modulation.amount);
+
+                modulationIndex++;
             }
         }
 

@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 namespace Tytel
 {
@@ -16,6 +17,9 @@ namespace Tytel
     [Serializable]
     public class HelmPatchSettings
     {
+        public const int kMaxModulations = 16;
+        public const int kMaxCharacters = 15;
+
         static readonly string[] kModulationSources = new string[]
         {
             "aftertouch",
@@ -168,6 +172,11 @@ namespace Tytel
             "velocity_track"
         };
 
+        public static readonly string[] kShortenNames = new string[]
+        {
+            "stutter_resample", "stutter_resamp"
+        };
+
         public float amp_attack;
         public float amp_decay;
         public float amp_release;
@@ -302,7 +311,17 @@ namespace Tytel
 
         public HelmModulationSetting[] modulations;
 
-        static int GetSourceIndex(string source)
+        public static string ConvertToPlugin(string name)
+        {
+            string converted = name;
+            for (int i = 0; i < kShortenNames.Length; i += 2)
+                converted = converted.Replace(kShortenNames[i], kShortenNames[i + 1]);
+            converted = converted.Replace("_", "");
+            int length = Mathf.Min(converted.Length, kMaxCharacters);
+            return converted.Substring(0, length);
+        }
+
+        public static int GetSourceIndex(string source)
         {
             for (int i = 0; i < kModulationSources.Length; ++i)
             {
@@ -312,7 +331,7 @@ namespace Tytel
             return -1;
         }
 
-        static int GetDestinationIndex(string dest)
+        public static int GetDestinationIndex(string dest)
         {
             for (int i = 0; i < kModulationDestinations.Length; ++i)
             {

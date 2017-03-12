@@ -15,6 +15,10 @@ namespace Helm {
   const float MODULATION_RANGE = 1000000.0f;
   const double BPM_TO_SIXTEENTH = 4.0 / 60.0;
 
+  const std::map<std::string, std::string> REPLACE_STRINGS = {
+    {"stutter_resample", "stutter_resamp"}
+  };
+
   enum Param {
     kChannel,
     kNumParams
@@ -40,6 +44,17 @@ namespace Helm {
   Mutex sequencer_mutex;
   std::map<HelmSequencer*, bool> sequencer_lookup;
 
+  std::string getValueName(std::string full_name) {
+    std::string name = full_name;
+    for (auto replace : REPLACE_STRINGS) {
+      size_t index = name.find(replace.first);
+      if (index != std::string::npos)
+        name = name.substr(0, index) + replace.second + name.substr(index + replace.first.length());
+    }
+    name.erase(std::remove(name.begin(), name.end(), '_'), name.end());
+    return name.substr(0, MAX_CHARACTERS);
+  }
+
   int InternalRegisterEffectDefinition(UnityAudioEffectDefinition& definition) {
     std::map<std::string, mopo::ValueDetails> parameters = mopo::Parameters::lookup_.getAllDetails();
 
@@ -54,7 +69,7 @@ namespace Helm {
     int index = kNumParams;
     for (auto parameter : parameters) {
       mopo::ValueDetails& details = parameter.second;
-      std::string name = details.name.substr(0, MAX_CHARACTERS);
+      std::string name = getValueName(details.name);
       std::string units = details.display_units.substr(0, MAX_CHARACTERS);
       RegisterParameter(definition, name.c_str(), units.c_str(),
                         details.min, details.max, details.default_value,
@@ -64,9 +79,9 @@ namespace Helm {
 
     for (int m = 0; m < MAX_MODULATIONS; ++m) {
       std::string name = std::string("mod") + std::to_string(m);
-      std::string source_name = name + " source";
-      std::string dest_name = name + " dest";
-      std::string value_name = name + " value";
+      std::string source_name = name + "source";
+      std::string dest_name = name + "dest";
+      std::string value_name = name + "value";
       RegisterParameter(definition, source_name.c_str(), "", 0.0f, MODULATION_RANGE, 0.0f,
                         1.0f, 1.0f, index++);
       RegisterParameter(definition, dest_name.c_str(), "", 0.0f, MODULATION_RANGE, 0.0f,
@@ -131,9 +146,18 @@ namespace Helm {
     MutexScopeLock mutex_instance_lock(instance_mutex);
     data->synth_engine.allNotesOff();
     clearInstance(data->instance_id);
+
     delete[] data->parameters;
     delete[] data->value_lookup;
+
+    for (int i = 0; i < MAX_MODULATIONS; ++i) {
+      if (data->synth_engine.isModulationActive(data->modulations[i]))
+        data->synth_engine.disconnectModulation(data->modulations[i]);
+      delete data->modulations[i];
+    }
+    
     delete data;
+
     return UNITY_AUDIODSP_OK;
   }
 
@@ -155,7 +179,7 @@ namespace Helm {
     if (index >= modulation_start) {
       int mod_param = index - modulation_start;
       int mod_index = mod_param / VALUES_PER_MODULATION;
-      int mod_type = mod_index % VALUES_PER_MODULATION;
+      int mod_type = mod_param % VALUES_PER_MODULATION;
 
       mopo::ModulationConnection* connection = data->modulations[mod_index];
 
@@ -167,35 +191,26 @@ namespace Helm {
         mopo::output_map sources = data->synth_engine.getModulationSources();
         auto source = sources.begin();
         std::advance(source, source_index);
-        if (source != sources.end())
-          connection->source = source->first;
-
-        if (connection->amount.value())
-          data->synth_engine.connectModulation(connection);
+        connection->source = source->first;
       }
       else if (mod_type == 1) {
         if (data->synth_engine.isModulationActive(connection))
           data->synth_engine.disconnectModulation(connection);
-        
+
         mopo::output_map monoMods = data->synth_engine.getMonoModulations();
         int dest_index = value;
         if (dest_index < monoMods.size()) {
           auto mod = monoMods.begin();
           std::advance(mod, dest_index);
-          if (mod != monoMods.end())
-            connection->destination = mod->first;
+          connection->destination = mod->first;
         }
         else {
           dest_index -= monoMods.size();
           mopo::output_map polyMods = data->synth_engine.getPolyModulations();
           auto mod = polyMods.begin();
           std::advance(mod, dest_index);
-          if (mod != polyMods.end())
-            connection->destination = mod->first;
+          connection->destination = mod->first;
         }
-
-        if (connection->amount.value())
-          data->synth_engine.connectModulation(connection);
       }
       else {
         if (value == 0.0f) {
