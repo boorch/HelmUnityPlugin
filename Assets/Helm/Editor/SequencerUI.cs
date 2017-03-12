@@ -10,7 +10,7 @@ namespace Tytel
     public class SequencerUI
     {
         [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOn(int channel, int note);
+        private static extern void HelmNoteOn(int channel, int note, float velocity);
 
         [DllImport("AudioPluginHelm")]
         private static extern void HelmNoteOff(int channel, int note);
@@ -85,7 +85,7 @@ namespace Tytel
             {
                 mode = Mode.kKeyboarding;
                 pressedKey = note;
-                HelmNoteOn(sequencer.channel, pressedKey);
+                HelmNoteOn(sequencer.channel, pressedKey, 1.0f);
                 return;
             }
             else if (sequencer.NoteExistsInRange(note, time, time))
@@ -105,7 +105,7 @@ namespace Tytel
                 if (note != pressedKey)
                 {
                     HelmNoteOff(sequencer.channel, pressedKey);
-                    HelmNoteOn(sequencer.channel, note);
+                    HelmNoteOn(sequencer.channel, note, 1.0f);
                     pressedKey = note;
                 }
             }

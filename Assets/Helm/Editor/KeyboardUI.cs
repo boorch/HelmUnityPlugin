@@ -10,7 +10,7 @@ namespace Tytel
     public class KeyboardUI
     {
         [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOn(int channel, int note);
+        private static extern void HelmNoteOn(int channel, int note, float velocity);
 
         [DllImport("AudioPluginHelm")]
         private static extern void HelmNoteOff(int channel, int note);
@@ -55,7 +55,7 @@ namespace Tytel
                 {
                     if (currentKey >= 0)
                         HelmNoteOff(channel, currentKey);
-                    HelmNoteOn(channel, hoveredKey);
+                    HelmNoteOn(channel, hoveredKey, 1.0f);
                     currentKey = hoveredKey;
                     return true;
                 }
