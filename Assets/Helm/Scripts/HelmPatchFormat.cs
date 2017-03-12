@@ -16,6 +16,158 @@ namespace Tytel
     [Serializable]
     public class HelmPatchSettings
     {
+        static readonly string[] kModulationSources = new string[]
+        {
+            "aftertouch",
+            "amp_envelope",
+            "fil_envelope",
+            "mod_envelope",
+            "mod_wheel",
+            "mono_lfo_1",
+            "mono_lfo_1_phase",
+            "mono_lfo_2",
+            "mono_lfo_2_phase",
+            "note",
+            "pitch_wheel",
+            "poly_lfo",
+            "step_sequencer",
+            "step_sequencer_step",
+            "velocity",
+        };
+
+        static readonly string[] kModulationDestinations = new string[]
+        {
+            "amp_attack",
+            "amp_decay",
+            "amp_release",
+            "amp_sustain",
+            "arp_frequency",
+            "arp_gate",
+            "arp_octaves",
+            "arp_pattern",
+            "arp_tempo",
+            "beats_per_minute",
+            "cross_modulation",
+            "cutoff",
+            "delay_dry_wet",
+            "delay_feedback",
+            "delay_frequency",
+            "delay_tempo",
+            "fil_attack",
+            "fil_decay",
+            "fil_env_depth",
+            "fil_release",
+            "fil_sustain",
+            "filter_saturation",
+            "formant_x",
+            "formant_y",
+            "keytrack",
+            "mod_attack",
+            "mod_decay",
+            "mod_release",
+            "mod_sustain",
+            "mono_lfo_1_amplitude",
+            "mono_lfo_1_frequency",
+            "mono_lfo_1_tempo",
+            "mono_lfo_1_waveform",
+            "mono_lfo_2_amplitude",
+            "mono_lfo_2_frequency",
+            "mono_lfo_2_tempo",
+            "mono_lfo_2_waveform",
+            "noise_volume",
+            "num_steps",
+            "osc_1_transpose",
+            "osc_1_tune",
+            "osc_1_unison_detune",
+            "osc_1_unison_voices",
+            "osc_1_volume",
+            "osc_1_waveform",
+            "osc_2_transpose",
+            "osc_2_tune",
+            "osc_2_unison_detune",
+            "osc_2_unison_voices",
+            "osc_2_volume",
+            "osc_2_waveform",
+            "osc_feedback_amount",
+            "osc_feedback_transpose",
+            "osc_feedback_tune",
+            "pitch_bend_range",
+            "poly_lfo_amplitude",
+            "poly_lfo_frequency",
+            "poly_lfo_tempo",
+            "poly_lfo_waveform",
+            "polyphony",
+            "portamento",
+            "resonance",
+            "reverb_damping",
+            "reverb_dry_wet",
+            "reverb_feedback",
+            "step_frequency",
+            "step_sequencer_tempo",
+            "step_smoothing",
+            "stutter_frequency",
+            "stutter_resample_frequency",
+            "stutter_resample_tempo",
+            "stutter_softness",
+            "stutter_tempo",
+            "sub_shuffle",
+            "sub_volume",
+            "sub_waveform",
+            "velocity_track",
+            "volume",
+            "amp_attack",
+            "amp_decay",
+            "amp_release",
+            "amp_sustain",
+            "cross_modulation",
+            "cutoff",
+            "fil_attack",
+            "fil_decay",
+            "fil_env_depth",
+            "fil_release",
+            "fil_sustain",
+            "filter_saturation",
+            "formant_x",
+            "formant_y",
+            "keytrack",
+            "mod_attack",
+            "mod_decay",
+            "mod_release",
+            "mod_sustain",
+            "noise_volume",
+            "osc_1_transpose",
+            "osc_1_tune",
+            "osc_1_unison_detune",
+            "osc_1_unison_voices",
+            "osc_1_volume",
+            "osc_1_waveform",
+            "osc_2_transpose",
+            "osc_2_tune",
+            "osc_2_unison_detune",
+            "osc_2_unison_voices",
+            "osc_2_volume",
+            "osc_2_waveform",
+            "osc_feedback_amount",
+            "osc_feedback_transpose",
+            "osc_feedback_tune",
+            "pitch_bend_range",
+            "poly_lfo_amplitude",
+            "poly_lfo_frequency",
+            "poly_lfo_tempo",
+            "poly_lfo_waveform",
+            "portamento",
+            "resonance",
+            "stutter_frequency",
+            "stutter_resample_frequency",
+            "stutter_resample_tempo",
+            "stutter_softness",
+            "stutter_tempo",
+            "sub_shuffle",
+            "sub_volume",
+            "sub_waveform",
+            "velocity_track"
+        };
+
         public float amp_attack;
         public float amp_decay;
         public float amp_release;
@@ -149,6 +301,26 @@ namespace Tytel
         public float volume;
 
         public HelmModulationSetting[] modulations;
+
+        static int GetSourceIndex(string source)
+        {
+            for (int i = 0; i < kModulationSources.Length; ++i)
+            {
+                if (source == kModulationSources[i])
+                    return i;
+            }
+            return -1;
+        }
+
+        static int GetDestinationIndex(string dest)
+        {
+            for (int i = 0; i < kModulationDestinations.Length; ++i)
+            {
+                if (dest == kModulationDestinations[i])
+                    return i;
+            }
+            return -1;
+        }
     }
 
     [Serializable]

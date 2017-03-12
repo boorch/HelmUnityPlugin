@@ -10,6 +10,9 @@ namespace Helm {
   const int MAX_CHARACTERS = 15;
   const int MAX_CHANNELS = 16;
   const int MAX_NOTES = 128;
+  const int MAX_MODULATIONS = 16;
+  const int VALUES_PER_MODULATION = 3;
+  const float MODULATION_RANGE = 1000000.0f;
   const double BPM_TO_SIXTEENTH = 4.0 / 60.0;
 
   enum Param {
@@ -19,7 +22,9 @@ namespace Helm {
 
   struct EffectData {
     int num_parameters;
+    int num_synth_parameters;
     HelmSequencer::Note* note_events[MAX_NOTES];
+    mopo::ModulationConnection* modulations[MAX_MODULATIONS];
     float* parameters;
     mopo::Value** value_lookup;
     int instance_id;
@@ -37,10 +42,13 @@ namespace Helm {
 
   int InternalRegisterEffectDefinition(UnityAudioEffectDefinition& definition) {
     std::map<std::string, mopo::ValueDetails> parameters = mopo::Parameters::lookup_.getAllDetails();
-    int num_synth_parameters = parameters.size();
-    int num_plugin_params = kNumParams;
 
-    definition.paramdefs = new UnityAudioParameterDefinition[num_synth_parameters + num_plugin_params];
+    int num_synth_params = parameters.size();
+    int num_modulation_params = MAX_MODULATIONS * VALUES_PER_MODULATION;
+    int num_plugin_params = kNumParams;
+    int total_params = num_synth_params + num_plugin_params + num_modulation_params;
+
+    definition.paramdefs = new UnityAudioParameterDefinition[total_params];
     RegisterParameter(definition, "Channel", "", 0.0f, MAX_CHANNELS, 0.0f, 1.0f, 1.0f, kChannel);
 
     int index = kNumParams;
@@ -54,16 +62,29 @@ namespace Helm {
       index++;
     }
 
-    return num_synth_parameters + kNumParams;
+    for (int m = 0; m < MAX_MODULATIONS; ++m) {
+      std::string name = std::string("mod") + std::to_string(m);
+      std::string source_name = name + " source";
+      std::string dest_name = name + " dest";
+      std::string value_name = name + " value";
+      RegisterParameter(definition, source_name.c_str(), "", 0.0f, MODULATION_RANGE, 0.0f,
+                        1.0f, 1.0f, index++);
+      RegisterParameter(definition, dest_name.c_str(), "", 0.0f, MODULATION_RANGE, 0.0f,
+                        1.0f, 1.0f, index++);
+      RegisterParameter(definition, value_name.c_str(), "", -MODULATION_RANGE, MODULATION_RANGE, 0.0f,
+                        1.0f, 1.0f, index++);
+    }
+
+    return num_synth_params + kNumParams + num_modulation_params;
   }
 
-  void initializeValueLookup(mopo::Value** lookup, mopo::control_map& controls) {
+  void initializeValueLookup(mopo::Value** lookup, mopo::control_map& controls, int num_params) {
     std::map<std::string, mopo::ValueDetails> parameters = mopo::Parameters::lookup_.getAllDetails();
 
-    int index = 0;
-    for (; index < kNumParams; ++index)
-      lookup[index] = 0;
+    for (int i = 0; i < num_params; ++i)
+      lookup[i] = 0;
 
+    int index = kNumParams;
     for (auto parameter : parameters) {
       mopo::ValueDetails& details = parameter.second;
       lookup[index] = controls[details.name];
@@ -74,16 +95,21 @@ namespace Helm {
   UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK CreateCallback(UnityAudioEffectState* state) {
     EffectData* effect_data = new EffectData;
     MutexScopeLock mutex_lock(effect_data->mutex);
-    int num_parameters = mopo::Parameters::lookup_.getAllDetails().size() + kNumParams;
     memset(effect_data->note_events, 0, sizeof(HelmSequencer::Note*) * MAX_NOTES);
-    effect_data->num_parameters = num_parameters;
 
-    effect_data->parameters = new float[num_parameters];
+    effect_data->num_synth_parameters = mopo::Parameters::lookup_.getAllDetails().size();
+    int num_params = effect_data->num_synth_parameters + kNumParams + MAX_MODULATIONS * VALUES_PER_MODULATION;
+    effect_data->num_parameters = num_params;
+
+    effect_data->parameters = new float[num_params];
     InitParametersFromDefinitions(InternalRegisterEffectDefinition, effect_data->parameters);
 
-    effect_data->value_lookup = new mopo::Value*[num_parameters];
+    effect_data->value_lookup = new mopo::Value*[num_params];
     mopo::control_map controls = effect_data->synth_engine.getControls();
-    initializeValueLookup(effect_data->value_lookup, controls);
+    initializeValueLookup(effect_data->value_lookup, controls, num_params);
+
+    for (int i = 0; i < MAX_MODULATIONS; ++i)
+      effect_data->modulations[i] = new mopo::ModulationConnection();
 
     effect_data->synth_engine.setSampleRate(state->samplerate);
 
@@ -123,6 +149,65 @@ namespace Helm {
     if (data->value_lookup[index]) {
       MutexScopeLock mutex_lock(data->mutex);
       data->value_lookup[index]->set(value);
+    }
+
+    int modulation_start = kNumParams + data->num_synth_parameters;
+    if (index >= modulation_start) {
+      int mod_param = index - modulation_start;
+      int mod_index = mod_param / VALUES_PER_MODULATION;
+      int mod_type = mod_index % VALUES_PER_MODULATION;
+
+      mopo::ModulationConnection* connection = data->modulations[mod_index];
+
+      if (mod_type == 0) {
+        if (data->synth_engine.isModulationActive(connection))
+          data->synth_engine.disconnectModulation(connection);
+
+        int source_index = value;
+        mopo::output_map sources = data->synth_engine.getModulationSources();
+        auto source = sources.begin();
+        std::advance(source, source_index);
+        if (source != sources.end())
+          connection->source = source->first;
+
+        if (connection->amount.value())
+          data->synth_engine.connectModulation(connection);
+      }
+      else if (mod_type == 1) {
+        if (data->synth_engine.isModulationActive(connection))
+          data->synth_engine.disconnectModulation(connection);
+        
+        mopo::output_map monoMods = data->synth_engine.getMonoModulations();
+        int dest_index = value;
+        if (dest_index < monoMods.size()) {
+          auto mod = monoMods.begin();
+          std::advance(mod, dest_index);
+          if (mod != monoMods.end())
+            connection->destination = mod->first;
+        }
+        else {
+          dest_index -= monoMods.size();
+          mopo::output_map polyMods = data->synth_engine.getPolyModulations();
+          auto mod = polyMods.begin();
+          std::advance(mod, dest_index);
+          if (mod != polyMods.end())
+            connection->destination = mod->first;
+        }
+
+        if (connection->amount.value())
+          data->synth_engine.connectModulation(connection);
+      }
+      else {
+        if (value == 0.0f) {
+          if (data->synth_engine.isModulationActive(connection))
+            data->synth_engine.disconnectModulation(connection);
+        }
+        else {
+          connection->amount.set(value);
+          if (!data->synth_engine.isModulationActive(connection))
+            data->synth_engine.connectModulation(connection);
+        }
+      }
     }
     return UNITY_AUDIODSP_OK;
   }
