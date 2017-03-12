@@ -14,16 +14,24 @@ namespace Tytel
         private SerializedObject serialized;
         SequencerUI sequencer = new SequencerUI(keyboardWidth, scrollWidth + 1);
         SequencerPositionUI sequencerPosition = new SequencerPositionUI(keyboardWidth, scrollWidth);
-        SerializedProperty allNotes;
         SerializedProperty channel;
+        SerializedProperty length;
 
         float positionHeight = 10.0f;
         float sequencerHeight = 400.0f;
 
         Rect sequencerPositionRect;
 
+        void OnEnable()
+        {
+            channel = serializedObject.FindProperty("channel");
+            length = serializedObject.FindProperty("length");
+        }
+
         public override void OnInspectorGUI()
         {
+            serializedObject.Update();
+
             Color prev_color = GUI.backgroundColor;
             GUILayout.Space(5f);
             HelmSequencer helmSequencer = target as HelmSequencer;
@@ -40,8 +48,9 @@ namespace Tytel
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
-            helmSequencer.channel = EditorGUILayout.IntSlider("Channel", helmSequencer.channel, 0, Utils.kMaxChannels - 1);
-            helmSequencer.length = EditorGUILayout.IntSlider("Length", helmSequencer.length, 1, HelmSequencer.kMaxLength);
+            EditorGUILayout.IntSlider(channel, 0, Utils.kMaxChannels - 1);
+            EditorGUILayout.IntSlider(length, 1, HelmSequencer.kMaxLength);
+            serializedObject.ApplyModifiedProperties();
         }
     }
 }

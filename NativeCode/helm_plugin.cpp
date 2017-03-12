@@ -276,7 +276,6 @@ namespace Helm {
   }
 
   void processSequencerNotes(EffectData* data, UInt64 current_sample, UInt64 end_sample) {
-    MutexScopeLock sequencer_lock(sequencer_mutex);
     for (auto sequencer : sequencer_lookup) {
       if (sequencer.second && sequencer.first->channel() == data->parameters[kChannel])
         processNotes(data, sequencer.first, current_sample, end_sample);
