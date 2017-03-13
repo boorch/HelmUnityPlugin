@@ -48,6 +48,14 @@ namespace Helm {
     off_events_[std::pair<double, int>(end, note->midi_note)] = note;
   }
 
+  void HelmSequencer::changeNoteKey(Note* note, int midi_key) {
+    on_events_.erase(std::pair<double, int>(note->time_on, note->midi_note));
+    off_events_.erase(std::pair<double, int>(note->time_off, note->midi_note));
+    note->midi_note = midi_key;
+    on_events_[std::pair<double, int>(note->time_on, midi_key)] = note;
+    off_events_[std::pair<double, int>(note->time_off, midi_key)] = note;
+  }
+
   void HelmSequencer::getNoteEvents(Note** notes, event_map events, double start, double end) {
     auto iter = events.lower_bound(std::pair<double, int>(start, 0));
 

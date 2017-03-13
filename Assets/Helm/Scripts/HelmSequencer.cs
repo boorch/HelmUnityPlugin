@@ -26,58 +26,7 @@ namespace Tytel
         private static extern bool ChangeSequencerChannel(IntPtr sequencer, int channel);
 
         [DllImport("AudioPluginHelm")]
-        private static extern IntPtr CreateNote(IntPtr sequencer, int note, float velocity, float start, float end);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern IntPtr DeleteNote(IntPtr sequencer, IntPtr note);
-
-        [DllImport("AudioPluginHelm")]
         private static extern void HelmAllNotesOff(int channel);
-
-        [System.Serializable]
-        public class Note : ISerializationCallbackReceiver
-        {
-            public int note;
-            public float start;
-            public float end;
-            public float velocity;
-            public HelmSequencer parent;
-
-            [NonSerialized]
-            public IntPtr noteRef;
-
-            public Note()
-            {
-                noteRef = IntPtr.Zero;
-            }
-
-            ~Note()
-            {
-                TryDelete();
-            }
-
-            public void TryCreate()
-            {
-                if (noteRef == IntPtr.Zero && parent.sequencer != IntPtr.Zero)
-                    noteRef = CreateNote(parent.sequencer, note, velocity, start, end);
-            }
-
-            public void TryDelete()
-            {
-                if (noteRef != IntPtr.Zero && parent.sequencer != IntPtr.Zero)
-                    DeleteNote(parent.sequencer, noteRef);
-                noteRef = IntPtr.Zero;
-            }
-
-            public void OnBeforeSerialize()
-            {
-            }
-
-            public void OnAfterDeserialize()
-            {
-                TryCreate();
-            }
-        }
 
         [System.Serializable]
         public class NoteRow
@@ -104,28 +53,33 @@ namespace Tytel
 
         public const int kRows = Utils.kMidiSize;
         public const int kMaxLength = 128;
-        IntPtr sequencer = IntPtr.Zero;
+        IntPtr reference = IntPtr.Zero;
         NoteComparer noteComparer = new NoteComparer();
         int currentChannel = -1;
         int currentLength = -1;
 
         void CreateNativeSequencer()
         {
-            if (sequencer == IntPtr.Zero)
-                sequencer = CreateSequencer();
+            if (reference == IntPtr.Zero)
+                reference = CreateSequencer();
         }
 
         void DeleteNativeSequencer()
         {
-            if (sequencer != IntPtr.Zero)
-                DeleteSequencer(sequencer);
-            sequencer = IntPtr.Zero;
+            if (reference != IntPtr.Zero)
+                DeleteSequencer(reference);
+            reference = IntPtr.Zero;
+        }
+
+        public IntPtr Reference()
+        {
+            return reference;
         }
 
         void Awake()
         {
-            if (sequencer == IntPtr.Zero)
-                sequencer = CreateSequencer();
+            if (reference == IntPtr.Zero)
+                reference = CreateSequencer();
             for (int i = 0; i < allNotes.Length; ++i)
             {
                 if (allNotes[i] == null)
@@ -145,14 +99,14 @@ namespace Tytel
 
         void OnEnable()
         {
-            if (sequencer != IntPtr.Zero)
-                EnableSequencer(sequencer, true);
+            if (reference != IntPtr.Zero)
+                EnableSequencer(reference, true);
         }
 
         void OnDisable()
         {
-            if (sequencer != IntPtr.Zero)
-                EnableSequencer(sequencer, false);
+            if (reference != IntPtr.Zero)
+                EnableSequencer(reference, false);
             HelmAllNotesOff(channel);
         }
 
@@ -195,7 +149,7 @@ namespace Tytel
                 RemoveNote(noteObject);
         }
 
-        public void AddNote(int note, float start, float end, float velocity = 1.0f)
+        public Note AddNote(int note, float start, float end, float velocity = 1.0f)
         {
             Note noteObject = new Note();
             noteObject.note = note;
@@ -209,6 +163,8 @@ namespace Tytel
                 allNotes[note] = new NoteRow();
             allNotes[note].notes.Add(noteObject);
             allNotes[note].notes.Sort(noteComparer);
+
+            return noteObject;
         }
 
         public void Clear()
@@ -232,13 +188,13 @@ namespace Tytel
             if (length != currentLength)
             {
                 HelmAllNotesOff(currentChannel);
-                ChangeSequencerLength(sequencer, length);
+                ChangeSequencerLength(reference, length);
                 currentLength = length;
             }
             if (channel != currentChannel)
             {
                 HelmAllNotesOff(currentChannel);
-                ChangeSequencerChannel(sequencer, channel);
+                ChangeSequencerChannel(reference, channel);
                 currentChannel = channel;
             }
         }

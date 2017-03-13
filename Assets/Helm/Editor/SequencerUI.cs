@@ -232,12 +232,12 @@ namespace Tytel
             EditorGUI.DrawRect(noteRect, color);
         }
 
-        void DrawRowNotes(List<HelmSequencer.Note> notes)
+        void DrawRowNotes(List<Note> notes)
         {
             if (notes == null)
                 return;
 
-            foreach (HelmSequencer.Note note in notes)
+            foreach (Note note in notes)
             {
                 Color color = fullCell;
                 if (mode == Mode.kDeleting && pressNote == note.note)

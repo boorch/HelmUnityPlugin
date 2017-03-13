@@ -28,6 +28,7 @@ namespace Helm {
       void deleteNote(Note* note);
       void changeNoteStart(Note* note, double start);
       void changeNoteEnd(Note* note, double end);
+      void changeNoteKey(Note* note, int midi_key);
 
       void getNoteEvents(Note** notes, event_map events, double start, double end);
       void getNoteOns(Note* notes[kMaxNotes], double start, double end);

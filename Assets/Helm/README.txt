@@ -34,11 +34,13 @@ Better way to change parameters live
 Better way to route Helm audio into an object in 3d space
 UI widgets for better tweaking in Unity
 Generative music demo scene
+Linux support
+iOS/anroid/ps4/xbox support?
 
 ## Known Issues
 
 When same note is turned on in HelmController in a row with automatic off. Helm doesn't restart waiting.
-Some weird undo/redo things happening in sequencer (only on windows?)
-Note hiccup when sequencer loops
+Undoing note creation/deletion disables all other notes of that same midi note.
+Note hiccup when sequencer loops because all notes after length play at once.
 On low powered machines, making game full screen in Unity makes audio glitchy, even when dsp usage very low
 

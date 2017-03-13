@@ -389,6 +389,11 @@ namespace Helm {
     note->velocity = new_velocity;
   }
 
+  extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteKey(
+      HelmSequencer* sequencer, HelmSequencer::Note* note, int midi_key) {
+    sequencer->changeNoteKey(note, midi_key);
+  }
+
   extern "C" UNITY_AUDIODSP_EXPORT_API bool ChangeSequencerChannel(
       HelmSequencer* sequencer, int channel) {
     sequencer->setChannel(channel);
