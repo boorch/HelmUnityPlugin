@@ -3,6 +3,7 @@
 *.pidb
 *.svd
 *.suo
+*.sdf
 *.user
 *.booproj
 *.unitypackage
