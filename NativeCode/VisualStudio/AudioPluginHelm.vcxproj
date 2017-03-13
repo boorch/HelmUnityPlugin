@@ -240,7 +240,8 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
     <ClCompile Include="..\helm\src\synthesis\noise_oscillator.cpp" />
     <ClCompile Include="..\helm\src\synthesis\resonance_cancel.cpp" />
     <ClCompile Include="..\helm\src\synthesis\switch.cpp" />
-    <ClCompile Include="..\Plugin_Helm.cpp" />
+    <ClCompile Include="..\helm_plugin.cpp" />
+    <ClCompile Include="..\helm_sequencer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AudioPluginInterface.h" />
@@ -299,6 +300,7 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
     <ClInclude Include="..\helm\src\synthesis\noise_oscillator.h" />
     <ClInclude Include="..\helm\src\synthesis\resonance_cancel.h" />
     <ClInclude Include="..\helm\src\synthesis\switch.h" />
+    <ClInclude Include="..\helm_sequencer.h" />
     <ClInclude Include="..\PluginList.h" />
   </ItemGroup>
   <ItemGroup>

@@ -81,8 +81,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\HelmController.cs" />
-    <Compile Include="Assets\Scripts\SilentAudioSource.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\BounceAudio2d.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\CameraMan.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\ControlJump.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\ControlTorque.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\DestroyAfterTime.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\GroundKey.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\GroundKeyboard.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\MaterialPulse.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\PlatformCreator.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\RepetitiveSpawner.cs" />
+    <Compile Include="Assets\Helm\Scripts\AudioHeartBeat.cs" />
+    <Compile Include="Assets\Helm\Scripts\HelmController.cs" />
+    <Compile Include="Assets\Helm\Scripts\HelmPatchFormat.cs" />
+    <Compile Include="Assets\Helm\Scripts\HelmSequencer.cs" />
+    <Compile Include="Assets\Helm\Scripts\Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
