@@ -1,0 +1,52 @@
+OUTPUT_DIR = out
+LOCAL_DIR = .
+MOPO_DIR = helm/mopo/src
+SYNTHESIS_DIR = helm/src/synthesis
+HELM_COMMON_DIR = helm/src/common
+
+MOPO_OBJS := $(patsubst $(MOPO_DIR)/%.cpp,$(OUTPUT_DIR)/$(MOPO_DIR)/%.o, $(wildcard $(MOPO_DIR)/*.cpp))
+SYNTHESIS_OBJS := $(patsubst $(SYNTHESIS_DIR)/%.cpp,$(OUTPUT_DIR)/$(SYNTHESIS_DIR)/%.o, $(wildcard $(SYNTHESIS_DIR)/*.cpp))
+LOCAL_OBJS := $(patsubst $(LOCAL_DIR)/%.cpp,$(OUTPUT_DIR)/$(LOCAL_DIR)/%.o, $(wildcard $(LOCAL_DIR)/*.cpp))
+
+OUTPUT=libAudioPluginHelm.so
+CXXFLAGS= -I . -I $(MOPO_DIR) -I $(SYNTHESIS_DIR) -I $(HELM_COMMON_DIR) -O3 -fPIC -std=c++11
+LDFLAGS= -shared -rdynamic -fPIC
+DESTINATION=../Assets/Plugins
+ifeq ($(ARCH),32)
+	CXXFLAGS:= $(CXXFLAGS) -m32
+	LDFLAGS:= $(LDFLAGS) -m32
+	DESTINATION:=$(DESTINATION)/x86
+else
+	CXXFLAGS:= $(CXXFLAGS) -m64
+	LDFLAGS:= $(LDFLAGS) -m64
+	DESTINATION:=$(DESTINATION)/x86_64
+endif
+CXX=g++
+
+all: directory $(OUTPUT) move
+
+clean:
+	rm -rf $(OUTPUT_DIR)
+
+directory:
+	mkdir -p $(OUTPUT_DIR)/$(SYNTHESIS_DIR)
+	mkdir -p $(OUTPUT_DIR)/$(MOPO_DIR)
+	mkdir -p $(OUTPUT_DIR)/$(HELM_COMMON_DIR)
+
+move:
+	mv $(OUTPUT) $(DESTINATION)/$(OUTPUT)
+
+$(OUTPUT): $(MOPO_OBJS) $(SYNTHESIS_OBJS) $(OUTPUT_DIR)/$(HELM_COMMON_DIR)/helm_common.o $(LOCAL_OBJS)
+	$(CXX) $(LDFLAGS) -o $(OUTPUT) $^
+
+$(OUTPUT_DIR)/$(SYNTHESIS_DIR)/%.o: $(SYNTHESIS_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OUTPUT_DIR)/$(MOPO_DIR)/%.o: $(MOPO_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OUTPUT_DIR)/$(LOCAL_DIR)/%.o: $(LOCAL_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OUTPUT_DIR)/$(HELM_COMMON_DIR)/helm_common.o: $(HELM_COMMON_DIR)/helm_common.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
