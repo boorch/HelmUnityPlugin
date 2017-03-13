@@ -48,6 +48,9 @@ namespace Tytel
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
+            if (GUILayout.Button("Clear Sequencer"))
+                helmSequencer.Clear();
+
             EditorGUILayout.IntSlider(channel, 0, Utils.kMaxChannels - 1);
             EditorGUILayout.IntSlider(length, 1, HelmSequencer.kMaxLength);
             serializedObject.ApplyModifiedProperties();
