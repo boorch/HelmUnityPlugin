@@ -80,7 +80,7 @@ namespace Tytel
             return new Vector2(time, note);
         }
 
-        void MouseDown(int note, float time, HelmSequencer sequencer)
+        void MouseDown(int note, float time, HelmSequencer sequencer, bool edit)
         {
             activeNote = sequencer.GetNoteInRange(note, time, time);
             dragTime = time;
@@ -100,7 +100,11 @@ namespace Tytel
             {
                 float startPixels = colWidth * (time - activeNote.start);
                 float endPixels = colWidth * (activeNote.end - time);
-                if (endPixels <= grabResizeWidth)
+                if (edit)
+                {
+                    mode = Mode.kDragging;
+                }
+                else if (endPixels <= grabResizeWidth)
                 {
                     Undo.RecordObject(sequencer, "Resize Note End");
                     mode = Mode.kResizingEnd;
@@ -125,7 +129,9 @@ namespace Tytel
 
         void MouseDrag(int note, float time, HelmSequencer sequencer)
         {
-            dragTime = time;
+            float clampedTime = Mathf.Clamp(time, 0.0f, sequencer.length);
+            float delta = clampedTime - dragTime;
+            dragTime = clampedTime;
 
             if (mode == Mode.kKeyboarding)
             {
@@ -138,6 +144,18 @@ namespace Tytel
             }
             else if (mode == Mode.kDragging)
             {
+                if (activeNote != null)
+                {
+                    float newStart = activeNote.start + delta;
+                    float length = activeNote.end - activeNote.start;
+                    if (newStart + length > sequencer.length)
+                        newStart = sequencer.length - length;
+                    if (newStart < 0.0f)
+                        newStart = 0.0f;
+                    activeNote.start = newStart;
+                    activeNote.end = newStart + length;
+                    activeNote.note = note;
+                }
             }
             else if (mode == Mode.kResizingStart)
             {
@@ -162,6 +180,8 @@ namespace Tytel
 
             if (mode == Mode.kDragging)
             {
+                if (activeNote != null)
+                    sequencer.ClampNotesInRange(activeNote.note, activeNote.start, activeNote.end, activeNote);
             }
             else if (mode == Mode.kResizingStart)
             {
@@ -201,6 +221,8 @@ namespace Tytel
         {
             Event evt = Event.current;
             Vector2 sequencerPosition = GetSequencerPosition(rect, evt.mousePosition);
+            bool modifier = (evt.modifiers & (EventModifiers.Shift | EventModifiers.Control | EventModifiers.Alt | EventModifiers.Command)) != EventModifiers.None;
+            bool edit = evt.button > 0 || modifier;
             float time = sequencerPosition.x;
 
             if (evt.type == EventType.MouseUp)
@@ -217,7 +239,7 @@ namespace Tytel
                 return false;
 
             if (evt.type == EventType.MouseDown)
-                MouseDown(note, time, sequencer);
+                MouseDown(note, time, sequencer, edit);
             else if (evt.type == EventType.MouseDrag)
                 MouseDrag(note, time, sequencer);
             return true;

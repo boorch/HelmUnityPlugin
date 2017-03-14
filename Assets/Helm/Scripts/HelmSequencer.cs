@@ -28,6 +28,9 @@ namespace Tytel
         [DllImport("AudioPluginHelm")]
         private static extern void HelmAllNotesOff(int channel);
 
+        [DllImport("AudioPluginHelm")]
+        private static extern float GetBpm();
+
         [System.Serializable]
         public class NoteRow : ISerializationCallbackReceiver
         {
@@ -128,6 +131,12 @@ namespace Tytel
             HelmAllNotesOff(channel);
         }
 
+        public void NotifyNoteKeyChanged(Note note, int oldKey)
+        {
+            allNotes[oldKey].notes.Remove(note);
+            allNotes[note.note].notes.Add(note);
+        }
+
         void RemoveNote(Note note)
         {
             allNotes[note.note].notes.Remove(note);
@@ -224,8 +233,7 @@ namespace Tytel
 
         void Update()
         {
-            float bpm = 120.0f;
-            double sequencerTime = Utils.kBpmToSixteenths * bpm * AudioSettings.dspTime;
+            double sequencerTime = Utils.kBpmToSixteenths * GetBpm() * AudioSettings.dspTime;
             float position = Mathf.Repeat((float)sequencerTime, length);
             currentSixteenth = (int)position;
 

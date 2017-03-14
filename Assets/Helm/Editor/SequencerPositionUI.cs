@@ -3,7 +3,6 @@
 using UnityEditor;
 using UnityEngine;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
 
 namespace Tytel
 {

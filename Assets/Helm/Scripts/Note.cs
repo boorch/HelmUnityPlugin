@@ -39,9 +39,12 @@ namespace Tytel
             {
                 if (note_ == value)
                     return;
+                int oldNote = note_;
                 note_ = value;
                 if (FullyNative())
                     ChangeNoteKey(parent.Reference(), reference, note_);
+                if (parent)
+                    parent.NotifyNoteKeyChanged(this, oldNote);
             }
         }
 

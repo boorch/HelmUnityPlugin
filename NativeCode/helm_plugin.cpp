@@ -414,4 +414,8 @@ namespace Helm {
   extern "C" UNITY_AUDIODSP_EXPORT_API void SetBpm(float new_bpm) {
     bpm = new_bpm;
   }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API float GetBpm() {
+    return bpm;
+  }
 }
