@@ -2,7 +2,6 @@
 
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Tytel
@@ -38,6 +37,8 @@ namespace Tytel
             }
             set
             {
+                if (note_ == value)
+                    return;
                 note_ = value;
                 if (FullyNative())
                     ChangeNoteKey(parent.Reference(), reference, note_);
@@ -54,6 +55,8 @@ namespace Tytel
             }
             set
             {
+                if (start_ == value)
+                    return;
                 start_ = value;
                 if (FullyNative())
                     ChangeNoteStart(parent.Reference(), reference, start_);
@@ -70,6 +73,8 @@ namespace Tytel
             }
             set
             {
+                if (end_ == value)
+                    return;
                 end_ = value;
                 if (FullyNative())
                     ChangeNoteEnd(parent.Reference(), reference, end_);
@@ -86,6 +91,8 @@ namespace Tytel
             }
             set
             {
+                if (velocity_ == value)
+                    return;
                 velocity_ = value;
                 if (FullyNative())
                     ChangeNoteVelocity(reference, velocity_);
@@ -101,9 +108,15 @@ namespace Tytel
             reference = IntPtr.Zero;
         }
 
-        ~Note()
+        public void CopySettingsToNative()
         {
-            TryDelete();
+            if (!HasNativeNote() || !HasNativeSequencer())
+                return;
+
+            ChangeNoteEnd(parent.Reference(), reference, end);
+            ChangeNoteStart(parent.Reference(), reference, start);
+            ChangeNoteKey(parent.Reference(), reference, note);
+            ChangeNoteVelocity(reference, velocity);
         }
 
         bool HasNativeNote()
@@ -124,7 +137,12 @@ namespace Tytel
         public void TryCreate()
         {
             if (HasNativeSequencer())
-                reference = CreateNote(parent.Reference(), note, velocity, start, end);
+            {
+                if (HasNativeNote())
+                    CopySettingsToNative();
+                else
+                    reference = CreateNote(parent.Reference(), note, velocity, start, end);
+            }
         }
 
         public void TryDelete()
@@ -141,6 +159,28 @@ namespace Tytel
         public void OnAfterDeserialize()
         {
             TryCreate();
+        }
+
+        public bool OverlapsRange(float rangeStart, float rangeEnd)
+        {
+            return !(start < rangeStart && end <= rangeStart) &&
+                   !(start >= rangeEnd && end > rangeEnd);
+        }
+
+        public bool InsideRange(float rangeStart, float rangeEnd)
+        {
+            return start >= rangeStart && end <= rangeEnd;
+        }
+
+        public void RemoveRange(float rangeStart, float rangeEnd)
+        {
+            if (!OverlapsRange(rangeStart, rangeEnd))
+                return;
+
+            if (start > rangeStart)
+                start = rangeEnd;
+            else
+                end = rangeStart;
         }
     }
 }

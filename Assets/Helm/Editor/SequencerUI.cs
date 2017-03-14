@@ -108,7 +108,7 @@ namespace Tytel
                 }
                 else if (startPixels <= grabResizeWidth)
                 {
-                    Undo.RecordObject(sequencer, "ResizeNoteEnd");
+                    Undo.RecordObject(sequencer, "Resize Note Start");
                     mode = Mode.kResizingStart;
                     activeNote.start = Mathf.Min(activeNote.end - minNoteTime, dragTime);
                 }
@@ -142,16 +142,12 @@ namespace Tytel
             else if (mode == Mode.kResizingStart)
             {
                 if (activeNote != null)
-                {
                     activeNote.start = Mathf.Min(activeNote.end - minNoteTime, dragTime);
-                }
             }
             else if (mode == Mode.kResizingEnd)
             {
                 if (activeNote != null)
-                {
                     activeNote.end = Mathf.Max(activeNote.start + minNoteTime, dragTime);
-                }
             }
         }
 
@@ -169,15 +165,21 @@ namespace Tytel
             }
             else if (mode == Mode.kResizingStart)
             {
-
+                if (activeNote != null)
+                    sequencer.ClampNotesInRange(pressNote, activeNote.start, activeNote.end, activeNote);
             }
             else if (mode == Mode.kResizingEnd)
             {
-
+                if (activeNote != null)
+                    sequencer.ClampNotesInRange(pressNote, activeNote.start, activeNote.end, activeNote);
             }
             else
             {
-                Undo.RecordObject(sequencer, "Sequencer Notes");
+                if (mode == Mode.kAdding)
+                    Undo.RecordObject(sequencer, "Add Sequencer Notes");
+                else
+                    Undo.RecordObject(sequencer, "Delete Sequencer Notes");
+
                 dragTime = time;
                 float startTime = Mathf.Min(pressTime, dragTime);
                 float endTime = Mathf.Max(pressTime, dragTime);
@@ -287,7 +289,7 @@ namespace Tytel
             Rect noteRect = new Rect(x + 1, y, width - 1, rowHeight);
             EditorGUI.DrawRect(noteRect, color);
             Rect leftResizeRect = new Rect(x, y, grabResizeWidth, rowHeight);
-            Rect rightResizeRect = new Rect(noteRect.right - grabResizeWidth, y, grabResizeWidth, rowHeight);
+            Rect rightResizeRect = new Rect(noteRect.xMax - grabResizeWidth, y, grabResizeWidth, rowHeight);
             EditorGUIUtility.AddCursorRect(leftResizeRect, MouseCursor.SplitResizeLeftRight);
             EditorGUIUtility.AddCursorRect(rightResizeRect, MouseCursor.SplitResizeLeftRight);
         }
@@ -305,7 +307,7 @@ namespace Tytel
                     float start = Mathf.Min(pressTime, dragTime);
                     float end = Mathf.Max(pressTime, dragTime);
 
-                    if (HelmSequencer.IsNoteInRange(note, start, end))
+                    if (note.OverlapsRange(start, end))
                         color = deletingCell;
                 }
                 DrawNote(note.note, note.start, note.end, color);

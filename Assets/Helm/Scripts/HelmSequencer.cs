@@ -29,9 +29,26 @@ namespace Tytel
         private static extern void HelmAllNotesOff(int channel);
 
         [System.Serializable]
-        public class NoteRow
+        public class NoteRow : ISerializationCallbackReceiver
         {
             public List<Note> notes = new List<Note>();
+            private List<Note> oldNotes = new List<Note>();
+
+            public void OnBeforeSerialize()
+            {
+                oldNotes = new List<Note>(notes);
+            }
+
+            public void OnAfterDeserialize()
+            {
+                if (oldNotes.Count == notes.Count)
+                    return;
+
+                foreach (Note note in oldNotes)
+                    note.TryDelete();
+                foreach (Note note in notes)
+                    note.TryCreate();
+            }
         }
 
         class NoteComparer : IComparer<Note>
@@ -40,6 +57,7 @@ namespace Tytel
             {
                 if (left.start < right.start)
                     return -1;
+
                 else if (left.start > right.start)
                     return 1;
                 return 0;
@@ -116,24 +134,18 @@ namespace Tytel
             note.TryDelete();
         }
 
-        public static bool IsNoteInRange(Note note, float start, float end)
-        {
-            return !(note.start < start && note.end <= start) &&
-                   !(note.start >= end && note.end > end);
-        }
-
         public bool NoteExistsInRange(int note, float start, float end)
         {
             return GetNoteInRange(note, start, end) != null;
         }
 
-        public Note GetNoteInRange(int note, float start, float end)
+        public Note GetNoteInRange(int note, float start, float end, Note ignore = null)
         {
             if (note >= kRows || note < 0 || allNotes == null || allNotes[note] == null)
                 return null;
             foreach (Note noteObject in allNotes[note].notes)
             {
-                if (IsNoteInRange(noteObject, start, end))
+                if (noteObject.OverlapsRange(start, end) && noteObject != ignore)
                     return noteObject;
             }
             return null;
@@ -147,11 +159,38 @@ namespace Tytel
             List<Note> toRemove = new List<Note>();
             foreach (Note noteObject in allNotes[note].notes)
             {
-                if (IsNoteInRange(noteObject, start, end))
+                if (noteObject.OverlapsRange(start, end))
                     toRemove.Add(noteObject);
             }
             foreach (Note noteObject in toRemove)
                 RemoveNote(noteObject);
+        }
+
+        public void RemoveNotesContainedInRange(int note, float start, float end, Note ignore = null)
+        {
+            if (allNotes == null || allNotes[note] == null)
+                return;
+
+            List<Note> toRemove = new List<Note>();
+            foreach (Note noteObject in allNotes[note].notes)
+            {
+                if (noteObject.InsideRange(start, end) && noteObject != ignore)
+                    toRemove.Add(noteObject);
+            }
+            foreach (Note noteObject in toRemove)
+                RemoveNote(noteObject);
+        }
+
+        public void ClampNotesInRange(int note, float start, float end, Note ignore = null)
+        {
+            RemoveNotesContainedInRange(note, start, end, ignore);
+
+            Note noteInRange = GetNoteInRange(note, start, end, ignore);
+            while (noteInRange != null)
+            {
+                noteInRange.RemoveRange(start, end);
+                noteInRange = GetNoteInRange(note, start, end, ignore);
+            }
         }
 
         public Note AddNote(int note, float start, float end, float velocity = 1.0f)

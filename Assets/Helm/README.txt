@@ -30,6 +30,7 @@ Play the scene to hear the sequence.
 ## Features
 
 BPM Changer
+Sync audio loops to seqeuncer
 Edit mode in sequencer with resizing and drag and drop
 Better way to change parameters live
 Better way to route Helm audio into an object in 3d space

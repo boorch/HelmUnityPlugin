@@ -26,7 +26,7 @@ root = true
 indent_style = space
 indent_size = 2
 tab_width = 2
-end_of_line = lf                    ; help with sharing files across os's (i.e. network share or through local vm)
+end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
@@ -37,7 +37,3 @@ tab_width = 4
 
 [*.{md,markdown}]
 trim_trailing_whitespace = false
-
-# keep these in sync with .hgeol's CRLF extensions
-[*.{vcproj,vcxproj,vcxproj.filters,csproj,sln,sln.template,bat,cmd,xaml}]
-end_of_line = crlf
