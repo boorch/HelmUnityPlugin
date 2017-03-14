@@ -29,7 +29,6 @@ Play the scene to hear the sequence.
 
 ## Features
 
-BPM Changer
 Sync audio loops to seqeuncer
 Edit mode in sequencer with resizing and drag and drop
 Better way to change parameters live
@@ -43,7 +42,6 @@ iOS/anroid/ps4/xbox support?
 ## Known Issues
 
 When same note is turned on in HelmController in a row with automatic off. Helm doesn't restart waiting.
-Undoing note creation/deletion disables all other notes of that same midi note.
 Note hiccup when sequencer loops because all notes after length play at once.
 On low powered machines, making game full screen in Unity makes audio glitchy, even when dsp usage very low.
 Low refresh time for playhead updates.
