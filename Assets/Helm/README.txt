@@ -34,6 +34,7 @@ Better way to change parameters live
 Better way to route Helm audio into an object in 3d space
 UI widgets for better tweaking in Unity
 Generative music demo scene
+Folders for patches
 Linux support
 iOS/anroid/ps4/xbox support?
 

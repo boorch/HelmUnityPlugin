@@ -34,7 +34,7 @@ namespace Tytel
         }
 
         const float grabResizeWidth = 5.0f;
-        const float minNoteTime = 0.05f;
+        const float minNoteTime = 0.15f;
 
         float keyboardWidth = 20.0f;
         float rightPadding = 15.0f;
@@ -83,6 +83,7 @@ namespace Tytel
         void MouseDown(int note, float time, HelmSequencer sequencer)
         {
             activeNote = sequencer.GetNoteInRange(note, time, time);
+            dragTime = time;
             if (pressedKey >= 0)
             {
                 HelmNoteOff(sequencer.channel, pressedKey);
@@ -100,9 +101,17 @@ namespace Tytel
                 float startPixels = colWidth * (time - activeNote.start);
                 float endPixels = colWidth * (activeNote.end - time);
                 if (endPixels <= grabResizeWidth)
+                {
+                    Undo.RecordObject(sequencer, "Resize Note End");
                     mode = Mode.kResizingEnd;
+                    activeNote.end = Mathf.Max(activeNote.start + minNoteTime, dragTime);
+                }
                 else if (startPixels <= grabResizeWidth)
+                {
+                    Undo.RecordObject(sequencer, "ResizeNoteEnd");
                     mode = Mode.kResizingStart;
+                    activeNote.start = Mathf.Min(activeNote.end - minNoteTime, dragTime);
+                }
                 else
                     mode = Mode.kDeleting;
             }
@@ -152,10 +161,11 @@ namespace Tytel
             {
                 HelmNoteOff(sequencer.channel, pressedKey);
                 pressedKey = -1;
+                return;
             }
-            else if (mode == Mode.kDragging)
-            {
 
+            if (mode == Mode.kDragging)
+            {
             }
             else if (mode == Mode.kResizingStart)
             {

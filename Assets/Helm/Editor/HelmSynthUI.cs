@@ -50,7 +50,12 @@ namespace Tytel
             GUILayout.Space(5.0f);
             GUI.backgroundColor = prev_color;
 
+            float newChannel = EditorGUILayout.IntSlider("Channel", (int)channel, 0, Utils.kMaxChannels - 1);
             showOptions = EditorGUILayout.Toggle("Show All Options", showOptions);
+
+            if (newChannel != channel)
+                plugin.SetFloatParameter("Channel", newChannel);
+
             return showOptions;
         }
     }
