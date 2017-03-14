@@ -155,7 +155,7 @@ namespace Helm {
         data->synth_engine.disconnectModulation(data->modulations[i]);
       delete data->modulations[i];
     }
-    
+
     delete data;
 
     return UNITY_AUDIODSP_OK;
@@ -286,6 +286,7 @@ namespace Helm {
     if (engine.getBufferSize() != samples)
       engine.setBufferSize(samples);
 
+    engine.setBpm(bpm);
     engine.process();
 
     const mopo::mopo_float* engine_output_left = engine.output(0)->buffer;
