@@ -21,6 +21,9 @@ namespace Tytel
             kAdding,
             kDeleting,
             kKeyboarding,
+            kDragging,
+            kResizingStart,
+            kResizingEnd,
             kNumModes
         }
 
@@ -30,10 +33,14 @@ namespace Tytel
             rightPadding = scroll;
         }
 
+        const float grabResizeWidth = 5.0f;
+        const float minNoteTime = 0.05f;
+
         float keyboardWidth = 20.0f;
         float rightPadding = 15.0f;
 
         Mode mode = Mode.kWaiting;
+        Note activeNote = null;
         int pressNote = 0;
         float pressTime = 0.0f;
         float dragTime = 0.0f;
@@ -60,7 +67,6 @@ namespace Tytel
         float colWidth = 30.0f;
 
         Vector2 scrollPosition;
-
         Vector2 mouseBump = new Vector2(0.0f, -3.0f);
 
         Vector2 GetSequencerPosition(Rect rect, Vector2 mousePosition)
@@ -76,6 +82,7 @@ namespace Tytel
 
         void MouseDown(int note, float time, HelmSequencer sequencer)
         {
+            activeNote = sequencer.GetNoteInRange(note, time, time);
             if (pressedKey >= 0)
             {
                 HelmNoteOff(sequencer.channel, pressedKey);
@@ -88,8 +95,17 @@ namespace Tytel
                 HelmNoteOn(sequencer.channel, pressedKey, 1.0f);
                 return;
             }
-            else if (sequencer.NoteExistsInRange(note, time, time))
-                mode = Mode.kDeleting;
+            else if (activeNote != null)
+            {
+                float startPixels = colWidth * (time - activeNote.start);
+                float endPixels = colWidth * (activeNote.end - time);
+                if (endPixels <= grabResizeWidth)
+                    mode = Mode.kResizingEnd;
+                else if (startPixels <= grabResizeWidth)
+                    mode = Mode.kResizingStart;
+                else
+                    mode = Mode.kDeleting;
+            }
             else
                 mode = Mode.kAdding;
 
@@ -100,6 +116,8 @@ namespace Tytel
 
         void MouseDrag(int note, float time, HelmSequencer sequencer)
         {
+            dragTime = time;
+
             if (mode == Mode.kKeyboarding)
             {
                 if (note != pressedKey)
@@ -109,8 +127,23 @@ namespace Tytel
                     pressedKey = note;
                 }
             }
-            else
-                dragTime = time;
+            else if (mode == Mode.kDragging)
+            {
+            }
+            else if (mode == Mode.kResizingStart)
+            {
+                if (activeNote != null)
+                {
+                    activeNote.start = Mathf.Min(activeNote.end - minNoteTime, dragTime);
+                }
+            }
+            else if (mode == Mode.kResizingEnd)
+            {
+                if (activeNote != null)
+                {
+                    activeNote.end = Mathf.Max(activeNote.start + minNoteTime, dragTime);
+                }
+            }
         }
 
         void MouseUp(float time, HelmSequencer sequencer)
@@ -119,24 +152,37 @@ namespace Tytel
             {
                 HelmNoteOff(sequencer.channel, pressedKey);
                 pressedKey = -1;
-                return;
             }
-
-            Undo.RecordObject(sequencer, "Sequencer Notes");
-            dragTime = time;
-            float startTime = Mathf.Min(pressTime, dragTime);
-            float endTime = Mathf.Max(pressTime, dragTime);
-            sequencer.RemoveNotesInRange(pressNote, startTime, endTime);
-
-            int startDrag = Mathf.Max(0, (int)Mathf.Floor(startTime));
-            int endDrag = (int)Mathf.Ceil(endTime);
-
-            if (mode == Mode.kAdding)
+            else if (mode == Mode.kDragging)
             {
-                for (int i = startDrag; i < endDrag; ++i)
-                    sequencer.AddNote(pressNote, i, i + 1);
+
             }
-            mode = Mode.kWaiting;
+            else if (mode == Mode.kResizingStart)
+            {
+
+            }
+            else if (mode == Mode.kResizingEnd)
+            {
+
+            }
+            else
+            {
+                Undo.RecordObject(sequencer, "Sequencer Notes");
+                dragTime = time;
+                float startTime = Mathf.Min(pressTime, dragTime);
+                float endTime = Mathf.Max(pressTime, dragTime);
+                sequencer.RemoveNotesInRange(pressNote, startTime, endTime);
+
+                int startDrag = Mathf.Max(0, (int)Mathf.Floor(startTime));
+                int endDrag = (int)Mathf.Ceil(endTime);
+
+                if (mode == Mode.kAdding)
+                {
+                    for (int i = startDrag; i < endDrag; ++i)
+                        sequencer.AddNote(pressNote, i, i + 1);
+                }
+                mode = Mode.kWaiting;
+            }
         }
 
         public bool DoSequencerEvents(Rect rect, HelmSequencer sequencer)
@@ -230,6 +276,10 @@ namespace Tytel
             float width = end * colWidth + keyboardWidth - x;
             Rect noteRect = new Rect(x + 1, y, width - 1, rowHeight);
             EditorGUI.DrawRect(noteRect, color);
+            Rect leftResizeRect = new Rect(x, y, grabResizeWidth, rowHeight);
+            Rect rightResizeRect = new Rect(noteRect.right - grabResizeWidth, y, grabResizeWidth, rowHeight);
+            EditorGUIUtility.AddCursorRect(leftResizeRect, MouseCursor.SplitResizeLeftRight);
+            EditorGUIUtility.AddCursorRect(rightResizeRect, MouseCursor.SplitResizeLeftRight);
         }
 
         void DrawRowNotes(List<Note> notes)

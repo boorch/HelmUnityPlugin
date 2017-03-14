@@ -124,14 +124,19 @@ namespace Tytel
 
         public bool NoteExistsInRange(int note, float start, float end)
         {
+            return GetNoteInRange(note, start, end) != null;
+        }
+
+        public Note GetNoteInRange(int note, float start, float end)
+        {
             if (note >= kRows || note < 0 || allNotes == null || allNotes[note] == null)
-                return false;
+                return null;
             foreach (Note noteObject in allNotes[note].notes)
             {
                 if (IsNoteInRange(noteObject, start, end))
-                    return true;
+                    return noteObject;
             }
-            return false;
+            return null;
         }
 
         public void RemoveNotesInRange(int note, float start, float end)
