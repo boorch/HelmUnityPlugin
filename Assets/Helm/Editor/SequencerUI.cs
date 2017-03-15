@@ -102,6 +102,7 @@ namespace Tytel
                 float endPixels = colWidth * (activeNote.end - time);
                 if (edit)
                 {
+                    Undo.RegisterCompleteObjectUndo(sequencer, "Drag Note");
                     mode = Mode.kDragging;
                 }
                 else if (endPixels <= grabResizeWidth)
