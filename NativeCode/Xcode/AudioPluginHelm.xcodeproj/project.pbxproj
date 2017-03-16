@@ -59,6 +59,7 @@
 		D10099011E6717BD003830AE /* AudioPluginUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098FF1E6717BD003830AE /* AudioPluginUtil.cpp */; };
 		D171C37C1E6F3A6F000987FD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D171C37B1E6F3A6F000987FD /* Accelerate.framework */; };
 		D1CAEEE21E6F74F10053B7E0 /* helm_sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1CAEEE01E6F74F10053B7E0 /* helm_sequencer.cpp */; };
+		D1D2A0AB1E7B36D000E4A19D /* LICENSE.md in Sources */ = {isa = PBXBuildFile; fileRef = D1D2A0AA1E7B36D000E4A19D /* LICENSE.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -176,6 +177,9 @@
 		D171C37B1E6F3A6F000987FD /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		D1CAEEE01E6F74F10053B7E0 /* helm_sequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = helm_sequencer.cpp; path = ../helm_sequencer.cpp; sourceTree = "<group>"; };
 		D1CAEEE11E6F74F10053B7E0 /* helm_sequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = helm_sequencer.h; path = ../helm_sequencer.h; sourceTree = "<group>"; };
+		D1D2A0A81E7B36D000E4A19D /* blockingconcurrentqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blockingconcurrentqueue.h; sourceTree = "<group>"; };
+		D1D2A0A91E7B36D000E4A19D /* concurrentqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = concurrentqueue.h; sourceTree = "<group>"; };
+		D1D2A0AA1E7B36D000E4A19D /* LICENSE.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -275,6 +279,7 @@
 		D10098721E662D68003830AE /* helm */ = {
 			isa = PBXGroup;
 			children = (
+				D1D2A0A71E7B36D000E4A19D /* concurrentqueue */,
 				D10098731E662D72003830AE /* src */,
 			);
 			name = helm;
@@ -410,6 +415,17 @@
 			name = plugin_interface;
 			sourceTree = "<group>";
 		};
+		D1D2A0A71E7B36D000E4A19D /* concurrentqueue */ = {
+			isa = PBXGroup;
+			children = (
+				D1D2A0A81E7B36D000E4A19D /* blockingconcurrentqueue.h */,
+				D1D2A0A91E7B36D000E4A19D /* concurrentqueue.h */,
+				D1D2A0AA1E7B36D000E4A19D /* LICENSE.md */,
+			);
+			name = concurrentqueue;
+			path = ../helm/concurrentqueue;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -505,6 +521,7 @@
 				D10098691E662D62003830AE /* fixed_point_wave.cpp in Sources */,
 				D10098E01E662DCD003830AE /* feedback.cpp in Sources */,
 				D10098FA1E662DCD003830AE /* value.cpp in Sources */,
+				D1D2A0AB1E7B36D000E4A19D /* LICENSE.md in Sources */,
 				D10099011E6717BD003830AE /* AudioPluginUtil.cpp in Sources */,
 				D10098EE1E662DCD003830AE /* processor_router.cpp in Sources */,
 				D10098E21E662DCD003830AE /* formant_manager.cpp in Sources */,

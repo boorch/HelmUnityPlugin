@@ -46,6 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Helm\Editor\HelmBpmUI.cs" />
      <Compile Include="Assets\Helm\Editor\HelmControllerUI.cs" />
      <Compile Include="Assets\Helm\Editor\HelmSequencerUI.cs" />
      <Compile Include="Assets\Helm\Editor\HelmSynthUI.cs" />

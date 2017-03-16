@@ -54,9 +54,12 @@
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\GroundKey.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\GroundKeyboard.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\MaterialPulse.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\Oscillate.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\PlatformCreator.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\RepetitiveSpawner.cs" />
      <Compile Include="Assets\Helm\Scripts\AudioHeartBeat.cs" />
+     <Compile Include="Assets\Helm\Scripts\Helm3dAudioSource.cs" />
+     <Compile Include="Assets\Helm\Scripts\HelmBpm.cs" />
      <Compile Include="Assets\Helm\Scripts\HelmController.cs" />
      <Compile Include="Assets\Helm\Scripts\HelmPatchFormat.cs" />
      <Compile Include="Assets\Helm\Scripts\HelmSequencer.cs" />

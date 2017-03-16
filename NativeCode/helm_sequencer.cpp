@@ -56,8 +56,8 @@ namespace Helm {
     off_events_[std::pair<double, int>(note->time_off, midi_key)] = note;
   }
 
-  void HelmSequencer::getNoteEvents(Note** notes, event_map events, double start, double end) {
-    auto iter = events.lower_bound(std::pair<double, int>(start, 0));
+  void HelmSequencer::getNoteEvents(Note** notes, event_map& events, double start, double end) {
+    event_map::const_iterator iter = events.lower_bound(std::pair<double, int>(start, 0));
 
     int note_index = 0;
     while (iter != events.end() && (start > end || iter->first.first < end) && note_index < kMaxNotes) {

@@ -3,10 +3,10 @@
 #include "helm_engine.h"
 #include "helm_sequencer.h"
 #include "AudioPluginUtil.h"
+#include "concurrentqueue.h"
 
 namespace Helm {
 
-  const int MAX_BUFFER_SAMPLES = 256;
   const int MAX_CHARACTERS = 15;
   const int MAX_CHANNELS = 16;
   const int MAX_NOTES = 128;
@@ -27,9 +27,11 @@ namespace Helm {
   struct EffectData {
     int num_parameters;
     int num_synth_parameters;
-    HelmSequencer::Note* note_events[MAX_NOTES];
+    HelmSequencer::Note* sequencer_events[MAX_NOTES];
     mopo::ModulationConnection* modulations[MAX_MODULATIONS];
     float* parameters;
+    moodycamel::ConcurrentQueue<std::pair<int, float>> note_events;
+    moodycamel::ConcurrentQueue<std::pair<int, float>> value_events;
     mopo::Value** value_lookup;
     int instance_id;
     mopo::HelmEngine synth_engine;
@@ -110,7 +112,7 @@ namespace Helm {
   UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK CreateCallback(UnityAudioEffectState* state) {
     EffectData* effect_data = new EffectData;
     MutexScopeLock mutex_lock(effect_data->mutex);
-    memset(effect_data->note_events, 0, sizeof(HelmSequencer::Note*) * MAX_NOTES);
+    memset(effect_data->sequencer_events, 0, sizeof(HelmSequencer::Note*) * MAX_NOTES);
 
     effect_data->num_synth_parameters = mopo::Parameters::lookup_.getAllDetails().size();
     int num_params = effect_data->num_synth_parameters + kNumParams + MAX_MODULATIONS * VALUES_PER_MODULATION;
@@ -170,13 +172,13 @@ namespace Helm {
 
     data->parameters[index] = value;
 
-    if (data->value_lookup[index]) {
-      MutexScopeLock mutex_lock(data->mutex);
-      data->value_lookup[index]->set(value);
-    }
+    if (data->value_lookup[index])
+      data->value_events.enqueue(std::pair<int, float>(index, value));
 
     int modulation_start = kNumParams + data->num_synth_parameters;
     if (index >= modulation_start) {
+      MutexScopeLock mutex_lock(data->mutex);
+
       int mod_param = index - modulation_start;
       int mod_index = mod_param / VALUES_PER_MODULATION;
       int mod_type = mod_param % VALUES_PER_MODULATION;
@@ -259,20 +261,15 @@ namespace Helm {
     double end = timeToSixteenth(end_sample, data->synth_engine.getSampleRate());
     end = wrap(end, sequencer->length());
 
-    sequencer->getNoteOffs(data->note_events, start, end);
+    sequencer->getNoteOffs(data->sequencer_events, start, end);
 
-    data->mutex.Lock();
-    for (int i = 0; i < MAX_NOTES && data->note_events[i]; ++i)
-      data->synth_engine.noteOff(data->note_events[i]->midi_note);
+    for (int i = 0; i < MAX_NOTES && data->sequencer_events[i]; ++i)
+      data->synth_engine.noteOff(data->sequencer_events[i]->midi_note);
 
-    data->mutex.Unlock();
+    sequencer->getNoteOns(data->sequencer_events, start, end);
 
-    sequencer->getNoteOns(data->note_events, start, end);
-
-    data->mutex.Lock();
-    for (int i = 0; i < MAX_NOTES && data->note_events[i]; ++i)
-      data->synth_engine.noteOn(data->note_events[i]->midi_note, data->note_events[i]->velocity);
-    data->mutex.Unlock();
+    for (int i = 0; i < MAX_NOTES && data->sequencer_events[i]; ++i)
+      data->synth_engine.noteOn(data->sequencer_events[i]->midi_note, data->sequencer_events[i]->velocity);
   }
 
   void processSequencerNotes(EffectData* data, UInt64 current_sample, UInt64 end_sample) {
@@ -300,30 +297,59 @@ namespace Helm {
     }
   }
 
+  void processQueuedNotes(EffectData* data) {
+    std::pair<int, float> event;
+    while (data->note_events.try_dequeue(event)) {
+      if (event.second)
+        data->synth_engine.noteOn(event.first, event.second);
+      else
+        data->synth_engine.noteOff(event.first);
+    }
+  }
+
+  void processQueuedFloatChanges(EffectData* data) {
+    std::pair<int, float> event;
+    while (data->value_events.try_dequeue(event))
+      data->value_lookup[event.first]->set(event.second);
+  }
+
   UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ProcessCallback(
       UnityAudioEffectState* state,
       float* in_buffer, float* out_buffer, unsigned int num_samples,
       int in_channels, int out_channels) {
     EffectData* data = state->GetEffectData<EffectData>();
 
+    int synth_samples = num_samples > mopo::MAX_BUFFER_SIZE ? mopo::MAX_BUFFER_SIZE : num_samples;
     MutexScopeLock mutex_lock(data->mutex);
-    int synth_samples = num_samples > MAX_BUFFER_SAMPLES ? MAX_BUFFER_SAMPLES : num_samples;
+    processQueuedFloatChanges(data);
 
     for (int b = 0; b < num_samples; b += synth_samples) {
       int current_samples = std::min<int>(synth_samples, num_samples - b);
 
       processSequencerNotes(data, state->currdsptick + b, state->currdsptick + b + current_samples + 1);
+      processQueuedNotes(data);
       processAudio(data->synth_engine, out_buffer, out_channels, current_samples, b);
     }
 
     return UNITY_AUDIODSP_OK;
   }
 
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmGetBuffer(int channel, float* buffer, int samples, int channels) {
+    for (auto synth : instance_map) {
+      if (((int)synth.second->parameters[kChannel]) == channel) {
+
+        for (int c = 0; c < channels; ++c) {
+          for (int i = 0; i < samples; ++i)
+            buffer[i * channels + c] += 0.0f;
+        }
+      }
+    }
+  }
+
   extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOn(int channel, int note, float velocity) {
     for (auto synth : instance_map) {
       if (((int)synth.second->parameters[kChannel]) == channel) {
-        MutexScopeLock mutex_lock(synth.second->mutex);
-        synth.second->synth_engine.noteOn(note, velocity);
+        synth.second->note_events.enqueue(std::pair<int, float>(note, velocity));
       }
     }
   }
@@ -331,8 +357,7 @@ namespace Helm {
   extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOff(int channel, int note) {
     for (auto synth : instance_map) {
       if (((int)synth.second->parameters[kChannel]) == channel) {
-        MutexScopeLock mutex_lock(synth.second->mutex);
-        synth.second->synth_engine.noteOff(note);
+        synth.second->note_events.enqueue(std::pair<int, float>(note, 0.0f));
       }
     }
   }
