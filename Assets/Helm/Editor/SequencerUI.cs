@@ -281,6 +281,11 @@ namespace Tytel
 
         void DrawNoteRows(Rect rect)
         {
+            GUIStyle cStyle = new GUIStyle();
+            cStyle.fontSize = 8;
+            cStyle.alignment = TextAnchor.MiddleRight;
+            cStyle.padding = new RectOffset(0, 1, 0, 0);
+
             float y = 0.0f;
             for (int i = 0; i < numRows; ++i)
             {
@@ -302,6 +307,9 @@ namespace Tytel
                 Rect key = new Rect(0.0f, y, keyboardWidth, rowHeight);
                 Rect row = new Rect(keyboardWidth, y, rect.width - keyboardWidth, rowHeight);
                 EditorGUI.DrawRect(key, keyColor);
+                if (midiNote % Utils.kNotesPerOctave == 0)
+                    GUI.Label(key, "C" + Utils.GetOctave(midiNote), cStyle);
+
                 EditorGUI.DrawRect(row, rowColor);
                 y += rowHeight;
             }

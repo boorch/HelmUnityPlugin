@@ -10,6 +10,7 @@ namespace Tytel
         public const int kNotesPerOctave = 12;
         public const int kMaxChannels = 16;
         public const float kBpmToSixteenths = 4.0f / 60.0f;
+        public const int kMinOctave = -2;
 
         static bool[] blackKeys = new bool[kNotesPerOctave] { false, true, false, true,
                                                               false, false, true, false,
@@ -18,6 +19,11 @@ namespace Tytel
         public static bool IsBlackKey(int key)
         {
             return blackKeys[key % kNotesPerOctave];
+        }
+
+        public static int GetOctave(int key)
+        {
+            return key / kNotesPerOctave + kMinOctave;
         }
     }
 }
