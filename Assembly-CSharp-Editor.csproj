@@ -54,6 +54,7 @@
      <Compile Include="Assets\Helm\Editor\PatchBrowserUI.cs" />
      <Compile Include="Assets\Helm\Editor\SequencerPositionUI.cs" />
      <Compile Include="Assets\Helm\Editor\SequencerUI.cs" />
+     <Compile Include="Assets\Helm\Editor\SequencerVelocityUI.cs" />
      <None Include="Assets\Helm\README.txt" />
  <Reference Include="UnityEngine.Advertisements">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
