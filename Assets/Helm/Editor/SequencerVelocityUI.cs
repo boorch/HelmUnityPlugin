@@ -66,7 +66,7 @@ namespace Tytel
             }
 
             if (currentNote != null)
-                Undo.RecordObject(sequencer, "Set Note Velocity");
+                Undo.RegisterCompleteObjectUndo(sequencer, "Set Note Velocity");
         }
 
         void MouseDrag(float velocity)

@@ -36,6 +36,7 @@ namespace Tytel
         const float grabResizeWidth = 5.0f;
         const float minNoteTime = 0.15f;
         const float defaultVelocity = 0.8f;
+        const float dragDeltaStartRounding = 0.8f;
 
         float keyboardWidth = 20.0f;
         float rightPadding = 15.0f;
@@ -43,6 +44,9 @@ namespace Tytel
         Mode mode = Mode.kWaiting;
         Note activeNote = null;
         bool mouseActive = false;
+        bool roundingToSixteenth = false;
+        float clickNoteStartOffset = 0.0f;
+
         int pressNote = 0;
         float pressTime = 0.0f;
         float dragTime = 0.0f;
@@ -90,6 +94,7 @@ namespace Tytel
 
         void MouseDown(int note, float time, HelmSequencer sequencer, bool edit)
         {
+            roundingToSixteenth = false;
             mouseActive = true;
             activeNote = sequencer.GetNoteInRange(note, time, time);
             dragTime = time;
@@ -113,6 +118,7 @@ namespace Tytel
                 {
                     Undo.RegisterCompleteObjectUndo(sequencer, "Drag Note");
                     mode = Mode.kDragging;
+                    clickNoteStartOffset = time - activeNote.start;
                 }
                 else if (endPixels <= grabResizeWidth)
                 {
@@ -140,8 +146,10 @@ namespace Tytel
         void MouseDrag(int note, float time, HelmSequencer sequencer)
         {
             float clampedTime = Mathf.Clamp(time, 0.0f, sequencer.length);
-            float delta = clampedTime - dragTime;
             dragTime = clampedTime;
+
+            if (Mathf.Abs(dragTime - pressTime) >= dragDeltaStartRounding)
+                roundingToSixteenth = true;
 
             if (mode == Mode.kKeyboarding)
             {
@@ -156,12 +164,15 @@ namespace Tytel
             {
                 if (activeNote != null)
                 {
-                    float newStart = activeNote.start + delta;
+                    float newStart = dragTime - clickNoteStartOffset;
                     float length = activeNote.end - activeNote.start;
                     if (newStart + length > sequencer.length)
                         newStart = sequencer.length - length;
                     if (newStart < 0.0f)
                         newStart = 0.0f;
+
+                    if (roundingToSixteenth)
+                        newStart = Mathf.Round(newStart);
                     activeNote.start = newStart;
                     activeNote.end = newStart + length;
                     activeNote.note = note;
@@ -170,12 +181,22 @@ namespace Tytel
             else if (mode == Mode.kResizingStart)
             {
                 if (activeNote != null)
-                    activeNote.start = Mathf.Min(activeNote.end - minNoteTime, dragTime);
+                {
+                    float startTime = dragTime;
+                    if (roundingToSixteenth)
+                        startTime = Mathf.Round(dragTime);
+                    activeNote.start = Mathf.Min(activeNote.end - minNoteTime, startTime);
+                }
             }
             else if (mode == Mode.kResizingEnd)
             {
                 if (activeNote != null)
-                    activeNote.end = Mathf.Max(activeNote.start + minNoteTime, dragTime);
+                {
+                    float endTime = dragTime;
+                    if (roundingToSixteenth)
+                        endTime = Mathf.Round(dragTime);
+                    activeNote.end = Mathf.Max(activeNote.start + minNoteTime, endTime);
+                }
             }
         }
 
