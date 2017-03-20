@@ -17,10 +17,8 @@ namespace Tytel
 
         Color blackUnpressed = Color.black;
         Color blackPressed = Color.red;
-        Color blackHovered = new Color(0.3f, 0.3f, 0.3f);
         Color whiteUnPressed = Color.white;
         Color whitePressed = Color.red;
-        Color whiteHovered = new Color(0.9f, 0.9f, 0.9f);
 
         float keyWidth = 20.0f;
         float blackKeyWidthPercent = 0.55f;
@@ -39,8 +37,11 @@ namespace Tytel
         GUIStyle keyStyle;
         GUIStyle cStyle;
 
-        public KeyboardUI()
+        void InitStyles()
         {
+            if (keyStyle != null)
+                return;
+
             keyStyle = GUI.skin.box;
             keyStyle.padding = new RectOffset(0, 0, 0, 0);
             keyStyle.border = new RectOffset(1, 1, 1, 1);
@@ -124,15 +125,11 @@ namespace Tytel
             {
                 if (key == currentKey || pressed)
                     return blackPressed;
-                else if (key == hoveredKey)
-                    return blackHovered;
                 else
                     return blackUnpressed;
             }
             if (key == currentKey || pressed)
                 return whitePressed;
-            else if (key == hoveredKey)
-                return whiteHovered;
             return whiteUnPressed;
         }
 
@@ -189,6 +186,7 @@ namespace Tytel
 
         public void DrawKeyboard(Rect rect, HashSet<int> pressedNotes = null)
         {
+            InitStyles();
             rect = new Rect(rect.x - leftGrowth, rect.y,
                             rect.width + leftGrowth + rightGrowth, rect.height);
 
