@@ -57,6 +57,7 @@
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\Oscillate.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\PlatformCreator.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\RepetitiveSpawner.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\SetSleepThreshold.cs" />
      <Compile Include="Assets\Helm\Scripts\AudioHeartBeat.cs" />
      <Compile Include="Assets\Helm\Scripts\Helm3dAudioSource.cs" />
      <Compile Include="Assets\Helm\Scripts\HelmBpm.cs" />
@@ -66,9 +67,6 @@
      <Compile Include="Assets\Helm\Scripts\Note.cs" />
      <Compile Include="Assets\Helm\Scripts\Utils.cs" />
      <None Include="Assets\Helm\README.txt" />
- <Reference Include="UnityEngine.Advertisements">
- <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
- </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
@@ -83,9 +81,6 @@
  </Reference>
  <Reference Include="UnityEngine.HoloLens">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
- </Reference>
- <Reference Include="UnityEngine.Purchasing">
- <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityPurchasing/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.VR">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>

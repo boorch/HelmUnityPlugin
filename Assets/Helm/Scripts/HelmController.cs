@@ -22,7 +22,8 @@ namespace Tytel
 
         public int channel = 0;
 
-        HashSet<int> pressedNotes = new HashSet<int>();
+        Dictionary<int, int> pressedNotes = new Dictionary<int, int>();
+
 
         void OnDestroy()
         {
@@ -31,10 +32,10 @@ namespace Tytel
 
         public bool IsNoteOn(int note)
         {
-            return pressedNotes.Contains(note);
+            return pressedNotes.ContainsKey(note);
         }
 
-        public HashSet<int> GetPressedNotes()
+        public Dictionary<int, int> GetPressedNotes()
         {
             return pressedNotes;
         }
@@ -53,14 +54,23 @@ namespace Tytel
 
         public void NoteOn(int note, float velocity = 1.0f)
         {
-            pressedNotes.Add(note);
+            int number = 0;
+            pressedNotes.TryGetValue(note, out number);
+            pressedNotes[note] = number + 1;
             HelmNoteOn(channel, note, velocity);
         }
 
         public void NoteOff(int note)
         {
-            pressedNotes.Remove(note);
-            HelmNoteOff(channel, note);
+            int number = 0;
+            pressedNotes.TryGetValue(note, out number);
+            if (number <= 1)
+            {
+                pressedNotes.Remove(note);
+                HelmNoteOff(channel, note);
+            }
+            else
+                pressedNotes[note] = number - 1;
         }
     }
 }

@@ -167,24 +167,24 @@ namespace Tytel
             return true;
         }
 
-        void DrawKeys(Rect rect, bool blackKeys, HashSet<int> pressedNotes)
+        void DrawKeys(Rect rect, bool blackKeys, Dictionary<int, int> pressedNotes)
         {
             for (int key = middleKey; ValidKey(key); ++key)
             {
-                bool pressed = pressedNotes != null && pressedNotes.Contains(key);
+                bool pressed = pressedNotes != null && pressedNotes.ContainsKey(key);
                 if (blackKeys == Utils.IsBlackKey(key))
                     DrawKey(key, rect, pressed);
             }
 
             for (int key = middleKey - 1; ValidKey(key); --key)
             {
-                bool pressed = pressedNotes != null && pressedNotes.Contains(key);
+                bool pressed = pressedNotes != null && pressedNotes.ContainsKey(key);
                 if (blackKeys == Utils.IsBlackKey(key))
                     DrawKey(key, rect, pressed);
             }
         }
 
-        public void DrawKeyboard(Rect rect, HashSet<int> pressedNotes = null)
+        public void DrawKeyboard(Rect rect, Dictionary<int, int> pressedNotes = null)
         {
             InitStyles();
             rect = new Rect(rect.x - leftGrowth, rect.y,
