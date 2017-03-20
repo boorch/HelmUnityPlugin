@@ -24,10 +24,20 @@ namespace Tytel
 
         Dictionary<int, int> pressedNotes = new Dictionary<int, int>();
 
-
         void OnDestroy()
         {
+            AllNotesOff();
+        }
+
+        void Start()
+        {
+            AllNotesOff();
+        }
+
+        public void AllNotesOff()
+        {
             HelmAllNotesOff(channel);
+            pressedNotes.Clear();
         }
 
         public bool IsNoteOn(int note)
