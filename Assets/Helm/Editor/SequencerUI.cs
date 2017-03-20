@@ -35,6 +35,7 @@ namespace Tytel
 
         const float grabResizeWidth = 5.0f;
         const float minNoteTime = 0.15f;
+        const float defaultVelocity = 0.8f;
 
         float keyboardWidth = 20.0f;
         float rightPadding = 15.0f;
@@ -53,7 +54,7 @@ namespace Tytel
         Color beatDivision = new Color(0.2f, 0.2f, 0.2f);
         Color fullCellFullVelocity = Color.red;
         Color fullCellZeroVelocity = new Color(1.0f, 0.8f, 0.8f);
-        Color pressedCell = new Color(0.9f, 0.8f, 0.7f);
+        Color pressedCell = new Color(0.6f, 1.0f, 1.0f);
         Color deletingCell = new Color(0.7f, 1.0f, 0.7f);
         Color lightenColor = new Color(1.0f, 1.0f, 1.0f, 0.1f);
         Color blackKey = Color.black;
@@ -69,7 +70,7 @@ namespace Tytel
         float colWidth = 30.0f;
 
         Vector2 scrollPosition;
-        Vector2 mouseBump = new Vector2(0.0f, -3.0f);
+        Vector2 mouseBump = new Vector2(-1.0f, -3.0f);
 
         Vector2 GetSequencerPosition(Rect rect, Vector2 mousePosition)
         {
@@ -78,7 +79,7 @@ namespace Tytel
 
             Vector2 localPosition = mousePosition - rect.position + scrollPosition + mouseBump;
             float note = numRows - Mathf.Floor((localPosition.y / rowHeight)) - 1;
-            float time = (localPosition.x - keyboardWidth - 2) / colWidth;
+            float time = (localPosition.x - keyboardWidth) / colWidth;
             return new Vector2(time, note);
         }
 
@@ -214,13 +215,13 @@ namespace Tytel
             else if (mode == Mode.kAdding)
             {
                 Undo.RecordObject(sequencer, "Add Sequencer Notes");
-                int startDrag = (int)Mathf.Floor(startTime);
-                int endDrag = (int)Mathf.Ceil(endTime);
+                int startDrag = Mathf.FloorToInt(startTime);
+                int endDrag = Mathf.CeilToInt(endTime);
 
                 sequencer.ClampNotesInRange(pressNote, startDrag, endDrag);
 
                 for (int i = startDrag; i < endDrag; ++i)
-                    sequencer.AddNote(pressNote, i, i + 1);
+                    sequencer.AddNote(pressNote, i, i + 1, defaultVelocity);
             }
             else if (mode == Mode.kDeleting)
             {
@@ -234,7 +235,9 @@ namespace Tytel
         {
             Event evt = Event.current;
             Vector2 sequencerPosition = GetSequencerPosition(rect, evt.mousePosition);
-            bool modifier = (evt.modifiers & (EventModifiers.Shift | EventModifiers.Control | EventModifiers.Alt | EventModifiers.Command)) != EventModifiers.None;
+            EventModifiers modifiers = (EventModifiers.Shift | EventModifiers.Control |
+                                        EventModifiers.Alt | EventModifiers.Command);
+            bool modifier = (evt.modifiers & modifiers) != EventModifiers.None;
             bool edit = evt.button > 0 || modifier;
             float time = sequencerPosition.x;
 
@@ -318,12 +321,13 @@ namespace Tytel
             float x = start * colWidth + keyboardWidth;
             float y = (numRows - note - 1) * rowHeight;
             float width = end * colWidth + keyboardWidth - x;
-            Rect noteOutsideRect = new Rect(x, y - 1, width + 1, rowHeight + 1);
-            Rect noteRect = new Rect(x + 1, y, width - 1, rowHeight - 1);
+            Rect noteOutsideRect = new Rect(x, y, width + 1, rowHeight);
+            Rect noteRect = new Rect(x + 1, y + 1, width - 1, rowHeight - 2);
             EditorGUI.DrawRect(noteOutsideRect, Color.black);
             EditorGUI.DrawRect(noteRect, color);
-            Rect leftResizeRect = new Rect(x + 2, y, grabResizeWidth, rowHeight);
-            Rect rightResizeRect = new Rect(noteRect.xMax - grabResizeWidth, y, grabResizeWidth, rowHeight);
+            Rect leftResizeRect = new Rect(x - mouseBump.x, y - mouseBump.y, grabResizeWidth, rowHeight);
+            Rect rightResizeRect = new Rect(noteRect.xMax - grabResizeWidth - mouseBump.x, y - mouseBump.y,
+                                            grabResizeWidth, rowHeight);
             EditorGUIUtility.AddCursorRect(leftResizeRect, MouseCursor.SplitResizeLeftRight);
             EditorGUIUtility.AddCursorRect(rightResizeRect, MouseCursor.SplitResizeLeftRight);
         }
@@ -365,7 +369,7 @@ namespace Tytel
             }
             else if (mode == Mode.kAdding)
             {
-                int startDrag = Mathf.Max(0, (int)Mathf.Floor(Mathf.Min(pressTime, dragTime)));
+                int startDrag = Mathf.Max(0, Mathf.FloorToInt(Mathf.Min(pressTime, dragTime)));
                 int endDrag = (int)Mathf.Ceil(Mathf.Max(pressTime, dragTime));
 
                 for (int i = startDrag; i < endDrag; ++i)

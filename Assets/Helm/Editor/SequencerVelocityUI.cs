@@ -19,6 +19,7 @@ namespace Tytel
         Color activeAreaColor = new Color(0.6f, 0.6f, 0.6f);
         Color background = new Color(0.5f, 0.5f, 0.5f);
         Color velocityColor = new Color(1.0f, 0.3f, 0.3f);
+        Color velocityActiveColor = new Color(0.6f, 1.0f, 1.0f);
 
         float sixteenthWidth = 1.0f;
         float height = 1.0f;
@@ -43,7 +44,7 @@ namespace Tytel
         {
             currentNote = null;
             float closest = 2.0f  * velocityHandleGrabWidth;
-            float mouseX = mousePosition.x - rect.x;
+            float mouseX = mousePosition.x - rect.x - leftPadding;
             float mouseY = mousePosition.y - rect.y;
             for (int i = sequencer.allNotes.Length - 1; i >= 0; --i)
             {
@@ -78,7 +79,7 @@ namespace Tytel
         {
             Event evt = Event.current;
 
-            sixteenthWidth = rect.width / sequencer.length;
+            sixteenthWidth = (rect.width - rightPadding - leftPadding) / sequencer.length;
 
             float velocityMovementHeight = rect.height - velocityHandleWidth;
             float minVelocityY = rect.y + velocityHandleWidth;
@@ -101,20 +102,21 @@ namespace Tytel
             return true;
         }
 
-        void DrawNote(Note note)
+        void DrawNote(Note note, Color color)
         {
             float x = sixteenthWidth * note.start;
             float h = note.velocity * (height - velocityHandleWidth) + velocityHandleWidth / 2.0f;
             float y = height - h;
 
-            EditorGUI.DrawRect(new Rect(x - velocityMeterWidth / 2.0f, y, velocityMeterWidth, h), velocityColor);
-            EditorGUI.DrawRect(new Rect(x - velocityHandleWidth / 2.0f, y - velocityHandleWidth / 2.0f, velocityHandleWidth, velocityHandleWidth), velocityColor);
+            EditorGUI.DrawRect(new Rect(x - velocityMeterWidth / 2.0f, y, velocityMeterWidth, h), color);
+            EditorGUI.DrawRect(new Rect(x - velocityHandleWidth / 2.0f, y - velocityHandleWidth / 2.0f,
+                                        velocityHandleWidth, velocityHandleWidth), color);
         }
 
         void DrawRowNotes(List<Note> rowNotes)
         {
             foreach (Note note in rowNotes)
-                DrawNote(note);
+                DrawNote(note, velocityColor);
         }
 
         void DrawNoteVelocities(HelmSequencer sequencer)
@@ -124,6 +126,28 @@ namespace Tytel
 
             for (int i = 0; i < sequencer.allNotes.Length; ++i)
                 DrawRowNotes(sequencer.allNotes[i].notes);
+        }
+
+        public void DrawTextMeasurements(Rect rect)
+        {
+            const int barWidth = 4;
+
+            GUIStyle style = new GUIStyle();
+            style.fontSize = 9;
+            style.padding = new RectOffset(0, barWidth, 0, 0);
+            style.alignment = TextAnchor.UpperRight;
+            GUI.Label(rect, "127", style);
+            style.alignment = TextAnchor.LowerRight;
+            GUI.Label(rect, "1", style);
+
+            Rect bar = new Rect(rect.x + rect.width - 1, rect.y, 1, rect.height);
+            Rect top = new Rect(rect.x + rect.width - barWidth, rect.y, barWidth, 1);
+            Rect bottom = new Rect(rect.x + rect.width - barWidth, rect.y + rect.height - 1, barWidth, 1);
+            Rect middle = new Rect(rect.x + rect.width - barWidth / 2.0f, rect.y + rect.height / 2.0f, barWidth / 2.0f, 1);
+            EditorGUI.DrawRect(bar, Color.black);
+            EditorGUI.DrawRect(top, Color.black);
+            EditorGUI.DrawRect(bottom, Color.black);
+            EditorGUI.DrawRect(middle, Color.black);
         }
 
         public void DrawSequencerPosition(Rect rect, HelmSequencer sequencer)
@@ -138,8 +162,15 @@ namespace Tytel
             EditorGUI.DrawRect(rect, background);
             EditorGUI.DrawRect(activeArea, activeAreaColor);
 
+            Rect leftBufferArea = new Rect(rect);
+            leftBufferArea.width = leftPadding;
+            DrawTextMeasurements(leftBufferArea);
+
             GUI.BeginGroup(activeArea);
             DrawNoteVelocities(sequencer);
+            if (currentNote != null)
+                DrawNote(currentNote, velocityActiveColor);
+
             GUI.EndGroup();
         }
     }
