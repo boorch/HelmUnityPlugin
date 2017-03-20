@@ -36,6 +36,20 @@ namespace Tytel
         const float leftGrowth = 15.0f;
         const float rightGrowth = 10.0f;
 
+        GUIStyle keyStyle;
+        GUIStyle cStyle;
+
+        public KeyboardUI()
+        {
+            keyStyle = GUI.skin.box;
+            keyStyle.padding = new RectOffset(0, 0, 0, 0);
+            keyStyle.border = new RectOffset(1, 1, 1, 1);
+            keyStyle.overflow = new RectOffset(0, 0, 0, 0);
+
+            cStyle = new GUIStyle();
+            cStyle.alignment = TextAnchor.LowerCenter;
+        }
+
         public bool DoKeyboardEvents(Rect rect, int channel)
         {
             Event evt = Event.current;
@@ -149,11 +163,10 @@ namespace Tytel
 
             Rect keyRect = new Rect(left, y, right - left + 1, height);
             GUI.backgroundColor = GetKeyColor(key, pressed);
-            GUIStyle style = GUI.skin.box;
-            style.padding = new RectOffset(0, 0, 0, 0);
-            style.border = new RectOffset(1, 1, 1, 1);
-            style.overflow = new RectOffset(0, 0, 0, 0);
-            GUI.Box(keyRect, GUIContent.none, style);
+            GUI.Box(keyRect, GUIContent.none, keyStyle);
+
+            if (key % Utils.kNotesPerOctave == 0)
+                GUI.Label(keyRect, "C" + Utils.GetOctave(key), cStyle);
             return true;
         }
 
