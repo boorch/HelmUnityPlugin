@@ -111,7 +111,6 @@ namespace Helm {
 
   UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK CreateCallback(UnityAudioEffectState* state) {
     EffectData* effect_data = new EffectData;
-    MutexScopeLock mutex_lock(effect_data->mutex);
     memset(effect_data->sequencer_events, 0, sizeof(HelmSequencer::Note*) * MAX_NOTES);
 
     effect_data->num_synth_parameters = mopo::Parameters::lookup_.getAllDetails().size();
