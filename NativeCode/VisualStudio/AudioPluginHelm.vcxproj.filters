@@ -321,6 +321,12 @@
       <Filter>plugin</Filter>
     </ClInclude>
     <ClInclude Include="..\helm_sequencer.h" />
+    <ClInclude Include="..\helm\concurrentqueue\blockingconcurrentqueue.h">
+      <Filter>helm\concurrentqueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\concurrentqueue\concurrentqueue.h">
+      <Filter>helm\concurrentqueue</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="helm">
@@ -343,6 +349,9 @@
     </Filter>
     <Filter Include="plugin">
       <UniqueIdentifier>{5c82ff85-98a2-4d39-9d43-ffbddc80bbba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helm\concurrentqueue">
+      <UniqueIdentifier>{78a6e315-0d81-4851-a890-60f03827e1c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

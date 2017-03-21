@@ -74,7 +74,7 @@ namespace Tytel
         float colWidth = 30.0f;
 
         Vector2 scrollPosition;
-        Vector2 mouseBump = new Vector2(-1.0f, -3.0f);
+        Vector2 mouseBump = new Vector2(0.0f, 0.0f);
 
         Vector2 GetSequencerPosition(Rect rect, Vector2 mousePosition)
         {

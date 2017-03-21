@@ -137,6 +137,7 @@
     <Compile Include="Assets\Helm\Editor\PatchBrowserUI.cs" />
     <Compile Include="Assets\Helm\Editor\SequencerPositionUI.cs" />
     <Compile Include="Assets\Helm\Editor\SequencerUI.cs" />
+    <Compile Include="Assets\Helm\Editor\SequencerVelocityUI.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Helm\README.txt" />

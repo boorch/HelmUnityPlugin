@@ -89,7 +89,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>../helm/src/synthesis;../helm/src/common;../helm/mopo/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../helm/src/synthesis;../helm/src/common;../helm/mopo/src;../helm/concurrentqueue</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -115,7 +115,7 @@ copy $(TargetPath) ..\..\Assets\Plugins\x86\$(TargetName).dll
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>false</ExceptionHandling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <AdditionalIncludeDirectories>../helm/src/synthesis;../helm/src/common;../helm/mopo/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../helm/src/synthesis;../helm/src/common;../helm/mopo/src;../helm/concurrentqueue</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -143,7 +143,7 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
       <FloatingPointModel>Fast</FloatingPointModel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointExceptions>false</FloatingPointExceptions>
-      <AdditionalIncludeDirectories>../helm/src/synthesis;../helm/src/common;../helm/mopo/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../helm/src/synthesis;../helm/src/common;../helm/mopo/src;../helm/concurrentqueue</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -176,7 +176,7 @@ copy $(TargetPath) ..\..\Assets\Plugins\x86\$(TargetName).dll
       <ExceptionHandling>false</ExceptionHandling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FloatingPointExceptions>false</FloatingPointExceptions>
-      <AdditionalIncludeDirectories>../helm/src/synthesis;../helm/src/common;../helm/mopo/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../helm/src/synthesis;../helm/src/common;../helm/mopo/src;../helm/concurrentqueue</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -246,6 +246,8 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
   <ItemGroup>
     <ClInclude Include="..\AudioPluginInterface.h" />
     <ClInclude Include="..\AudioPluginUtil.h" />
+    <ClInclude Include="..\helm\concurrentqueue\blockingconcurrentqueue.h" />
+    <ClInclude Include="..\helm\concurrentqueue\concurrentqueue.h" />
     <ClInclude Include="..\helm\mopo\src\alias.h" />
     <ClInclude Include="..\helm\mopo\src\arpeggiator.h" />
     <ClInclude Include="..\helm\mopo\src\bit_crush.h" />
