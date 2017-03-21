@@ -29,7 +29,8 @@ namespace Tytel
 
             EditorGUI.DrawRect(activeArea, Color.gray);
             Rect position = new Rect(relativePostition * activeArea.width + activeArea.x, activeArea.y, positionWidth, activeArea.height);
-            EditorGUI.DrawRect(position, tickColor);
+            if (sequencer.isActiveAndEnabled && Application.isPlaying)
+                EditorGUI.DrawRect(position, tickColor);
         }
     }
 }

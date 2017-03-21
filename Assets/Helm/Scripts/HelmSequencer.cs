@@ -69,7 +69,7 @@ namespace Tytel
 
         public int length = 16;
         public int channel = 0;
-        public int currentSixteenth = 0;
+        public int currentSixteenth = -1;
         public NoteRow[] allNotes = new NoteRow[Utils.kMidiSize];
 
         public const int kRows = Utils.kMidiSize;
@@ -90,6 +90,7 @@ namespace Tytel
             if (reference != IntPtr.Zero)
                 DeleteSequencer(reference);
             reference = IntPtr.Zero;
+            currentSixteenth = -1;
         }
 
         public IntPtr Reference()
