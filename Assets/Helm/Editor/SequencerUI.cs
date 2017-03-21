@@ -81,7 +81,6 @@ namespace Tytel
                 return -Vector2.one;
 
             Vector2 localPosition = mousePosition - rect.position + scrollPosition;
-            Debug.Log(localPosition);
             float note = numRows - Mathf.Floor((localPosition.y / rowHeight)) - 1;
             float time = (localPosition.x - keyboardWidth) / colWidth;
             return new Vector2(time, note);
