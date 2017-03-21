@@ -52,9 +52,6 @@
     <Reference Include="UnityEngine">
       <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Advertisements">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Advertisements.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -70,9 +67,6 @@
     <Reference Include="UnityEngine.HoloLens">
       <HintPath>Library\UnityAssemblies\UnityEngine.HoloLens.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Purchasing">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Purchasing.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.VR">
       <HintPath>Library\UnityAssemblies\UnityEngine.VR.dll</HintPath>
     </Reference>
@@ -86,6 +80,7 @@
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\ControlJump.cs" />
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\ControlTorque.cs" />
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\DestroyAfterTime.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\EnableAfterTime.cs" />
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\GroundKey.cs" />
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\GroundKeyboard.cs" />
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\MaterialPulse.cs" />
