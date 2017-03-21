@@ -17,8 +17,8 @@ namespace Tytel
         int lastSelectedIndex = -1;
         public string selected = "";
 
-        const float rowHeight = 22.0f;
-        const int rightPadding = 15;
+        public const float rowHeight = 22.0f;
+        public const int rightPadding = 15;
 
         string filter;
         public string folder;

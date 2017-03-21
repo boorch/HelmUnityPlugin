@@ -85,6 +85,17 @@ namespace Tytel
 
             GUI.backgroundColor = prev_color;
             GUILayout.Space(5.0f);
+
+            GUIStyle titleStyle = new GUIStyle();
+            titleStyle.alignment = TextAnchor.MiddleCenter;
+            titleStyle.fontSize = 12;
+            titleStyle.fontStyle = FontStyle.Bold;
+            Rect titleRect = GUILayoutUtility.GetRect(200, PatchBrowserUI.rowHeight, GUILayout.ExpandWidth(true));
+            titleRect.width = titleRect.width / 2 - PatchBrowserUI.rightPadding;
+            GUI.Label(titleRect, "Folder", titleStyle);
+            titleRect.x = titleRect.xMax + PatchBrowserUI.rightPadding;
+            GUI.Label(titleRect, "Patch", titleStyle);
+
             Rect browserRect = GUILayoutUtility.GetRect(200, 120, GUILayout.ExpandWidth(true));
             browserRect.x -= 14.0f;
             browserRect.width += 18.0f;
@@ -96,7 +107,10 @@ namespace Tytel
             patchRect.x = folderRect.xMax;
 
             if (folderBrowser.DoBrowserEvents(plugin, folderRect))
+            {
                 patchBrowser.folder = folderBrowser.selected;
+                plugin.SetFloatParameter("oscmix", Random.Range(0.0f, 0.1f));
+            }
 
             folderBrowser.DrawBrowser(folderRect);
 
