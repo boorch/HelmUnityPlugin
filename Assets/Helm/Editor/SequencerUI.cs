@@ -74,14 +74,14 @@ namespace Tytel
         float colWidth = 30.0f;
 
         Vector2 scrollPosition;
-        Vector2 mouseBump = new Vector2(0.0f, 0.0f);
 
         Vector2 GetSequencerPosition(Rect rect, Vector2 mousePosition)
         {
             if (!rect.Contains(mousePosition))
                 return -Vector2.one;
 
-            Vector2 localPosition = mousePosition - rect.position + scrollPosition + mouseBump;
+            Vector2 localPosition = mousePosition - rect.position + scrollPosition;
+            Debug.Log(localPosition);
             float note = numRows - Mathf.Floor((localPosition.y / rowHeight)) - 1;
             float time = (localPosition.x - keyboardWidth) / colWidth;
             return new Vector2(time, note);
@@ -255,6 +255,9 @@ namespace Tytel
         public bool DoSequencerEvents(Rect rect, HelmSequencer sequencer)
         {
             Event evt = Event.current;
+            if (!evt.isMouse)
+                return false;
+
             Vector2 sequencerPosition = GetSequencerPosition(rect, evt.mousePosition);
             EventModifiers modifiers = (EventModifiers.Shift | EventModifiers.Control |
                                         EventModifiers.Alt | EventModifiers.Command);
@@ -354,9 +357,8 @@ namespace Tytel
             Rect noteRect = new Rect(x + 1, y + 1, width - 1, rowHeight - 2);
             EditorGUI.DrawRect(noteOutsideRect, Color.black);
             EditorGUI.DrawRect(noteRect, color);
-            Rect leftResizeRect = new Rect(x - mouseBump.x, y - mouseBump.y, grabResizeWidth, rowHeight);
-            Rect rightResizeRect = new Rect(noteRect.xMax - grabResizeWidth - mouseBump.x, y - mouseBump.y,
-                                            grabResizeWidth, rowHeight);
+            Rect leftResizeRect = new Rect(x, y, grabResizeWidth, rowHeight);
+            Rect rightResizeRect = new Rect(noteRect.xMax - grabResizeWidth, y, grabResizeWidth, rowHeight);
             EditorGUIUtility.AddCursorRect(leftResizeRect, MouseCursor.SplitResizeLeftRight);
             EditorGUIUtility.AddCursorRect(rightResizeRect, MouseCursor.SplitResizeLeftRight);
         }
