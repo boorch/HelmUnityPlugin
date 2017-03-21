@@ -101,6 +101,10 @@ namespace Tytel
         {
             if (reference == IntPtr.Zero)
                 reference = CreateSequencer();
+
+            ChangeSequencerChannel(reference, channel);
+            ChangeSequencerLength(reference, length);
+
             for (int i = 0; i < allNotes.Length; ++i)
             {
                 if (allNotes[i] == null)
