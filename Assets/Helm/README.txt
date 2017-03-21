@@ -29,6 +29,7 @@ Play the scene to hear the sequence.
 
 ## Features
 
+PlayNoteScheduled
 Sync audio loops to seqeuncer
 Better way to change parameters live
 Better way to route Helm audio into an object in 3d space
