@@ -407,6 +407,24 @@ namespace Tytel
             }
         }
 
+        public float GetScrollPosition(HelmSequencer sequencer, float height)
+        {
+            float lowerBuffer = rowHeight * 8.0f;
+            float totalHeight = sequencer.allNotes.Length * rowHeight;
+
+            for (int i = 0; i < sequencer.allNotes.Length; ++i)
+            {
+                if (sequencer.allNotes[i].notes.Count > 0)
+                {
+                    float noteY = (sequencer.allNotes.Length - i - 1) * rowHeight;
+                    float bottom = Mathf.Clamp(noteY + lowerBuffer, height, totalHeight);
+                    return bottom - height;
+                }
+            }
+
+            return (sequencer.allNotes.Length * rowHeight - height) / 2.0f;
+        }
+
         public void DrawSequencer(Rect rect, HelmSequencer sequencer)
         {
             numRows = HelmSequencer.kRows;
@@ -418,7 +436,7 @@ namespace Tytel
             if (lastHeight != rect.height)
             {
                 lastHeight = rect.height;
-                scrollPosition.y = (scrollableHeight - rect.height) / 2.0f;
+                scrollPosition.y = GetScrollPosition(sequencer, rect.height);
             }
 
             Rect scrollableArea = new Rect(0, 0, scrollableWidth, scrollableHeight);
