@@ -12,7 +12,6 @@ namespace Tytel
         public int octaveSpan = 2;
         public float minDensity = 0.5f;
         public float maxDensity = 1.0f;
-        public bool generate = false;
 
         List<float> rhythm;
         List<int> melody;
@@ -57,13 +56,6 @@ namespace Tytel
                 else
                     lastNote.end = i + 1;
             }
-        }
-
-        void Update()
-        {
-            if (generate)
-                Generate();
-            generate = false;
         }
     }
 }
