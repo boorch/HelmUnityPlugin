@@ -2,14 +2,18 @@
 
 using UnityEditor;
 using UnityEngine;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Tytel
 {
     public class HelmSynthUI : IAudioEffectPluginGUI
     {
+        const string extension = ".helm";
         KeyboardUI keyboard = new KeyboardUI();
-        PatchBrowserUI patchBrowser = new PatchBrowserUI();
+        PatchBrowserUI folderBrowser = new PatchBrowserUI(true, "");
+        PatchBrowserUI patchBrowser = new PatchBrowserUI(false, extension);
         bool showOptions = false;
 
         public override string Name
@@ -25,6 +29,46 @@ namespace Tytel
         public override string Vendor
         {
             get { return "Matt Tytel"; }
+        }
+
+        void LoadPatch(IAudioEffectPlugin plugin, string path)
+        {
+            string patchText = File.ReadAllText(path);
+            HelmPatchFormat patch = JsonUtility.FromJson<HelmPatchFormat>(patchText);
+
+            FieldInfo[] fields = typeof(HelmPatchSettings).GetFields();
+
+            foreach (FieldInfo field in fields)
+            {
+                if (!field.FieldType.IsArray && !field.IsLiteral)
+                {
+                    float val = (float)field.GetValue(patch.settings);
+                    string name = HelmPatchSettings.ConvertToPlugin(field.Name);
+                    plugin.SetFloatParameter(name, val);
+                }
+            }
+
+            for (int i = 0; i < HelmPatchSettings.kMaxModulations; ++i)
+                plugin.SetFloatParameter("mod" + i + "value", 0.0f);
+
+            int modulationIndex = 0;
+            foreach (HelmModulationSetting modulation in patch.settings.modulations)
+            {
+                if (modulationIndex >= HelmPatchSettings.kMaxModulations)
+                {
+                    Debug.LogWarning("Only 16 modulations are currently supported in the Helm Unity plugin.");
+                    break;
+                }
+                string prefix = "mod" + modulationIndex;
+
+                float source = HelmPatchSettings.GetSourceIndex(modulation.source);
+                plugin.SetFloatParameter(prefix + "source", source);
+                float dest = HelmPatchSettings.GetDestinationIndex(modulation.destination);
+                plugin.SetFloatParameter(prefix + "dest", dest);
+                plugin.SetFloatParameter(prefix + "value", modulation.amount);
+
+                modulationIndex++;
+            }
         }
 
         public override bool OnGUI(IAudioEffectPlugin plugin)
@@ -44,8 +88,21 @@ namespace Tytel
             Rect browserRect = GUILayoutUtility.GetRect(200, 120, GUILayout.ExpandWidth(true));
             browserRect.x -= 14.0f;
             browserRect.width += 18.0f;
-            patchBrowser.DoBrowserEvents(plugin, browserRect);
-            patchBrowser.DrawBrowser(browserRect);
+
+            Rect folderRect = new Rect(browserRect);
+            folderRect.width = (int)(browserRect.width / 2);
+
+            Rect patchRect = new Rect(folderRect);
+            patchRect.x = folderRect.xMax;
+
+            if (folderBrowser.DoBrowserEvents(plugin, folderRect))
+                patchBrowser.folder = folderBrowser.selected;
+
+            folderBrowser.DrawBrowser(folderRect);
+
+            if (patchBrowser.DoBrowserEvents(plugin, patchRect))
+                LoadPatch(plugin, patchBrowser.selected);
+            patchBrowser.DrawBrowser(patchRect);
 
             GUILayout.Space(5.0f);
             GUI.backgroundColor = prev_color;

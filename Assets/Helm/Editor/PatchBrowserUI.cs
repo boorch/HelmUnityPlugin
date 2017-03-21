@@ -3,7 +3,6 @@
 using UnityEditor;
 using UnityEngine;
 using System.IO;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -14,98 +13,84 @@ namespace Tytel
         Vector2 scrollPosition = Vector2.zero;
         Vector2 mousePosition = Vector2.zero;
         GUIStyle rowStyle;
-        FileInfo[] files;
+        FileSystemInfo[] files;
         int lastSelectedIndex = -1;
+        public string selected = "";
 
         const float rowHeight = 22.0f;
         const int rightPadding = 15;
 
-        public PatchBrowserUI()
+        string filter;
+        public string folder;
+        bool directories;
+
+        public PatchBrowserUI(bool browseDirectories, string extension)
         {
-            rowStyle = new GUIStyle(GUI.skin.box);
+            directories = browseDirectories;
+            filter = "*" + extension;
+            folder = GetFullPatchesPath();
+
+            rowStyle = new GUIStyle();
             rowStyle.alignment = TextAnchor.MiddleLeft;
             rowStyle.padding = new RectOffset(10, 10, 0, 0);
             rowStyle.border = new RectOffset(11, 11, 2, 2);
 
-            files = GetAllPatches();
+            files = GetAllFiles();
         }
 
-        string GetFullPatchesPath()
+        public static string GetFullPatchesPath()
         {
             const string patchesPath = "/Helm/Patches/";
             return Application.dataPath + patchesPath;
         }
 
-        void LoadPatch(IAudioEffectPlugin plugin, string path)
-        {
-            string patchText = File.ReadAllText(path);
-            HelmPatchFormat patch = JsonUtility.FromJson<HelmPatchFormat>(patchText);
-
-            FieldInfo[] fields = typeof(HelmPatchSettings).GetFields();
-
-            foreach (FieldInfo field in fields)
-            {
-                if (!field.FieldType.IsArray && !field.IsLiteral)
-                {
-                    float val = (float)field.GetValue(patch.settings);
-                    string name = HelmPatchSettings.ConvertToPlugin(field.Name);
-                    plugin.SetFloatParameter(name, val);
-                }
-            }
-
-            for (int i = 0; i < HelmPatchSettings.kMaxModulations; ++i)
-                plugin.SetFloatParameter("mod" + i + "value", 0.0f);
-
-            int modulationIndex = 0;
-            foreach (HelmModulationSetting modulation in patch.settings.modulations)
-            {
-                if (modulationIndex >= HelmPatchSettings.kMaxModulations)
-                {
-                    Debug.LogWarning("Only 16 modulations are currently supported in the Helm Unity plugin.");
-                    break;
-                }
-                string prefix = "mod" + modulationIndex;
-
-                float source = HelmPatchSettings.GetSourceIndex(modulation.source);
-                plugin.SetFloatParameter(prefix + "source", source);
-                float dest = HelmPatchSettings.GetDestinationIndex(modulation.destination);
-                plugin.SetFloatParameter(prefix + "dest", dest);
-                plugin.SetFloatParameter(prefix + "value", modulation.amount);
-
-                modulationIndex++;
-            }
-        }
-
-        FileInfo[] GetAllPatches()
+        public static DirectoryInfo[] GetAllPatchFolders()
         {
             DirectoryInfo directory = new DirectoryInfo(GetFullPatchesPath());
-            return directory.GetFiles("*.helm");
+            return directory.GetDirectories();
+        }
+
+        public static FileInfo[] GetFilesInDirectory(string directory, string pattern)
+        {
+            DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+            return directoryInfo.GetFiles(pattern);
+        }
+
+        FileSystemInfo[] GetAllFiles()
+        {
+            if (directories)
+                return GetAllPatchFolders();
+            DirectoryInfo directory = new DirectoryInfo(folder + "/");
+            return directory.GetFiles(filter);
         }
 
         void ReloadPatches()
         {
-            FileInfo[] newFiles = GetAllPatches();
+            FileSystemInfo[] newFiles = GetAllFiles();
             if (newFiles.Length != files.Length)
                 lastSelectedIndex = -1;
             files = newFiles;
         }
 
-        public void DoBrowserEvents(IAudioEffectPlugin plugin, Rect rect)
+        public bool DoBrowserEvents(IAudioEffectPlugin plugin, Rect rect)
         {
             Event evt = Event.current;
             mousePosition = evt.mousePosition;
+            bool newSelected = false;
             if (evt.type == EventType.MouseDown && rect.Contains(mousePosition))
             {
-                FileInfo[] files = GetAllPatches();
+                FileSystemInfo[] files = GetAllFiles();
                 int index = GetPatchIndex(rect, evt.mousePosition);
                 if (files.Length > index && index >= 0)
                 {
                     lastSelectedIndex = index;
-                    LoadPatch(plugin, files[index].FullName);
+                    selected = files[index].FullName;
+                    newSelected = true;
                 }
-
-                ReloadPatches();
             }
+
+            ReloadPatches();
+            return newSelected;
         }
 
         int GetPatchIndex(Rect guiRect, Vector2 mousePosition)
@@ -123,24 +108,18 @@ namespace Tytel
             Color previousColor = GUI.color;
             Color colorEven = new Color(0.8f, 0.8f, 0.8f);
             Color colorOdd = new Color(0.9f, 0.9f, 0.9f);
-            Color colorHover = Color.white;
 
             float rowWidth = rect.width - rightPadding;
             Rect scrollableArea = new Rect(0, 0, rowWidth, files.Length * rowHeight);
             scrollPosition = GUI.BeginScrollView(rect, scrollPosition, scrollableArea, false, true);
 
-            int hoverIndex = GetPatchIndex(rect, mousePosition);
-
             float y = 0.0f;
             int index = 0;
-            foreach (FileInfo file in files)
+            foreach (FileSystemInfo file in files)
             {
-                if (index == hoverIndex)
-                    GUI.color = colorHover;
-                else if (index % 2 == 0)
-                    GUI.color = colorEven;
-                else
-                    GUI.color = colorOdd;
+                Color color = colorOdd;
+                if (index % 2 == 0)
+                    color = colorEven;
 
                 if (lastSelectedIndex == index)
                     rowStyle.fontStyle = FontStyle.Bold;
@@ -148,7 +127,10 @@ namespace Tytel
                     rowStyle.fontStyle = FontStyle.Normal;
 
                 string name = Path.GetFileNameWithoutExtension(file.Name);
-                GUI.Label(new Rect(0, y, rowWidth, rowHeight + 1), name, rowStyle);
+
+                Rect rowRect = new Rect(0, y, rowWidth, rowHeight + 1);
+                EditorGUI.DrawRect(rowRect, color);
+                GUI.Label(rowRect, name, rowStyle);
                 y += rowHeight;
                 index++;
             }
