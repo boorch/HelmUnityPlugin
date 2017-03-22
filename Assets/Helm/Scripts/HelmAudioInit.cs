@@ -6,7 +6,7 @@ namespace Helm
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(AudioSource))]
-    public class AudioHeartBeat : MonoBehaviour
+    public class HelmAudioInit : MonoBehaviour
     {
         void Awake()
         {

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Helm
 {
-    [RequireComponent(typeof(AudioHeartBeat))]
+    [RequireComponent(typeof(HelmAudioInit))]
     public class HelmController : MonoBehaviour
     {
         [DllImport("AudioPluginHelm")]
