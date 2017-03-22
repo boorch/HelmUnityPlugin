@@ -3,7 +3,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Tytel
+namespace Helm
 {
     [CustomEditor(typeof(HelmController))]
     class HelmControllerUI : Editor

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Tytel
+namespace Helm
 {
     public class DestroyAfterTime : MonoBehaviour
     {

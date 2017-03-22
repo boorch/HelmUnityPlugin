@@ -40,5 +40,5 @@ iOS/android/ps4/xbox support?
 
 Sometimes playhead is out of sync?
 BPM Change notes stay around.
-Low refresh time for playhead updates.
+Low refresh rate for playhead updates.
 

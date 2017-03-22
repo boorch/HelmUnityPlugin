@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace Tytel
+namespace Helm
 {
     [RequireComponent(typeof(AudioHeartBeat))]
     public class HelmSequencer : MonoBehaviour

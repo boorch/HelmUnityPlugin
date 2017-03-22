@@ -3,7 +3,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Tytel
+namespace Helm
 {
     [CustomEditor(typeof(HelmBpm))]
     class HelmBpmUI : Editor

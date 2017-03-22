@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Tytel
+namespace Helm
 {
     public class SequencerVelocityUI
     {

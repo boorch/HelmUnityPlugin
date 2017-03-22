@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
 
-namespace Tytel
+namespace Helm
 {
     public class HelmBpm : MonoBehaviour
     {

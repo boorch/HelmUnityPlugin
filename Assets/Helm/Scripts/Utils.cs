@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Tytel
+namespace Helm
 {
     public class Utils : MonoBehaviour
     {

@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
 
-namespace Tytel
+namespace Helm
 {
     [RequireComponent(typeof(AudioSource))]
     public class Helm3dAudioSource : MonoBehaviour

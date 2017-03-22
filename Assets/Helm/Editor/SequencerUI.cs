@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-namespace Tytel
+namespace Helm
 {
     public class SequencerUI
     {

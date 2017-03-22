@@ -3,7 +3,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Tytel
+namespace Helm
 {
     public class SequencerPositionUI
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
 
-namespace Tytel
+namespace Helm
 {
     [System.Serializable]
     public class Note : ISerializationCallbackReceiver
