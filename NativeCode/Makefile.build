@@ -3,13 +3,14 @@ LOCAL_DIR = .
 MOPO_DIR = helm/mopo/src
 SYNTHESIS_DIR = helm/src/synthesis
 HELM_COMMON_DIR = helm/src/common
+QUEUE_DIR = helm/concurrentqueue
 
 MOPO_OBJS := $(patsubst $(MOPO_DIR)/%.cpp,$(OUTPUT_DIR)/$(MOPO_DIR)/%.o, $(wildcard $(MOPO_DIR)/*.cpp))
 SYNTHESIS_OBJS := $(patsubst $(SYNTHESIS_DIR)/%.cpp,$(OUTPUT_DIR)/$(SYNTHESIS_DIR)/%.o, $(wildcard $(SYNTHESIS_DIR)/*.cpp))
 LOCAL_OBJS := $(patsubst $(LOCAL_DIR)/%.cpp,$(OUTPUT_DIR)/$(LOCAL_DIR)/%.o, $(wildcard $(LOCAL_DIR)/*.cpp))
 
 OUTPUT=libAudioPluginHelm.so
-CXXFLAGS= -I . -I $(MOPO_DIR) -I $(SYNTHESIS_DIR) -I $(HELM_COMMON_DIR) -O3 -fPIC -std=c++11
+CXXFLAGS= -I . -I $(MOPO_DIR) -I $(SYNTHESIS_DIR) -I $(HELM_COMMON_DIR) -I $(QUEUE_DIR) -O3 -fPIC -std=c++11
 LDFLAGS= -shared -rdynamic -fPIC
 DESTINATION=../Assets/Plugins
 ifeq ($(ARCH),32)
