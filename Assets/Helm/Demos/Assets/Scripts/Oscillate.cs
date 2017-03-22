@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class Oscillate : MonoBehaviour
     {
         public Vector3 oscillationVector = Vector3.right;

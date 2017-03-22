@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class ControlTorque : MonoBehaviour
     {
         public float torque = 1.0f;

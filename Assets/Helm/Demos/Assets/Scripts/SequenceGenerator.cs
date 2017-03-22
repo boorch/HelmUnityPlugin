@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class SequenceGenerator : MonoBehaviour
     {
         public HelmSequencer sequencer;

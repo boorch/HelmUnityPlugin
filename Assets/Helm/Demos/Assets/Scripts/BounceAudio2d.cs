@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class BounceAudio2d : MonoBehaviour
     {
         public HelmController synth;

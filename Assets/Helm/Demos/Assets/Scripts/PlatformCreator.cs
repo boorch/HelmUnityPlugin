@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class PlatformCreator : MonoBehaviour
     {
         public Transform platformModel;

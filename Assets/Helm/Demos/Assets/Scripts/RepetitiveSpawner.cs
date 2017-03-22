@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class RepetitiveSpawner : MonoBehaviour
     {
         public Transform model;

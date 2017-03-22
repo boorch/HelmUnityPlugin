@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class ControlJump : MonoBehaviour
     {
         public float jumpForce = 1.0f;

@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class CameraMan : MonoBehaviour
     {
         public Transform player;

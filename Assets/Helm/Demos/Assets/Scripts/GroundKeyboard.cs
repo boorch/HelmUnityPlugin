@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class GroundKeyboard : MonoBehaviour
     {
         public GroundKey keyModel;

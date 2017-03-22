@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class EnableAfterTime : MonoBehaviour
     {
         public float time = 1.0f;
