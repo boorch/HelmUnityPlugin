@@ -24,11 +24,28 @@ namespace Tytel
         {
         }
 
+        void Start()
+        {
+            Generate();
+        }
+
         int GetKeyFromRandomWalk(int note)
         {
             int octave = note / scale.Length;
             int scalePosition = note % scale.Length;
             return minNote + octave * Utils.kNotesPerOctave + scale[scalePosition];
+        }
+
+        int GetNextNote(int current, int max)
+        {
+            int next = current + Random.Range(-3, 3);
+
+            if (next > max)
+                return 2 * max - next;
+            if (next < 0)
+                return Mathf.Abs(next);
+
+            return next;
         }
 
         public void Generate()
@@ -45,12 +62,7 @@ namespace Tytel
 
                 if (Random.Range(0.0f, 1.0f) < density)
                 {
-                    currentNote = currentNote + Random.Range(-3, 3);
-                    if (currentNote > maxNote)
-                        currentNote = 2 * maxNote - currentNote;
-                    else if (currentNote < 0)
-                        currentNote = Mathf.Abs(currentNote);
-
+                    currentNote = GetNextNote(currentNote, maxNote);
                     lastNote = sequencer.AddNote(GetKeyFromRandomWalk(currentNote), i, i + 1);
                 }
                 else

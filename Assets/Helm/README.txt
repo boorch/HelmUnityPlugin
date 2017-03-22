@@ -30,6 +30,7 @@ Play the scene to hear the sequence.
 
 PlayNoteScheduled
 Start sequencer loop at beginning
+Variable BPM without resyncing
 Sync audio loops to seqeuncer
 Better way to change parameters live
 UI widgets for better tweaking in Unity
@@ -38,5 +39,6 @@ iOS/anroid/ps4/xbox support?
 
 ## Known Issues
 
+BPM Change notes stay around.
 Low refresh time for playhead updates.
 

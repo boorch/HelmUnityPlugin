@@ -174,6 +174,7 @@ namespace Tytel
                         newStart = Mathf.Round(newStart);
                     activeNote.start = newStart;
                     activeNote.end = newStart + length;
+                    HelmNoteOff(sequencer.channel, activeNote.note);
                     activeNote.note = note;
                 }
             }
@@ -185,6 +186,8 @@ namespace Tytel
                     if (roundingToSixteenth)
                         startTime = Mathf.Round(dragTime);
                     activeNote.start = Mathf.Min(activeNote.end - minNoteTime, startTime);
+
+                    HelmNoteOff(sequencer.channel, activeNote.note);
                 }
             }
             else if (mode == Mode.kResizingEnd)
@@ -195,6 +198,8 @@ namespace Tytel
                     if (roundingToSixteenth)
                         endTime = Mathf.Round(dragTime);
                     activeNote.end = Mathf.Max(activeNote.start + minNoteTime, endTime);
+
+                    HelmNoteOff(sequencer.channel, activeNote.note);
                 }
             }
         }
@@ -217,6 +222,8 @@ namespace Tytel
             {
                 if (activeNote != null)
                     sequencer.ClampNotesInRange(activeNote.note, activeNote.start, activeNote.end, activeNote);
+
+                HelmNoteOff(sequencer.channel, activeNote.note);
             }
             else if (mode == Mode.kResizingStart)
             {
@@ -224,6 +231,8 @@ namespace Tytel
 
                 if (activeNote != null)
                     sequencer.ClampNotesInRange(pressNote, activeNote.start, activeNote.end, activeNote);
+
+                HelmNoteOff(sequencer.channel, pressNote);
             }
             else if (mode == Mode.kResizingEnd)
             {
@@ -231,6 +240,8 @@ namespace Tytel
 
                 if (activeNote != null)
                     sequencer.ClampNotesInRange(pressNote, activeNote.start, activeNote.end, activeNote);
+
+                HelmNoteOff(sequencer.channel, pressNote);
             }
             else if (mode == Mode.kAdding)
             {
@@ -242,11 +253,14 @@ namespace Tytel
 
                 for (int i = startDrag; i < endDrag; ++i)
                     sequencer.AddNote(pressNote, i, i + 1, defaultVelocity);
+
+                HelmNoteOff(sequencer.channel, pressNote);
             }
             else if (mode == Mode.kDeleting)
             {
                 Undo.RecordObject(sequencer, "Delete Sequencer Notes");
                 sequencer.RemoveNotesInRange(pressNote, startTime, endTime);
+                HelmNoteOff(sequencer.channel, pressNote);
             }
             mode = Mode.kWaiting;
         }
