@@ -233,10 +233,13 @@ namespace Helm {
     EffectData* data = state->GetEffectData<EffectData>();
     if (index < 0 || index >= data->num_parameters)
       return UNITY_AUDIODSP_ERR_UNSUPPORTED;
+
     if (value != NULL)
       *value = data->parameters[index];
+
     if (valuestr != NULL)
       valuestr[0] = 0;
+    
     return UNITY_AUDIODSP_OK;
   }
 
@@ -278,7 +281,9 @@ namespace Helm {
     }
   }
 
-  void processAudio(mopo::HelmEngine& engine, float* buffer, int channels, int samples, int offset) {
+  void processAudio(mopo::HelmEngine& engine,
+                    float* in_buffer, float* out_buffer,
+                    int in_channels, int out_channels, int samples, int offset) {
     if (engine.getBufferSize() != samples)
       engine.setBufferSize(samples);
 
@@ -287,11 +292,14 @@ namespace Helm {
 
     const mopo::mopo_float* engine_output_left = engine.output(0)->buffer;
     const mopo::mopo_float* engine_output_right = engine.output(1)->buffer;
-    for (int channel = 0; channel < channels; ++channel) {
+    for (int channel = 0; channel < out_channels; ++channel) {
       const mopo::mopo_float* synth_output = (channel % 2) ? engine_output_right : engine_output_left;
+      int in_channel = channel % in_channels;
 
       for (int i = 0; i < samples; ++i) {
-        buffer[(i + offset) * channels + channel] = synth_output[i];
+        int sample = i + offset;
+        float mult = in_buffer[sample * in_channels + in_channel];
+        out_buffer[sample * out_channels + channel] = mult * synth_output[i];
       }
     }
   }
@@ -327,7 +335,7 @@ namespace Helm {
 
       processSequencerNotes(data, state->currdsptick + b, state->currdsptick + b + current_samples + 1);
       processQueuedNotes(data);
-      processAudio(data->synth_engine, out_buffer, out_channels, current_samples, b);
+      processAudio(data->synth_engine, in_buffer, out_buffer, in_channels, out_channels, current_samples, b);
     }
 
     return UNITY_AUDIODSP_OK;
@@ -365,6 +373,10 @@ namespace Helm {
     for (auto synth : instance_map) {
       if (((int)synth.second->parameters[kChannel]) == channel) {
         MutexScopeLock mutex_lock(synth.second->mutex);
+        std::pair<int, float> event;
+
+        while (synth.second->note_events.try_dequeue(event))
+          ;
         synth.second->synth_engine.allNotesOff();
       }
     }

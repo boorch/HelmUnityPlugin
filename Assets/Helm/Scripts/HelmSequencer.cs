@@ -116,10 +116,12 @@ namespace Tytel
                         note.TryCreate();
                 }
             }
+            AllNotesOff();
         }
 
         void OnDestroy()
         {
+            AllNotesOff();
             DeleteNativeSequencer();
         }
 
@@ -133,6 +135,11 @@ namespace Tytel
         {
             if (reference != IntPtr.Zero)
                 EnableSequencer(reference, false);
+            AllNotesOff();
+        }
+
+        void AllNotesOff()
+        {
             HelmAllNotesOff(channel);
         }
 
@@ -244,13 +251,13 @@ namespace Tytel
 
             if (length != currentLength)
             {
-                HelmAllNotesOff(currentChannel);
+                AllNotesOff();
                 ChangeSequencerLength(reference, length);
                 currentLength = length;
             }
             if (channel != currentChannel)
             {
-                HelmAllNotesOff(currentChannel);
+                AllNotesOff();
                 ChangeSequencerChannel(reference, channel);
                 currentChannel = channel;
             }

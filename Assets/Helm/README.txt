@@ -6,10 +6,9 @@ Helm is a synthesizer that you can play live inside of Unity.
 
 ### Editor
 
-In an Audio Mixer, load the Helm plugin.
+In an AudioMixerGroup, load the Helm plugin.
 Pick a patch from the list.
 Make sure the speaker icon is clicked at the top of the Scene window.
-Now click on the keyboard at the top of the Helm plugin to hear Helm inside Unity.
 
 ### Trigger notes in scene
 
@@ -32,16 +31,13 @@ Play the scene to hear the sequence.
 PlayNoteScheduled
 Sync audio loops to seqeuncer
 Better way to change parameters live
-Better way to route Helm audio into an object in 3d space
 UI widgets for better tweaking in Unity
-Generative music demo scene
-Folders for patches
 Linux support
 iOS/anroid/ps4/xbox support?
 
 ## Known Issues
 
+Notes playing from old scene on start? Or some sound carrying over.
 Note hiccup when sequencer loops because all notes after length play at once.
-On low powered machines, making game full screen in Unity makes audio glitchy, even when dsp usage very low.
 Low refresh time for playhead updates.
 

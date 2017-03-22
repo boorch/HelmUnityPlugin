@@ -4,11 +4,13 @@ using UnityEngine;
 
 namespace Tytel
 {
+    [ExecuteInEditMode]
     [RequireComponent(typeof(AudioSource))]
     public class AudioHeartBeat : MonoBehaviour
     {
-        void OnAudioFilterRead(float[] data, int channels)
+        void Awake()
         {
+            Utils.InitAudioSource(GetComponent<AudioSource>());
         }
     }
 }

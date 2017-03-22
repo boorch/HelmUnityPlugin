@@ -29,9 +29,14 @@ namespace Tytel
             AllNotesOff();
         }
 
-        void Start()
+        void Awake()
         {
             AllNotesOff();
+        }
+
+        void Start()
+        {
+            Utils.InitAudioSource(GetComponent<AudioSource>());
         }
 
         public void AllNotesOff()

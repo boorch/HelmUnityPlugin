@@ -36,18 +36,18 @@ char* strnew(const char* src);
 class Mutex
 {
 public:
-    Mutex();
-    ~Mutex();
+  Mutex();
+  ~Mutex();
 public:
-    bool TryLock();
-    void Lock();
-    void Unlock();
+  bool TryLock();
+  void Lock();
+  void Unlock();
 protected:
 #if UNITY_WIN
-    CRITICAL_SECTION crit_sec;
+  CRITICAL_SECTION crit_sec;
 #else
 # if !UNITY_SPU
-    pthread_mutex_t mutex;
+  pthread_mutex_t mutex;
 # endif
 #endif
 };
@@ -55,38 +55,35 @@ protected:
 class MutexScopeLock
 {
 public:
-    MutexScopeLock(Mutex& _mutex, bool condition = true) : mutex(condition ? &_mutex : NULL) { if (mutex != NULL) mutex->Lock(); }
-    ~MutexScopeLock() { if (mutex != NULL) mutex->Unlock(); }
+  MutexScopeLock(Mutex& _mutex, bool condition = true) : mutex(condition ? &_mutex : NULL) { if (mutex != NULL) mutex->Lock(); }
+  ~MutexScopeLock() { if (mutex != NULL) mutex->Unlock(); }
 protected:
-    Mutex* mutex;
+  Mutex* mutex;
 };
 
-void RegisterParameter(
-    UnityAudioEffectDefinition& desc,
-    const char* name,
-    const char* unit,
-    float minval,
-    float maxval,
-    float defaultval,
-    float displayscale,
-    float displayexponent,
-    int enumvalue,
-    const char* description = NULL
-    );
+void RegisterParameter(UnityAudioEffectDefinition& desc,
+                       const char* name,
+                       const char* unit,
+                       float minval,
+                       float maxval,
+                       float defaultval,
+                       float displayscale,
+                       float displayexponent,
+                       int enumvalue,
+                       const char* description = NULL
+                       );
 
-void InitParametersFromDefinitions(
-    InternalEffectDefinitionRegistrationCallback registereffectdefcallback,
-    float* params
-    );
+void InitParametersFromDefinitions(InternalEffectDefinitionRegistrationCallback registereffectdefcallback,
+                                   float* params
+                                   );
 
-void DeclareEffect(
-    UnityAudioEffectDefinition& desc,
-    const char* name,
-    UnityAudioEffect_CreateCallback createcallback,
-    UnityAudioEffect_ReleaseCallback releasecallback,
-    UnityAudioEffect_ProcessCallback processcallback,
-    UnityAudioEffect_SetFloatParameterCallback setfloatparametercallback,
-    UnityAudioEffect_GetFloatParameterCallback getfloatparametercallback,
-    UnityAudioEffect_GetFloatBufferCallback getfloatbuffercallback,
-    InternalEffectDefinitionRegistrationCallback registereffectdefcallback
-    );
+void DeclareEffect(UnityAudioEffectDefinition& desc,
+                   const char* name,
+                   UnityAudioEffect_CreateCallback createcallback,
+                   UnityAudioEffect_ReleaseCallback releasecallback,
+                   UnityAudioEffect_ProcessCallback processcallback,
+                   UnityAudioEffect_SetFloatParameterCallback setfloatparametercallback,
+                   UnityAudioEffect_GetFloatParameterCallback getfloatparametercallback,
+                   UnityAudioEffect_GetFloatBufferCallback getfloatbuffercallback,
+                   InternalEffectDefinitionRegistrationCallback registereffectdefcallback
+                   );

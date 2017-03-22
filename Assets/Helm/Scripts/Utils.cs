@@ -25,5 +25,16 @@ namespace Tytel
         {
             return key / kNotesPerOctave + kMinOctave;
         }
+
+        public static void InitAudioSource(AudioSource audio)
+        {
+            AudioClip one = AudioClip.Create("one", 1, 1, AudioSettings.outputSampleRate, false);
+            one.SetData(new float[] { 1 }, 0);
+
+            audio.clip = one;
+            audio.loop = true;
+            if (Application.isPlaying)
+                audio.Play();
+        }
     }
 }
