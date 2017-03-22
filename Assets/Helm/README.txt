@@ -39,6 +39,7 @@ iOS/anroid/ps4/xbox support?
 
 ## Known Issues
 
+Sometimes playhead is out of sync?
 BPM Change notes stay around.
 Low refresh time for playhead updates.
 
