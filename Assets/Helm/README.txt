@@ -34,8 +34,7 @@ Variable BPM without resyncing
 Sync audio loops to seqeuncer
 Better way to change parameters live
 UI widgets for better tweaking in Unity
-Linux support
-iOS/anroid/ps4/xbox support?
+iOS/android/ps4/xbox support?
 
 ## Known Issues
 
