@@ -29,6 +29,7 @@ Play the scene to hear the sequence.
 ## Features
 
 PlayNoteScheduled
+Start sequencer loop at beginning
 Sync audio loops to seqeuncer
 Better way to change parameters live
 UI widgets for better tweaking in Unity
@@ -37,7 +38,5 @@ iOS/anroid/ps4/xbox support?
 
 ## Known Issues
 
-Notes playing from old scene on start? Or some sound carrying over.
-Note hiccup when sequencer loops because all notes after length play at once.
 Low refresh time for playhead updates.
 
