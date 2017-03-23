@@ -31,6 +31,9 @@ namespace Helm
         [DllImport("AudioPluginHelm")]
         private static extern float GetBpm();
 
+        [DllImport("AudioPluginHelm")]
+        private static extern bool HelmChangeParameter(int channel, int paramIndex, float newValue);
+
         [System.Serializable]
         public class NoteRow : ISerializationCallbackReceiver
         {
@@ -138,7 +141,17 @@ namespace Helm
             AllNotesOff();
         }
 
-        void AllNotesOff()
+        public void SetParameter(Param parameter, float newValue)
+        {
+            HelmChangeParameter(channel, (int)parameter, newValue);
+        }
+
+        public void SetParameter(CommonParam parameter, float newValue)
+        {
+            HelmChangeParameter(channel, (int)parameter, newValue);
+        }
+
+        public void AllNotesOff()
         {
             HelmAllNotesOff(channel);
         }

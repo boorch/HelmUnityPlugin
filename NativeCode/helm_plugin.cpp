@@ -29,10 +29,11 @@ namespace Helm {
     int num_synth_parameters;
     HelmSequencer::Note* sequencer_events[MAX_NOTES];
     mopo::ModulationConnection* modulations[MAX_MODULATIONS];
-    float* parameters;
     moodycamel::ConcurrentQueue<std::pair<int, float>> note_events;
     moodycamel::ConcurrentQueue<std::pair<int, float>> value_events;
+    float* parameters;
     mopo::Value** value_lookup;
+    std::pair<float, float>* range_lookup;
     int instance_id;
     mopo::HelmEngine synth_engine;
     Mutex mutex;
@@ -95,16 +96,20 @@ namespace Helm {
     return num_synth_params + kNumParams + num_modulation_params;
   }
 
-  void initializeValueLookup(mopo::Value** lookup, mopo::control_map& controls, int num_params) {
+  void initializeValueLookup(mopo::Value** lookup, std::pair<float, float>* range_lookup,
+                             mopo::control_map& controls, int num_params) {
     std::map<std::string, mopo::ValueDetails> parameters = mopo::Parameters::lookup_.getAllDetails();
 
-    for (int i = 0; i < num_params; ++i)
+    for (int i = 0; i < num_params; ++i) {
       lookup[i] = 0;
+    }
 
     int index = kNumParams;
     for (auto parameter : parameters) {
       mopo::ValueDetails& details = parameter.second;
       lookup[index] = controls[details.name];
+      range_lookup[index].first = details.min;
+      range_lookup[index].second = details.max;
       index++;
     }
   }
@@ -121,8 +126,9 @@ namespace Helm {
     InitParametersFromDefinitions(InternalRegisterEffectDefinition, effect_data->parameters);
 
     effect_data->value_lookup = new mopo::Value*[num_params];
+    effect_data->range_lookup = new std::pair<float, float>[num_params];
     mopo::control_map controls = effect_data->synth_engine.getControls();
-    initializeValueLookup(effect_data->value_lookup, controls, num_params);
+    initializeValueLookup(effect_data->value_lookup, effect_data->range_lookup, controls, num_params);
 
     for (int i = 0; i < MAX_MODULATIONS; ++i)
       effect_data->modulations[i] = new mopo::ModulationConnection();
@@ -150,6 +156,7 @@ namespace Helm {
 
     delete[] data->parameters;
     delete[] data->value_lookup;
+    delete[] data->range_lookup;
 
     for (int i = 0; i < MAX_MODULATIONS; ++i) {
       if (data->synth_engine.isModulationActive(data->modulations[i]))
@@ -380,6 +387,28 @@ namespace Helm {
         synth.second->synth_engine.allNotesOff();
       }
     }
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API bool HelmChangeParameter(int channel, int index, float value) {
+    if (index < kNumParams)
+      return false;
+
+    bool success = true;
+    for (auto synth : instance_map) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel) {
+        if (index >= data->num_parameters)
+          success = false;
+        else {
+          float clamped_value = mopo::utils::clamp(value, data->range_lookup[index].first,
+                                                          data->range_lookup[index].second);
+          data->parameters[index] = clamped_value;
+          if (data->value_lookup[index])
+            data->value_events.enqueue(std::pair<int, float>(index, clamped_value));
+        }
+      }
+    }
+    return success;
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API HelmSequencer* CreateSequencer() {

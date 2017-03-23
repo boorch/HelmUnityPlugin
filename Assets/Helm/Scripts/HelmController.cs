@@ -20,6 +20,9 @@ namespace Helm
         [DllImport("AudioPluginHelm")]
         private static extern void HelmAllNotesOff(int channel);
 
+        [DllImport("AudioPluginHelm")]
+        private static extern bool HelmChangeParameter(int channel, int paramIndex, float newValue);
+
         public int channel = 0;
 
         Dictionary<int, int> pressedNotes = new Dictionary<int, int>();
@@ -37,6 +40,16 @@ namespace Helm
         void Start()
         {
             Utils.InitAudioSource(GetComponent<AudioSource>());
+        }
+
+        public void SetParameter(Param parameter, float newValue)
+        {
+            HelmChangeParameter(channel, (int)parameter, newValue);
+        }
+
+        public void SetParameter(CommonParam parameter, float newValue)
+        {
+            HelmChangeParameter(channel, (int)parameter, newValue);
         }
 
         public void AllNotesOff()
