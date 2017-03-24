@@ -334,7 +334,7 @@ namespace Helm
         void DrawBarHighlights(Rect rect)
         {
             float x = keyboardWidth;
-            int numBars = numCols / notesPerBeat;
+            int numBars = 1 + (numCols - 1) / notesPerBeat;
             float barWidth = colWidth * notesPerBeat;
             for (int i = 0; i < numBars; ++i)
             {

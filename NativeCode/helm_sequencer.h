@@ -35,14 +35,17 @@ namespace Helm {
       void getNoteOffs(Note* notes[kMaxNotes], double start, double end);
       double length() { return num_sixteenths_; }
       int channel() { return channel_; }
+      double start_time() { return start_time_; }
       void setLength(double length) { num_sixteenths_ = length; }
       void setChannel(int channel) { channel_ = channel; }
+      void setStartTime(double start_time) { start_time_ = start_time; }
 
     private:
       int channel_;
       event_map on_events_;
       event_map off_events_;
       double num_sixteenths_;
+      double start_time_;
   };
 
 } // Helm

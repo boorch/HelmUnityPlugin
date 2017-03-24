@@ -62,6 +62,7 @@
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\SequenceGenerator.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\SetParamsWithMouse.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\SetSleepThreshold.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\SyncAudioAndSequencers.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\ToggleParameter.cs" />
      <Compile Include="Assets\Helm\Scripts\HelmAudioInit.cs" />
      <Compile Include="Assets\Helm\Scripts\HelmBpm.cs" />

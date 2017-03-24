@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -24,6 +25,9 @@ namespace Helm
 
         [DllImport("AudioPluginHelm")]
         private static extern bool ChangeSequencerChannel(IntPtr sequencer, int channel);
+
+        [DllImport("AudioPluginHelm")]
+        private static extern void SyncSequencerStart(IntPtr sequencer, double dspTime);
 
         [DllImport("AudioPluginHelm")]
         private static extern void HelmAllNotesOff(int channel);
@@ -254,6 +258,19 @@ namespace Helm
 
                 allNotes[i].notes.Clear();
             }
+        }
+
+        void EnableComponent()
+        {
+            enabled = true;
+        }
+
+        public void StartSequencerScheduled(double dspTime)
+        {
+            const float lookaheadTime = 0.5f;
+            SyncSequencerStart(reference, dspTime);
+            float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
+            Invoke("EnableComponent", waitToEnable);
         }
 
         void Update()

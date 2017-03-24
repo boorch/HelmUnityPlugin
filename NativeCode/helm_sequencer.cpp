@@ -8,6 +8,7 @@ namespace Helm {
 
   HelmSequencer::HelmSequencer() {
     channel_ = 0;
+    start_time_ = 0.0f;
     num_sixteenths_ = kDefaultNumSixteenths;
   }
 

@@ -12,5 +12,12 @@ namespace Helm
         {
             Utils.InitAudioSource(GetComponent<AudioSource>());
         }
+
+        void Update()
+        {
+            AudioSource audio = GetComponent<AudioSource>();
+            audio.pitch = 1.0f;
+            audio.loop = true;
+        }
     }
 }

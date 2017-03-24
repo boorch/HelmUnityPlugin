@@ -255,8 +255,9 @@ namespace Helm {
     return UNITY_AUDIODSP_OK;
   }
 
-  double timeToSixteenth(UInt64 sample, int sample_rate) {
-    return (bpm * BPM_TO_SIXTEENTH * sample) / sample_rate;
+  double timeToSixteenth(UInt64 sample, double start_time, int sample_rate) {
+    double seconds = (1.0 * sample) / sample_rate - start_time;
+    return (bpm * BPM_TO_SIXTEENTH) * seconds;
   }
 
   double wrap(double value, double length) {
@@ -265,10 +266,12 @@ namespace Helm {
   }
 
   void processNotes(EffectData* data, HelmSequencer* sequencer, UInt64 current_sample, UInt64 end_sample) {
-    double start = timeToSixteenth(current_sample, data->synth_engine.getSampleRate());
+    double start = timeToSixteenth(current_sample, sequencer->start_time(), data->synth_engine.getSampleRate());
     start = wrap(start, sequencer->length());
-    double end = timeToSixteenth(end_sample, data->synth_engine.getSampleRate());
+    double end = timeToSixteenth(end_sample, sequencer->start_time(), data->synth_engine.getSampleRate());
     end = wrap(end, sequencer->length());
+
+    MutexScopeLock mutex_lock(sequencer_mutex);
 
     sequencer->getNoteOffs(data->sequencer_events, start, end);
 
@@ -432,22 +435,26 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API HelmSequencer::Note* CreateNote(
       HelmSequencer* sequencer, int note, float velocity, float start, float end) {
+    MutexScopeLock mutex_lock(sequencer_mutex);
     return sequencer->addNote(note, velocity, start, end);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void DeleteNote(
       HelmSequencer* sequencer, HelmSequencer::Note* note) {
     HelmNoteOff(sequencer->channel(), note->midi_note);
+    MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer->deleteNote(note);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteStart(
       HelmSequencer* sequencer, HelmSequencer::Note* note, float new_start) {
+    MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer->changeNoteStart(note, new_start);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteEnd(
       HelmSequencer* sequencer, HelmSequencer::Note* note, float new_end) {
+    MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer->changeNoteEnd(note, new_end);
   }
 
@@ -457,11 +464,13 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteKey(
       HelmSequencer* sequencer, HelmSequencer::Note* note, int midi_key) {
+    MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer->changeNoteKey(note, midi_key);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API bool ChangeSequencerChannel(
       HelmSequencer* sequencer, int channel) {
+    MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer->setChannel(channel);
 
     for (auto sequencer : sequencer_lookup) {
@@ -471,6 +480,11 @@ namespace Helm {
     return true;
   }
 
+  extern "C" UNITY_AUDIODSP_EXPORT_API void SyncSequencerStart(HelmSequencer* sequencer, double dsp_time) {
+    MutexScopeLock mutex_lock(sequencer_mutex);
+    sequencer->setStartTime(dsp_time);
+  }
+  
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeSequencerLength(
       HelmSequencer* sequencer, float length) {
     sequencer->setLength(length);
