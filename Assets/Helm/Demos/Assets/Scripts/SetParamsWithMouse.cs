@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class SetParamsWithMouse : MonoBehaviour
     {
         public Param xParameter;

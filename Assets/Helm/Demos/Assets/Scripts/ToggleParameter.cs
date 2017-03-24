@@ -3,6 +3,7 @@ using System.Collections;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class ToggleParameter : MonoBehaviour
     {
         public HelmController controller;

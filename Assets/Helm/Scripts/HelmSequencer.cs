@@ -258,8 +258,9 @@ namespace Helm
 
         void Update()
         {
-            double sequencerTime = Utils.kBpmToSixteenths * GetBpm() * AudioSettings.dspTime;
-            float position = Mathf.Repeat((float)sequencerTime, length);
+            double sequencerTime = (Utils.kBpmToSixteenths * GetBpm()) * AudioSettings.dspTime;
+            int cycles = (int)(sequencerTime / length);
+            double position = sequencerTime - cycles * length;
             currentSixteenth = (int)position;
 
             if (length != currentLength)

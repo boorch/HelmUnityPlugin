@@ -31,8 +31,8 @@ Play the scene to hear the sequence.
 PlayNoteScheduled
 Start sequencer loop at beginning
 Variable BPM without resyncing
+Sequencer for samples
 Sync audio loops to seqeuncer
-Better way to change parameters live
 UI widgets for better tweaking in Unity
 iOS/android/ps4/xbox support?
 
