@@ -351,18 +351,6 @@ namespace Helm {
     return UNITY_AUDIODSP_OK;
   }
 
-  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmGetBuffer(int channel, float* buffer, int samples, int channels) {
-    for (auto synth : instance_map) {
-      if (((int)synth.second->parameters[kChannel]) == channel) {
-
-        for (int c = 0; c < channels; ++c) {
-          for (int i = 0; i < samples; ++i)
-            buffer[i * channels + c] += 0.0f;
-        }
-      }
-    }
-  }
-
   extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOn(int channel, int note, float velocity) {
     for (auto synth : instance_map) {
       if (((int)synth.second->parameters[kChannel]) == channel) {
