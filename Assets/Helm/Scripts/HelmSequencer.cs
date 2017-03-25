@@ -101,9 +101,7 @@ namespace Helm
 
         void Awake()
         {
-            if (reference == IntPtr.Zero)
-                reference = CreateSequencer();
-
+            CreateNativeSequencer();
             ChangeSequencerChannel(reference, channel);
             ChangeSequencerLength(reference, length);
 
@@ -137,16 +135,6 @@ namespace Helm
             if (reference != IntPtr.Zero)
                 EnableSequencer(reference, false);
             AllNotesOff();
-        }
-
-        public void SetParameter(Param parameter, float newValue)
-        {
-            HelmChangeParameter(channel, (int)parameter, newValue);
-        }
-
-        public void SetParameter(CommonParam parameter, float newValue)
-        {
-            HelmChangeParameter(channel, (int)parameter, newValue);
         }
 
         public void NotifyNoteKeyChanged(Note note, int oldKey)
