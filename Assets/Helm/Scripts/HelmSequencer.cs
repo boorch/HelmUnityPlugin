@@ -120,8 +120,11 @@ namespace Helm
 
         void OnDestroy()
         {
-            AllNotesOff();
-            DeleteNativeSequencer();
+            if (reference != IntPtr.Zero)
+            {
+                AllNotesOff();
+                DeleteNativeSequencer();
+            }
         }
 
         void OnEnable()
@@ -133,8 +136,10 @@ namespace Helm
         void OnDisable()
         {
             if (reference != IntPtr.Zero)
+            {
                 EnableSequencer(reference, false);
-            AllNotesOff();
+                AllNotesOff();
+            }
         }
 
         public void NotifyNoteKeyChanged(Note note, int oldKey)
@@ -251,23 +256,34 @@ namespace Helm
             Invoke("EnableComponent", waitToEnable);
         }
 
-        void Update()
+        protected void UpdatePosition()
         {
             double sequencerTime = (Utils.kBpmToSixteenths * GetBpm()) * (AudioSettings.dspTime - syncTime);
             int cycles = (int)(sequencerTime / length);
             double position = sequencerTime - cycles * length;
             currentSixteenth = (int)position;
+        }
+
+        void Update()
+        {
+            UpdatePosition();
 
             if (length != currentLength)
             {
-                AllNotesOff();
-                ChangeSequencerLength(reference, length);
+                if (reference != IntPtr.Zero)
+                {
+                    AllNotesOff();
+                    ChangeSequencerLength(reference, length);
+                }
                 currentLength = length;
             }
             if (channel != currentChannel)
             {
-                AllNotesOff();
-                ChangeSequencerChannel(reference, channel);
+                if (reference != IntPtr.Zero)
+                {
+                    AllNotesOff();
+                    ChangeSequencerChannel(reference, channel);
+                }
                 currentChannel = channel;
             }
         }
