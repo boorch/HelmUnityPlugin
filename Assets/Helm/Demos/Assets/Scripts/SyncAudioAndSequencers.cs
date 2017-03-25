@@ -33,7 +33,7 @@ namespace Helm
                 if (lastSecond < 1)
                 {
                     Destroy(this);
-                    text.text = "0";
+                    text.text = "PLAY";
                 }
                 else if (text)
                     text.text = "" + lastSecond;
