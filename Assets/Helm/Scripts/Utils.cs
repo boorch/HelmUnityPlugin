@@ -164,7 +164,7 @@ namespace Helm
 
         public static void InitAudioSource(AudioSource audio)
         {
-            AudioClip one = AudioClip.Create("one", 1, 1, AudioSettings.outputSampleRate, false);
+            AudioClip one = AudioClip.Create("helm", 1, 1, AudioSettings.outputSampleRate, false);
             one.SetData(new float[] { 1 }, 0);
 
             audio.clip = one;
