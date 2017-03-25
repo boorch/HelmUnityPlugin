@@ -56,6 +56,7 @@
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\GroundKeyboard.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\MaterialPulse.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\MouseClickNoteOn.cs" />
+     <Compile Include="Assets\Helm\Demos\Assets\Scripts\NoteBlaster.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\Oscillate.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\PlatformCreator.cs" />
      <Compile Include="Assets\Helm\Demos\Assets\Scripts\RepetitiveSpawner.cs" />
