@@ -69,6 +69,7 @@ namespace Helm
 
         public int length = 16;
         public int currentSixteenth = -1;
+        public double syncTime = 0.0;
         public NoteRow[] allNotes = new NoteRow[Utils.kMidiSize];
 
         public const int kRows = Utils.kMidiSize;
@@ -255,6 +256,7 @@ namespace Helm
 
         public void StartSequencerScheduled(double dspTime)
         {
+            syncTime = dspTime;
             const float lookaheadTime = 0.5f;
             SyncSequencerStart(reference, dspTime);
             float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
@@ -263,7 +265,7 @@ namespace Helm
 
         void Update()
         {
-            double sequencerTime = (Utils.kBpmToSixteenths * GetBpm()) * AudioSettings.dspTime;
+            double sequencerTime = (Utils.kBpmToSixteenths * GetBpm()) * (AudioSettings.dspTime - syncTime);
             int cycles = (int)(sequencerTime / length);
             double position = sequencerTime - cycles * length;
             currentSixteenth = (int)position;
