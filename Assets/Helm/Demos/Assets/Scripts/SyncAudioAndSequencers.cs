@@ -4,6 +4,7 @@ using System.Collections;
 
 namespace Helm
 {
+    [AddComponentMenu("")]
     public class SyncAudioAndSequencers : MonoBehaviour
     {
         public HelmSequencer sequencer;

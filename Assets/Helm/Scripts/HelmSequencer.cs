@@ -8,8 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Helm
 {
-    [RequireComponent(typeof(HelmAudioInit))]
-    public class HelmSequencer : MonoBehaviour
+    public class HelmSequencer : HelmController
     {
         [DllImport("AudioPluginHelm")]
         private static extern IntPtr CreateSequencer();
@@ -30,13 +29,7 @@ namespace Helm
         private static extern void SyncSequencerStart(IntPtr sequencer, double dspTime);
 
         [DllImport("AudioPluginHelm")]
-        private static extern void HelmAllNotesOff(int channel);
-
-        [DllImport("AudioPluginHelm")]
         private static extern float GetBpm();
-
-        [DllImport("AudioPluginHelm")]
-        private static extern bool HelmChangeParameter(int channel, int paramIndex, float newValue);
 
         [System.Serializable]
         public class NoteRow : ISerializationCallbackReceiver
@@ -75,12 +68,12 @@ namespace Helm
         }
 
         public int length = 16;
-        public int channel = 0;
         public int currentSixteenth = -1;
         public NoteRow[] allNotes = new NoteRow[Utils.kMidiSize];
 
         public const int kRows = Utils.kMidiSize;
         public const int kMaxLength = 128;
+
         IntPtr reference = IntPtr.Zero;
         NoteComparer noteComparer = new NoteComparer();
         int currentChannel = -1;
@@ -153,11 +146,6 @@ namespace Helm
         public void SetParameter(CommonParam parameter, float newValue)
         {
             HelmChangeParameter(channel, (int)parameter, newValue);
-        }
-
-        public void AllNotesOff()
-        {
-            HelmAllNotesOff(channel);
         }
 
         public void NotifyNoteKeyChanged(Note note, int oldKey)

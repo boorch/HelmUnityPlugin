@@ -12,16 +12,16 @@ namespace Helm
     public class HelmController : MonoBehaviour
     {
         [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOn(int channel, int note, float velocity);
+        protected static extern void HelmNoteOn(int channel, int note, float velocity);
 
         [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOff(int channel, int note);
+        protected static extern void HelmNoteOff(int channel, int note);
 
         [DllImport("AudioPluginHelm")]
-        private static extern void HelmAllNotesOff(int channel);
+        protected static extern void HelmAllNotesOff(int channel);
 
         [DllImport("AudioPluginHelm")]
-        private static extern bool HelmChangeParameter(int channel, int paramIndex, float newValue);
+        protected static extern bool HelmChangeParameter(int channel, int paramIndex, float newValue);
 
         public int channel = 0;
 
