@@ -100,12 +100,14 @@ namespace Helm
                         audioIndex = (audioIndex + 1) % audios.Length;
                         audios[audioIndex].PlayScheduled(AudioSettings.dspTime + startTime - currentTime);
                         audios[audioIndex].SetScheduledEndTime(AudioSettings.dspTime + endTime - currentTime);
+                        audios[audioIndex].pitch = Utils.MidiChangeToRatio(note.note - Utils.kMiddleC);
                     }
                     else if (loopTime <= windowMax && loopTime > lastWindowTime)
                     {
                         audioIndex = (audioIndex + 1) % audios.Length;
                         audios[audioIndex].PlayScheduled(AudioSettings.dspTime + loopTime - currentTime);
                         audios[audioIndex].SetScheduledEndTime(AudioSettings.dspTime + endTime - currentTime);
+                        audios[audioIndex].pitch = Utils.MidiChangeToRatio(note.note - Utils.kMiddleC);
                     }
                 }
             }

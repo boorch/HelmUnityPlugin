@@ -147,6 +147,7 @@ namespace Helm
         public const int kMaxChannels = 16;
         public const float kBpmToSixteenths = 4.0f / 60.0f;
         public const int kMinOctave = -2;
+        public const int kMiddleC = 60;
 
         static bool[] blackKeys = new bool[kNotesPerOctave] { false, true, false, true,
                                                               false, false, true, false,
@@ -160,6 +161,11 @@ namespace Helm
         public static int GetOctave(int key)
         {
             return key / kNotesPerOctave + kMinOctave;
+        }
+
+        public static float MidiChangeToRatio(int midi)
+        {
+            return Mathf.Pow(2, (1.0f * midi) / kNotesPerOctave);
         }
 
         public static void InitAudioSource(AudioSource audio)
