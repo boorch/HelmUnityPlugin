@@ -40,6 +40,7 @@ namespace Helm
             Rect rect = GUILayoutUtility.GetRect(minWidth, sequencerHeight, GUILayout.ExpandWidth(true));
             Rect velocitiesRect = GUILayoutUtility.GetRect(minWidth, velocitiesHeight, GUILayout.ExpandWidth(true));
 
+            sequencer.channel = helmSequencer.channel;
             if (sequencer.DoSequencerEvents(rect, helmSequencer))
                 Repaint();
             if (velocities.DoVelocityEvents(velocitiesRect, helmSequencer))

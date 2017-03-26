@@ -102,7 +102,7 @@ namespace Helm
             }
         }
 
-        public HelmSequencer parent;
+        public Sequencer parent;
 
         private IntPtr reference;
 
@@ -111,7 +111,7 @@ namespace Helm
             reference = IntPtr.Zero;
         }
 
-        public void CopySettingsToNative()
+        void CopySettingsToNative()
         {
             if (!HasNativeNote() || !HasNativeSequencer())
                 return;

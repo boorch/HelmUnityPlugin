@@ -17,7 +17,7 @@ namespace Helm
             rightPadding = right;
         }
 
-        public void DrawSequencerPosition(Rect rect, HelmSequencer sequencer)
+        public void DrawSequencerPosition(Rect rect, Sequencer sequencer)
         {
             Rect activeArea = new Rect(rect);
             activeArea.x += leftPadding;

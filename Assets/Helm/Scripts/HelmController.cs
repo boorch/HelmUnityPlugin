@@ -9,19 +9,19 @@ using System.Runtime.InteropServices;
 namespace Helm
 {
     [RequireComponent(typeof(HelmAudioInit))]
-    public class HelmController : MonoBehaviour
+    public class HelmController : MonoBehaviour, NoteHandler
     {
         [DllImport("AudioPluginHelm")]
-        protected static extern void HelmNoteOn(int channel, int note, float velocity);
+        private static extern void HelmNoteOn(int channel, int note, float velocity);
 
         [DllImport("AudioPluginHelm")]
-        protected static extern void HelmNoteOff(int channel, int note);
+        private static extern void HelmNoteOff(int channel, int note);
 
         [DllImport("AudioPluginHelm")]
-        protected static extern void HelmAllNotesOff(int channel);
+        private static extern void HelmAllNotesOff(int channel);
 
         [DllImport("AudioPluginHelm")]
-        protected static extern bool HelmChangeParameter(int channel, int paramIndex, float newValue);
+        private static extern bool HelmChangeParameter(int channel, int paramIndex, float newValue);
 
         public int channel = 0;
 

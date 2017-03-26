@@ -40,7 +40,7 @@ namespace Helm
             currentNote = null;
         }
 
-        void MouseDown(Rect rect, HelmSequencer sequencer, Vector2 mousePosition)
+        void MouseDown(Rect rect, Sequencer sequencer, Vector2 mousePosition)
         {
             currentNote = null;
             float closest = 2.0f  * velocityHandleGrabWidth;
@@ -75,7 +75,7 @@ namespace Helm
                 currentNote.velocity = velocity;
         }
 
-        public bool DoVelocityEvents(Rect rect, HelmSequencer sequencer)
+        public bool DoVelocityEvents(Rect rect, Sequencer sequencer)
         {
             Event evt = Event.current;
 
@@ -119,7 +119,7 @@ namespace Helm
                 DrawNote(note, velocityColor);
         }
 
-        void DrawNoteVelocities(HelmSequencer sequencer)
+        void DrawNoteVelocities(Sequencer sequencer)
         {
             if (sequencer.allNotes == null)
                 return;
@@ -150,7 +150,7 @@ namespace Helm
             EditorGUI.DrawRect(middle, Color.black);
         }
 
-        public void DrawSequencerPosition(Rect rect, HelmSequencer sequencer)
+        public void DrawSequencerPosition(Rect rect, Sequencer sequencer)
         {
             Rect activeArea = new Rect(rect);
             activeArea.x += leftPadding;

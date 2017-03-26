@@ -9,12 +9,6 @@ namespace Helm
 {
     public class SequencerUI
     {
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOn(int channel, int note, float velocity);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOff(int channel, int note);
-
         enum Mode
         {
             kWaiting,
@@ -32,6 +26,8 @@ namespace Helm
             keyboardWidth = keyboard;
             rightPadding = scroll;
         }
+
+        public int channel = 0;
 
         const float grabResizeWidth = 5.0f;
         const float minNoteTime = 0.15f;
@@ -91,7 +87,7 @@ namespace Helm
             return mouseActive;
         }
 
-        void MouseDown(int note, float time, HelmSequencer sequencer, bool edit)
+        void MouseDown(int note, float time, Sequencer sequencer, bool edit)
         {
             roundingToSixteenth = false;
             mouseActive = true;
@@ -99,14 +95,14 @@ namespace Helm
             dragTime = time;
             if (pressedKey >= 0)
             {
-                HelmNoteOff(sequencer.channel, pressedKey);
+                sequencer.NoteOff(pressedKey);
                 pressedKey = -1;
             }
             if (time < 0.0f)
             {
                 mode = Mode.kKeyboarding;
                 pressedKey = note;
-                HelmNoteOn(sequencer.channel, pressedKey, 1.0f);
+                sequencer.NoteOn(pressedKey, 1.0f);
                 return;
             }
             else if (activeNote != null)
@@ -142,7 +138,7 @@ namespace Helm
             dragTime = time;
         }
 
-        void MouseDrag(int note, float time, HelmSequencer sequencer)
+        void MouseDrag(int note, float time, Sequencer sequencer)
         {
             float clampedTime = Mathf.Clamp(time, 0.0f, sequencer.length);
             dragTime = clampedTime;
@@ -154,8 +150,8 @@ namespace Helm
             {
                 if (note != pressedKey)
                 {
-                    HelmNoteOff(sequencer.channel, pressedKey);
-                    HelmNoteOn(sequencer.channel, note, 1.0f);
+                    sequencer.NoteOff(pressedKey);
+                    sequencer.NoteOn(note);
                     pressedKey = note;
                 }
             }
@@ -174,7 +170,7 @@ namespace Helm
                         newStart = Mathf.Round(newStart);
                     activeNote.start = newStart;
                     activeNote.end = newStart + length;
-                    HelmNoteOff(sequencer.channel, activeNote.note);
+                    sequencer.NoteOff(activeNote.note);
                     activeNote.note = note;
                 }
             }
@@ -187,7 +183,7 @@ namespace Helm
                         startTime = Mathf.Round(dragTime);
                     activeNote.start = Mathf.Min(activeNote.end - minNoteTime, startTime);
 
-                    HelmNoteOff(sequencer.channel, activeNote.note);
+                    sequencer.NoteOff(activeNote.note);
                 }
             }
             else if (mode == Mode.kResizingEnd)
@@ -199,17 +195,17 @@ namespace Helm
                         endTime = Mathf.Round(dragTime);
                     activeNote.end = Mathf.Max(activeNote.start + minNoteTime, endTime);
 
-                    HelmNoteOff(sequencer.channel, activeNote.note);
+                    sequencer.NoteOff(activeNote.note);
                 }
             }
         }
 
-        void MouseUp(float time, HelmSequencer sequencer)
+        void MouseUp(float time, Sequencer sequencer)
         {
             mouseActive = false;
             if (mode == Mode.kKeyboarding)
             {
-                HelmNoteOff(sequencer.channel, pressedKey);
+                sequencer.NoteOff(pressedKey);
                 pressedKey = -1;
                 return;
             }
@@ -223,7 +219,7 @@ namespace Helm
                 if (activeNote != null)
                     sequencer.ClampNotesInRange(activeNote.note, activeNote.start, activeNote.end, activeNote);
 
-                HelmNoteOff(sequencer.channel, activeNote.note);
+                sequencer.NoteOff(activeNote.note);
             }
             else if (mode == Mode.kResizingStart)
             {
@@ -232,7 +228,7 @@ namespace Helm
                 if (activeNote != null)
                     sequencer.ClampNotesInRange(pressNote, activeNote.start, activeNote.end, activeNote);
 
-                HelmNoteOff(sequencer.channel, pressNote);
+                sequencer.NoteOff(pressNote);
             }
             else if (mode == Mode.kResizingEnd)
             {
@@ -241,7 +237,7 @@ namespace Helm
                 if (activeNote != null)
                     sequencer.ClampNotesInRange(pressNote, activeNote.start, activeNote.end, activeNote);
 
-                HelmNoteOff(sequencer.channel, pressNote);
+                sequencer.NoteOff(pressNote);
             }
             else if (mode == Mode.kAdding)
             {
@@ -254,18 +250,18 @@ namespace Helm
                 for (int i = startDrag; i < endDrag; ++i)
                     sequencer.AddNote(pressNote, i, i + 1, defaultVelocity);
 
-                HelmNoteOff(sequencer.channel, pressNote);
+                sequencer.NoteOff(pressNote);
             }
             else if (mode == Mode.kDeleting)
             {
                 Undo.RecordObject(sequencer, "Delete Sequencer Notes");
                 sequencer.RemoveNotesInRange(pressNote, startTime, endTime);
-                HelmNoteOff(sequencer.channel, pressNote);
+                sequencer.NoteOff(pressNote);
             }
             mode = Mode.kWaiting;
         }
 
-        public bool DoSequencerEvents(Rect rect, HelmSequencer sequencer)
+        public bool DoSequencerEvents(Rect rect, Sequencer sequencer)
         {
             Event evt = Event.current;
             if (!evt.isMouse)
@@ -396,7 +392,7 @@ namespace Helm
             }
         }
 
-        void DrawActiveNotes(HelmSequencer sequencer)
+        void DrawActiveNotes(Sequencer sequencer)
         {
             if (sequencer.allNotes == null)
                 return;
@@ -421,7 +417,7 @@ namespace Helm
             }
         }
 
-        public float GetScrollPosition(HelmSequencer sequencer, float height)
+        public float GetScrollPosition(Sequencer sequencer, float height)
         {
             float lowerBuffer = rowHeight * 8.0f;
             float totalHeight = sequencer.allNotes.Length * rowHeight;
@@ -439,9 +435,9 @@ namespace Helm
             return (sequencer.allNotes.Length * rowHeight - height) / 2.0f;
         }
 
-        public void DrawSequencer(Rect rect, HelmSequencer sequencer)
+        public void DrawSequencer(Rect rect, Sequencer sequencer)
         {
-            numRows = HelmSequencer.kRows;
+            numRows = Sequencer.kRows;
             numCols = sequencer.length;
             colWidth = (rect.width - keyboardWidth - rightPadding) / numCols;
             float scrollableWidth = numCols * colWidth + keyboardWidth + 1;
