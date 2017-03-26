@@ -12,6 +12,7 @@ namespace Helm
     public class SampleSequencer : Sequencer
     {
         double lastWindowTime = -0.01;
+        int audioIndex = 0;
 
         void Awake()
         {
@@ -60,23 +61,41 @@ namespace Helm
 
         void Update()
         {
-            const float lookaheadTime = 0.05f;
             UpdatePosition();
-            AudioSource audio = GetComponent<AudioSource>();
+        }
+
+        void FixedUpdate()
+        {
+            const float lookaheadTime = 0.12f;
+            AudioSource[] audios = GetComponents<AudioSource>();
 
             double position = GetSequencerPosition();
             float sixteenthTime = GetSixteenthTime();
             double currentTime = position * sixteenthTime;
+            double sequencerTime = length * sixteenthTime;
 
             double windowMax = currentTime + lookaheadTime;
+            if (windowMax == lastWindowTime)
+                return;
+            else if (windowMax < lastWindowTime)
+                lastWindowTime -= sequencerTime;
 
             foreach (NoteRow row in allNotes)
             {
                 foreach (Note note in row.notes)
                 {
                     float startTime = sixteenthTime * note.start;
-                    if (startTime < windowMax && startTime >= lastWindowTime)
-                        audio.PlayScheduled(AudioSettings.dspTime + startTime - currentTime);
+                    double loopTime = startTime + sequencerTime;
+                    if (startTime <= windowMax && startTime > lastWindowTime)
+                    {
+                        audioIndex = (audioIndex + 1) % audios.Length;
+                        audios[audioIndex].PlayScheduled(AudioSettings.dspTime + startTime - currentTime);
+                    }
+                    else if (loopTime <= windowMax && loopTime > lastWindowTime)
+                    {
+                        audioIndex = (audioIndex + 1) % audios.Length;
+                        audios[audioIndex].PlayScheduled(AudioSettings.dspTime + loopTime - currentTime);
+                    }
                 }
             }
             lastWindowTime = windowMax;
