@@ -30,7 +30,7 @@ Play the scene to hear the sequence.
 
 PlayNoteScheduled
 Variable BPM without resyncing
-Sequencer for samples
+Sampler with keyzones
 UI widgets for better tweaking in Unity
 iOS/android/ps4/xbox support?
 

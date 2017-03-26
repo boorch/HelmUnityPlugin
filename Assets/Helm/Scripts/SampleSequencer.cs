@@ -11,8 +11,12 @@ namespace Helm
     [RequireComponent(typeof(AudioSource))]
     public class SampleSequencer : Sequencer
     {
+        public int numVoices = 2;
+
         double lastWindowTime = -0.01;
         int audioIndex = 0;
+
+        const float lookaheadTime = 0.12f;
 
         void Awake()
         {
@@ -27,6 +31,10 @@ namespace Helm
 
         void OnEnable()
         {
+            double position = GetSequencerPosition();
+            float sixteenthTime = GetSixteenthTime();
+            double currentTime = position * sixteenthTime;
+            lastWindowTime = currentTime + lookaheadTime;
         }
 
         void OnDisable()
@@ -66,7 +74,6 @@ namespace Helm
 
         void FixedUpdate()
         {
-            const float lookaheadTime = 0.12f;
             AudioSource[] audios = GetComponents<AudioSource>();
 
             double position = GetSequencerPosition();
@@ -80,21 +87,25 @@ namespace Helm
             else if (windowMax < lastWindowTime)
                 lastWindowTime -= sequencerTime;
 
+            // TODO: performance.
             foreach (NoteRow row in allNotes)
             {
                 foreach (Note note in row.notes)
                 {
                     float startTime = sixteenthTime * note.start;
+                    float endTime = sixteenthTime * note.end;
                     double loopTime = startTime + sequencerTime;
                     if (startTime <= windowMax && startTime > lastWindowTime)
                     {
                         audioIndex = (audioIndex + 1) % audios.Length;
                         audios[audioIndex].PlayScheduled(AudioSettings.dspTime + startTime - currentTime);
+                        audios[audioIndex].SetScheduledEndTime(AudioSettings.dspTime + endTime - currentTime);
                     }
                     else if (loopTime <= windowMax && loopTime > lastWindowTime)
                     {
                         audioIndex = (audioIndex + 1) % audios.Length;
                         audios[audioIndex].PlayScheduled(AudioSettings.dspTime + loopTime - currentTime);
+                        audios[audioIndex].SetScheduledEndTime(AudioSettings.dspTime + endTime - currentTime);
                     }
                 }
             }
