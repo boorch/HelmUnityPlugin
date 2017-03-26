@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace Helm
 {
-    [CustomEditor(typeof(HelmSequencer))]
-    class HelmSequencerUI : Editor
+    [CustomEditor(typeof(SampleSequencer))]
+    class SampleSequencerUI : Editor
     {
         const float keyboardWidth = 30.0f;
         const float scrollWidth = 15.0f;
@@ -15,7 +15,6 @@ namespace Helm
         SequencerUI sequencer = new SequencerUI(keyboardWidth, scrollWidth + 1);
         SequencerPositionUI sequencerPosition = new SequencerPositionUI(keyboardWidth, scrollWidth);
         SequencerVelocityUI velocities = new SequencerVelocityUI(keyboardWidth, scrollWidth);
-        SerializedProperty channel;
         SerializedProperty length;
 
         float positionHeight = 10.0f;
@@ -25,7 +24,6 @@ namespace Helm
 
         void OnEnable()
         {
-            channel = serializedObject.FindProperty("channel");
             length = serializedObject.FindProperty("length");
         }
 
@@ -35,7 +33,7 @@ namespace Helm
 
             Color prev_color = GUI.backgroundColor;
             GUILayout.Space(5f);
-            HelmSequencer helmSequencer = target as HelmSequencer;
+            SampleSequencer helmSequencer = target as SampleSequencer;
             Rect sequencerPositionRect = GUILayoutUtility.GetRect(minWidth, positionHeight, GUILayout.ExpandWidth(true));
             Rect rect = GUILayoutUtility.GetRect(minWidth, sequencerHeight, GUILayout.ExpandWidth(true));
             Rect velocitiesRect = GUILayoutUtility.GetRect(minWidth, velocitiesHeight, GUILayout.ExpandWidth(true));
@@ -59,7 +57,6 @@ namespace Helm
                 helmSequencer.Clear();
             }
 
-            EditorGUILayout.IntSlider(channel, 0, Utils.kMaxChannels - 1);
             EditorGUILayout.IntSlider(length, 1, HelmSequencer.kMaxLength);
             serializedObject.ApplyModifiedProperties();
         }

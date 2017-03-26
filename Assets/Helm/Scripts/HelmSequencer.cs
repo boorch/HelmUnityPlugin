@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Helm
 {
+    [RequireComponent(typeof(HelmAudioInit))]
     public class HelmSequencer : Sequencer
     {
         [DllImport("AudioPluginHelm")]

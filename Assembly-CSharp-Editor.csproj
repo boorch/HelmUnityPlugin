@@ -52,6 +52,7 @@
      <Compile Include="Assets\Helm\Editor\HelmSynthUI.cs" />
      <Compile Include="Assets\Helm\Editor\KeyboardUI.cs" />
      <Compile Include="Assets\Helm\Editor\PatchBrowserUI.cs" />
+     <Compile Include="Assets\Helm\Editor\SampleSequencerUI.cs" />
      <Compile Include="Assets\Helm\Editor\SequencerPositionUI.cs" />
      <Compile Include="Assets\Helm\Editor\SequencerUI.cs" />
      <Compile Include="Assets\Helm\Editor\SequencerVelocityUI.cs" />

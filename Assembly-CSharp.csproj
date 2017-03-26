@@ -72,6 +72,7 @@
      <Compile Include="Assets\Helm\Scripts\HelmSequencer.cs" />
      <Compile Include="Assets\Helm\Scripts\Note.cs" />
      <Compile Include="Assets\Helm\Scripts\NoteHandler.cs" />
+     <Compile Include="Assets\Helm\Scripts\SampleSequencer.cs" />
      <Compile Include="Assets\Helm\Scripts\Sequencer.cs" />
      <Compile Include="Assets\Helm\Scripts\Utils.cs" />
      <None Include="Assets\Helm\README.txt" />

@@ -11,7 +11,7 @@ namespace Helm
     public abstract class Sequencer : MonoBehaviour, NoteHandler
     {
         [DllImport("AudioPluginHelm")]
-        private static extern float GetBpm();
+        protected static extern float GetBpm();
 
         [System.Serializable]
         public class NoteRow : ISerializationCallbackReceiver
@@ -178,12 +178,26 @@ namespace Helm
             }
         }
 
+        public float GetSixteenthTime()
+        {
+            return 1.0f / (Utils.kBpmToSixteenths * GetBpm());
+        }
+
+        protected double GetSequencerTime()
+        {
+            return (Utils.kBpmToSixteenths * GetBpm()) * (AudioSettings.dspTime - syncTime);
+        }
+
+        protected double GetSequencerPosition()
+        {
+            double sequencerTime = GetSequencerTime();
+            int cycles = (int)(sequencerTime / length);
+            return sequencerTime - cycles * length;
+        }
+
         protected void UpdatePosition()
         {
-            double sequencerTime = (Utils.kBpmToSixteenths * GetBpm()) * (AudioSettings.dspTime - syncTime);
-            int cycles = (int)(sequencerTime / length);
-            double position = sequencerTime - cycles * length;
-            currentSixteenth = (int)position;
+            currentSixteenth = (int)GetSequencerPosition();
         }
     }
 }

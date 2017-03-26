@@ -27,8 +27,6 @@ namespace Helm
             rightPadding = scroll;
         }
 
-        public int channel = 0;
-
         const float grabResizeWidth = 5.0f;
         const float minNoteTime = 0.15f;
         const float defaultVelocity = 0.8f;
