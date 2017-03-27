@@ -1,6 +1,8 @@
 // Copyright 2017 Matt Tytel
 
 using UnityEngine;
+using System;
+using System.Reflection;
 
 namespace Helm
 {
@@ -177,6 +179,32 @@ namespace Helm
             audio.loop = true;
             if (Application.isPlaying)
                 audio.Play();
+        }
+
+        public static T CopyComponent<T>(T original, GameObject destination) where T : Component
+        {
+            System.Type type = original.GetType();
+            Component copy = destination.AddComponent(type);
+
+            BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
+                                 BindingFlags.Default | BindingFlags.DeclaredOnly;
+            PropertyInfo[] properties = type.GetProperties(flags);
+            foreach (PropertyInfo property in properties)
+            {
+                if (property.CanWrite && !property.IsDefined(typeof(ObsoleteAttribute), true))
+                {
+                    try
+                    {
+                        property.SetValue(copy, property.GetValue(original, null), null);
+                    }
+                    catch { }
+                }
+            }
+            FieldInfo[] fields = type.GetFields(flags);
+            foreach (FieldInfo field in fields)
+                field.SetValue(copy, field.GetValue(original));
+
+            return copy as T;
         }
     }
 }

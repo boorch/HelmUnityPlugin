@@ -8,11 +8,9 @@ using System.Runtime.InteropServices;
 
 namespace Helm
 {
-    [RequireComponent(typeof(AudioSource))]
+    [RequireComponent(typeof(Sampler))]
     public class SampleSequencer : Sequencer
     {
-        public float velocityTracking = 1.0f;
-
         double lastWindowTime = -0.01;
         int audioIndex = 0;
 
@@ -44,31 +42,17 @@ namespace Helm
 
         public override void AllNotesOff()
         {
-            AudioSource[] audios = GetComponents<AudioSource>();
-            foreach (AudioSource audio in audios)
-                audio.Stop();
+            GetComponent<Sampler>().AllNotesOff();
         }
 
         public override void NoteOn(int note, float velocity = 1.0f)
         {
-            AudioSource[] audios = GetComponents<AudioSource>();
-            audioIndex = (audioIndex + 1) % audios.Length;
-            AudioSource audio = audios[audioIndex];
-
-            audio.pitch = Utils.MidiChangeToRatio(note - Utils.kMiddleC);
-            audio.volume = Mathf.Lerp(1.0f - velocityTracking, 1.0f, velocity);
-            audio.Play();
+            GetComponent<Sampler>().NoteOn(note, velocity);
         }
 
         public override void NoteOff(int note)
         {
-            float pitch = Utils.MidiChangeToRatio(note - Utils.kMiddleC);
-            AudioSource[] audios = GetComponents<AudioSource>();
-            foreach (AudioSource audio in audios)
-            {
-                if (audio.pitch == pitch)
-                    audio.Stop();
-            }
+            GetComponent<Sampler>().NoteOff(note);
         }
 
         void EnableComponent()
@@ -118,14 +102,9 @@ namespace Helm
                     }
                     if (startTime < windowMax && startTime >= lastWindowTime)
                     {
-                        audioIndex = (audioIndex + 1) % audios.Length;
-                        AudioSource audio = audios[audioIndex];
-
-                        audio.pitch = Utils.MidiChangeToRatio(note.note - Utils.kMiddleC);
-                        audio.volume = Mathf.Lerp(1.0f - velocityTracking, 1.0f, note.velocity);
-
-                        audio.PlayScheduled(AudioSettings.dspTime + startTime - currentTime);
-                        audio.SetScheduledEndTime(AudioSettings.dspTime + endTime - currentTime);
+                        double timeToStart = startTime - currentTime;
+                        double timeToEnd = endTime - currentTime;
+                        GetComponent<Sampler>().NoteOnScheduled(note.note, note.velocity, timeToStart, timeToEnd);
                     }
                 }
             }
