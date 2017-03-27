@@ -283,7 +283,9 @@ namespace Helm
             if (note >= numRows || note < 0)
                 return false;
 
-            if (evt.type == EventType.MouseDown && rect.Contains(evt.mousePosition))
+            Rect ignoreScrollRect = new Rect(rect);
+            ignoreScrollRect.width -= rightPadding;
+            if (evt.type == EventType.MouseDown && ignoreScrollRect.Contains(evt.mousePosition))
                 MouseDown(note, time, sequencer, edit);
             else if (evt.type == EventType.MouseDrag && mouseActive)
                 MouseDrag(note, time, sequencer);
