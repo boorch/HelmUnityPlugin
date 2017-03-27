@@ -11,7 +11,7 @@ namespace Helm
     [RequireComponent(typeof(AudioSource))]
     public class SampleSequencer : Sequencer
     {
-        public int numVoices = 2;
+        public float velocityTracking = 1.0f;
 
         double lastWindowTime = -0.01;
         int audioIndex = 0;
@@ -44,14 +44,31 @@ namespace Helm
 
         public override void AllNotesOff()
         {
+            AudioSource[] audios = GetComponents<AudioSource>();
+            foreach (AudioSource audio in audios)
+                audio.Stop();
         }
 
         public override void NoteOn(int note, float velocity = 1.0f)
         {
+            AudioSource[] audios = GetComponents<AudioSource>();
+            audioIndex = (audioIndex + 1) % audios.Length;
+            AudioSource audio = audios[audioIndex];
+
+            audio.pitch = Utils.MidiChangeToRatio(note - Utils.kMiddleC);
+            audio.volume = Mathf.Lerp(1.0f - velocityTracking, 1.0f, velocity);
+            audio.Play();
         }
 
         public override void NoteOff(int note)
         {
+            float pitch = Utils.MidiChangeToRatio(note - Utils.kMiddleC);
+            AudioSource[] audios = GetComponents<AudioSource>();
+            foreach (AudioSource audio in audios)
+            {
+                if (audio.pitch == pitch)
+                    audio.Stop();
+            }
         }
 
         void EnableComponent()
@@ -92,22 +109,21 @@ namespace Helm
             {
                 foreach (Note note in row.notes)
                 {
-                    float startTime = sixteenthTime * note.start;
-                    float endTime = sixteenthTime * note.end;
-                    double loopTime = startTime + sequencerTime;
-                    if (startTime <= windowMax && startTime > lastWindowTime)
+                    double startTime = sixteenthTime * note.start;
+                    double endTime = sixteenthTime * note.end;
+                    if (startTime < lastWindowTime)
                     {
-                        audioIndex = (audioIndex + 1) % audios.Length;
-                        audios[audioIndex].PlayScheduled(AudioSettings.dspTime + startTime - currentTime);
-                        audios[audioIndex].SetScheduledEndTime(AudioSettings.dspTime + endTime - currentTime);
-                        audios[audioIndex].pitch = Utils.MidiChangeToRatio(note.note - Utils.kMiddleC);
+                        startTime += sequencerTime;
+                        endTime += sequencerTime;
                     }
-                    else if (loopTime <= windowMax && loopTime > lastWindowTime)
+                    if (startTime < windowMax && startTime >= lastWindowTime)
                     {
                         audioIndex = (audioIndex + 1) % audios.Length;
-                        audios[audioIndex].PlayScheduled(AudioSettings.dspTime + loopTime - currentTime);
-                        audios[audioIndex].SetScheduledEndTime(AudioSettings.dspTime + endTime - currentTime);
-                        audios[audioIndex].pitch = Utils.MidiChangeToRatio(note.note - Utils.kMiddleC);
+                        AudioSource audio = audios[audioIndex];
+                        audio.PlayScheduled(AudioSettings.dspTime + startTime - currentTime);
+                        audio.SetScheduledEndTime(AudioSettings.dspTime + endTime - currentTime);
+                        audio.pitch = Utils.MidiChangeToRatio(note.note - Utils.kMiddleC);
+                        audio.volume = Mathf.Lerp(1.0f - velocityTracking, 1.0f, note.velocity);
                     }
                 }
             }
