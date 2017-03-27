@@ -16,6 +16,7 @@ namespace Helm
         SequencerPositionUI sequencerPosition = new SequencerPositionUI(keyboardWidth, scrollWidth);
         SequencerVelocityUI velocities = new SequencerVelocityUI(keyboardWidth, scrollWidth);
         SerializedProperty length;
+        SerializedProperty velocityTracking;
 
         float positionHeight = 10.0f;
         float velocitiesHeight = 40.0f;
@@ -25,6 +26,7 @@ namespace Helm
         void OnEnable()
         {
             length = serializedObject.FindProperty("length");
+            velocityTracking = serializedObject.FindProperty("velocityTracking");
         }
 
         public override void OnInspectorGUI()
@@ -58,6 +60,7 @@ namespace Helm
             }
 
             EditorGUILayout.IntSlider(length, 1, HelmSequencer.kMaxLength);
+            EditorGUILayout.Slider(velocityTracking, 0.0f, 1.0f);
             serializedObject.ApplyModifiedProperties();
         }
     }

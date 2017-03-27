@@ -55,6 +55,7 @@ namespace Helm
         Color pressedCell = new Color(0.6f, 1.0f, 1.0f);
         Color deletingCell = new Color(0.7f, 1.0f, 0.7f);
         Color lightenColor = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+        Color darkenColor = new Color(0.0f, 0.0f, 0.0f, 0.05f);
         Color blackKey = Color.black;
         Color whiteKey = Color.white;
         Color blackKeyPressed = Color.red;
@@ -314,13 +315,15 @@ namespace Helm
                 else if (pressedKey == midiNote)
                     keyColor = whiteKeyPressed;
 
-                Rect key = new Rect(0.0f, y, keyboardWidth, rowHeight);
+                Rect key = new Rect(0.0f, y, keyboardWidth, rowHeight - 1);
                 Rect row = new Rect(keyboardWidth, y, rect.width - keyboardWidth, rowHeight);
                 EditorGUI.DrawRect(key, keyColor);
+                EditorGUI.DrawRect(new Rect(key.x, key.yMax, key.width, 1), Color.black);
                 if (midiNote % Utils.kNotesPerOctave == 0)
                     GUI.Label(key, "C" + Utils.GetOctave(midiNote), cStyle);
 
                 EditorGUI.DrawRect(row, rowColor);
+                EditorGUI.DrawRect(new Rect(row.x, row.yMax - 1, row.width, 1), darkenColor);
                 y += rowHeight;
             }
         }

@@ -120,10 +120,12 @@ namespace Helm
                     {
                         audioIndex = (audioIndex + 1) % audios.Length;
                         AudioSource audio = audios[audioIndex];
-                        audio.PlayScheduled(AudioSettings.dspTime + startTime - currentTime);
-                        audio.SetScheduledEndTime(AudioSettings.dspTime + endTime - currentTime);
+
                         audio.pitch = Utils.MidiChangeToRatio(note.note - Utils.kMiddleC);
                         audio.volume = Mathf.Lerp(1.0f - velocityTracking, 1.0f, note.velocity);
+
+                        audio.PlayScheduled(AudioSettings.dspTime + startTime - currentTime);
+                        audio.SetScheduledEndTime(AudioSettings.dspTime + endTime - currentTime);
                     }
                 }
             }

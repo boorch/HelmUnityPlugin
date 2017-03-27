@@ -31,11 +31,12 @@ Play the scene to hear the sequence.
 PlayNoteScheduled
 Variable BPM without resyncing
 Sampler with keyzones
-UI widgets for better tweaking in Unity
+UI widgets for better tweaking in Unity?
 iOS/android/ps4/xbox support?
 
 ## Known Issues
 
+Sample Sequencer is inefficient with a lot of notes
 Sequencer changes lock audio thread
 Sometimes playhead is out of sync?
 BPM Change notes stay around
