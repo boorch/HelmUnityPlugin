@@ -69,10 +69,17 @@ namespace Helm
 
         public void NoteOnScheduled(int note, float velocity, double timeToStart, double timeToEnd)
         {
+            // We end sample early to prevent click at end of sample caused by Unity pitch change.
+            const double endEarlyTime = 0.01;
+
             AudioSource audio = GetNextAudioSource();
             PrepNote(audio, note, velocity);
             audio.PlayScheduled(AudioSettings.dspTime + timeToStart);
-            audio.SetScheduledEndTime(AudioSettings.dspTime + timeToEnd);
+            double length = timeToEnd - timeToStart;
+
+            if (!audio.loop)
+                length = Math.Min(length, audio.clip.length / audio.pitch - 0.01);
+            audio.SetScheduledEndTime(AudioSettings.dspTime + timeToStart + length);
         }
 
         public void NoteOff(int note)
