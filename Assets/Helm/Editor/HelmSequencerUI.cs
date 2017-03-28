@@ -60,7 +60,7 @@ namespace Helm
             }
 
             EditorGUILayout.IntSlider(channel, 0, Utils.kMaxChannels - 1);
-            EditorGUILayout.IntSlider(length, 1, HelmSequencer.kMaxLength);
+            EditorGUILayout.IntSlider(length, 1, Sequencer.kMaxLength);
             serializedObject.ApplyModifiedProperties();
         }
     }

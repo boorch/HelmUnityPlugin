@@ -16,6 +16,9 @@ namespace Helm
 
         int audioIndex = 0;
 
+        // We end sample early to prevent click at end of sample caused by Unity pitch change.
+        const double endEarlyTime = 0.01;
+
         void Awake()
         {
             AllNotesOff();
@@ -65,20 +68,23 @@ namespace Helm
             AudioSource audio = GetNextAudioSource();
             PrepNote(audio, note, velocity);
             audio.Play();
+            if (!audio.loop)
+            {
+                double length = (audio.clip.length - endEarlyTime) / audio.pitch;
+                audio.SetScheduledEndTime(AudioSettings.dspTime + length);
+            }
         }
 
         public void NoteOnScheduled(int note, float velocity, double timeToStart, double timeToEnd)
         {
-            // We end sample early to prevent click at end of sample caused by Unity pitch change.
-            const double endEarlyTime = 0.01;
-
             AudioSource audio = GetNextAudioSource();
             PrepNote(audio, note, velocity);
-            audio.PlayScheduled(AudioSettings.dspTime + timeToStart);
-            double length = timeToEnd - timeToStart;
 
+            double length = timeToEnd - timeToStart;
             if (!audio.loop)
-                length = Math.Min(length, audio.clip.length / audio.pitch - 0.01);
+                length = Math.Min(length, (audio.clip.length - endEarlyTime) / audio.pitch);
+
+            audio.PlayScheduled(AudioSettings.dspTime + timeToStart);
             audio.SetScheduledEndTime(AudioSettings.dspTime + timeToStart + length);
         }
 

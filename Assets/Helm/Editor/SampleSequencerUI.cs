@@ -33,31 +33,31 @@ namespace Helm
 
             Color prev_color = GUI.backgroundColor;
             GUILayout.Space(5f);
-            SampleSequencer helmSequencer = target as SampleSequencer;
+            SampleSequencer sampleSequencer = target as SampleSequencer;
             Rect sequencerPositionRect = GUILayoutUtility.GetRect(minWidth, positionHeight, GUILayout.ExpandWidth(true));
             Rect rect = GUILayoutUtility.GetRect(minWidth, sequencerHeight, GUILayout.ExpandWidth(true));
             Rect velocitiesRect = GUILayoutUtility.GetRect(minWidth, velocitiesHeight, GUILayout.ExpandWidth(true));
 
-            if (sequencer.DoSequencerEvents(rect, helmSequencer))
+            if (sequencer.DoSequencerEvents(rect, sampleSequencer))
                 Repaint();
-            if (velocities.DoVelocityEvents(velocitiesRect, helmSequencer))
+            if (velocities.DoVelocityEvents(velocitiesRect, sampleSequencer))
                 Repaint();
 
-            sequencerPosition.DrawSequencerPosition(sequencerPositionRect, helmSequencer);
-            velocities.DrawSequencerPosition(velocitiesRect, helmSequencer);
+            sequencerPosition.DrawSequencerPosition(sequencerPositionRect, sampleSequencer);
+            velocities.DrawSequencerPosition(velocitiesRect, sampleSequencer);
 
             if (rect.height == sequencerHeight)
-                sequencer.DrawSequencer(rect, helmSequencer);
+                sequencer.DrawSequencer(rect, sampleSequencer);
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
             if (GUILayout.Button("Clear Sequencer"))
             {
-                Undo.RecordObject(helmSequencer, "Clear Sequencer");
-                helmSequencer.Clear();
+                Undo.RecordObject(sampleSequencer, "Clear Sequencer");
+                sampleSequencer.Clear();
             }
 
-            EditorGUILayout.IntSlider(length, 1, HelmSequencer.kMaxLength);
+            EditorGUILayout.IntSlider(length, 1, Sequencer.kMaxLength);
             serializedObject.ApplyModifiedProperties();
         }
     }

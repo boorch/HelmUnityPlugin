@@ -41,9 +41,6 @@ namespace Helm
         [DllImport("AudioPluginHelm")]
         private static extern bool HelmChangeParameter(int channel, int paramIndex, float newValue);
 
-        [DllImport("AudioPluginHelm")]
-        private static extern float GetBpm();
-
         public int channel = 0;
         IntPtr reference = IntPtr.Zero;
         int currentChannel = -1;

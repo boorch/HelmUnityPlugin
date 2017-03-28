@@ -12,7 +12,6 @@ namespace Helm
     public class SampleSequencer : Sequencer
     {
         double lastWindowTime = -0.01;
-        int audioIndex = 0;
 
         const float lookaheadTime = 0.12f;
 
@@ -75,8 +74,6 @@ namespace Helm
 
         void FixedUpdate()
         {
-            AudioSource[] audios = GetComponents<AudioSource>();
-
             double position = GetSequencerPosition();
             float sixteenthTime = GetSixteenthTime();
             double currentTime = position * sixteenthTime;
