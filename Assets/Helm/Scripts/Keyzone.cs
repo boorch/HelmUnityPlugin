@@ -12,16 +12,16 @@ namespace Helm
         public AudioMixerGroup mixer;
         public int rootKey = Utils.kMiddleC;
         public int minKey = 0;
-        public int maxKey = Utils.kMidiSize;
+        public int maxKey = Utils.kMidiSize - 1;
         public float minVelocity = 0.0f;
         public float maxVelocity = 1.0f;
 
-        bool ValidForNote(int note)
+        public bool ValidForNote(int note)
         {
-            return note <= maxKey && note >= minKey;
+            return note <= maxKey && note >= minKey && audioClip != null;
         }
 
-        bool ValidForNote(int note, float velocity)
+        public bool ValidForNote(int note, float velocity)
         {
             return ValidForNote(note) && velocity >= minVelocity && velocity <= maxVelocity;
         }

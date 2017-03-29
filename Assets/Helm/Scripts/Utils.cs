@@ -160,6 +160,11 @@ namespace Helm
             return blackKeys[key % kNotesPerOctave];
         }
 
+        public static bool IsC(int key)
+        {
+            return key % kNotesPerOctave == 0;
+        }
+
         public static int GetOctave(int key)
         {
             return key / kNotesPerOctave + kMinOctave;

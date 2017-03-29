@@ -54,7 +54,6 @@ namespace Helm
         public double syncTime = 0.0;
         public NoteRow[] allNotes = new NoteRow[Utils.kMidiSize];
 
-        public const int kRows = Utils.kMidiSize;
         public const int kMaxLength = 128;
 
         NoteComparer noteComparer = new NoteComparer();
@@ -97,7 +96,7 @@ namespace Helm
 
         public Note GetNoteInRange(int note, float start, float end, Note ignore = null)
         {
-            if (note >= kRows || note < 0 || allNotes == null || allNotes[note] == null)
+            if (note >= Utils.kMidiSize || note < 0 || allNotes == null || allNotes[note] == null)
                 return null;
             foreach (Note noteObject in allNotes[note].notes)
             {

@@ -16,8 +16,8 @@ namespace Helm
             kDeleting,
             kKeyboarding,
             kDragging,
-            kResizingStart,
-            kResizingEnd,
+            kDraggingStart,
+            kDraggingEnd,
             kNumModes
         }
 
@@ -26,6 +26,9 @@ namespace Helm
             keyboardWidth = keyboard;
             rightPadding = scroll;
         }
+
+        public int minKey = 0;
+        public int maxKey = Utils.kMidiSize - 1;
 
         const float grabResizeWidth = 5.0f;
         const float minNoteTime = 0.15f;
@@ -62,7 +65,9 @@ namespace Helm
         Color whiteKeyPressed = Color.red;
 
         float rowHeight = 10.0f;
-        int numRows = 128;
+        const float minRowHeight = 10.0f;
+        const float maxRowHeight = 35.0f;
+        int numRows = Utils.kMidiSize;
         int numCols = 16;
         int notesPerBeat = 4;
         float lastHeight = 0;
@@ -76,7 +81,7 @@ namespace Helm
                 return -Vector2.one;
 
             Vector2 localPosition = mousePosition - rect.position + scrollPosition;
-            float note = numRows - Mathf.Floor((localPosition.y / rowHeight)) - 1;
+            float note = minKey + numRows - Mathf.Floor((localPosition.y / rowHeight)) - 1;
             float time = (localPosition.x - keyboardWidth) / colWidth;
             return new Vector2(time, note);
         }
@@ -116,14 +121,14 @@ namespace Helm
                 }
                 else if (endPixels <= grabResizeWidth)
                 {
-                    Undo.RecordObject(sequencer, "Resize Note End");
-                    mode = Mode.kResizingEnd;
+                    Undo.RecordObject(sequencer, "Move Note End");
+                    mode = Mode.kDraggingEnd;
                     activeNote.end = Mathf.Max(activeNote.start + minNoteTime, dragTime);
                 }
                 else if (startPixels <= grabResizeWidth)
                 {
-                    Undo.RecordObject(sequencer, "Resize Note Start");
-                    mode = Mode.kResizingStart;
+                    Undo.RecordObject(sequencer, "Move Note Start");
+                    mode = Mode.kDraggingStart;
                     activeNote.start = Mathf.Min(activeNote.end - minNoteTime, dragTime);
                 }
                 else
@@ -173,7 +178,7 @@ namespace Helm
                     activeNote.note = note;
                 }
             }
-            else if (mode == Mode.kResizingStart)
+            else if (mode == Mode.kDraggingStart)
             {
                 if (activeNote != null)
                 {
@@ -185,7 +190,7 @@ namespace Helm
                     sequencer.NoteOff(activeNote.note);
                 }
             }
-            else if (mode == Mode.kResizingEnd)
+            else if (mode == Mode.kDraggingEnd)
             {
                 if (activeNote != null)
                 {
@@ -220,18 +225,18 @@ namespace Helm
 
                 sequencer.NoteOff(activeNote.note);
             }
-            else if (mode == Mode.kResizingStart)
+            else if (mode == Mode.kDraggingStart)
             {
-                Undo.RecordObject(sequencer, "Resize Note Start");
+                Undo.RecordObject(sequencer, "Move Note Start");
 
                 if (activeNote != null)
                     sequencer.ClampNotesInRange(pressNote, activeNote.start, activeNote.end, activeNote);
 
                 sequencer.NoteOff(pressNote);
             }
-            else if (mode == Mode.kResizingEnd)
+            else if (mode == Mode.kDraggingEnd)
             {
-                Undo.RecordObject(sequencer, "Resize Note End");
+                Undo.RecordObject(sequencer, "Move Note End");
 
                 if (activeNote != null)
                     sequencer.ClampNotesInRange(pressNote, activeNote.start, activeNote.end, activeNote);
@@ -280,7 +285,7 @@ namespace Helm
             }
 
             int note = (int)sequencerPosition.y;
-            if (note >= numRows || note < 0)
+            if (note > maxKey || note < minKey)
                 return false;
 
             Rect ignoreScrollRect = new Rect(rect);
@@ -300,29 +305,28 @@ namespace Helm
             cStyle.padding = new RectOffset(0, 1, 0, 0);
 
             float y = 0.0f;
-            for (int i = 0; i < numRows; ++i)
+            for (int i = maxKey; i >= minKey; --i)
             {
-                int midiNote = numRows - i - 1;
                 Color keyColor = whiteKey;
                 Color rowColor = emptyCellWhite;
 
-                if (Utils.IsBlackKey(midiNote))
+                if (Utils.IsBlackKey(i))
                 {
-                    if (pressedKey == midiNote)
+                    if (pressedKey == i)
                         keyColor = blackKeyPressed;
                     else
                         keyColor = blackKey;
                     rowColor = emptyCellBlack;
                 }
-                else if (pressedKey == midiNote)
+                else if (pressedKey == i)
                     keyColor = whiteKeyPressed;
 
                 Rect key = new Rect(0.0f, y, keyboardWidth, rowHeight - 1);
                 Rect row = new Rect(keyboardWidth, y, rect.width - keyboardWidth, rowHeight);
                 EditorGUI.DrawRect(key, keyColor);
                 EditorGUI.DrawRect(new Rect(key.x, key.yMax, key.width, 1), Color.black);
-                if (midiNote % Utils.kNotesPerOctave == 0)
-                    GUI.Label(key, "C" + Utils.GetOctave(midiNote), cStyle);
+                if (i % Utils.kNotesPerOctave == 0)
+                    GUI.Label(key, "C" + Utils.GetOctave(i), cStyle);
 
                 EditorGUI.DrawRect(row, rowColor);
                 EditorGUI.DrawRect(new Rect(row.x, row.yMax - 1, row.width, 1), darkenColor);
@@ -363,7 +367,7 @@ namespace Helm
         void DrawNote(int note, float start, float end, Color color)
         {
             float x = start * colWidth + keyboardWidth;
-            float y = (numRows - note - 1) * rowHeight;
+            float y = (numRows - (note - minKey) - 1) * rowHeight;
             float width = end * colWidth + keyboardWidth - x;
             Rect noteOutsideRect = new Rect(x, y, width + 1, rowHeight);
             Rect noteRect = new Rect(x + 1, y + 1, width - 1, rowHeight - 2);
@@ -400,13 +404,13 @@ namespace Helm
             if (sequencer.allNotes == null)
                 return;
 
-            for (int i = 0; i < numRows; ++i)
+            for (int i = minKey; i <= maxKey; ++i)
                 DrawRowNotes(sequencer.allNotes[i].notes);
         }
 
         void DrawPressedNotes()
         {
-            if (mode == Mode.kResizingStart || mode == Mode.kResizingEnd)
+            if (mode == Mode.kDraggingStart || mode == Mode.kDraggingEnd)
             {
                 DrawNote(activeNote.note, activeNote.start, activeNote.end, pressedCell);
             }
@@ -418,6 +422,16 @@ namespace Helm
                 for (int i = startDrag; i < endDrag; ++i)
                     DrawNote(pressNote, i, i + 1, pressedCell);
             }
+        }
+
+        void DrawPositionOverlay(Sequencer sequencer)
+        {
+            if (!sequencer.isActiveAndEnabled || !Application.isPlaying)
+                return;
+
+            float x = keyboardWidth + colWidth * sequencer.currentSixteenth;
+            float height = numRows * rowHeight;
+            EditorGUI.DrawRect(new Rect(x, 0, colWidth, height), lightenColor);
         }
 
         public float GetScrollPosition(Sequencer sequencer, float height)
@@ -438,11 +452,17 @@ namespace Helm
             return (sequencer.allNotes.Length * rowHeight - height) / 2.0f;
         }
 
+        public float GetMaxHeight()
+        {
+            return maxRowHeight * (maxKey - minKey + 1);
+        }
+
         public void DrawSequencer(Rect rect, Sequencer sequencer)
         {
-            numRows = Sequencer.kRows;
+            numRows = maxKey - minKey + 1;
             numCols = sequencer.length;
             colWidth = (rect.width - keyboardWidth - rightPadding) / numCols;
+            rowHeight = Mathf.Clamp(rect.height / numRows, minRowHeight, maxRowHeight);
             float scrollableWidth = numCols * colWidth + keyboardWidth + 1;
             float scrollableHeight = numRows * rowHeight;
 
@@ -460,6 +480,7 @@ namespace Helm
             DrawNoteDivisionLines(scrollableArea);
             DrawActiveNotes(sequencer);
             DrawPressedNotes();
+            DrawPositionOverlay(sequencer);
 
             GUI.EndScrollView();
         }

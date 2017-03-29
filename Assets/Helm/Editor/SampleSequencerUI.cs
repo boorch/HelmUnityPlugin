@@ -34,8 +34,21 @@ namespace Helm
             Color prev_color = GUI.backgroundColor;
             GUILayout.Space(5f);
             SampleSequencer sampleSequencer = target as SampleSequencer;
+            Sampler sampler = sampleSequencer.GetComponent<Sampler>();
+            if (sampler)
+            {
+                sequencer.minKey = sampler.GetMinKey();
+                sequencer.maxKey = sampler.GetMaxKey();
+            }
+            else
+            {
+                sequencer.minKey = 0;
+                sequencer.maxKey = Utils.kMidiSize - 1;
+            }
+
             Rect sequencerPositionRect = GUILayoutUtility.GetRect(minWidth, positionHeight, GUILayout.ExpandWidth(true));
-            Rect rect = GUILayoutUtility.GetRect(minWidth, sequencerHeight, GUILayout.ExpandWidth(true));
+            float seqHeight = Mathf.Min(sequencerHeight, sequencer.GetMaxHeight());
+            Rect rect = GUILayoutUtility.GetRect(minWidth, seqHeight, GUILayout.ExpandWidth(true));
             Rect velocitiesRect = GUILayoutUtility.GetRect(minWidth, velocitiesHeight, GUILayout.ExpandWidth(true));
 
             if (sequencer.DoSequencerEvents(rect, sampleSequencer))
@@ -46,7 +59,7 @@ namespace Helm
             sequencerPosition.DrawSequencerPosition(sequencerPositionRect, sampleSequencer);
             velocities.DrawSequencerPosition(velocitiesRect, sampleSequencer);
 
-            if (rect.height == sequencerHeight)
+            if (rect.height == seqHeight)
                 sequencer.DrawSequencer(rect, sampleSequencer);
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;

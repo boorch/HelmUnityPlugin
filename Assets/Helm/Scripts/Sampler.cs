@@ -69,6 +69,14 @@ namespace Helm
             audio.volume = Mathf.Lerp(1.0f - velocityTracking, 1.0f, velocity);
         }
 
+        void PrepNote(AudioSource audio, Keyzone keyzone, int note, float velocity)
+        {
+            audio.pitch = Utils.MidiChangeToRatio(note - keyzone.rootKey);
+            audio.clip = keyzone.audioClip;
+            audio.outputAudioMixerGroup = keyzone.mixer;
+            audio.volume = Mathf.Lerp(1.0f - velocityTracking, 1.0f, velocity);
+        }
+
         public void AllNotesOff()
         {
             AudioSource[] audios = GetComponents<AudioSource>();
@@ -76,39 +84,94 @@ namespace Helm
                 audio.Stop();
         }
 
+        List<Keyzone> GetValidKeyzones(int note, float velocity = 1.0f)
+        {
+            List<Keyzone> validKeyzones = new List<Keyzone>();
+            foreach (Keyzone keyzone in keyzones)
+            {
+                if (keyzone.ValidForNote(note, velocity))
+                    validKeyzones.Add(keyzone);
+            }
+            return validKeyzones;
+        }
+
+        List<AudioSource> GetPreppedAudioSources(int note, float velocity)
+        {
+            List<AudioSource> audioSources = new List<AudioSource>();
+            List<Keyzone> validKeyzones = GetValidKeyzones(note, velocity);
+            foreach (Keyzone keyzone in validKeyzones)
+            {
+                AudioSource audio = GetNextAudioSource();
+                PrepNote(audio, keyzone, note, velocity);
+                audioSources.Add(audio);
+            }
+            return audioSources;
+        }
+
+        public int GetMinKey()
+        {
+            if (keyzones.Count == 0)
+                return 0;
+
+            int min = Utils.kMidiSize;
+            foreach (Keyzone keyzone in keyzones)
+                min = Mathf.Min(keyzone.minKey, min);
+
+            return min;
+        }
+
+        public int GetMaxKey()
+        {
+            if (keyzones.Count == 0)
+                return Utils.kMidiSize - 1;
+
+            int max = 0;
+            foreach (Keyzone keyzone in keyzones)
+                max = Mathf.Max(keyzone.maxKey, max);
+
+            return max;
+        }
+
         public void NoteOn(int note, float velocity = 1.0f)
         {
-            AudioSource audio = GetNextAudioSource();
-            PrepNote(audio, note, velocity);
-            audio.Play();
-            if (!audio.loop)
+            List<AudioSource> audioSources = GetPreppedAudioSources(note, velocity);
+            foreach (AudioSource audio in audioSources)
             {
-                double length = (audio.clip.length - endEarlyTime) / audio.pitch;
-                audio.SetScheduledEndTime(AudioSettings.dspTime + length);
+                audio.Play();
+                if (!audio.loop)
+                {
+                    double length = (audio.clip.length - endEarlyTime) / audio.pitch;
+                    audio.SetScheduledEndTime(AudioSettings.dspTime + length);
+                }
             }
         }
 
         public void NoteOnScheduled(int note, float velocity, double timeToStart, double timeToEnd)
         {
-            AudioSource audio = GetNextAudioSource();
-            PrepNote(audio, note, velocity);
+            List<AudioSource> audioSources = GetPreppedAudioSources(note, velocity);
+            foreach (AudioSource audio in audioSources)
+            {
+                double length = timeToEnd - timeToStart;
+                if (!audio.loop)
+                    length = Math.Min(length, (audio.clip.length - endEarlyTime) / audio.pitch);
 
-            double length = timeToEnd - timeToStart;
-            if (!audio.loop)
-                length = Math.Min(length, (audio.clip.length - endEarlyTime) / audio.pitch);
-
-            audio.PlayScheduled(AudioSettings.dspTime + timeToStart);
-            audio.SetScheduledEndTime(AudioSettings.dspTime + timeToStart + length);
+                audio.PlayScheduled(AudioSettings.dspTime + timeToStart);
+                audio.SetScheduledEndTime(AudioSettings.dspTime + timeToStart + length);
+            }
         }
 
         public void NoteOff(int note)
         {
-            float pitch = Utils.MidiChangeToRatio(note - Utils.kMiddleC);
-            AudioSource[] audios = GetComponents<AudioSource>();
-            foreach (AudioSource audio in audios)
+            List<Keyzone> validKeyzones = GetValidKeyzones(note);
+            foreach (Keyzone keyzone in validKeyzones)
             {
-                if (audio.pitch == pitch)
-                    audio.Stop();
+                float pitch = Utils.MidiChangeToRatio(note - keyzone.rootKey);
+                AudioSource[] audios = GetComponents<AudioSource>();
+                foreach (AudioSource audio in audios)
+                {
+                    if (audio.pitch == pitch && audio.clip == keyzone.audioClip)
+                        audio.Stop();
+                }
             }
         }
     }
