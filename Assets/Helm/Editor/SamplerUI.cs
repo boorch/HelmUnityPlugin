@@ -8,14 +8,14 @@ namespace Helm
     [CustomEditor(typeof(Sampler))]
     class SamplerUI : Editor
     {
-        const float scrollWidth = 15.0f;
+        const int scrollWidth = 15;
 
         private SerializedObject serialized;
-        KeyzoneUI keyzones = new KeyzoneUI(scrollWidth);
+        KeyzoneEditorUI keyzones = new KeyzoneEditorUI(scrollWidth);
         SerializedProperty numVoices;
         SerializedProperty velocityTracking;
 
-        const float keyzoneHeight = 200.0f;
+        const int keyzoneHeight = 120;
         const float minWidth = 200.0f;
 
         void OnEnable()
@@ -31,12 +31,13 @@ namespace Helm
             Color prev_color = GUI.backgroundColor;
             GUILayout.Space(5f);
             Sampler sampler = target as Sampler;
-            Rect keyzonesRect = GUILayoutUtility.GetRect(minWidth, keyzoneHeight, GUILayout.ExpandWidth(true));
+            int height = Mathf.Max(keyzoneHeight, keyzones.GetHeight(sampler));
+            Rect keyzonesRect = GUILayoutUtility.GetRect(minWidth, height, GUILayout.ExpandWidth(true));
 
             if (keyzones.DoKeyzoneEvents(keyzonesRect, sampler))
                 Repaint();
 
-            if (keyzonesRect.height == keyzoneHeight)
+            if (keyzonesRect.height == height)
                 keyzones.DrawKeyzones(keyzonesRect, sampler);
 
             GUILayout.Space(5f);

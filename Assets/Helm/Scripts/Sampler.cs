@@ -11,6 +11,7 @@ namespace Helm
     [RequireComponent(typeof(AudioSource))]
     public class Sampler : MonoBehaviour, NoteHandler
     {
+        public List<Keyzone> keyzones = new List<Keyzone>() { new Keyzone() };
         public float velocityTracking = 1.0f;
         public int numVoices = 2;
 
@@ -41,6 +42,18 @@ namespace Helm
         void OnDisable()
         {
             AllNotesOff();
+        }
+
+        public Keyzone AddKeyzone()
+        {
+            Keyzone keyzone = new Keyzone();
+            keyzones.Add(keyzone);
+            return keyzone;
+        }
+
+        public void RemoveKeyzone(Keyzone keyzone)
+        {
+            keyzones.Remove(keyzone);
         }
 
         AudioSource GetNextAudioSource()

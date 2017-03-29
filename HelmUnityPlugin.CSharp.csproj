@@ -84,17 +84,27 @@
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\GroundKey.cs" />
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\GroundKeyboard.cs" />
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\MaterialPulse.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\MouseClickNoteOn.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\NoteBlaster.cs" />
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\Oscillate.cs" />
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\PlatformCreator.cs" />
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\RepetitiveSpawner.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\SequenceGenerator.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\SetParamsWithMouse.cs" />
     <Compile Include="Assets\Helm\Demos\Assets\Scripts\SetSleepThreshold.cs" />
-    <Compile Include="Assets\Helm\Scripts\AudioHeartBeat.cs" />
-    <Compile Include="Assets\Helm\Scripts\Helm3dAudioSource.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\SyncAudioAndSequencers.cs" />
+    <Compile Include="Assets\Helm\Demos\Assets\Scripts\ToggleParameter.cs" />
+    <Compile Include="Assets\Helm\Scripts\HelmAudioInit.cs" />
     <Compile Include="Assets\Helm\Scripts\HelmBpm.cs" />
     <Compile Include="Assets\Helm\Scripts\HelmController.cs" />
     <Compile Include="Assets\Helm\Scripts\HelmPatchFormat.cs" />
     <Compile Include="Assets\Helm\Scripts\HelmSequencer.cs" />
+    <Compile Include="Assets\Helm\Scripts\Keyzone.cs" />
     <Compile Include="Assets\Helm\Scripts\Note.cs" />
+    <Compile Include="Assets\Helm\Scripts\NoteHandler.cs" />
+    <Compile Include="Assets\Helm\Scripts\SampleSequencer.cs" />
+    <Compile Include="Assets\Helm\Scripts\Sampler.cs" />
+    <Compile Include="Assets\Helm\Scripts\Sequencer.cs" />
     <Compile Include="Assets\Helm\Scripts\Utils.cs" />
   </ItemGroup>
   <ItemGroup>

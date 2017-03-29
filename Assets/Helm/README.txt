@@ -29,6 +29,7 @@ Play the scene to hear the sequence.
 ## Features
 
 PlayNoteScheduled
+Expose aftertouch, pitch bend, modulation wheel controls
 Variable BPM without resyncing
 Sampler with keyzones
 UI widgets for better tweaking in Unity?

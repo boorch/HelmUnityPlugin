@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Editor:5</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -128,7 +130,10 @@
     <Compile Include="Assets\Helm\Editor\HelmSequencerUI.cs" />
     <Compile Include="Assets\Helm\Editor\HelmSynthUI.cs" />
     <Compile Include="Assets\Helm\Editor\KeyboardUI.cs" />
+    <Compile Include="Assets\Helm\Editor\KeyzoneEditorUI.cs" />
     <Compile Include="Assets\Helm\Editor\PatchBrowserUI.cs" />
+    <Compile Include="Assets\Helm\Editor\SampleSequencerUI.cs" />
+    <Compile Include="Assets\Helm\Editor\SamplerUI.cs" />
     <Compile Include="Assets\Helm\Editor\SequencerPositionUI.cs" />
     <Compile Include="Assets\Helm\Editor\SequencerUI.cs" />
     <Compile Include="Assets\Helm\Editor\SequencerVelocityUI.cs" />
