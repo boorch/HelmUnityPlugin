@@ -1,6 +1,7 @@
 // Copyright 2017 Matt Tytel
 
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Helm
 {
@@ -8,6 +9,7 @@ namespace Helm
     public class Keyzone
     {
         public AudioClip audioClip;
+        public AudioMixerGroup mixer;
         public int rootKey = Utils.kMiddleC;
         public int minKey = 0;
         public int maxKey = Utils.kMidiSize;

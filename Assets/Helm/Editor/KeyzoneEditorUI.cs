@@ -2,6 +2,7 @@
 
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Helm
 {
@@ -14,10 +15,13 @@ namespace Helm
 
         Color lightenColor = new Color(1.0f, 1.0f, 1.0f, 0.1f);
         Color keylaneBackground = new Color(0.5f, 0.5f, 0.5f);
+        Color rootNoteColor = new Color(0.7f, 1.0f, 1.0f);
+        Color keyzoneRangeColor = new Color(0.7f, 1.0f, 0.7f);
         const int keyboardHeight = 16;
-        const int rowHeight = 16;
+        const int rowHeight = 32;
         const int keyzoneWidth = 150;
         const int minKeyWidth = 6;
+        const int buttonBuffer = 17;
 
         public KeyzoneEditorUI(int scroll)
         {
@@ -93,20 +97,28 @@ namespace Helm
 
         void DrawClips(Sampler sampler)
         {
-            GUIStyle style = GUI.skin.button;
+            int height = rowHeight / 2;
+            GUIStyle style = new GUIStyle(GUI.skin.button);
             style.padding = new RectOffset(0, 0, 0, 0);
-            style.fontSize = rowHeight - 4;
+            style.fontSize = height - 4;
             int y = keyboardHeight;
 
             Keyzone remove = null;
 
             foreach (Keyzone keyzone in sampler.keyzones)
             {
-                Rect buttonRect = new Rect(0, y, rowHeight, rowHeight);
-                Rect clipRect = new Rect(buttonRect.xMax, y, keyzoneWidth - buttonRect.width, rowHeight);
+                Rect buttonRect = new Rect(0, y, height, height);
+                Rect clipRect = new Rect(buttonRect.xMax, y, keyzoneWidth - buttonRect.width, height);
+                Rect mixerRect = new Rect(buttonRect.xMax, y + height, keyzoneWidth - buttonRect.width, height);
+
                 if (GUI.Button(buttonRect, "X", style))
                     remove = keyzone;
-                AudioClip clip = EditorGUI.ObjectField(clipRect, keyzone.audioClip, typeof(AudioClip), false) as AudioClip;
+
+                AudioClip clip = EditorGUI.ObjectField(clipRect, keyzone.audioClip, typeof(AudioClip), false)
+                                 as AudioClip;
+                AudioMixerGroup mixer = EditorGUI.ObjectField(mixerRect, keyzone.mixer, typeof(AudioMixerGroup), false)
+                                        as AudioMixerGroup;
+
                 if (clip != keyzone.audioClip)
                 {
                     if (clip == null)
@@ -114,6 +126,14 @@ namespace Helm
                     else
                         Undo.RecordObject(sampler, "Change AudioClip in Keyzone");
                     keyzone.audioClip = clip;
+                }
+                if (mixer != keyzone.mixer)
+                {
+                    if (mixer == null)
+                        Undo.RecordObject(sampler, "Remove AudioMixerGroup from Keyzone");
+                    else
+                        Undo.RecordObject(sampler, "Change AudioMixerGroup in Keyzone");
+                    keyzone.mixer = mixer;
                 }
                 y += rowHeight;
             }
@@ -125,9 +145,45 @@ namespace Helm
             }
         }
 
+        void DrawKeyzoneRanges(Sampler sampler)
+        {
+            int y = keyboardHeight;
+
+            foreach (Keyzone keyzone in sampler.keyzones)
+            {
+                int range = keyzone.maxKey - keyzone.minKey + 1;
+                float rangeX = keyzone.minKey * keyWidth;
+                float width = range * keyWidth;
+                float height = rowHeight / 2.0f;
+                Rect rootRect = new Rect(keyzone.rootKey * keyWidth, y, keyWidth, height);
+                Rect rangeRect = new Rect(rangeX, y + height, width, height);
+                EditorGUI.DrawRect(rootRect, rootNoteColor);
+                EditorGUI.DrawRect(rangeRect, keyzoneRangeColor);
+                y += rowHeight;
+            }
+        }
+
         public int GetHeight(Sampler sampler)
         {
             return keyboardHeight + rowHeight * sampler.keyzones.Count + scrollWidth;
+        }
+
+        void AddKeyzone(Sampler sampler)
+        {
+            Keyzone keyzone = sampler.AddKeyzone();
+            if (sampler.keyzones.Count >= 2)
+            {
+                Keyzone lastKeyzone = sampler.keyzones[sampler.keyzones.Count - 2];
+                int min = lastKeyzone.maxKey + 1;
+                int range = lastKeyzone.maxKey - lastKeyzone.minKey;
+                int max = min + range;
+                if (max < Utils.kMidiSize)
+                {
+                    keyzone.minKey = min;
+                    keyzone.maxKey = max;
+                }
+                keyzone.mixer = lastKeyzone.mixer;
+            }
         }
 
         public void DrawKeyzones(Rect rect, Sampler sampler)
@@ -140,14 +196,11 @@ namespace Helm
 
             GUI.BeginGroup(rect);
             DrawClips(sampler);
-            GUIStyle style = GUI.skin.button;
-            style.padding = new RectOffset(0, 0, 0, 1);
-            style.fontSize = rowHeight - 2;
-            Rect buttonRect = new Rect(0, 0, keyboardHeight, keyboardHeight);
-            if (GUI.Button(buttonRect, "+", style))
+            Rect buttonRect = new Rect(0, 0, keyzoneWidth - buttonBuffer, keyboardHeight);
+            if (GUI.Button(buttonRect, "Add Keyzone"))
             {
                 Undo.RecordObject(sampler, "Add Keyzone");
-                sampler.AddKeyzone();
+                AddKeyzone(sampler);
             }
 
             Rect keySection = new Rect(keyzoneWidth, 0, rect.width - keyzoneWidth, rect.height);
@@ -157,6 +210,7 @@ namespace Helm
             EditorGUI.DrawRect(new Rect(0, 0, keyboardScroll.width, keyboardScroll.height), keylaneBackground);
 
             DrawKeyboard(scrollableHeight);
+            DrawKeyzoneRanges(sampler);
             GUI.EndScrollView();
             GUI.EndGroup();
         }
