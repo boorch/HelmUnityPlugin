@@ -91,7 +91,7 @@ namespace Helm
             return mouseActive;
         }
 
-        void MouseDown(int note, float time, Sequencer sequencer, bool edit)
+        void MouseDown(int note, float time, Sequencer sequencer, SerializedProperty allNotes, bool edit)
         {
             roundingToSixteenth = false;
             mouseActive = true;
@@ -142,7 +142,7 @@ namespace Helm
             dragTime = time;
         }
 
-        void MouseDrag(int note, float time, Sequencer sequencer)
+        void MouseDrag(int note, float time, Sequencer sequencer, SerializedProperty allNotes)
         {
             float clampedTime = Mathf.Clamp(time, 0.0f, sequencer.length);
             dragTime = clampedTime;
@@ -204,7 +204,7 @@ namespace Helm
             }
         }
 
-        void MouseUp(float time, Sequencer sequencer)
+        void MouseUp(float time, Sequencer sequencer, SerializedProperty allNotes)
         {
             mouseActive = false;
             if (mode == Mode.kKeyboarding)
@@ -265,7 +265,7 @@ namespace Helm
             mode = Mode.kWaiting;
         }
 
-        public bool DoSequencerEvents(Rect rect, Sequencer sequencer)
+        public bool DoSequencerEvents(Rect rect, Sequencer sequencer, SerializedProperty allNotes)
         {
             Event evt = Event.current;
             if (!evt.isMouse)
@@ -280,7 +280,7 @@ namespace Helm
 
             if (evt.type == EventType.MouseUp && mouseActive)
             {
-                MouseUp(time, sequencer);
+                MouseUp(time, sequencer, allNotes);
                 return true;
             }
 
@@ -291,9 +291,9 @@ namespace Helm
             Rect ignoreScrollRect = new Rect(rect);
             ignoreScrollRect.width -= rightPadding;
             if (evt.type == EventType.MouseDown && ignoreScrollRect.Contains(evt.mousePosition))
-                MouseDown(note, time, sequencer, edit);
+                MouseDown(note, time, sequencer, allNotes, edit);
             else if (evt.type == EventType.MouseDrag && mouseActive)
-                MouseDrag(note, time, sequencer);
+                MouseDrag(note, time, sequencer, allNotes);
             return true;
         }
 
@@ -379,7 +379,7 @@ namespace Helm
             EditorGUIUtility.AddCursorRect(rightResizeRect, MouseCursor.SplitResizeLeftRight);
         }
 
-        void DrawRowNotes(List<Note> notes)
+        void DrawRowNotes(SerializedProperty notes)
         {
             if (notes == null)
                 return;
@@ -399,15 +399,18 @@ namespace Helm
             }
         }
 
-        void DrawActiveNotes(Sequencer sequencer)
+        void DrawActiveNotes(Sequencer sequencer, SerializedProperty allNotes)
         {
             if (sequencer.allNotes == null)
                 return;
 
             for (int i = minKey; i <= maxKey; ++i)
             {
-                if (sequencer.allNotes[i] != null)
-                    DrawRowNotes(sequencer.allNotes[i].notes);
+                SerializedProperty row = allNotes.GetArrayElementAtIndex(i);
+                SerializedProperty notes = row.FindPropertyRelative("notes");
+
+                if (notes != null)
+                    DrawRowNotes(notes);
             }
         }
 
@@ -460,7 +463,7 @@ namespace Helm
             return maxRowHeight * (maxKey - minKey + 1);
         }
 
-        public void DrawSequencer(Rect rect, Sequencer sequencer)
+        public void DrawSequencer(Rect rect, Sequencer sequencer, SerializedProperty allNotes)
         {
             numRows = maxKey - minKey + 1;
             numCols = sequencer.length;
@@ -481,7 +484,7 @@ namespace Helm
             DrawNoteRows(scrollableArea);
             DrawBarHighlights(scrollableArea);
             DrawNoteDivisionLines(scrollableArea);
-            DrawActiveNotes(sequencer);
+            DrawActiveNotes(sequencer, allNotes);
             DrawPressedNotes();
             DrawPositionOverlay(sequencer);
 

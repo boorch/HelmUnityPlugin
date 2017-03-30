@@ -12,7 +12,7 @@ namespace Helm
         const float scrollWidth = 15.0f;
 
         SerializedProperty length;
-        // SerializedProperty allNotes;
+        SerializedProperty allNotes;
 
         SequencerUI sequencer = new SequencerUI(keyboardWidth, scrollWidth + 1);
         SequencerPositionUI sequencerPosition = new SequencerPositionUI(keyboardWidth, scrollWidth);
@@ -26,7 +26,7 @@ namespace Helm
         void OnEnable()
         {
             length = serializedObject.FindProperty("length");
-            // allNotes = serializedObject.FindProperty("allNotes");
+            allNotes = serializedObject.FindProperty("allNotes");
         }
 
         public override void OnInspectorGUI()
@@ -53,7 +53,7 @@ namespace Helm
             Rect rect = GUILayoutUtility.GetRect(minWidth, seqHeight, GUILayout.ExpandWidth(true));
             Rect velocitiesRect = GUILayoutUtility.GetRect(minWidth, velocitiesHeight, GUILayout.ExpandWidth(true));
 
-            if (sequencer.DoSequencerEvents(rect, sampleSequencer))
+            if (sequencer.DoSequencerEvents(rect, sampleSequencer, allNotes))
                 Repaint();
             if (velocities.DoVelocityEvents(velocitiesRect, sampleSequencer))
                 Repaint();
@@ -62,16 +62,12 @@ namespace Helm
             velocities.DrawSequencerPosition(velocitiesRect, sampleSequencer);
 
             if (rect.height == seqHeight)
-                sequencer.DrawSequencer(rect, sampleSequencer);
+                sequencer.DrawSequencer(rect, sampleSequencer, allNotes);
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
             if (GUILayout.Button("Clear Sequencer"))
             {
-                Undo.RecordObject(sampleSequencer, "Clear Sequencer");
-                sampleSequencer.Clear();
-
-                /*
                 for (int i = 0; i < allNotes.arraySize; ++i)
                 {
                     SerializedProperty row = allNotes.GetArrayElementAtIndex(i);
@@ -79,7 +75,6 @@ namespace Helm
                     if (notes != null)
                         notes.ClearArray();
                 }
-                sampleSequencer.Clear();*/
             }
 
             EditorGUILayout.IntSlider(length, 1, Sequencer.kMaxLength);

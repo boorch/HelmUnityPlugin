@@ -16,6 +16,7 @@ namespace Helm
         SequencerVelocityUI velocities = new SequencerVelocityUI(keyboardWidth, scrollWidth);
         SerializedProperty channel;
         SerializedProperty length;
+        SerializedProperty allNotes;
 
         float positionHeight = 10.0f;
         float velocitiesHeight = 40.0f;
@@ -26,6 +27,7 @@ namespace Helm
         {
             channel = serializedObject.FindProperty("channel");
             length = serializedObject.FindProperty("length");
+            allNotes = serializedObject.FindProperty("allNotes");
         }
 
         public override void OnInspectorGUI()
@@ -39,7 +41,7 @@ namespace Helm
             Rect rect = GUILayoutUtility.GetRect(minWidth, sequencerHeight, GUILayout.ExpandWidth(true));
             Rect velocitiesRect = GUILayoutUtility.GetRect(minWidth, velocitiesHeight, GUILayout.ExpandWidth(true));
 
-            if (sequencer.DoSequencerEvents(rect, helmSequencer))
+            if (sequencer.DoSequencerEvents(rect, helmSequencer, allNotes))
                 Repaint();
             if (velocities.DoVelocityEvents(velocitiesRect, helmSequencer))
                 Repaint();
@@ -48,7 +50,7 @@ namespace Helm
             velocities.DrawSequencerPosition(velocitiesRect, helmSequencer);
 
             if (rect.height == sequencerHeight)
-                sequencer.DrawSequencer(rect, helmSequencer);
+                sequencer.DrawSequencer(rect, helmSequencer, allNotes);
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
