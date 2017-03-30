@@ -70,10 +70,9 @@ namespace Helm
             {
                 for (int i = 0; i < allNotes.arraySize; ++i)
                 {
-                    SerializedProperty row = allNotes.GetArrayElementAtIndex(i);
-                    SerializedProperty notes = row.FindPropertyRelative("notes");
-                    if (notes != null)
-                        notes.ClearArray();
+                    SerializedProperty noteRow = allNotes.GetArrayElementAtIndex(i);
+                    SerializedProperty notes = noteRow.FindPropertyRelative("notes");
+                    notes.ClearArray();
                 }
             }
 

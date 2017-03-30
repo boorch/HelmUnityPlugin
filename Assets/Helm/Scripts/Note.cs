@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace Helm
 {
     [System.Serializable]
-    public class Note : ScriptableObject
+    public class Note
     {
         [DllImport("AudioPluginHelm")]
         private static extern IntPtr CreateNote(IntPtr sequencer, int note, float velocity, float start, float end);
@@ -162,8 +162,7 @@ namespace Helm
 
         public bool OverlapsRange(float rangeStart, float rangeEnd)
         {
-            return !(start < rangeStart && end <= rangeStart) &&
-                   !(start >= rangeEnd && end > rangeEnd);
+            return Utils.RangesOverlap(start, end, rangeStart, rangeEnd);
         }
 
         public bool InsideRange(float rangeStart, float rangeEnd)

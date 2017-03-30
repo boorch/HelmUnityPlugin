@@ -175,6 +175,12 @@ namespace Helm
             return Mathf.Pow(2, (1.0f * midi) / kNotesPerOctave);
         }
 
+        public static bool RangesOverlap(float start, float end, float rangeStart, float rangeEnd)
+        {
+            return !(start < rangeStart && end <= rangeStart) &&
+                   !(start >= rangeEnd && end > rangeEnd);
+        }
+
         public static void InitAudioSource(AudioSource audio)
         {
             AudioClip one = AudioClip.Create("helm", 1, 1, AudioSettings.outputSampleRate, false);

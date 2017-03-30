@@ -50,7 +50,7 @@ namespace Helm
             for (int i = 0; i < allNotes.Length; ++i)
             {
                 if (allNotes[i] == null)
-                    allNotes[i] = ScriptableObject.CreateInstance<NoteRow>();
+                    allNotes[i] = new NoteRow();
             }
         }
 
@@ -127,7 +127,7 @@ namespace Helm
 
         public Note AddNote(int note, float start, float end, float velocity = 1.0f)
         {
-            Note noteObject = ScriptableObject.CreateInstance<Note>();
+            Note noteObject = new Note();
             noteObject.note = note;
             noteObject.start = start;
             noteObject.end = end;
@@ -136,7 +136,7 @@ namespace Helm
             noteObject.TryCreate();
 
             if (allNotes[note] == null)
-                allNotes[note] = ScriptableObject.CreateInstance<NoteRow>();
+                allNotes[note] = new NoteRow();
             allNotes[note].notes.Add(noteObject);
             allNotes[note].notes.Sort(noteComparer);
 

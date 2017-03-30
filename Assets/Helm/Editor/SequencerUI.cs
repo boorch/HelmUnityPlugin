@@ -124,12 +124,14 @@ namespace Helm
                     Undo.RecordObject(sequencer, "Move Note End");
                     mode = Mode.kDraggingEnd;
                     activeNote.end = Mathf.Max(activeNote.start + minNoteTime, dragTime);
+                    CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
                 }
                 else if (startPixels <= grabResizeWidth)
                 {
                     Undo.RecordObject(sequencer, "Move Note Start");
                     mode = Mode.kDraggingStart;
                     activeNote.start = Mathf.Min(activeNote.end - minNoteTime, dragTime);
+                    CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
                 }
                 else
                     mode = Mode.kDeleting;
@@ -176,6 +178,7 @@ namespace Helm
                     activeNote.end = newStart + length;
                     sequencer.NoteOff(activeNote.note);
                     activeNote.note = note;
+                    CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
                 }
             }
             else if (mode == Mode.kDraggingStart)
@@ -187,6 +190,7 @@ namespace Helm
                         startTime = Mathf.Round(dragTime);
                     activeNote.start = Mathf.Min(activeNote.end - minNoteTime, startTime);
 
+                    CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
                     sequencer.NoteOff(activeNote.note);
                 }
             }
@@ -199,8 +203,31 @@ namespace Helm
                         endTime = Mathf.Round(dragTime);
                     activeNote.end = Mathf.Max(activeNote.start + minNoteTime, endTime);
 
+                    CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
                     sequencer.NoteOff(activeNote.note);
                 }
+            }
+        }
+
+        void CopyNoteToSerializedProperty(Note note, SerializedProperty serializedNote)
+        {
+            serializedNote.FindPropertyRelative("note_").intValue = note.note;
+            serializedNote.FindPropertyRelative("velocity_").floatValue = note.velocity;
+            serializedNote.FindPropertyRelative("start_").floatValue = note.start;
+            serializedNote.FindPropertyRelative("end_").floatValue = note.end;
+            serializedNote.FindPropertyRelative("parent").objectReferenceValue = note.parent;
+        }
+
+        void CopyNoteRowToSerializedProperty(NoteRow row, SerializedProperty serializedRow)
+        {
+            SerializedProperty noteList = serializedRow.FindPropertyRelative("notes");
+            noteList.arraySize = row.notes.Count;
+
+            for (int i = 0; i < row.notes.Count; ++i)
+            {
+                Note note = row.notes[i];
+                SerializedProperty serializedNote = noteList.GetArrayElementAtIndex(i);
+                CopyNoteToSerializedProperty(note, serializedNote);
             }
         }
 
@@ -223,6 +250,7 @@ namespace Helm
                 if (activeNote != null)
                     sequencer.ClampNotesInRange(activeNote.note, activeNote.start, activeNote.end, activeNote);
 
+                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
                 sequencer.NoteOff(activeNote.note);
             }
             else if (mode == Mode.kDraggingStart)
@@ -232,6 +260,7 @@ namespace Helm
                 if (activeNote != null)
                     sequencer.ClampNotesInRange(pressNote, activeNote.start, activeNote.end, activeNote);
 
+                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
                 sequencer.NoteOff(pressNote);
             }
             else if (mode == Mode.kDraggingEnd)
@@ -241,6 +270,7 @@ namespace Helm
                 if (activeNote != null)
                     sequencer.ClampNotesInRange(pressNote, activeNote.start, activeNote.end, activeNote);
 
+                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
                 sequencer.NoteOff(pressNote);
             }
             else if (mode == Mode.kAdding)
@@ -250,10 +280,10 @@ namespace Helm
                 int endDrag = Mathf.CeilToInt(endTime);
 
                 sequencer.ClampNotesInRange(pressNote, startDrag, endDrag);
-
                 for (int i = startDrag; i < endDrag; ++i)
                     sequencer.AddNote(pressNote, i, i + 1, defaultVelocity);
 
+                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
                 sequencer.NoteOff(pressNote);
             }
             else if (mode == Mode.kDeleting)
@@ -384,18 +414,24 @@ namespace Helm
             if (notes == null)
                 return;
 
-            foreach (Note note in notes)
+            for (int i = 0; i < notes.arraySize; ++i)
             {
-                Color color = Color.Lerp(fullCellZeroVelocity, fullCellFullVelocity, note.velocity);
-                if (mode == Mode.kDeleting && pressNote == note.note)
-                {
-                    float start = Mathf.Min(pressTime, dragTime);
-                    float end = Mathf.Max(pressTime, dragTime);
+                SerializedProperty serializedNote = notes.GetArrayElementAtIndex(i);
+                int note = serializedNote.FindPropertyRelative("note_").intValue;
+                float velocity = serializedNote.FindPropertyRelative("velocity_").floatValue;
+                float start = serializedNote.FindPropertyRelative("start_").floatValue;
+                float end = serializedNote.FindPropertyRelative("end_").floatValue;
 
-                    if (note.OverlapsRange(start, end))
+                Color color = Color.Lerp(fullCellZeroVelocity, fullCellFullVelocity, velocity);
+                if (mode == Mode.kDeleting && pressNote == note)
+                {
+                    float pressStart = Mathf.Min(pressTime, dragTime);
+                    float pressEnd = Mathf.Max(pressTime, dragTime);
+
+                    if (Utils.RangesOverlap(start, end, pressStart, pressEnd))
                         color = deletingCell;
                 }
-                DrawNote(note.note, note.start, note.end, color);
+                DrawNote(note, start, end, color);
             }
         }
 

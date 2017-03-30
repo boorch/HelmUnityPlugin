@@ -102,6 +102,7 @@
     <Compile Include="Assets\Helm\Scripts\Keyzone.cs" />
     <Compile Include="Assets\Helm\Scripts\Note.cs" />
     <Compile Include="Assets\Helm\Scripts\NoteHandler.cs" />
+    <Compile Include="Assets\Helm\Scripts\NoteRow.cs" />
     <Compile Include="Assets\Helm\Scripts\SampleSequencer.cs" />
     <Compile Include="Assets\Helm\Scripts\Sampler.cs" />
     <Compile Include="Assets\Helm\Scripts\Sequencer.cs" />
