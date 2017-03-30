@@ -11,11 +11,26 @@ namespace Helm
     [RequireComponent(typeof(AudioSource))]
     public class Sampler : MonoBehaviour, NoteHandler
     {
+        class ActiveNote
+        {
+            public int note = 0;
+            public List<AudioSource> audioSources;
+            public double startTime = 0.0;
+
+            public ActiveNote(int n, List<AudioSource> sources, double start)
+            {
+                note = n;
+                audioSources = sources;
+                startTime = start;
+            }
+        }
+
         public List<Keyzone> keyzones = new List<Keyzone>() { new Keyzone() };
         public float velocityTracking = 1.0f;
         public int numVoices = 2;
 
         int audioIndex = 0;
+        List<ActiveNote> activeNotes = new List<ActiveNote>();
 
         // We end sample early to prevent click at end of sample caused by Unity pitch change.
         const double endEarlyTime = 0.01;
@@ -25,7 +40,7 @@ namespace Helm
             AllNotesOff();
 
             AudioSource[] audios = GetComponents<AudioSource>();
-            int voicesToAdd = audios.Length;
+            int voicesToAdd = numVoices - audios.Length;
             int originalIndex = 0;
             for (int i = 0; i < voicesToAdd; ++i)
             {
@@ -77,13 +92,6 @@ namespace Helm
             audio.volume = Mathf.Lerp(1.0f - velocityTracking, 1.0f, velocity);
         }
 
-        public void AllNotesOff()
-        {
-            AudioSource[] audios = GetComponents<AudioSource>();
-            foreach (AudioSource audio in audios)
-                audio.Stop();
-        }
-
         List<Keyzone> GetValidKeyzones(int note, float velocity = 1.0f)
         {
             List<Keyzone> validKeyzones = new List<Keyzone>();
@@ -132,16 +140,29 @@ namespace Helm
             return max;
         }
 
+        public void AllNotesOff()
+        {
+            AudioSource[] audios = GetComponents<AudioSource>();
+            foreach (AudioSource audio in audios)
+                audio.Stop();
+
+            activeNotes.Clear();
+        }
+
         public void NoteOn(int note, float velocity = 1.0f)
         {
             List<AudioSource> audioSources = GetPreppedAudioSources(note, velocity);
+            activeNotes.Add(new ActiveNote(note, audioSources, AudioSettings.dspTime));
             foreach (AudioSource audio in audioSources)
             {
-                audio.Play();
-                if (!audio.loop)
+                if (audio.isActiveAndEnabled)
                 {
-                    double length = (audio.clip.length - endEarlyTime) / audio.pitch;
-                    audio.SetScheduledEndTime(AudioSettings.dspTime + length);
+                    audio.Play();
+                    if (!audio.loop)
+                    {
+                        double length = (audio.clip.length - endEarlyTime) / audio.pitch;
+                        audio.SetScheduledEndTime(AudioSettings.dspTime + length);
+                    }
                 }
             }
         }
@@ -160,19 +181,25 @@ namespace Helm
             }
         }
 
+        ActiveNote FindActiveNote(int note)
+        {
+            foreach (ActiveNote activeNote in activeNotes)
+            {
+                if (note == activeNote.note)
+                    return activeNote;
+            }
+            return null;
+        }
+
         public void NoteOff(int note)
         {
-            List<Keyzone> validKeyzones = GetValidKeyzones(note);
-            foreach (Keyzone keyzone in validKeyzones)
-            {
-                float pitch = Utils.MidiChangeToRatio(note - keyzone.rootKey);
-                AudioSource[] audios = GetComponents<AudioSource>();
-                foreach (AudioSource audio in audios)
-                {
-                    if (audio.pitch == pitch && audio.clip == keyzone.audioClip)
-                        audio.Stop();
-                }
-            }
+            ActiveNote activeNote = FindActiveNote(note);
+            if (activeNote == null || AudioSettings.dspTime <= activeNote.startTime)
+                return;
+
+            activeNotes.Remove(activeNote);
+            foreach (AudioSource audio in activeNote.audioSources)
+                audio.volume = 0.0f;
         }
     }
 }

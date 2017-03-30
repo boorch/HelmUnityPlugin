@@ -8,13 +8,23 @@ using System.Runtime.InteropServices;
 
 namespace Helm
 {
-    public class HelmSynthUI : IAudioEffectPluginGUI
+    public class HelmSynthUI : IAudioEffectPluginGUI, NoteHandler
     {
+        [DllImport("AudioPluginHelm")]
+        private static extern void HelmNoteOn(int channel, int note, float velocity);
+
+        [DllImport("AudioPluginHelm")]
+        private static extern void HelmNoteOff(int channel, int note);
+
+        [DllImport("AudioPluginHelm")]
+        private static extern void HelmAllNotesOff(int channel);
+
         const string extension = ".helm";
         KeyboardUI keyboard = new KeyboardUI();
         PatchBrowserUI folderBrowser = new PatchBrowserUI(true, "");
         PatchBrowserUI patchBrowser = new PatchBrowserUI(false, extension);
         bool showOptions = false;
+        int channel = 0;
 
         public override string Name
         {
@@ -29,6 +39,21 @@ namespace Helm
         public override string Vendor
         {
             get { return "Matt Tytel"; }
+        }
+
+        public void NoteOn(int note, float velocity = 1.0f)
+        {
+            HelmNoteOn(channel, note, velocity);
+        }
+
+        public void NoteOff(int note)
+        {
+            HelmNoteOff(channel, note);
+        }
+
+        public void AllNotesOff()
+        {
+            HelmAllNotesOff(channel);
         }
 
         void LoadPatch(IAudioEffectPlugin plugin, string path)
@@ -78,9 +103,7 @@ namespace Helm
             GUILayout.Space(5.0f);
             Rect keyboardRect = GUILayoutUtility.GetRect(200, 60, GUILayout.ExpandWidth(true));
 
-            float channel = 0.0f;
-            plugin.GetFloatParameter("Channel", out channel);
-            keyboard.DoKeyboardEvents(keyboardRect, (int)channel);
+            keyboard.DoKeyboardEvents(keyboardRect, this);
             keyboard.DrawKeyboard(keyboardRect);
 
             GUI.backgroundColor = prev_color;
@@ -121,8 +144,12 @@ namespace Helm
             GUILayout.Space(5.0f);
             GUI.backgroundColor = prev_color;
 
-            float newChannel = EditorGUILayout.IntSlider("Channel", (int)channel, 0, Utils.kMaxChannels - 1);
+            float pluginChannel = 0.0f;
+            plugin.GetFloatParameter("Channel", out pluginChannel);
+            channel = (int)pluginChannel;
+            float newChannel = EditorGUILayout.IntSlider("Channel", channel, 0, Utils.kMaxChannels - 1);
             showOptions = EditorGUILayout.Toggle("Show All Options", showOptions);
+
 
             if (newChannel != channel)
                 plugin.SetFloatParameter("Channel", newChannel);

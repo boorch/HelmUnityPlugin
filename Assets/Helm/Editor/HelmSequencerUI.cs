@@ -11,7 +11,6 @@ namespace Helm
         const float keyboardWidth = 30.0f;
         const float scrollWidth = 15.0f;
 
-        private SerializedObject serialized;
         SequencerUI sequencer = new SequencerUI(keyboardWidth, scrollWidth + 1);
         SequencerPositionUI sequencerPosition = new SequencerPositionUI(keyboardWidth, scrollWidth);
         SequencerVelocityUI velocities = new SequencerVelocityUI(keyboardWidth, scrollWidth);

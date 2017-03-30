@@ -10,13 +10,14 @@ namespace Helm
     {
         const int scrollWidth = 15;
 
-        private SerializedObject serialized;
+        KeyboardUI keyboard = new KeyboardUI();
         KeyzoneEditorUI keyzones = new KeyzoneEditorUI(scrollWidth);
         SerializedProperty numVoices;
         SerializedProperty velocityTracking;
 
         const int keyzoneHeight = 120;
         const float minWidth = 200.0f;
+        const float keyboardHeight = 60.0f;
 
         void OnEnable()
         {
@@ -32,13 +33,21 @@ namespace Helm
             GUILayout.Space(5f);
             Sampler sampler = target as Sampler;
             int height = Mathf.Max(keyzoneHeight, keyzones.GetHeight(sampler));
+
+            Rect keyboardRect = GUILayoutUtility.GetRect(minWidth, keyboardHeight, GUILayout.ExpandWidth(true));
+            GUILayout.Space(10.0f);
             Rect keyzonesRect = GUILayoutUtility.GetRect(minWidth, height, GUILayout.ExpandWidth(true));
+
+            if (keyboard.DoKeyboardEvents(keyboardRect, sampler))
+                Repaint();
 
             if (keyzones.DoKeyzoneEvents(keyzonesRect, sampler))
                 Repaint();
 
             if (keyzonesRect.height == height)
                 keyzones.DrawKeyzones(keyzonesRect, sampler);
+
+            keyboard.DrawKeyboard(keyboardRect);
 
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;

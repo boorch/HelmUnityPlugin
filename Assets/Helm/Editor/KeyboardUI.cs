@@ -2,19 +2,12 @@
 
 using UnityEditor;
 using UnityEngine;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
 namespace Helm
 {
     public class KeyboardUI
     {
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOn(int channel, int note, float velocity);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOff(int channel, int note);
-
         Color blackUnpressed = Color.black;
         Color blackPressed = Color.red;
         Color whiteUnPressed = Color.white;
@@ -51,7 +44,7 @@ namespace Helm
             cStyle.alignment = TextAnchor.LowerCenter;
         }
 
-        public bool DoKeyboardEvents(Rect rect, int channel)
+        public bool DoKeyboardEvents(Rect rect, NoteHandler noteHandler)
         {
             Event evt = Event.current;
             hoveredKey = GetHoveredKey(evt.mousePosition, rect);
@@ -59,7 +52,7 @@ namespace Helm
             if (evt.type == EventType.MouseUp)
             {
                 if (currentKey >= 0)
-                    HelmNoteOff(channel, currentKey);
+                    noteHandler.NoteOff(currentKey);
                 currentKey = -1;
                 return true;
             }
@@ -69,8 +62,8 @@ namespace Helm
                 if (hoveredKey != currentKey)
                 {
                     if (currentKey >= 0)
-                        HelmNoteOff(channel, currentKey);
-                    HelmNoteOn(channel, hoveredKey, 1.0f);
+                        noteHandler.NoteOff(currentKey);
+                    noteHandler.NoteOn(hoveredKey, 1.0f);
                     currentKey = hoveredKey;
                     return true;
                 }

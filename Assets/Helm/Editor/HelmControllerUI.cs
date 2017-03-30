@@ -24,11 +24,11 @@ namespace Helm
             Color prev_color = GUI.backgroundColor;
             GUILayout.Space(5f);
             Rect rect = GUILayoutUtility.GetRect(200, 60, GUILayout.ExpandWidth(true));
+            HelmController controller = target as HelmController;
 
-            if (keyboard.DoKeyboardEvents(rect, channel.intValue))
+            if (keyboard.DoKeyboardEvents(rect, controller))
                 Repaint();
 
-            HelmController controller = target as HelmController;
             keyboard.DrawKeyboard(rect, controller.GetPressedNotes());
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;

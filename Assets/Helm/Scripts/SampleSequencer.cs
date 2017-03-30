@@ -82,10 +82,11 @@ namespace Helm
             double windowMax = currentTime + lookaheadTime;
             if (windowMax == lastWindowTime)
                 return;
-            else if (windowMax < lastWindowTime)
+
+            if (windowMax < lastWindowTime)
                 lastWindowTime -= sequencerTime;
 
-            // TODO: performance.
+            // TODO: search performance.
             foreach (NoteRow row in allNotes)
             {
                 foreach (Note note in row.notes)
@@ -93,12 +94,10 @@ namespace Helm
                     double startTime = sixteenthTime * note.start;
                     double endTime = sixteenthTime * note.end;
                     if (startTime < lastWindowTime)
-                    {
                         startTime += sequencerTime;
-                        endTime += sequencerTime;
-                    }
                     if (startTime < windowMax && startTime >= lastWindowTime)
                     {
+                        endTime = startTime + sixteenthTime * (note.end - note.start);
                         double timeToStart = startTime - currentTime;
                         double timeToEnd = endTime - currentTime;
                         GetComponent<Sampler>().NoteOnScheduled(note.note, note.velocity, timeToStart, timeToEnd);
