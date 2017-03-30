@@ -106,10 +106,15 @@ namespace Helm
             }
         }
 
-        void MouseDrag(float key, int row, Sampler sampler)
+        void MouseDrag(float key, int row, Sampler sampler, SerializedProperty keyzones)
         {
             if (currentKeyzone == null)
                 return;
+
+            SerializedProperty serializedKeyzone = null;
+            int index = sampler.keyzones.IndexOf(currentKeyzone);
+            if (index >= 0)
+                serializedKeyzone = keyzones.GetArrayElementAtIndex(index);
 
             int roundedKey = Mathf.Clamp(Mathf.RoundToInt(key), 0, Utils.kMidiSize - 1);
             int flooredKey = Mathf.Clamp(Mathf.FloorToInt(key), 0, Utils.kMidiSize - 1);
@@ -117,16 +122,22 @@ namespace Helm
             {
                 Undo.RecordObject(sampler, "Change Keyzone End Note");
                 currentKeyzone.maxKey = Mathf.Max(roundedKey - 1, currentKeyzone.minKey);
+                if (serializedKeyzone != null)
+                    serializedKeyzone.FindPropertyRelative("maxKey").intValue = currentKeyzone.maxKey;
             }
             else if (mouseMode == MouseMode.kDraggingRangeStart)
             {
                 Undo.RecordObject(sampler, "Change Keyzone Start Note");
                 currentKeyzone.minKey = Mathf.Min(roundedKey, currentKeyzone.maxKey);
+                if (serializedKeyzone != null)
+                    serializedKeyzone.FindPropertyRelative("minKey").intValue = currentKeyzone.minKey;
             }
             else if (mouseMode == MouseMode.kDraggingRoot)
             {
                 Undo.RecordObject(sampler, "Change Keyzone Root");
                 currentKeyzone.rootKey = flooredKey - pressOffset;
+                if (serializedKeyzone != null)
+                    serializedKeyzone.FindPropertyRelative("rootKey").intValue = currentKeyzone.rootKey;
             }
             else if (mouseMode == MouseMode.kDraggingRange)
             {
@@ -135,10 +146,15 @@ namespace Helm
                 int min = Mathf.Clamp(flooredKey - pressOffset, 0, Utils.kMidiSize - 1 - range);
                 currentKeyzone.minKey = min;
                 currentKeyzone.maxKey = min + range;
+                if (serializedKeyzone != null)
+                {
+                    serializedKeyzone.FindPropertyRelative("minKey").intValue = currentKeyzone.minKey;
+                    serializedKeyzone.FindPropertyRelative("maxKey").intValue = currentKeyzone.maxKey;
+                }
             }
         }
 
-        public bool DoKeyzoneEvents(Rect rect, Sampler sampler)
+        public bool DoKeyzoneEvents(Rect rect, Sampler sampler, SerializedProperty keyzones)
         {
             Event evt = Event.current;
             if (!evt.isMouse)
@@ -159,7 +175,7 @@ namespace Helm
             if (evt.type == EventType.MouseDown && ignoreScrollRect.Contains(evt.mousePosition))
                 MouseDown(key, row, sampler);
             else if (evt.type == EventType.MouseDrag && currentKeyzone != null)
-                MouseDrag(key, row, sampler);
+                MouseDrag(key, row, sampler, keyzones);
             return true;
         }
 
@@ -218,7 +234,7 @@ namespace Helm
             }
         }
 
-        void DrawClips(Sampler sampler)
+        void DrawClips(Sampler sampler, SerializedProperty keyzones)
         {
             int height = rowHeight / 2;
             GUIStyle style = new GUIStyle(GUI.skin.button);
@@ -264,7 +280,9 @@ namespace Helm
             if (remove != null)
             {
                 Undo.RecordObject(sampler, "Delete Keyzone");
-                sampler.RemoveKeyzone(remove);
+                int index = sampler.RemoveKeyzone(remove);
+                if (index >= 0)
+                    keyzones.DeleteArrayElementAtIndex(index);
             }
         }
 
@@ -322,7 +340,7 @@ namespace Helm
             return keyboardHeight + rowHeight * sampler.keyzones.Count + scrollWidth;
         }
 
-        void AddKeyzone(Sampler sampler)
+        void AddKeyzone(Sampler sampler, SerializedProperty keyzones)
         {
             Keyzone keyzone = sampler.AddKeyzone();
             if (sampler.keyzones.Count >= 2)
@@ -339,9 +357,18 @@ namespace Helm
                 }
                 keyzone.mixer = lastKeyzone.mixer;
             }
+
+            keyzones.arraySize++;
+            SerializedProperty newKeyzone = keyzones.GetArrayElementAtIndex(keyzones.arraySize - 1);
+            newKeyzone.FindPropertyRelative("audioClip").objectReferenceValue = keyzone.audioClip;
+            newKeyzone.FindPropertyRelative("rootKey").intValue = keyzone.rootKey;
+            newKeyzone.FindPropertyRelative("minKey").intValue = keyzone.minKey;
+            newKeyzone.FindPropertyRelative("maxKey").intValue = keyzone.maxKey;
+            newKeyzone.FindPropertyRelative("minVelocity").floatValue = keyzone.minVelocity;
+            newKeyzone.FindPropertyRelative("maxVelocity").floatValue = keyzone.maxVelocity;
         }
 
-        public void DrawKeyzones(Rect rect, Sampler sampler)
+        public void DrawKeyzones(Rect rect, Sampler sampler, SerializedProperty keyzones)
         {
             int numKeyzones = 0;
             float scrollableHeight = Mathf.Max(rect.height, keyboardHeight + numKeyzones * rowHeight);
@@ -350,12 +377,12 @@ namespace Helm
             float scrollableWidth = Utils.kMidiSize * keyWidth;
 
             GUI.BeginGroup(rect);
-            DrawClips(sampler);
+            DrawClips(sampler, keyzones);
             Rect buttonRect = new Rect(0, 0, keyzoneWidth - buttonBuffer, keyboardHeight);
             if (GUI.Button(buttonRect, "Add Keyzone"))
             {
                 Undo.RecordObject(sampler, "Add Keyzone");
-                AddKeyzone(sampler);
+                AddKeyzone(sampler, keyzones);
             }
 
             Rect keySection = new Rect(keyzoneWidth, 0, rect.width - keyzoneWidth, rect.height);

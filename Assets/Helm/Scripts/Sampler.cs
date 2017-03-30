@@ -66,9 +66,11 @@ namespace Helm
             return keyzone;
         }
 
-        public void RemoveKeyzone(Keyzone keyzone)
+        public int RemoveKeyzone(Keyzone keyzone)
         {
+            int index = keyzones.IndexOf(keyzone);
             keyzones.Remove(keyzone);
+            return index;
         }
 
         AudioSource GetNextAudioSource()

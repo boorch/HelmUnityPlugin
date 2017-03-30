@@ -11,9 +11,10 @@ namespace Helm
         const int scrollWidth = 15;
 
         KeyboardUI keyboard = new KeyboardUI();
-        KeyzoneEditorUI keyzones = new KeyzoneEditorUI(scrollWidth);
+        KeyzoneEditorUI keyzonesUI = new KeyzoneEditorUI(scrollWidth);
         SerializedProperty numVoices;
         SerializedProperty velocityTracking;
+        SerializedProperty keyzones;
 
         const int keyzoneHeight = 120;
         const float minWidth = 200.0f;
@@ -23,6 +24,7 @@ namespace Helm
         {
             numVoices = serializedObject.FindProperty("numVoices");
             velocityTracking = serializedObject.FindProperty("velocityTracking");
+            keyzones = serializedObject.FindProperty("keyzones");
         }
 
         public override void OnInspectorGUI()
@@ -32,7 +34,7 @@ namespace Helm
             Color prev_color = GUI.backgroundColor;
             GUILayout.Space(5f);
             Sampler sampler = target as Sampler;
-            int height = Mathf.Max(keyzoneHeight, keyzones.GetHeight(sampler));
+            int height = Mathf.Max(keyzoneHeight, keyzonesUI.GetHeight(sampler));
 
             Rect keyboardRect = GUILayoutUtility.GetRect(minWidth, keyboardHeight, GUILayout.ExpandWidth(true));
             GUILayout.Space(10.0f);
@@ -41,11 +43,11 @@ namespace Helm
             if (keyboard.DoKeyboardEvents(keyboardRect, sampler))
                 Repaint();
 
-            if (keyzones.DoKeyzoneEvents(keyzonesRect, sampler))
+            if (keyzonesUI.DoKeyzoneEvents(keyzonesRect, sampler, keyzones))
                 Repaint();
 
             if (keyzonesRect.height == height)
-                keyzones.DrawKeyzones(keyzonesRect, sampler);
+                keyzonesUI.DrawKeyzones(keyzonesRect, sampler, keyzones);
 
             keyboard.DrawKeyboard(keyboardRect);
 
