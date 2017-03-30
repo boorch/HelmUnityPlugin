@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace Helm
 {
     [System.Serializable]
-    public class Note
+    public class Note : ISerializationCallbackReceiver
     {
         [DllImport("AudioPluginHelm")]
         private static extern IntPtr CreateNote(IntPtr sequencer, int note, float velocity, float start, float end);
@@ -106,14 +106,13 @@ namespace Helm
 
         private IntPtr reference;
 
-        void OnEnable()
+        public void OnAfterDeserialize()
         {
             TryCreate();
         }
 
-        void OnDestroy()
+        public void OnBeforeSerialize()
         {
-            TryDelete();
         }
 
         void CopySettingsToNative()
