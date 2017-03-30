@@ -13,29 +13,6 @@ namespace Helm
         [DllImport("AudioPluginHelm")]
         protected static extern float GetBpm();
 
-        [System.Serializable]
-        public class NoteRow : ISerializationCallbackReceiver
-        {
-            public List<Note> notes = new List<Note>();
-            private List<Note> oldNotes = new List<Note>();
-
-            public void OnBeforeSerialize()
-            {
-                oldNotes = new List<Note>(notes);
-            }
-
-            public void OnAfterDeserialize()
-            {
-                if (oldNotes.Count == notes.Count)
-                    return;
-
-                foreach (Note note in oldNotes)
-                    note.TryDelete();
-                foreach (Note note in notes)
-                    note.TryCreate();
-            }
-        }
-
         class NoteComparer : IComparer<Note>
         {
             public int Compare(Note left, Note right)
@@ -73,7 +50,7 @@ namespace Helm
             for (int i = 0; i < allNotes.Length; ++i)
             {
                 if (allNotes[i] == null)
-                    allNotes[i] = new NoteRow();
+                    allNotes[i] = ScriptableObject.CreateInstance<NoteRow>();
             }
         }
 
@@ -150,7 +127,7 @@ namespace Helm
 
         public Note AddNote(int note, float start, float end, float velocity = 1.0f)
         {
-            Note noteObject = new Note();
+            Note noteObject = ScriptableObject.CreateInstance<Note>();
             noteObject.note = note;
             noteObject.start = start;
             noteObject.end = end;
@@ -159,7 +136,7 @@ namespace Helm
             noteObject.TryCreate();
 
             if (allNotes[note] == null)
-                allNotes[note] = new NoteRow();
+                allNotes[note] = ScriptableObject.CreateInstance<NoteRow>();
             allNotes[note].notes.Add(noteObject);
             allNotes[note].notes.Sort(noteComparer);
 
@@ -170,10 +147,13 @@ namespace Helm
         {
             for (int i = 0; i < allNotes.Length; ++i)
             {
-                foreach (Note note in allNotes[i].notes)
-                    note.TryDelete();
+                if (allNotes[i] != null)
+                {
+                    foreach (Note note in allNotes[i].notes)
+                        note.TryDelete();
 
-                allNotes[i].notes.Clear();
+                    allNotes[i].notes.Clear();
+                }
             }
         }
 

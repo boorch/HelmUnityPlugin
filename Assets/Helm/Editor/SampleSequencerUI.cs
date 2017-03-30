@@ -11,11 +11,12 @@ namespace Helm
         const float keyboardWidth = 30.0f;
         const float scrollWidth = 15.0f;
 
-        private SerializedObject serialized;
+        SerializedProperty length;
+        // SerializedProperty allNotes;
+
         SequencerUI sequencer = new SequencerUI(keyboardWidth, scrollWidth + 1);
         SequencerPositionUI sequencerPosition = new SequencerPositionUI(keyboardWidth, scrollWidth);
         SequencerVelocityUI velocities = new SequencerVelocityUI(keyboardWidth, scrollWidth);
-        SerializedProperty length;
 
         float positionHeight = 10.0f;
         float velocitiesHeight = 40.0f;
@@ -25,6 +26,7 @@ namespace Helm
         void OnEnable()
         {
             length = serializedObject.FindProperty("length");
+            // allNotes = serializedObject.FindProperty("allNotes");
         }
 
         public override void OnInspectorGUI()
@@ -68,6 +70,16 @@ namespace Helm
             {
                 Undo.RecordObject(sampleSequencer, "Clear Sequencer");
                 sampleSequencer.Clear();
+
+                /*
+                for (int i = 0; i < allNotes.arraySize; ++i)
+                {
+                    SerializedProperty row = allNotes.GetArrayElementAtIndex(i);
+                    SerializedProperty notes = row.FindPropertyRelative("notes");
+                    if (notes != null)
+                        notes.ClearArray();
+                }
+                sampleSequencer.Clear();*/
             }
 
             EditorGUILayout.IntSlider(length, 1, Sequencer.kMaxLength);

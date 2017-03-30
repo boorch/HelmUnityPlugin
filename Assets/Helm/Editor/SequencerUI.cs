@@ -405,7 +405,10 @@ namespace Helm
                 return;
 
             for (int i = minKey; i <= maxKey; ++i)
-                DrawRowNotes(sequencer.allNotes[i].notes);
+            {
+                if (sequencer.allNotes[i] != null)
+                    DrawRowNotes(sequencer.allNotes[i].notes);
+            }
         }
 
         void DrawPressedNotes()
@@ -441,7 +444,7 @@ namespace Helm
 
             for (int i = 0; i < sequencer.allNotes.Length; ++i)
             {
-                if (sequencer.allNotes[i].notes.Count > 0)
+                if (sequencer.allNotes[i] != null && sequencer.allNotes[i].notes.Count > 0)
                 {
                     float noteY = (sequencer.allNotes.Length - i - 1) * rowHeight;
                     float bottom = Mathf.Clamp(noteY + lowerBuffer, height, totalHeight);

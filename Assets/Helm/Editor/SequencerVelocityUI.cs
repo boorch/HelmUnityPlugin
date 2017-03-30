@@ -115,6 +115,9 @@ namespace Helm
 
         void DrawRowNotes(List<Note> rowNotes)
         {
+            if (rowNotes == null)
+                return;
+
             foreach (Note note in rowNotes)
                 DrawNote(note, velocityColor);
         }
@@ -125,7 +128,10 @@ namespace Helm
                 return;
 
             for (int i = 0; i < sequencer.allNotes.Length; ++i)
-                DrawRowNotes(sequencer.allNotes[i].notes);
+            {
+                if (sequencer.allNotes[i] != null)
+                    DrawRowNotes(sequencer.allNotes[i].notes);
+            }
         }
 
         public void DrawTextMeasurements(Rect rect)

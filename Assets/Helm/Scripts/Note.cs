@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace Helm
 {
     [System.Serializable]
-    public class Note : ISerializationCallbackReceiver
+    public class Note : ScriptableObject
     {
         [DllImport("AudioPluginHelm")]
         private static extern IntPtr CreateNote(IntPtr sequencer, int note, float velocity, float start, float end);
@@ -106,9 +106,14 @@ namespace Helm
 
         private IntPtr reference;
 
-        public Note()
+        void OnEnable()
         {
-            reference = IntPtr.Zero;
+            TryCreate();
+        }
+
+        void OnDestroy()
+        {
+            TryDelete();
         }
 
         void CopySettingsToNative()
@@ -153,15 +158,6 @@ namespace Helm
             if (FullyNative())
                 DeleteNote(parent.Reference(), reference);
             reference = IntPtr.Zero;
-        }
-
-        public void OnBeforeSerialize()
-        {
-        }
-
-        public void OnAfterDeserialize()
-        {
-            TryCreate();
         }
 
         public bool OverlapsRange(float rangeStart, float rangeEnd)
