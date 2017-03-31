@@ -10,9 +10,6 @@ namespace Helm
 {
     public abstract class Sequencer : MonoBehaviour, NoteHandler
     {
-        [DllImport("AudioPluginHelm")]
-        protected static extern float GetBpm();
-
         class NoteComparer : IComparer<Note>
         {
             public int Compare(Note left, Note right)
@@ -159,12 +156,12 @@ namespace Helm
 
         public float GetSixteenthTime()
         {
-            return 1.0f / (Utils.kBpmToSixteenths * GetBpm());
+            return 1.0f / (Utils.kBpmToSixteenths * HelmBpm.GetGlobalBpm());
         }
 
         protected double GetSequencerTime()
         {
-            return (Utils.kBpmToSixteenths * GetBpm()) * (AudioSettings.dspTime - syncTime);
+            return (Utils.kBpmToSixteenths * HelmBpm.GetGlobalBpm()) * (AudioSettings.dspTime - syncTime);
         }
 
         protected double GetSequencerPosition()

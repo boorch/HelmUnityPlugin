@@ -29,7 +29,7 @@ namespace Helm
             if (EditorGUI.EndChangeCheck())
             {
                 HelmBpm helmBpm = target as HelmBpm;
-                helmBpm.SetNative();
+                helmBpm.SetGlobalBpm();
             }
         }
     }
