@@ -32,7 +32,7 @@ PlayNoteScheduled
 Expose aftertouch, pitch bend, modulation wheel controls
 Variable BPM without resyncing
 Sequencer time signature/division size
-Take unused AudioSource first instead of round robin.
+Start sequencer on next loop
 UI widgets for better tweaking in Unity?
 iOS/android/ps4/xbox support?
 

@@ -76,6 +76,11 @@ namespace Helm
         AudioSource GetNextAudioSource()
         {
             AudioSource[] audios = GetComponents<AudioSource>();
+            foreach (AudioSource audio in audios)
+            {
+                if (!audio.isPlaying)
+                    return audio;
+            }
             audioIndex = (audioIndex + 1) % audios.Length;
             return audios[audioIndex];
         }
