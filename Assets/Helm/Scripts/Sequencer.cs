@@ -23,10 +23,19 @@ namespace Helm
             }
         }
 
+        enum Division
+        {
+            kEighth,
+            kSixteenth,
+            kTriplet,
+            kThirtySecond,
+        }
+
         public int length = 16;
         public int currentSixteenth = -1;
         public double syncTime = 0.0;
         public NoteRow[] allNotes = new NoteRow[Utils.kMidiSize];
+        public Division division;
 
         public const int kMaxLength = 128;
 
