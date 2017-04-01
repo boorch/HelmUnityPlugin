@@ -21,7 +21,7 @@ You can call NoteOn and NoteOff on this script to trigger notes from code. Just 
 
 In your scene load the HelmSequencer script onto an empty GameObject.
 Like above, hook up the AudioSource target mixer that appears to the AudioMixerGroup that the Helm instance is on.
-Click to create a note, click again to delete. Click and drage to create a repeating sequencer.
+Click to create a note, click again to delete. Click and drag to create a repeating sequence.
 Play the scene to hear the sequence.
 
 # TODO
