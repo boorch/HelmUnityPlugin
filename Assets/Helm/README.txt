@@ -31,7 +31,6 @@ Play the scene to hear the sequence.
 PlayNoteScheduled
 Expose aftertouch, pitch bend, modulation wheel controls
 Variable BPM without resyncing
-Start sequencer on next loop
 UI widgets for better tweaking in Unity?
 iOS/android/ps4/xbox support?
 
