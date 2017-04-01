@@ -7,7 +7,7 @@ namespace Helm
     public class EnableAfterTime : MonoBehaviour
     {
         public float time = 1.0f;
-        public MonoBehaviour behavior;
+        public Sequencer sequencer;
 
         void Start()
         {
@@ -16,7 +16,7 @@ namespace Helm
 
         void Enable()
         {
-            behavior.enabled = true;
+            sequencer.StartOnNextCycle();
         }
     }
 }

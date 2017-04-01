@@ -17,7 +17,7 @@ namespace Helm
         void Start()
         {
             double time = AudioSettings.dspTime + waitTime;
-            sequencer.StartSequencerScheduled(time);
+            sequencer.StartScheduled(time);
             loop.PlayScheduled(time);
         }
 

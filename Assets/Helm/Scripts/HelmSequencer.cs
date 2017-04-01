@@ -124,13 +124,21 @@ namespace Helm
             enabled = true;
         }
 
-        public override void StartSequencerScheduled(double dspTime)
+        public override void StartScheduled(double dspTime)
         {
             syncTime = dspTime;
             const float lookaheadTime = 0.5f;
             SyncSequencerStart(reference, dspTime);
             float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
             Invoke("EnableComponent", waitToEnable);
+        }
+
+        public override void StartOnNextCycle()
+        {
+            double timeSinceSync = AudioSettings.dspTime - syncTime;
+            double sequenceLength = (length * GetSixteenthTime());
+            int cyclesSinceSync = (int)(timeSinceSync / sequenceLength);
+            StartScheduled(syncTime + (cyclesSinceSync + 1) * sequenceLength);
         }
 
         void Update()

@@ -12,6 +12,7 @@ namespace Helm
     public class SampleSequencer : Sequencer
     {
         double lastWindowTime = -0.01;
+        bool waitTillNextCycle = false;
 
         const float lookaheadTime = 0.12f;
 
@@ -37,6 +38,7 @@ namespace Helm
         void OnDisable()
         {
             AllNotesOff();
+            waitTillNextCycle = false;
         }
 
         public override void AllNotesOff()
@@ -54,17 +56,23 @@ namespace Helm
             GetComponent<Sampler>().NoteOff(note);
         }
 
-        void EnableComponent()
+        public void EnableComponent()
         {
             enabled = true;
         }
 
-        public override void StartSequencerScheduled(double dspTime)
+        public override void StartScheduled(double dspTime)
         {
             syncTime = dspTime;
             const float lookaheadTime = 0.5f;
             float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
             Invoke("EnableComponent", waitToEnable);
+        }
+
+        public override void StartOnNextCycle()
+        {
+            enabled = true;
+            waitTillNextCycle = true;
         }
 
         void Update()
@@ -84,7 +92,16 @@ namespace Helm
                 return;
 
             if (windowMax < lastWindowTime)
+            {
+                waitTillNextCycle = false;
                 lastWindowTime -= sequencerTime;
+            }
+
+            if (waitTillNextCycle)
+            {
+                lastWindowTime = windowMax;
+                return;
+            }
 
             // TODO: search performance.
             foreach (NoteRow row in allNotes)

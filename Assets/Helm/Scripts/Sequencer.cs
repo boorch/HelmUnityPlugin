@@ -44,7 +44,8 @@ namespace Helm
         public abstract void AllNotesOff();
         public abstract void NoteOn(int note, float velocity = 1.0f);
         public abstract void NoteOff(int note);
-        public abstract void StartSequencerScheduled(double dspTime);
+        public abstract void StartScheduled(double dspTime);
+        public abstract void StartOnNextCycle();
 
         public virtual IntPtr Reference()
         {
