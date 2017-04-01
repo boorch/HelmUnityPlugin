@@ -39,5 +39,4 @@ Sample Sequencer is inefficient with a lot of notes
 Sequencer changes lock audio thread
 Sometimes playhead is out of sync?
 BPM Change notes stay around
-Low refresh rate for playhead updates
 
