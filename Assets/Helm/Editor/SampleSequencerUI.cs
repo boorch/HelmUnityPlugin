@@ -57,11 +57,11 @@ namespace Helm
 
             if (sequencer.DoSequencerEvents(rect, sampleSequencer, allNotes))
                 Repaint();
-            if (velocities.DoVelocityEvents(velocitiesRect, sampleSequencer))
+            if (velocities.DoVelocityEvents(velocitiesRect, sampleSequencer, allNotes))
                 Repaint();
 
             sequencerPosition.DrawSequencerPosition(sequencerPositionRect, sampleSequencer);
-            velocities.DrawSequencerPosition(velocitiesRect, sampleSequencer);
+            velocities.DrawSequencerVelocities(velocitiesRect, sampleSequencer, allNotes);
 
             if (rect.height == seqHeight)
                 sequencer.DrawSequencer(rect, sampleSequencer, allNotes);

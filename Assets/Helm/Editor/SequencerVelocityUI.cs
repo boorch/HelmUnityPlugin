@@ -13,6 +13,7 @@ namespace Helm
         const float velocityHandleGrabWidth = 13.0f;
 
         Note currentNote;
+        SerializedProperty currentNoteSerialized = null;
 
         float leftPadding = 0.0f;
         float rightPadding = 0.0f;
@@ -38,9 +39,10 @@ namespace Helm
         void MouseUp()
         {
             currentNote = null;
+            currentNoteSerialized = null;
         }
 
-        void MouseDown(Rect rect, Sequencer sequencer, Vector2 mousePosition)
+        void MouseDown(Rect rect, Sequencer sequencer, Vector2 mousePosition, SerializedProperty allNotes)
         {
             currentNote = null;
             float closest = 2.0f  * velocityHandleGrabWidth;
@@ -61,6 +63,13 @@ namespace Helm
                     {
                         closest = diffTotal;
                         currentNote = note;
+
+                        SerializedProperty serializedNoteRow = allNotes.GetArrayElementAtIndex(currentNote.note);
+                        SerializedProperty serializedNoteList = serializedNoteRow.FindPropertyRelative("notes");
+                        List<Note> noteList = sequencer.allNotes[currentNote.note].notes;
+                        int index = noteList.IndexOf(currentNote);
+                        if (index >= 0)
+                            currentNoteSerialized = serializedNoteList.GetArrayElementAtIndex(index);
                     }
                 }
             }
@@ -69,13 +78,16 @@ namespace Helm
                 Undo.RegisterCompleteObjectUndo(sequencer, "Set Note Velocity");
         }
 
-        void MouseDrag(float velocity)
+        void MouseDrag(float velocity, SerializedProperty allNotes)
         {
-            if (currentNote != null)
-                currentNote.velocity = velocity;
+            if (currentNote == null)
+                return;
+
+            currentNote.velocity = velocity;
+            currentNoteSerialized.FindPropertyRelative("velocity_").floatValue = velocity;
         }
 
-        public bool DoVelocityEvents(Rect rect, Sequencer sequencer)
+        public bool DoVelocityEvents(Rect rect, Sequencer sequencer, SerializedProperty allNotes)
         {
             Event evt = Event.current;
 
@@ -94,18 +106,18 @@ namespace Helm
 
             if (evt.type == EventType.MouseDown && rect.Contains(evt.mousePosition))
             {
-                MouseDown(rect, sequencer, evt.mousePosition);
-                MouseDrag(velocity);
+                MouseDown(rect, sequencer, evt.mousePosition, allNotes);
+                MouseDrag(velocity, allNotes);
             }
             else if (evt.type == EventType.MouseDrag && MouseActive())
-                MouseDrag(velocity);
+                MouseDrag(velocity, allNotes);
             return true;
         }
 
-        void DrawNote(Note note, Color color)
+        void DrawNote(float start, float velocity, Color color)
         {
-            float x = sixteenthWidth * note.start;
-            float h = note.velocity * (height - velocityHandleWidth) + velocityHandleWidth / 2.0f;
+            float x = sixteenthWidth * start;
+            float h = velocity * (height - velocityHandleWidth) + velocityHandleWidth / 2.0f;
             float y = height - h;
 
             EditorGUI.DrawRect(new Rect(x - velocityMeterWidth / 2.0f, y, velocityMeterWidth, h), color);
@@ -113,24 +125,38 @@ namespace Helm
                                         velocityHandleWidth, velocityHandleWidth), color);
         }
 
-        void DrawRowNotes(List<Note> rowNotes)
+        void DrawNote(SerializedProperty note, Color color)
         {
-            if (rowNotes == null)
+            if (note == null)
                 return;
 
-            foreach (Note note in rowNotes)
-                DrawNote(note, velocityColor);
+            float start = note.FindPropertyRelative("start_").floatValue;
+            float velocity = note.FindPropertyRelative("velocity_").floatValue;
+            DrawNote(start, velocity, color);
         }
 
-        void DrawNoteVelocities(Sequencer sequencer)
+        void DrawRowNotes(SerializedProperty noteList)
         {
-            if (sequencer.allNotes == null)
+            if (noteList == null)
                 return;
 
-            for (int i = 0; i < sequencer.allNotes.Length; ++i)
+            for (int i = 0; i < noteList.arraySize; ++i)
             {
-                if (sequencer.allNotes[i] != null)
-                    DrawRowNotes(sequencer.allNotes[i].notes);
+                SerializedProperty note = noteList.GetArrayElementAtIndex(i);
+                DrawNote(note, velocityColor);
+            }
+        }
+
+        void DrawNoteVelocities(SerializedProperty allNotes)
+        {
+            if (allNotes == null)
+                return;
+
+            for (int i = 0; i < allNotes.arraySize; ++i)
+            {
+                SerializedProperty noteRow = allNotes.GetArrayElementAtIndex(i);
+                SerializedProperty noteList = noteRow.FindPropertyRelative("notes");
+                DrawRowNotes(noteList);
             }
         }
 
@@ -156,7 +182,7 @@ namespace Helm
             EditorGUI.DrawRect(middle, Color.black);
         }
 
-        public void DrawSequencerPosition(Rect rect, Sequencer sequencer)
+        public void DrawSequencerVelocities(Rect rect, Sequencer sequencer, SerializedProperty allNotes)
         {
             Rect activeArea = new Rect(rect);
             activeArea.x += leftPadding;
@@ -173,9 +199,9 @@ namespace Helm
             DrawTextMeasurements(leftBufferArea);
 
             GUI.BeginGroup(activeArea);
-            DrawNoteVelocities(sequencer);
+            DrawNoteVelocities(allNotes);
             if (currentNote != null)
-                DrawNote(currentNote, velocityActiveColor);
+                DrawNote(currentNote.start, currentNote.velocity, velocityActiveColor);
 
             GUI.EndGroup();
         }
