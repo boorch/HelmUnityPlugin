@@ -28,6 +28,8 @@ Play the scene to hear the sequence.
 
 ## Features
 
+Update to newest patches
+Chiptune patches
 PlayNoteScheduled
 Variable BPM without resyncing
 UI widgets for better tweaking in Unity?
