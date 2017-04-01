@@ -12,6 +12,7 @@ namespace Helm
         const float scrollWidth = 15.0f;
 
         SerializedProperty length;
+        SerializedProperty division;
         SerializedProperty allNotes;
 
         SequencerUI sequencer = new SequencerUI(keyboardWidth, scrollWidth + 1);
@@ -26,6 +27,7 @@ namespace Helm
         void OnEnable()
         {
             length = serializedObject.FindProperty("length");
+            division = serializedObject.FindProperty("division");
             allNotes = serializedObject.FindProperty("allNotes");
         }
 
@@ -77,6 +79,7 @@ namespace Helm
             }
 
             EditorGUILayout.IntSlider(length, 1, Sequencer.kMaxLength);
+            EditorGUILayout.PropertyField(division);
             serializedObject.ApplyModifiedProperties();
         }
     }

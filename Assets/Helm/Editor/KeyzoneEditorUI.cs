@@ -20,6 +20,7 @@ namespace Helm
         Keyzone currentKeyzone;
         Vector2 keyboardScrollPosition;
         float keyWidth = minKeyWidth;
+        float lastRectWidth = 0.0f;
         int pressOffset = 0;
         int scrollWidth = 15;
 
@@ -41,6 +42,22 @@ namespace Helm
         public KeyzoneEditorUI(int scroll)
         {
             scrollWidth = scroll;
+        }
+
+        Vector2 GetScrollPosition(Sampler sampler, float windowWidth, float keyWidth)
+        {
+            int minNote = Utils.kMidiSize - 1;
+            int maxNote = 0;
+            foreach (Keyzone keyzone in sampler.keyzones)
+            {
+                minNote = Mathf.Min(minNote, keyzone.minKey, keyzone.rootKey);
+                maxNote = Mathf.Max(maxNote, keyzone.maxKey, keyzone.rootKey);
+            }
+
+            int center = (maxNote + minNote) / 2;
+            float position = center * keyWidth;
+            position = Mathf.Clamp(position, 0.0f, Utils.kMidiSize * keyWidth - windowWidth);
+            return new Vector2(position, 0);
         }
 
         Vector2 GetKeyzonePosition(Rect rect, Vector2 mousePosition)
@@ -387,6 +404,13 @@ namespace Helm
 
             Rect keySection = new Rect(keyzoneWidth, 0, rect.width - keyzoneWidth, rect.height);
             Rect keyboardScroll = new Rect(0, 0, scrollableWidth, rect.height - scrollWidth);
+
+            if (lastRectWidth != rect.width)
+            {
+                lastRectWidth = rect.width;
+                keyboardScrollPosition = GetScrollPosition(sampler, rect.width, keyWidth);
+            }
+
             keyboardScrollPosition = GUI.BeginScrollView(keySection, keyboardScrollPosition, keyboardScroll, true, false);
 
             EditorGUI.DrawRect(new Rect(0, 0, keyboardScroll.width, keyboardScroll.height), keylaneBackground);

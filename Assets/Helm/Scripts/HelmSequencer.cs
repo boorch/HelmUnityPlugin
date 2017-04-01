@@ -57,7 +57,7 @@ namespace Helm
             if (reference != IntPtr.Zero)
                 DeleteSequencer(reference);
             reference = IntPtr.Zero;
-            currentSixteenth = -1;
+            currentIndex = -1;
         }
 
         public override IntPtr Reference()

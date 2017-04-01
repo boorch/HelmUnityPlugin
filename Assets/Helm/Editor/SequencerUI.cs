@@ -15,7 +15,6 @@ namespace Helm
             kAdding,
             kDeleting,
             kKeyboarding,
-            kDragging,
             kDraggingStart,
             kDraggingEnd,
             kNumModes
@@ -41,8 +40,7 @@ namespace Helm
         Mode mode = Mode.kWaiting;
         Note activeNote = null;
         bool mouseActive = false;
-        bool roundingToSixteenth = false;
-        float clickNoteStartOffset = 0.0f;
+        bool roundingToIndex = false;
 
         int pressNote = 0;
         float pressTime = 0.0f;
@@ -75,14 +73,14 @@ namespace Helm
 
         Vector2 scrollPosition;
 
-        Vector2 GetSequencerPosition(Rect rect, Vector2 mousePosition)
+        Vector2 GetSequencerPosition(Rect rect, Vector2 mousePosition, float sequencerLength)
         {
             if (!rect.Contains(mousePosition))
                 return -Vector2.one;
 
             Vector2 localPosition = mousePosition - rect.position + scrollPosition;
             float note = minKey + numRows - Mathf.Floor((localPosition.y / rowHeight)) - 1;
-            float time = (localPosition.x - keyboardWidth) / colWidth;
+            float time = sequencerLength * (localPosition.x - keyboardWidth) / (rect.width - keyboardWidth - rightPadding);
             return new Vector2(time, note);
         }
 
@@ -91,9 +89,10 @@ namespace Helm
             return mouseActive;
         }
 
-        void MouseDown(int note, float time, Sequencer sequencer, SerializedProperty allNotes, bool edit)
+        void MouseDown(int note, float time, Sequencer sequencer, SerializedProperty allNotes)
         {
-            roundingToSixteenth = false;
+            float divisionLength = sequencer.GetDivisionLength();
+            roundingToIndex = false;
             mouseActive = true;
             activeNote = sequencer.GetNoteInRange(note, time, time);
             dragTime = time;
@@ -111,15 +110,9 @@ namespace Helm
             }
             else if (activeNote != null)
             {
-                float startPixels = colWidth * (time - activeNote.start);
-                float endPixels = colWidth * (activeNote.end - time);
-                if (edit)
-                {
-                    Undo.RegisterCompleteObjectUndo(sequencer, "Drag Note");
-                    mode = Mode.kDragging;
-                    clickNoteStartOffset = time - activeNote.start;
-                }
-                else if (endPixels <= grabResizeWidth)
+                float startPixels = colWidth * (time - activeNote.start) / divisionLength;
+                float endPixels = colWidth * (activeNote.end - time) / divisionLength;
+                if (endPixels <= grabResizeWidth)
                 {
                     Undo.RecordObject(sequencer, "Move Note End");
                     mode = Mode.kDraggingEnd;
@@ -146,11 +139,12 @@ namespace Helm
 
         void MouseDrag(int note, float time, Sequencer sequencer, SerializedProperty allNotes)
         {
+            float divisionLength = sequencer.GetDivisionLength();
             float clampedTime = Mathf.Clamp(time, 0.0f, sequencer.length);
             dragTime = clampedTime;
 
             if (Mathf.Abs(dragTime - pressTime) >= dragDeltaStartRounding)
-                roundingToSixteenth = true;
+                roundingToIndex = true;
 
             if (mode == Mode.kKeyboarding)
             {
@@ -161,33 +155,13 @@ namespace Helm
                     pressedKey = note;
                 }
             }
-            else if (mode == Mode.kDragging)
-            {
-                if (activeNote != null)
-                {
-                    float newStart = dragTime - clickNoteStartOffset;
-                    float length = activeNote.end - activeNote.start;
-                    if (newStart + length > sequencer.length)
-                        newStart = sequencer.length - length;
-                    if (newStart < 0.0f)
-                        newStart = 0.0f;
-
-                    if (roundingToSixteenth)
-                        newStart = Mathf.Round(newStart);
-                    activeNote.start = newStart;
-                    activeNote.end = newStart + length;
-                    sequencer.NoteOff(activeNote.note);
-                    activeNote.note = note;
-                    CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
-                }
-            }
             else if (mode == Mode.kDraggingStart)
             {
                 if (activeNote != null)
                 {
                     float startTime = dragTime;
-                    if (roundingToSixteenth)
-                        startTime = Mathf.Round(dragTime);
+                    if (roundingToIndex)
+                        startTime = divisionLength * Mathf.Round(dragTime / divisionLength);
                     activeNote.start = Mathf.Min(activeNote.end - minNoteTime, startTime);
 
                     CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
@@ -199,8 +173,8 @@ namespace Helm
                 if (activeNote != null)
                 {
                     float endTime = dragTime;
-                    if (roundingToSixteenth)
-                        endTime = Mathf.Round(dragTime);
+                    if (roundingToIndex)
+                        endTime = divisionLength * Mathf.Round(dragTime / divisionLength);
                     activeNote.end = Mathf.Max(activeNote.start + minNoteTime, endTime);
 
                     CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
@@ -233,6 +207,7 @@ namespace Helm
 
         void MouseUp(float time, Sequencer sequencer, SerializedProperty allNotes)
         {
+            float divisionLength = sequencer.GetDivisionLength();
             mouseActive = false;
             if (mode == Mode.kKeyboarding)
             {
@@ -245,15 +220,7 @@ namespace Helm
             float startTime = Mathf.Min(pressTime, dragTime);
             float endTime = Mathf.Max(pressTime, dragTime);
 
-            if (mode == Mode.kDragging)
-            {
-                if (activeNote != null)
-                    sequencer.ClampNotesInRange(activeNote.note, activeNote.start, activeNote.end, activeNote);
-
-                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
-                sequencer.NoteOff(activeNote.note);
-            }
-            else if (mode == Mode.kDraggingStart)
+            if (mode == Mode.kDraggingStart)
             {
                 Undo.RecordObject(sequencer, "Move Note Start");
 
@@ -276,12 +243,12 @@ namespace Helm
             else if (mode == Mode.kAdding)
             {
                 Undo.RecordObject(sequencer, "Add Sequencer Notes");
-                int startDrag = Mathf.FloorToInt(startTime);
-                int endDrag = Mathf.CeilToInt(endTime);
+                int startDragIndex = Mathf.FloorToInt(startTime / divisionLength);
+                int endDragIndex = Mathf.CeilToInt(endTime / divisionLength);
 
-                sequencer.ClampNotesInRange(pressNote, startDrag, endDrag);
-                for (int i = startDrag; i < endDrag; ++i)
-                    sequencer.AddNote(pressNote, i, i + 1, defaultVelocity);
+                sequencer.ClampNotesInRange(pressNote, startDragIndex * divisionLength, endDragIndex * divisionLength);
+                for (int i = startDragIndex; i < endDragIndex; ++i)
+                    sequencer.AddNote(pressNote, i * divisionLength, (i + 1) * divisionLength, defaultVelocity);
 
                 CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
                 sequencer.NoteOff(pressNote);
@@ -301,11 +268,7 @@ namespace Helm
             if (!evt.isMouse)
                 return false;
 
-            Vector2 sequencerPosition = GetSequencerPosition(rect, evt.mousePosition);
-            EventModifiers modifiers = (EventModifiers.Shift | EventModifiers.Control |
-                                        EventModifiers.Alt | EventModifiers.Command);
-            bool modifier = (evt.modifiers & modifiers) != EventModifiers.None;
-            bool edit = evt.button > 0 || modifier;
+            Vector2 sequencerPosition = GetSequencerPosition(rect, evt.mousePosition, sequencer.length);
             float time = sequencerPosition.x;
 
             if (evt.type == EventType.MouseUp && mouseActive)
@@ -321,7 +284,7 @@ namespace Helm
             Rect ignoreScrollRect = new Rect(rect);
             ignoreScrollRect.width -= rightPadding;
             if (evt.type == EventType.MouseDown && ignoreScrollRect.Contains(evt.mousePosition))
-                MouseDown(note, time, sequencer, allNotes, edit);
+                MouseDown(note, time, sequencer, allNotes);
             else if (evt.type == EventType.MouseDrag && mouseActive)
                 MouseDrag(note, time, sequencer, allNotes);
             return true;
@@ -394,11 +357,11 @@ namespace Helm
             }
         }
 
-        void DrawNote(int note, float start, float end, Color color)
+        void DrawNote(int note, float startColumn, float endColumn, Color color)
         {
-            float x = start * colWidth + keyboardWidth;
+            float x = startColumn * colWidth + keyboardWidth;
             float y = (numRows - (note - minKey) - 1) * rowHeight;
-            float width = end * colWidth + keyboardWidth - x;
+            float width = endColumn * colWidth + keyboardWidth - x;
             Rect noteOutsideRect = new Rect(x, y, width + 1, rowHeight);
             Rect noteRect = new Rect(x + 1, y + 1, width - 1, rowHeight - 2);
             EditorGUI.DrawRect(noteOutsideRect, Color.black);
@@ -409,7 +372,7 @@ namespace Helm
             EditorGUIUtility.AddCursorRect(rightResizeRect, MouseCursor.SplitResizeLeftRight);
         }
 
-        void DrawRowNotes(SerializedProperty notes)
+        void DrawRowNotes(SerializedProperty notes, float divisionLength)
         {
             if (notes == null)
                 return;
@@ -431,11 +394,11 @@ namespace Helm
                     if (Utils.RangesOverlap(start, end, pressStart, pressEnd))
                         color = deletingCell;
                 }
-                DrawNote(note, start, end, color);
+                DrawNote(note, start / divisionLength, end / divisionLength, color);
             }
         }
 
-        void DrawActiveNotes(Sequencer sequencer, SerializedProperty allNotes)
+        void DrawActiveNotes(Sequencer sequencer, SerializedProperty allNotes, float divisionLength)
         {
             if (sequencer.allNotes == null)
                 return;
@@ -446,22 +409,22 @@ namespace Helm
                 SerializedProperty notes = row.FindPropertyRelative("notes");
 
                 if (notes != null)
-                    DrawRowNotes(notes);
+                    DrawRowNotes(notes, divisionLength);
             }
         }
 
-        void DrawPressedNotes()
+        void DrawPressedNotes(float divisionLength)
         {
             if (mode == Mode.kDraggingStart || mode == Mode.kDraggingEnd)
             {
-                DrawNote(activeNote.note, activeNote.start, activeNote.end, pressedCell);
+                DrawNote(activeNote.note, activeNote.start / divisionLength, activeNote.end / divisionLength, pressedCell);
             }
             else if (mode == Mode.kAdding)
             {
-                int startDrag = Mathf.Max(0, Mathf.FloorToInt(Mathf.Min(pressTime, dragTime)));
-                int endDrag = (int)Mathf.Ceil(Mathf.Max(pressTime, dragTime));
+                int startDragIndex = Mathf.Max(0, Mathf.FloorToInt(Mathf.Min(pressTime, dragTime) / divisionLength));
+                int endDragIndex = (int)Mathf.Ceil(Mathf.Max(pressTime, dragTime) / divisionLength);
 
-                for (int i = startDrag; i < endDrag; ++i)
+                for (int i = startDragIndex; i < endDragIndex; ++i)
                     DrawNote(pressNote, i, i + 1, pressedCell);
             }
         }
@@ -471,7 +434,7 @@ namespace Helm
             if (!sequencer.isActiveAndEnabled || !Application.isPlaying)
                 return;
 
-            float x = keyboardWidth + colWidth * sequencer.currentSixteenth;
+            float x = keyboardWidth + colWidth * sequencer.currentIndex;
             float height = numRows * rowHeight;
             EditorGUI.DrawRect(new Rect(x, 0, colWidth, height), lightenColor);
         }
@@ -501,8 +464,9 @@ namespace Helm
 
         public void DrawSequencer(Rect rect, Sequencer sequencer, SerializedProperty allNotes)
         {
+            float divisionLength = sequencer.GetDivisionLength();
             numRows = maxKey - minKey + 1;
-            numCols = sequencer.length;
+            numCols = Mathf.RoundToInt(sequencer.length / divisionLength);
             colWidth = (rect.width - keyboardWidth - rightPadding) / numCols;
             rowHeight = Mathf.Clamp(rect.height / numRows, minRowHeight, maxRowHeight);
             float scrollableWidth = numCols * colWidth + keyboardWidth + 1;
@@ -520,8 +484,8 @@ namespace Helm
             DrawNoteRows(scrollableArea);
             DrawBarHighlights(scrollableArea);
             DrawNoteDivisionLines(scrollableArea);
-            DrawActiveNotes(sequencer, allNotes);
-            DrawPressedNotes();
+            DrawActiveNotes(sequencer, allNotes, divisionLength);
+            DrawPressedNotes(divisionLength);
             DrawPositionOverlay(sequencer);
 
             GUI.EndScrollView();

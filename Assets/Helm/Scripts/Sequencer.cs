@@ -23,7 +23,7 @@ namespace Helm
             }
         }
 
-        enum Division
+        public enum Division
         {
             kEighth,
             kSixteenth,
@@ -32,10 +32,10 @@ namespace Helm
         }
 
         public int length = 16;
-        public int currentSixteenth = -1;
+        public int currentIndex = -1;
         public double syncTime = 0.0;
         public NoteRow[] allNotes = new NoteRow[Utils.kMidiSize];
-        public Division division;
+        public Division division = Division.kSixteenth;
 
         public const int kMaxLength = 128;
 
@@ -58,6 +58,19 @@ namespace Helm
                 if (allNotes[i] == null)
                     allNotes[i] = new NoteRow();
             }
+        }
+
+        public float GetDivisionLength()
+        {
+            if (division == Division.kEighth)
+                return 2.0f;
+            if (division == Division.kSixteenth)
+                return 1.0f;
+            if (division == Division.kTriplet)
+                return 4.0f / 3.0f;
+            if (division == Division.kThirtySecond)
+                return 0.5f;
+            return 1.0f;
         }
 
         public void NotifyNoteKeyChanged(Note note, int oldKey)
@@ -182,7 +195,7 @@ namespace Helm
 
         protected void UpdatePosition()
         {
-            currentSixteenth = (int)GetSequencerPosition();
+            currentIndex = (int)(GetSequencerPosition() / GetDivisionLength());
         }
     }
 }

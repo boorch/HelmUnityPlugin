@@ -16,6 +16,7 @@ namespace Helm
         SequencerVelocityUI velocities = new SequencerVelocityUI(keyboardWidth, scrollWidth);
         SerializedProperty channel;
         SerializedProperty length;
+        SerializedProperty division;
         SerializedProperty allNotes;
 
         float positionHeight = 10.0f;
@@ -27,6 +28,7 @@ namespace Helm
         {
             channel = serializedObject.FindProperty("channel");
             length = serializedObject.FindProperty("length");
+            division = serializedObject.FindProperty("division");
             allNotes = serializedObject.FindProperty("allNotes");
         }
 
@@ -62,6 +64,7 @@ namespace Helm
 
             EditorGUILayout.IntSlider(channel, 0, Utils.kMaxChannels - 1);
             EditorGUILayout.IntSlider(length, 1, Sequencer.kMaxLength);
+            EditorGUILayout.PropertyField(division);
             serializedObject.ApplyModifiedProperties();
         }
     }

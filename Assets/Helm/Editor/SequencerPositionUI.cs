@@ -23,9 +23,9 @@ namespace Helm
             activeArea.x += leftPadding;
             activeArea.width -= leftPadding + rightPadding;
 
-            float loopPosition = sequencer.currentSixteenth;
-            float relativePostition = loopPosition / sequencer.length;
-            float positionWidth = activeArea.width / sequencer.length;
+            float loopPosition = sequencer.currentIndex;
+            float relativePostition = sequencer.GetDivisionLength() * loopPosition / sequencer.length;
+            float positionWidth = sequencer.GetDivisionLength() * activeArea.width / sequencer.length;
 
             EditorGUI.DrawRect(activeArea, Color.gray);
             Rect position = new Rect(relativePostition * activeArea.width + activeArea.x, activeArea.y, positionWidth, activeArea.height);
