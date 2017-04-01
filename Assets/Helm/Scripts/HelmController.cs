@@ -21,6 +21,15 @@ namespace Helm
         private static extern void HelmAllNotesOff(int channel);
 
         [DllImport("AudioPluginHelm")]
+        private static extern void HelmSetPitchWheel(int channel, float value);
+
+        [DllImport("AudioPluginHelm")]
+        private static extern void HelmSetModWheel(int channel, float value);
+
+        [DllImport("AudioPluginHelm")]
+        private static extern void HelmSetAftertouch(int channel, int note, float value);
+
+        [DllImport("AudioPluginHelm")]
         private static extern bool HelmChangeParameter(int channel, int paramIndex, float newValue);
 
         public int channel = 0;
@@ -99,6 +108,21 @@ namespace Helm
             }
             else
                 pressedNotes[note] = number - 1;
+        }
+
+        public void SetPitchWheel(float wheelValue)
+        {
+            HelmSetPitchWheel(channel, wheelValue);
+        }
+
+        public void SetModWheel(float wheelValue)
+        {
+            HelmSetModWheel(channel, wheelValue);
+        }
+
+        public void SetAftertouch(int note, float aftertouchValue)
+        {
+            HelmSetAftertouch(channel, note, aftertouchValue);
         }
     }
 }

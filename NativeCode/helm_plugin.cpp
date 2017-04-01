@@ -246,7 +246,7 @@ namespace Helm {
 
     if (valuestr != NULL)
       valuestr[0] = 0;
-    
+
     return UNITY_AUDIODSP_OK;
   }
 
@@ -380,6 +380,30 @@ namespace Helm {
     }
   }
 
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmSetPitchWheel(int channel, float value) {
+    for (auto synth : instance_map) {
+      if (((int)synth.second->parameters[kChannel]) == channel) {
+        synth.second->synth_engine.setPitchWheel(value);
+      }
+    }
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmSetModWheel(int channel, float value) {
+    for (auto synth : instance_map) {
+      if (((int)synth.second->parameters[kChannel]) == channel) {
+        synth.second->synth_engine.setModWheel(value);
+      }
+    }
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmSetAftertouch(int channel, int note, float value) {
+    for (auto synth : instance_map) {
+      if (((int)synth.second->parameters[kChannel]) == channel) {
+        synth.second->synth_engine.setAftertouch(note, value);
+      }
+    }
+  }
+
   extern "C" UNITY_AUDIODSP_EXPORT_API bool HelmChangeParameter(int channel, int index, float value) {
     if (index < kNumParams)
       return false;
@@ -472,7 +496,7 @@ namespace Helm {
     MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer->setStartTime(dsp_time);
   }
-  
+
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeSequencerLength(
       HelmSequencer* sequencer, float length) {
     sequencer->setLength(length);

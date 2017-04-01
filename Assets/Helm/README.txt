@@ -29,7 +29,6 @@ Play the scene to hear the sequence.
 ## Features
 
 PlayNoteScheduled
-Expose aftertouch, pitch bend, modulation wheel controls
 Variable BPM without resyncing
 UI widgets for better tweaking in Unity?
 iOS/android/ps4/xbox support?
