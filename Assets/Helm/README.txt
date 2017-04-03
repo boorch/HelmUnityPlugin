@@ -28,10 +28,10 @@ Play the scene to hear the sequence.
 
 ## Features
 
-Update to newest patches
 Chiptune patches
 PlayNoteScheduled
 Variable BPM without resyncing
+Sequencer references player?
 UI widgets for better tweaking in Unity?
 iOS/android/ps4/xbox support?
 
