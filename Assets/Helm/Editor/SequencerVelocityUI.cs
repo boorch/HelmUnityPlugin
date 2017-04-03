@@ -147,6 +147,15 @@ namespace Helm
             }
         }
 
+        void DrawRowNotes(NoteRow row)
+        {
+            if (row == null || row.notes == null)
+                return;
+
+            foreach (Note note in row.notes)
+                DrawNote(note.start, note.velocity, velocityColor);
+        }
+
         void DrawNoteVelocities(SerializedProperty allNotes)
         {
             if (allNotes == null)
@@ -158,6 +167,15 @@ namespace Helm
                 SerializedProperty noteList = noteRow.FindPropertyRelative("notes");
                 DrawRowNotes(noteList);
             }
+        }
+
+        void DrawNoteVelocities(Sequencer sequencer)
+        {
+            if (sequencer.allNotes == null)
+                return;
+
+            for (int i = 0; i < sequencer.allNotes.Length; ++i)
+                DrawRowNotes(sequencer.allNotes[i]);
         }
 
         public void DrawTextMeasurements(Rect rect)
@@ -199,7 +217,7 @@ namespace Helm
             DrawTextMeasurements(leftBufferArea);
 
             GUI.BeginGroup(activeArea);
-            DrawNoteVelocities(allNotes);
+            DrawNoteVelocities(sequencer);
             if (currentNote != null)
                 DrawNote(currentNote.start, currentNote.velocity, velocityActiveColor);
 

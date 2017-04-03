@@ -201,7 +201,7 @@ namespace Helm
         public void NoteOff(int note)
         {
             ActiveNote activeNote = FindActiveNote(note);
-            if (activeNote == null || AudioSettings.dspTime <= activeNote.startTime)
+            if (activeNote == null || AudioSettings.dspTime < activeNote.startTime)
                 return;
 
             activeNotes.Remove(activeNote);
