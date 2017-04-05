@@ -31,12 +31,13 @@ Play the scene to hear the sequence.
 Chiptune patches
 PlayNoteScheduled
 Variable BPM without resyncing
-Sequencer references player?
+Sequencer references player instead of on same game object?
 UI widgets for better tweaking in Unity?
 iOS/android/ps4/xbox support?
 
 ## Known Issues
 
+Sometimes StartScheduled on sequencer starts early.
 Sample Sequencer is inefficient with a lot of notes
 Sequencer changes lock audio thread
 Sometimes playhead is out of sync?
