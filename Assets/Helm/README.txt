@@ -29,6 +29,7 @@ Play the scene to hear the sequence.
 ## Features
 
 Chiptune patches
+Optional send note off for sampler
 PlayNoteScheduled
 Variable BPM without resyncing
 Sequencer references player instead of on same game object?
