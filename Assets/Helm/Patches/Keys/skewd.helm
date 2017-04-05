@@ -1,6 +1,6 @@
 {
   "license": "Patch (c) by Ones & Zeros.  This patch is licensed under a Creative Commons Attribution 4.0 International License.  You should have received a copy of the license along with this work.  If not, see <http://creativecommons.org/licenses/by/4.0/>.",
-  "synth_version": "0.7.1",
+  "synth_version": "0.9.0",
   "patch_name": "skewd",
   "folder_name": "Keys",
   "author": "Ones & Zeros",
@@ -79,7 +79,7 @@
     "polyphony": 12,
     "portamento": -8.68000030517578125,
     "portamento_type": 2,
-    "resonance": 0.19014084339141845703,
+    "resonance": 0.19014084339141848479,
     "reverb_damping": 0.5,
     "reverb_dry_wet": 0.5,
     "reverb_feedback": 0.89999997615814208984,

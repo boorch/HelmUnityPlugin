@@ -1,13 +1,13 @@
 {
   "license": "Patch (c) by ATN69.  This patch is licensed under a Creative Commons Attribution 4.0 International License.  You should have received a copy of the license along with this work.  If not, see <http://creativecommons.org/licenses/by/4.0/>.",
-  "synth_version": "0.8.1",
-  "patch_name": "Rimshot",
-  "folder_name": "Bass",
+  "synth_version": "0.9.0",
+  "patch_name": "Snare",
+  "folder_name": "Percussion",
   "author": "ATN69",
   "settings": {
     "amp_attack": 0,
     "amp_decay": 0.421875,
-    "amp_release": 0.75351572036743164063,
+    "amp_release": 0.75351572036743164062,
     "amp_sustain": 0,
     "arp_frequency": 2,
     "arp_gate": 0.5,

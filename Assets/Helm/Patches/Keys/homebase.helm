@@ -1,13 +1,13 @@
 {
   "license": "Patch (c) by Ones & Zeros.  This patch is licensed under a Creative Commons Attribution 4.0 International License.  You should have received a copy of the license along with this work.  If not, see <http://creativecommons.org/licenses/by/4.0/>.",
-  "synth_version": "0.7.1",
+  "synth_version": "0.9.0",
   "patch_name": "homebase",
   "folder_name": "Keys",
   "author": "Ones & Zeros",
   "settings": {
     "amp_attack": 0.10000000149011611938,
     "amp_decay": 1.1976565122604370117,
-    "amp_release": 0.39140617847442626953,
+    "amp_release": 0.39140617847442621402,
     "amp_sustain": 0.83417975902557373047,
     "arp_frequency": 2,
     "arp_gate": 0.5,

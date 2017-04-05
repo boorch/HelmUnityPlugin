@@ -1,8 +1,8 @@
 {
   "license": "Patch (c) by ATN69.  This patch is licensed under a Creative Commons Attribution 4.0 International License.  You should have received a copy of the license along with this work.  If not, see <http://creativecommons.org/licenses/by/4.0/>.",
-  "synth_version": "0.8.1",
-  "patch_name": "Rimshot C3",
-  "folder_name": "Bass",
+  "synth_version": "0.9.0",
+  "patch_name": "HiHat C3",
+  "folder_name": "Percussion",
   "author": "ATN69",
   "settings": {
     "amp_attack": 0,

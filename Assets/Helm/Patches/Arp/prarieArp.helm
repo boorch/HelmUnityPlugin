@@ -1,8 +1,8 @@
 {
   "license": "Patch (c) by Ones & Zeros.  This patch is licensed under a Creative Commons Attribution 4.0 International License.  You should have received a copy of the license along with this work.  If not, see <http://creativecommons.org/licenses/by/4.0/>.",
-  "synth_version": "0.7.1",
+  "synth_version": "0.9.0",
   "patch_name": "prarieArp",
-  "folder_name": "Keys",
+  "folder_name": "Arp",
   "author": "Ones & Zeros",
   "settings": {
     "amp_attack": 0,
@@ -87,10 +87,10 @@
     "step_frequency": 1.9999998807907104492,
     "step_seq_00": 0.44578313827514648438,
     "step_seq_01": -0.71084332466125488281,
-    "step_seq_02": 0.12198793888092041016,
+    "step_seq_02": 0.12198793888092039628,
     "step_seq_03": 0.68674695491790771484,
     "step_seq_04": -0.46987950801849365234,
-    "step_seq_05": 0.42168676853179931641,
+    "step_seq_05": 0.42168676853179937192,
     "step_seq_06": 0.83132529258728027344,
     "step_seq_07": -0.32530117034912109375,
     "step_seq_08": 0,

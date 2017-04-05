@@ -1,6 +1,6 @@
 {
   "license": "Patch (c) by Ones & Zeros.  This patch is licensed under a Creative Commons Attribution 4.0 International License.  You should have received a copy of the license along with this work.  If not, see <http://creativecommons.org/licenses/by/4.0/>.",
-  "synth_version": "0.7.1",
+  "synth_version": "0.9.0",
   "patch_name": "natures best",
   "folder_name": "Keys",
   "author": "Ones & Zeros",
@@ -90,8 +90,8 @@
     "step_seq_02": -0.30120480060577392578,
     "step_seq_03": -0.49397587776184082031,
     "step_seq_04": -0.27710843086242675781,
-    "step_seq_05": -0.084337353706359863281,
-    "step_seq_06": 0.12349390983581542969,
+    "step_seq_05": -0.084337353706359849403,
+    "step_seq_06": 0.12349390983581544357,
     "step_seq_07": -0.012048244476318359375,
     "step_seq_08": 0,
     "step_seq_09": 0,

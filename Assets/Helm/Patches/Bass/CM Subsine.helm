@@ -1,8 +1,8 @@
 {
   "license": "Patch (c) by Mikolis.  This patch is licensed under a Creative Commons Attribution 4.0 International License.  You should have received a copy of the license along with this work.  If not, see <http://creativecommons.org/licenses/by/4.0/>.",
-  "synth_version": "0.7.1",
-  "patch_name": "BA Subsine",
-  "folder_name": "Mikolis",
+  "synth_version": "0.9.0",
+  "patch_name": "CM Subsine",
+  "folder_name": "Bass",
   "author": "Mikolis",
   "settings": {
     "amp_attack": 0.10000000149011611938,
@@ -135,7 +135,7 @@
     "unison_1_harmonize": 0,
     "unison_2_harmonize": 0,
     "velocity_track": 0,
-    "volume": 0.88230508565902709961,
+    "volume": 0.88230508565902698859,
     "modulations": []
   }
 }
