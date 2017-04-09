@@ -14,6 +14,7 @@ namespace Helm
         KeyzoneEditorUI keyzonesUI = new KeyzoneEditorUI(scrollWidth);
         SerializedProperty numVoices;
         SerializedProperty velocityTracking;
+        SerializedProperty useNoteOff;
         SerializedProperty keyzones;
 
         const int keyzoneHeight = 120;
@@ -24,6 +25,7 @@ namespace Helm
         {
             numVoices = serializedObject.FindProperty("numVoices");
             velocityTracking = serializedObject.FindProperty("velocityTracking");
+            useNoteOff = serializedObject.FindProperty("useNoteOff");
             keyzones = serializedObject.FindProperty("keyzones");
         }
 
@@ -56,6 +58,7 @@ namespace Helm
 
             EditorGUILayout.IntSlider(numVoices, 1, 16);
             EditorGUILayout.Slider(velocityTracking, 0.0f, 1.0f);
+            EditorGUILayout.PropertyField(useNoteOff);
             serializedObject.ApplyModifiedProperties();
         }
     }

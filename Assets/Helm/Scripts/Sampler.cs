@@ -28,6 +28,7 @@ namespace Helm
         public List<Keyzone> keyzones = new List<Keyzone>() { new Keyzone() };
         public float velocityTracking = 1.0f;
         public int numVoices = 2;
+        public bool useNoteOff = false;
 
         int audioIndex = 0;
         List<ActiveNote> activeNotes = new List<ActiveNote>();
@@ -180,6 +181,8 @@ namespace Helm
             foreach (AudioSource audio in audioSources)
             {
                 double length = timeToEnd - timeToStart;
+                if (!useNoteOff)
+                    length = Mathf.Infinity;
                 if (!audio.loop)
                     length = Math.Min(length, (audio.clip.length - endEarlyTime) / audio.pitch);
 
@@ -200,6 +203,9 @@ namespace Helm
 
         public void NoteOff(int note)
         {
+            if (!useNoteOff)
+                return;
+
             ActiveNote activeNote = FindActiveNote(note);
             if (activeNote == null || AudioSettings.dspTime < activeNote.startTime)
                 return;
