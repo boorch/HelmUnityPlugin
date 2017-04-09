@@ -22,7 +22,7 @@ namespace Helm
             if (Input.GetMouseButtonDown(0))
             {
                 startPosition = position;
-                currentPlatform = Instantiate(platformModel, null);
+                currentPlatform = Instantiate(platformModel) as Transform;
                 currentPlatform.position = startPosition;
             }
         }

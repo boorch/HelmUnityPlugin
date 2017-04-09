@@ -126,11 +126,14 @@ namespace Helm
 
         public override void StartScheduled(double dspTime)
         {
-            syncTime = dspTime;
-            const float lookaheadTime = 0.5f;
-            SyncSequencerStart(reference, dspTime);
-            float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
-            Invoke("EnableComponent", waitToEnable);
+            if (reference != IntPtr.Zero)
+            {
+                syncTime = dspTime;
+                const float lookaheadTime = 0.5f;
+                SyncSequencerStart(reference, dspTime);
+                float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
+                Invoke("EnableComponent", waitToEnable);
+            }
         }
 
         public override void StartOnNextCycle()

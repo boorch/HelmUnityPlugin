@@ -8,6 +8,8 @@ namespace Helm
     [RequireComponent(typeof(AudioSource))]
     public class HelmAudioInit : MonoBehaviour
     {
+        bool warnedNoAudioGroup = false;
+
         void Awake()
         {
             Utils.InitAudioSource(GetComponent<AudioSource>());
@@ -16,6 +18,18 @@ namespace Helm
         void Update()
         {
             AudioSource audio = GetComponent<AudioSource>();
+
+            if (Application.isPlaying && audio.clip == null)
+            {
+                if (!warnedNoAudioGroup)
+                {
+                    Debug.LogWarning("AudioSource output needs an AudioMixerGroup with a Helm Instance.");
+                    warnedNoAudioGroup = true;
+                }
+            }
+            else
+                warnedNoAudioGroup = false;
+
             audio.pitch = 1.0f;
         }
     }

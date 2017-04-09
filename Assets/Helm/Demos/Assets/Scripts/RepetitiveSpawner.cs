@@ -13,7 +13,8 @@ namespace Helm
 
         void Spawn()
         {
-            Transform next = Instantiate(model, transform);
+            Transform next = Instantiate(model, transform.position, transform.rotation) as Transform;
+            next.parent = transform;
             next.localPosition = Vector3.zero;
         }
 
