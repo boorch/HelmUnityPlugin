@@ -2,29 +2,30 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
 
 
-#ifndef VISUALISER_H_INCLUDED
-#define VISUALISER_H_INCLUDED
+#pragma once
 
 
 class NoteComponent : public Component
@@ -35,7 +36,7 @@ public:
     {
     }
 
-    //==========================================================================
+    //==============================================================================
     void update (const MPENote& newNote, Point<float> newCentre)
     {
         note = newNote;
@@ -49,7 +50,7 @@ public:
         repaint();
     }
 
-    //==========================================================================
+    //==============================================================================
     void paint (Graphics& g) override
     {
         if (note.keyState == MPENote::keyDown || note.keyState == MPENote::keyDownAndSustained)
@@ -62,13 +63,13 @@ public:
         drawNoteLabel (g, colour);
     }
 
-    //==========================================================================
+    //==============================================================================
     MPENote note;
     Colour colour;
     Point<float> centre;
 
 private:
-    //==========================================================================
+    //==============================================================================
     void drawPressedNoteCircle (Graphics& g, Colour zoneColour)
     {
         g.setColour (zoneColour.withAlpha (0.3f));
@@ -77,7 +78,7 @@ private:
         g.drawEllipse (translateToLocalBounds (getSquareAroundCentre (getPressureRadius())), 2.0f);
     }
 
-    //==========================================================================
+    //==============================================================================
     void drawSustainedNoteCircle (Graphics& g, Colour zoneColour)
     {
         g.setColour (zoneColour);
@@ -88,7 +89,7 @@ private:
         g.fillPath (dashedCircle);
     }
 
-    //==========================================================================
+    //==============================================================================
     void drawNoteLabel (Graphics& g, Colour zoneColour)
     {
         Rectangle<int> textBounds = translateToLocalBounds (getTextRectangle()).getSmallestIntegerContainer();
@@ -98,7 +99,7 @@ private:
         g.drawText (String (note.midiChannel), textBounds, Justification::centredTop);
     }
 
-    //==========================================================================
+    //==============================================================================
     Rectangle<float> getSquareAroundCentre (float radius) const noexcept
     {
         return Rectangle<float> (radius * 2.0f, radius * 2.0f).withCentre (centre);
@@ -129,12 +130,12 @@ class Visualiser : public Component,
                    private AsyncUpdater
 {
 public:
-    //==========================================================================
+    //==============================================================================
     Visualiser (const ZoneColourPicker& zoneColourPicker)
         : colourPicker (zoneColourPicker)
     {}
 
-    //==========================================================================
+    //==============================================================================
     void paint (Graphics& g) override
     {
         g.fillAll (Colours::black);
@@ -156,7 +157,7 @@ public:
         }
     }
 
-    //==========================================================================
+    //==============================================================================
     void noteAdded (MPENote newNote) override
     {
         const ScopedLock sl (lock);
@@ -193,7 +194,7 @@ public:
 
 
 private:
-    //==========================================================================
+    //==============================================================================
     MPENote* findActiveNote (int noteID) const noexcept
     {
         for (auto& note : activeNotes)
@@ -212,7 +213,7 @@ private:
         return nullptr;
     }
 
-    //==========================================================================
+    //==============================================================================
     void handleAsyncUpdate() override
     {
         const ScopedLock sl (lock);
@@ -230,7 +231,7 @@ private:
                 noteComp->update (*noteInfo, getCentrePositionForNote (*noteInfo));
     }
 
-    //==========================================================================
+    //==============================================================================
     Point<float> getCentrePositionForNote (MPENote note) const
     {
         float n = float (note.initialNote) + float (note.totalPitchbendInSemitones);
@@ -240,7 +241,7 @@ private:
         return Point<float> (x, y);
     }
 
-    //==========================================================================
+    //==============================================================================
     OwnedArray<NoteComponent> noteComponents;
     CriticalSection lock;
     Array<MPENote> activeNotes;
@@ -248,6 +249,3 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Visualiser)
 };
-
-
-#endif  // VISUALISER_H_INCLUDED

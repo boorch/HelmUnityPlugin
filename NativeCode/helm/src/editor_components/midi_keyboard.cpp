@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,16 @@
  */
 
 #include "midi_keyboard.h"
+
+MidiKeyboard::MidiKeyboard(MidiKeyboardState& state, Orientation orientation) :
+    MidiKeyboardComponent(state, orientation) {
+  int num_children = getNumChildComponents();
+
+  for (int i = 0; i < num_children; ++i) {
+    Component* child = getChildComponent(i);
+    child->setWantsKeyboardFocus(false);
+  }
+}
 
 void MidiKeyboard::drawBlackNote(int midiNoteNumber, Graphics& g,
                                  int x, int y, int w, int h,

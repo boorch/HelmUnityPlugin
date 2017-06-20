@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,26 +21,27 @@
 #define RAND_DECAY 0.999
 
 namespace mopo {
-  namespace {
-    inline mopo_float getRandomPitchChange() {
-      static const int RESOLUTION = 10000;
-      static const mopo_float RAND_RATIO = 0.00001;
-
-      return (RAND_RATIO * (rand() % RESOLUTION)) / RESOLUTION - RAND_RATIO / 2.0;
-    }
-  } // namespace
-
-  const mopo_float HelmOscillators::SCALE_OUT = 0.5 / (FixedPointWaveLookup::SCALE * INT_MAX);
+  const mopo_float HelmOscillators::scales[] = {
+      1.0, 1.0,
+      sqrt(1.0 / 2.0), sqrt(1.0 / 2.0),
+      sqrt(1.0 / 3.0), sqrt(1.0 / 3.0),
+      sqrt(1.0 / 4.0), sqrt(1.0 / 4.0),
+      sqrt(1.0 / 5.0), sqrt(1.0 / 5.0),
+      sqrt(1.0 / 6.0), sqrt(1.0 / 6.0),
+      sqrt(1.0 / 7.0), sqrt(1.0 / 7.0),
+      sqrt(1.0 / 8.0), sqrt(1.0 / 8.0),
+  };
 
   HelmOscillators::HelmOscillators() : Processor(kNumInputs, 1) {
-    oscillator1_cross_mod_ = 0;
-    oscillator2_cross_mod_ = 0;
+    utils::zeroBuffer(oscillator1_cross_mods_, MAX_BUFFER_SIZE + 1);
+    utils::zeroBuffer(oscillator2_cross_mods_, MAX_BUFFER_SIZE + 1);
+
+    oscillator1_phase_base_ = 0.0;
+    oscillator2_phase_base_ = 0.0;
 
     for (int v = 0; v < MAX_UNISON; ++v) {
       oscillator1_phases_[v] = 0;
       oscillator2_phases_[v] = 0;
-      oscillator1_rand_offset_[v] = 0.0;
-      oscillator2_rand_offset_[v] = 0.0;
       wave_buffers1_[v] = nullptr;
       wave_buffers2_[v] = nullptr;
       detune_diffs1_[v] = 0;
@@ -53,29 +54,20 @@ namespace mopo {
     }
   }
 
-  void HelmOscillators::addRandomPhaseToVoices() {
-    for (int i = 0; i < MAX_UNISON; ++i) {
-      oscillator1_rand_offset_[i] += getRandomPitchChange();
-      oscillator2_rand_offset_[i] += getRandomPitchChange();
-      oscillator1_rand_offset_[i] *= RAND_DECAY;
-      oscillator2_rand_offset_[i] *= RAND_DECAY;
-    }
-  }
+  void HelmOscillators::reset(int i) {
+    oscillator1_cross_mods_[i] = 0;
+    oscillator2_cross_mods_[i] = 0;
+    oscillator1_cross_mods_[i + 1] = 0;
+    oscillator2_cross_mods_[i + 1] = 0;
 
-  void HelmOscillators::reset() {
-    oscillator1_cross_mod_ = 0;
-    oscillator2_cross_mod_ = 0;
-
+    oscillator1_phase_base_ = 0.0;
+    oscillator2_phase_base_ = 0.0;
     oscillator1_phases_[0] = 0;
     oscillator2_phases_[0] = 0;
-    oscillator1_rand_offset_[0] = 0.0;
-    oscillator2_rand_offset_[0] = 0.0;
 
-    for (int i = 1; i < MAX_UNISON; ++i) {
-      oscillator1_phases_[i] = (UINT_MAX / RAND_MAX) * rand();
-      oscillator2_phases_[i] = (UINT_MAX / RAND_MAX) * rand();
-      oscillator1_rand_offset_[i] = 0.0;
-      oscillator2_rand_offset_[i] = 0.0;
+    for (int u = 1; u < MAX_UNISON; ++u) {
+      oscillator1_phases_[u] = (UINT_MAX / RAND_MAX) * rand();
+      oscillator2_phases_[u] = (UINT_MAX / RAND_MAX) * rand();
     }
   }
 
@@ -88,16 +80,20 @@ namespace mopo {
     const mopo_float* src1 = input(kOscillator1PhaseInc)->source->buffer;
     const mopo_float* src2 = input(kOscillator2PhaseInc)->source->buffer;
 
-    #pragma clang loop vectorize(enable) interleave(enable)
+    VECTORIZE_LOOP
     for (int i = 0; i < samples; ++i) {
       dest1[i] = UINT_MAX * src1[i];
       dest2[i] = UINT_MAX * src2[i];
+    }
+
+    for (int i = 1; i < samples; ++i) {
+      dest1[i] += dest1[i - 1];
+      dest2[i] += dest2[i - 1];
     }
   }
 
   void HelmOscillators::computeDetuneRatios(int* detune_diffs,
                                             int oscillator_diff,
-                                            const mopo_float* random_offsets,
                                             bool harmonize, mopo_float detune,
                                             int voices) {
     int harmonize_mult = harmonize ? 1 : 0;
@@ -109,13 +105,12 @@ namespace mopo {
 
       mopo_float harmonic = harmonize_mult * v;
 
-      mopo_float detune_ratio = harmonic + DetuneLookup::detuneLookup(amount) +
-                                amount * random_offsets[v];
+      mopo_float detune_ratio = harmonic + DetuneLookup::detuneLookup(amount);
       detune_diffs[v] = detune_ratio * oscillator_diff - oscillator_diff;
     }
   }
 
-  void HelmOscillators::prepareBuffers(int** wave_buffers,
+  void HelmOscillators::prepareBuffers(mopo_float** wave_buffers,
                                        const int* detune_diffs,
                                        const int* oscillator_phase_diffs,
                                        int waveform) {
@@ -125,8 +120,9 @@ namespace mopo {
     }
   }
 
-  void HelmOscillators::process() {
+  void HelmOscillators::processInitial() {
     loadBasePhaseInc();
+
     int voices1 = utils::iclamp(input(kUnisonVoices1)->source->buffer[0], 1, MAX_UNISON);
     int voices2 = utils::iclamp(input(kUnisonVoices2)->source->buffer[0], 1, MAX_UNISON);
     mopo_float detune1 = input(kUnisonDetune1)->source->buffer[0];
@@ -134,12 +130,9 @@ namespace mopo {
     mopo_float harmonize1 = input(kHarmonize1)->source->buffer[0];
     mopo_float harmonize2 = input(kHarmonize2)->source->buffer[0];
 
-    addRandomPhaseToVoices();
     computeDetuneRatios(detune_diffs1_, oscillator1_phase_diffs_[0],
-                        oscillator1_rand_offset_,
                         harmonize1, detune1, voices1);
     computeDetuneRatios(detune_diffs2_, oscillator2_phase_diffs_[0],
-                        oscillator2_rand_offset_,
                         harmonize2, detune2, voices2);
 
     int wave1 = static_cast<int>(input(kOscillator1Waveform)->source->buffer[0] + 0.5);
@@ -149,19 +142,134 @@ namespace mopo {
 
     prepareBuffers(wave_buffers1_, detune_diffs1_, oscillator1_phase_diffs_, wave1);
     prepareBuffers(wave_buffers2_, detune_diffs2_, oscillator2_phase_diffs_, wave2);
+  }
 
-    float scale1 = 1.0f / ((voices1 >> 1) + 1);
-    float scale2 = 1.0f / ((voices2 >> 1) + 1);
+  void HelmOscillators::processCrossMod() {
+    mopo_float cross_mod = input(kCrossMod)->at(0);
+    const int* phase_diffs1 = oscillator1_phase_diffs_;
+    const int* phase_diffs2 = oscillator2_phase_diffs_;
+    int* dest_cross_mod2 = oscillator2_cross_mods_;
+    int* dest_cross_mod1 = oscillator1_cross_mods_;
+
+    if (cross_mod == 0.0) {
+      utils::zeroBuffer(dest_cross_mod1, buffer_size_);
+      utils::zeroBuffer(dest_cross_mod2, buffer_size_);
+      return;
+    }
 
     int i = 0;
     if (input(kReset)->source->triggered) {
       int trigger_offset = input(kReset)->source->trigger_offset;
-      for (; i < trigger_offset; ++i)
-        tick(i, voices1, voices2, scale1, scale2);
+      for (; i < trigger_offset; ++i) {
+        tickCrossMod(i, cross_mod, dest_cross_mod1, dest_cross_mod2,
+                     oscillator1_phase_base_ + phase_diffs1[i],
+                     oscillator2_phase_base_ + phase_diffs2[i]);
+      }
 
-      reset();
+      oscillator1_cross_mods_[i] = 0;
+      oscillator2_cross_mods_[i] = 0;
+      oscillator1_cross_mods_[i + 1] = 0;
+      oscillator2_cross_mods_[i + 1] = 0;
+
+      oscillator1_phase_base_ = 0.0;
+      oscillator2_phase_base_ = 0.0;
     }
-    for (; i < buffer_size_; ++i)
-      tick(i, voices1, voices2, scale1, scale2);
+    for (; i < buffer_size_; ++i) {
+      tickCrossMod(i, cross_mod, dest_cross_mod1, dest_cross_mod2,
+                   oscillator1_phase_base_ + phase_diffs1[i],
+                   oscillator2_phase_base_ + phase_diffs2[i]);
+    }
+  }
+
+  void HelmOscillators::processVoices() {
+    int voices1 = utils::iclamp(input(kUnisonVoices1)->source->buffer[0], 1, MAX_UNISON);
+    int voices2 = utils::iclamp(input(kUnisonVoices2)->source->buffer[0], 1, MAX_UNISON);
+
+    utils::zeroBuffer(oscillator1_totals_, buffer_size_);
+    utils::zeroBuffer(oscillator2_totals_, buffer_size_);
+
+    int j = 0;
+    if (input(kReset)->source->triggered) {
+      int trigger_offset = input(kReset)->source->trigger_offset;
+      for (; j < trigger_offset; ++j)
+        tickInitialVoices(j);
+
+      oscillator1_phases_[0] = 0;
+      oscillator2_phases_[0] = 0;
+    }
+
+    for (; j < buffer_size_; ++j)
+      tickInitialVoices(j);
+
+    for (int v = 1; v < voices1; ++v) {
+      const mopo_float* wave_buffer = wave_buffers1_[v];
+      unsigned int start_phase = oscillator1_phases_[v];
+      int detune = detune_diffs1_[v];
+
+      int i = 0;
+      if (input(kReset)->source->triggered) {
+        int trigger_offset = input(kReset)->source->trigger_offset;
+        for (; i < trigger_offset; ++i)
+          tickVoice1(i, v, wave_buffer, start_phase, detune);
+
+        oscillator1_phases_[v] = (UINT_MAX / RAND_MAX) * rand();
+      }
+
+      for (; i < buffer_size_; ++i)
+        tickVoice1(i, v, wave_buffer, start_phase, detune);
+    }
+
+    for (int v = 1; v < voices2; ++v) {
+      const mopo_float* wave_buffer = wave_buffers2_[v];
+      unsigned int start_phase = oscillator2_phases_[v];
+      int detune = detune_diffs2_[v];
+
+      int i = 0;
+      if (input(kReset)->source->triggered) {
+        int trigger_offset = input(kReset)->source->trigger_offset;
+        for (; i < trigger_offset; ++i)
+          tickVoice2(i, v, wave_buffer, start_phase, detune);
+
+        oscillator2_phases_[v] = (UINT_MAX / RAND_MAX) * rand();
+      }
+      for (; i < buffer_size_; ++i)
+        tickVoice2(i, v, wave_buffer, start_phase, detune);
+    }
+
+    finishVoices(voices1, voices2);
+  }
+
+  void HelmOscillators::finishVoices(int voices1, int voices2) {
+    mopo_float scale1 = scales[voices1];
+    mopo_float scale2 = scales[voices2];
+
+    mopo_float* dest = output()->buffer;
+    const mopo_float* amp1 = input(kOscillator1Amplitude)->source->buffer;
+    const mopo_float* amp2 = input(kOscillator2Amplitude)->source->buffer;
+    const mopo_float* oscillator1_totals = oscillator1_totals_;
+    const mopo_float* oscillator2_totals = oscillator2_totals_;
+
+    VECTORIZE_LOOP
+    for (int j = 0; j < buffer_size_; ++j)
+      tickOut(j, dest, amp1, amp2, oscillator1_totals, oscillator2_totals, scale1, scale2);
+
+    oscillator1_cross_mods_[0] = oscillator1_cross_mods_[buffer_size_];
+    oscillator2_cross_mods_[0] = oscillator2_cross_mods_[buffer_size_];
+
+    oscillator1_phase_base_ += oscillator1_phase_diffs_[buffer_size_ - 1];
+    oscillator2_phase_base_ += oscillator2_phase_diffs_[buffer_size_ - 1];
+
+    for (int v = 0; v < MAX_UNISON; ++v) {
+      oscillator1_phases_[v] += oscillator1_phase_diffs_[buffer_size_ - 1] +
+                                buffer_size_ * detune_diffs1_[v];
+      oscillator2_phases_[v] += oscillator2_phase_diffs_[buffer_size_ - 1] +
+                                buffer_size_ * detune_diffs2_[v];
+    }
+  }
+
+  void HelmOscillators::process() {
+    processInitial();
+    processCrossMod();
+    processVoices();
   }
 } // namespace mopo

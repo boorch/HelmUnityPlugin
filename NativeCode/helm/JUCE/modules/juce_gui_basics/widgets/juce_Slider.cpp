@@ -2,22 +2,24 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
@@ -33,7 +35,7 @@ public:
         style (sliderStyle),
         lastCurrentValue (0), lastValueMin (0), lastValueMax (0),
         minimum (0), maximum (10), interval (0), doubleClickReturnValue (0),
-        skewFactor (1.0), velocityModeSensitivity (1.0),
+        skewFactor (1.0), symmetricSkew (false), velocityModeSensitivity (1.0),
         velocityModeOffset (0.0), velocityModeThreshold (1),
         sliderRegionStart (0), sliderRegionSize (1), sliderBeingDragged (-1),
         pixelsForFullDragExtent (250),
@@ -132,7 +134,7 @@ public:
             // interval setting.
             numDecimalPlaces = 7;
 
-            if (newInt != 0)
+            if (newInt != 0.0)
             {
                 int v = std::abs (roundToInt (newInt * 10000000));
 
@@ -177,10 +179,10 @@ public:
 
         if (style == ThreeValueHorizontal || style == ThreeValueVertical)
         {
-            jassert ((double) valueMin.getValue() <= (double) valueMax.getValue());
+            jassert (static_cast<double> (valueMin.getValue()) <= static_cast<double> (valueMax.getValue()));
 
-            newValue = jlimit ((double) valueMin.getValue(),
-                               (double) valueMax.getValue(),
+            newValue = jlimit (static_cast<double> (valueMin.getValue()),
+                               static_cast<double> (valueMax.getValue()),
                                newValue);
         }
 
@@ -217,10 +219,10 @@ public:
 
         if (style == TwoValueHorizontal || style == TwoValueVertical)
         {
-            if (allowNudgingOfOtherValues && newValue > (double) valueMax.getValue())
+            if (allowNudgingOfOtherValues && newValue > static_cast<double> (valueMax.getValue()))
                 setMaxValue (newValue, notification, false);
 
-            newValue = jmin ((double) valueMax.getValue(), newValue);
+            newValue = jmin (static_cast<double> (valueMax.getValue()), newValue);
         }
         else
         {
@@ -254,10 +256,10 @@ public:
 
         if (style == TwoValueHorizontal || style == TwoValueVertical)
         {
-            if (allowNudgingOfOtherValues && newValue < (double) valueMin.getValue())
+            if (allowNudgingOfOtherValues && newValue < static_cast<double> (valueMin.getValue()))
                 setMinValue (newValue, notification, false);
 
-            newValue = jmax ((double) valueMin.getValue(), newValue);
+            newValue = jmax (static_cast<double> (valueMin.getValue()), newValue);
         }
         else
         {
@@ -402,7 +404,7 @@ public:
     {
         const double newValue = owner.snapValue (owner.getValueFromText (label->getText()), notDragging);
 
-        if (newValue != (double) currentValue.getValue())
+        if (newValue != static_cast<double> (currentValue.getValue()))
         {
             DragInProgress drag (*this);
             setValue (newValue, sendNotificationSync);
@@ -477,8 +479,8 @@ public:
     void setSkewFactorFromMidPoint (const double sliderValueToShowAtMidPoint)
     {
         if (maximum > minimum)
-            skewFactor = log (0.5) / log ((sliderValueToShowAtMidPoint - minimum)
-                                            / (maximum - minimum));
+            skewFactor = std::log (0.5) / std::log ((sliderValueToShowAtMidPoint - minimum)
+                                        / (maximum - minimum));
     }
 
     void setIncDecButtonsMode (const IncDecButtonMode mode)
@@ -665,8 +667,8 @@ public:
             const float mousePos = isVertical() ? e.position.y : e.position.x;
 
             const float normalPosDistance = std::abs (getLinearSliderPos (currentValue.getValue()) - mousePos);
-            const float minPosDistance    = std::abs (getLinearSliderPos (valueMin.getValue()) - 0.1f - mousePos);
-            const float maxPosDistance    = std::abs (getLinearSliderPos (valueMax.getValue()) + 0.1f - mousePos);
+            const float minPosDistance    = std::abs (getLinearSliderPos (valueMin.getValue()) + (isVertical() ? 0.1f : -0.1f) - mousePos);
+            const float maxPosDistance    = std::abs (getLinearSliderPos (valueMax.getValue()) + (isVertical() ? -0.1f : 0.1f) - mousePos);
 
             if (isTwoValue)
                 return maxPosDistance <= minPosDistance ? 2 : 1;
@@ -777,18 +779,21 @@ public:
 
     void handleVelocityDrag (const MouseEvent& e)
     {
-        const float mouseDiff = style == RotaryHorizontalVerticalDrag
-                                   ? (e.position.x - mousePosWhenLastDragged.x) + (mousePosWhenLastDragged.y - e.position.y)
-                                   : (isHorizontal()
-                                       || style == RotaryHorizontalDrag
-                                       || (style == IncDecButtons && incDecDragDirectionIsHorizontal()))
-                                         ? e.position.x - mousePosWhenLastDragged.x
-                                         : e.position.y - mousePosWhenLastDragged.y;
+        const bool hasHorizontalStyle =
+            (isHorizontal() ||  style == RotaryHorizontalDrag
+                            || (style == IncDecButtons && incDecDragDirectionIsHorizontal()));
+
+        float mouseDiff;
+        if (style == RotaryHorizontalVerticalDrag)
+            mouseDiff = (e.position.x - mousePosWhenLastDragged.x) + (mousePosWhenLastDragged.y - e.position.y);
+        else
+            mouseDiff = (hasHorizontalStyle ? e.position.x - mousePosWhenLastDragged.x
+                                            : e.position.y - mousePosWhenLastDragged.y);
 
         const double maxSpeed = jmax (200, sliderRegionSize);
         double speed = jlimit (0.0, maxSpeed, (double) std::abs (mouseDiff));
 
-        if (speed != 0)
+        if (speed != 0.0)
         {
             speed = 0.2 * velocityModeSensitivity
                       * (1.0 + std::sin (double_Pi * (1.5 + jmin (0.5, velocityModeOffset
@@ -837,7 +842,7 @@ public:
 
                 sliderBeingDragged = getThumbIndexAt (e);
 
-                minMaxDiff = (double) valueMax.getValue() - (double) valueMin.getValue();
+                minMaxDiff = static_cast<double> (valueMax.getValue()) - static_cast<double> (valueMin.getValue());
 
                 lastAngle = rotaryParams.startAngleRadians
                                 + (rotaryParams.endAngleRadians - rotaryParams.startAngleRadians)
@@ -917,7 +922,7 @@ public:
                 if (e.mods.isShiftDown())
                     setMaxValue (getMinValue() + minMaxDiff, dontSendNotification, true);
                 else
-                    minMaxDiff = (double) valueMax.getValue() - (double) valueMin.getValue();
+                    minMaxDiff = static_cast<double> (valueMax.getValue()) - static_cast<double> (valueMin.getValue());
             }
             else if (sliderBeingDragged == 2)
             {
@@ -927,7 +932,7 @@ public:
                 if (e.mods.isShiftDown())
                     setMinValue (getMaxValue() - minMaxDiff, dontSendNotification, true);
                 else
-                    minMaxDiff = (double) valueMax.getValue() - (double) valueMin.getValue();
+                    minMaxDiff = static_cast<double> (valueMax.getValue()) - static_cast<double> (valueMin.getValue());
             }
 
             mousePosWhenLastDragged = e.position;
@@ -943,7 +948,7 @@ public:
         {
             restoreMouseIfHidden();
 
-            if (sendChangeOnlyOnRelease && valueOnMouseDown != (double) currentValue.getValue())
+            if (sendChangeOnlyOnRelease && valueOnMouseDown != static_cast<double> (currentValue.getValue()))
                 triggerChangeMessage (sendNotificationAsync);
 
             currentDrag = nullptr;
@@ -1007,11 +1012,11 @@ public:
                     if (valueBox != nullptr)
                         valueBox->hideEditor (false);
 
-                    const double value = (double) currentValue.getValue();
+                    const double value = static_cast<double> (currentValue.getValue());
                     const double delta = getMouseWheelDelta (value, (std::abs (wheel.deltaX) > std::abs (wheel.deltaY)
                                                                         ? -wheel.deltaX : wheel.deltaY)
                                                                       * (wheel.isReversed ? -1.0f : 1.0f));
-                    if (delta != 0)
+                    if (delta != 0.0)
                     {
                         const double newValue = value + jmax (interval, std::abs (delta)) * (delta < 0 ? -1.0 : 1.0);
 
@@ -1041,22 +1046,20 @@ public:
 
     void restoreMouseIfHidden()
     {
-        const Array<MouseInputSource>& mouseSources = Desktop::getInstance().getMouseSources();
-
-        for (MouseInputSource* mi = mouseSources.begin(), * const e = mouseSources.end(); mi != e; ++mi)
+        for (auto& ms : Desktop::getInstance().getMouseSources())
         {
-            if (mi->isUnboundedMouseMovementEnabled())
+            if (ms.isUnboundedMouseMovementEnabled())
             {
-                mi->enableUnboundedMouseMovement (false);
+                ms.enableUnboundedMouseMovement (false);
 
                 const double pos = sliderBeingDragged == 2 ? getMaxValue()
                                                            : (sliderBeingDragged == 1 ? getMinValue()
-                                                                                      : (double) currentValue.getValue());
+                                                                                      : static_cast<double> (currentValue.getValue()));
                 Point<float> mousePos;
 
                 if (isRotary())
                 {
-                    mousePos = mi->getLastMouseDownPosition();
+                    mousePos = ms.getLastMouseDownPosition();
 
                     const float delta = (float) (pixelsForFullDragExtent * (owner.valueToProportionOfLength (valueOnMouseDown)
                                                                                 - owner.valueToProportionOfLength (pos)));
@@ -1077,7 +1080,7 @@ public:
                                                                        isVertical()   ? pixelPos : (owner.getHeight() / 2.0f)));
                 }
 
-                mi->setScreenPosition (mousePos);
+                ms.setScreenPosition (mousePos);
             }
         }
     }
@@ -1181,6 +1184,7 @@ public:
     double lastCurrentValue, lastValueMin, lastValueMax;
     double minimum, maximum, interval, doubleClickReturnValue;
     double valueWhenLastDragged, valueOnMouseDown, skewFactor, lastAngle;
+    bool symmetricSkew;
     double velocityModeSensitivity, velocityModeOffset, minMaxDiff;
     int velocityModeThreshold;
     RotaryParameters rotaryParams;
@@ -1318,7 +1322,6 @@ void Slider::setRotaryParameters (RotaryParameters p) noexcept
     // make sure the values are sensible..
     jassert (p.startAngleRadians >= 0 && p.endAngleRadians >= 0);
     jassert (p.startAngleRadians < float_Pi * 4.0f && p.endAngleRadians < float_Pi * 4.0f);
-    jassert (p.startAngleRadians < p.endAngleRadians);
 
     pimpl->rotaryParams = p;
 }
@@ -1352,11 +1355,18 @@ void Slider::setVelocityModeParameters (const double sensitivity, const int thre
 }
 
 double Slider::getSkewFactor() const noexcept               { return pimpl->skewFactor; }
-void Slider::setSkewFactor (const double factor)            { pimpl->skewFactor = factor; }
+bool Slider::isSymmetricSkew() const noexcept               { return pimpl->symmetricSkew; }
+
+void Slider::setSkewFactor (double factor, bool symmetricSkew)
+{
+    pimpl->skewFactor = factor;
+    pimpl->symmetricSkew = symmetricSkew;
+}
 
 void Slider::setSkewFactorFromMidPoint (const double sliderValueToShowAtMidPoint)
 {
     pimpl->setSkewFactorFromMidPoint (sliderValueToShowAtMidPoint);
+    pimpl->symmetricSkew = false;
 }
 
 int Slider::getMouseDragSensitivity() const noexcept        { return pimpl->pixelsForFullDragExtent; }
@@ -1495,10 +1505,21 @@ double Slider::proportionOfLengthToValue (double proportion)
 {
     const double skew = getSkewFactor();
 
-    if (skew != 1.0 && proportion > 0.0)
-        proportion = exp (log (proportion) / skew);
+    if (! isSymmetricSkew())
+    {
+        if (skew != 1.0 && proportion > 0.0)
+            proportion = std::exp (std::log (proportion) / skew);
 
-    return getMinimum() + (getMaximum() - getMinimum()) * proportion;
+        return getMinimum() + (getMaximum() - getMinimum()) * proportion;
+    }
+
+    double distanceFromMiddle = 2.0 * proportion - 1.0;
+
+    if (skew != 1.0 && distanceFromMiddle != 0.0)
+        distanceFromMiddle =  std::exp (std::log (std::abs (distanceFromMiddle)) / skew)
+                                     * (distanceFromMiddle < 0 ? -1 : 1);
+
+    return getMinimum() + (getMaximum() - getMinimum()) / 2.0 * (1 + distanceFromMiddle);
 }
 
 double Slider::valueToProportionOfLength (double value)
@@ -1506,7 +1527,14 @@ double Slider::valueToProportionOfLength (double value)
     const double n = (value - getMinimum()) / (getMaximum() - getMinimum());
     const double skew = getSkewFactor();
 
-    return skew == 1.0 ? n : pow (n, skew);
+    if (skew == 1.0)
+        return n;
+
+    if (! isSymmetricSkew())
+        return std::pow (n, skew);
+
+    double distanceFromMiddle = 2.0 * n - 1.0;
+    return (1.0 + std::pow (std::abs (distanceFromMiddle), skew) * (distanceFromMiddle < 0 ? -1 : 1)) / 2.0;
 }
 
 double Slider::snapValue (double attemptedValue, DragMode)

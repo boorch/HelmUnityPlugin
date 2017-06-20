@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,23 +97,23 @@ namespace mopo {
         mopo_float integral;
         mopo_float fractional = utils::mod(t * LOOKUP_SIZE, &integral);
         int index = integral;
-        return INTERPOLATE(sin_[index], sin_[index + 1], fractional);
+        return utils::interpolate(sin_[index], sin_[index + 1], fractional);
       }
 
       inline mopo_float square(mopo_float t, int harmonics) const {
         mopo_float integral;
         mopo_float fractional = utils::mod(t * LOOKUP_SIZE, &integral);
         int index = integral;
-        return INTERPOLATE(square_[harmonics][index],
-                           square_[harmonics][index + 1], fractional);
+        return utils::interpolate(square_[harmonics][index],
+                                  square_[harmonics][index + 1], fractional);
       }
 
       inline mopo_float upsaw(mopo_float t, int harmonics) const {
         mopo_float integral;
         mopo_float fractional = utils::mod(t * LOOKUP_SIZE, &integral);
         int index = integral;
-        return INTERPOLATE(saw_[harmonics][index],
-                           saw_[harmonics][index + 1], fractional);
+        return utils::interpolate(saw_[harmonics][index],
+                                  saw_[harmonics][index + 1], fractional);
       }
 
       inline mopo_float downsaw(mopo_float t, int harmonics) const {
@@ -124,8 +124,8 @@ namespace mopo {
         mopo_float integral;
         mopo_float fractional = utils::mod(t * LOOKUP_SIZE, &integral);
         int index = integral;
-        return INTERPOLATE(triangle_[harmonics][index],
-                           triangle_[harmonics][index + 1], fractional);
+        return utils::interpolate(triangle_[harmonics][index],
+                                  triangle_[harmonics][index + 1], fractional);
       }
 
       template<size_t steps>
@@ -255,7 +255,7 @@ namespace mopo {
       }
 
       static inline mopo_float fullsin(mopo_float t) {
-        return sin((2.0 * PI) * t);
+        return utils::quickSin1(t);
       }
 
       static inline mopo_float square(mopo_float t) {

@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
  */
 
 #include "noise_section.h"
+
+#include "colors.h"
 #include "fonts.h"
 
 #define KNOB_WIDTH 40
@@ -32,7 +34,7 @@ void NoiseSection::paintBackground(Graphics& g) {
   static const DropShadow component_shadow(Colour(0x88000000), 2, Point<int>(0, 1));
   SynthSection::paintBackground(g);
 
-  g.setColour(Colour(0xffbbbbbb));
+  g.setColour(Colors::control_label_text);
   g.setFont(Fonts::instance()->proportional_regular().withPointHeight(10.0f));
   drawTextForComponent(g, TRANS("AMP"), volume_);
 }

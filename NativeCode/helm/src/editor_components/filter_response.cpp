@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,11 +15,13 @@
  */
 
 #include "filter_response.h"
+
+#include "colors.h"
 #include "midi_lookup.h"
 #include "utils.h"
 
-#define MIN_GAIN_DB -30.0f
-#define MAX_GAIN_DB 24.0f
+#define MIN_GAIN_DB -30.0
+#define MAX_GAIN_DB 24.0
 #define MIN_RESONANCE 0.5
 #define MAX_RESONANCE 16.0
 #define GRID_CELL_WIDTH 8
@@ -30,9 +32,15 @@ FilterResponse::FilterResponse(int resolution) {
   resolution_ = resolution;
   cutoff_slider_ = nullptr;
   resonance_slider_ = nullptr;
-  filter_type_slider_ = nullptr;
+  filter_blend_slider_ = nullptr;
+  filter_shelf_slider_ = nullptr;
 
-  filter_.setSampleRate(44100);
+  filter_low_.setSampleRate(44100);
+  filter_band_.setSampleRate(44100);
+  filter_high_.setSampleRate(44100);
+  filter_shelf_.setSampleRate(44100);
+  style_ = mopo::StateVariableFilter::kNumStyles;
+  active_ = false;
   resetResponsePath();
 
   setOpaque(true);
@@ -52,7 +60,6 @@ void FilterResponse::paintBackground(Graphics& g) {
 }
 
 void FilterResponse::paint(Graphics& g) {
-  static const PathStrokeType stroke(1.5f, PathStrokeType::beveled, PathStrokeType::rounded);
   static const DropShadow shadow(Colour(0xbb000000), 5, Point<int>(0, 0));
 
   g.drawImage(background_,
@@ -61,10 +68,16 @@ void FilterResponse::paint(Graphics& g) {
 
   shadow.drawForPath(g, filter_response_path_);
 
-  g.setColour(Colour(0xff565656));
+  g.setColour(Colors::graph_fill);
   g.fillPath(filter_response_path_);
 
-  g.setColour(Colour(0xff03a9f4));
+  if (active_)
+    g.setColour(Colors::audio);
+  else
+    g.setColour(Colors::graph_disable);
+
+  float line_width = 1.5f * getHeight() / 150.0f;
+  PathStrokeType stroke(line_width, PathStrokeType::beveled, PathStrokeType::rounded);
   g.strokePath(filter_response_path_, stroke);
 }
 
@@ -81,28 +94,36 @@ void FilterResponse::resized() {
 }
 
 void FilterResponse::mouseDown(const MouseEvent& e) {
-  if (e.mods.isRightButtonDown() && filter_type_slider_) {
-    int max = filter_type_slider_->getMaximum();
-    int current_value = filter_type_slider_->getValue();
-    filter_type_slider_->setValue((current_value + 1) % (max + 1));
-
-    computeFilterCoefficients();
-  }
-  else
-    setFilterSettingsFromPosition(e.getPosition());
+  setFilterSettingsFromPosition(e.getPosition());
   repaint();
 }
 
 void FilterResponse::mouseDrag(const MouseEvent& e) {
-  if (!e.mods.isRightButtonDown()) {
-    setFilterSettingsFromPosition(e.getPosition());
-    repaint();
-  }
+  setFilterSettingsFromPosition(e.getPosition());
+  repaint();
 }
 
 float FilterResponse::getPercentForMidiNote(float midi_note) {
   float frequency = mopo::utils::midiNoteToFrequency(midi_note);
-  float response = fabs(filter_.getAmplitudeResponse(frequency));
+
+  float response = 0.0f;
+  if (style_ == mopo::StateVariableFilter::kShelf)
+    response = fabs(filter_shelf_.getAmplitudeResponse(frequency));
+  else {
+    float blend = filter_blend_slider_->getValue();
+    float low_pass_amount = mopo::utils::clamp(1.0 - blend, 0.0, 1.0);
+    float band_pass_amount = mopo::utils::clamp(1.0 - fabs(blend - 1.0), 0.0, 1.0);
+    float high_pass_amount = mopo::utils::clamp(blend - 1.0, 0.0, 1.0);
+
+    response = low_pass_amount * filter_low_.getAmplitudeResponse(frequency) +
+               band_pass_amount * filter_band_.getAmplitudeResponse(frequency) +
+               high_pass_amount * filter_high_.getAmplitudeResponse(frequency);
+
+    response = fabs(response);
+    if (style_ == mopo::StateVariableFilter::k24dB)
+      response *= response;
+  }
+
   float gain_db = mopo::utils::gainToDb(response);
   return (gain_db - MIN_GAIN_DB) / (MAX_GAIN_DB - MIN_GAIN_DB);
 }
@@ -146,22 +167,36 @@ void FilterResponse::resetResponsePath() {
 }
 
 void FilterResponse::computeFilterCoefficients() {
-  if (cutoff_slider_ == nullptr || resonance_slider_ == nullptr || filter_type_slider_ == nullptr)
+  if (cutoff_slider_ == nullptr || resonance_slider_ == nullptr ||
+      filter_blend_slider_ == nullptr || filter_shelf_slider_ == nullptr) {
     return;
+  }
 
-  mopo::Filter::Type type = static_cast<mopo::Filter::Type>(
-                            static_cast<int>(filter_type_slider_->getValue()));
+  mopo::StateVariableFilter::Shelves shelf = static_cast<mopo::StateVariableFilter::Shelves>(
+      static_cast<int>(filter_shelf_slider_->getValue()));
   double frequency = mopo::utils::midiNoteToFrequency(cutoff_slider_->getValue());
   double resonance = mopo::utils::magnitudeToQ(resonance_slider_->getValue());
-  double decibels = INTERPOLATE(MIN_GAIN_DB, MAX_GAIN_DB, resonance_slider_->getValue());
+  double decibels = mopo::utils::interpolate(MIN_GAIN_DB, MAX_GAIN_DB,
+                                             resonance_slider_->getValue());
   double gain = mopo::utils::dbToGain(decibels);
-  if (type == mopo::Filter::kLowShelf ||
-      type == mopo::Filter::kHighShelf ||
-      type == mopo::Filter::kBandShelf) {
-    filter_.computeCoefficients(type, frequency, 1.0, gain);
+
+  if (style_ == mopo::StateVariableFilter::k24dB) {
+    resonance = sqrt(resonance);
+    gain = sqrt(gain);
+  }
+  
+  if (style_ == mopo::StateVariableFilter::kShelf) {
+    mopo::BiquadFilter::Type type = mopo::BiquadFilter::kLowShelf;
+    if (shelf == mopo::StateVariableFilter::kBandShelf)
+      type = mopo::BiquadFilter::kBandShelf;
+    else if (shelf == mopo::StateVariableFilter::kHighShelf)
+      type = mopo::BiquadFilter::kHighShelf;
+    filter_shelf_.computeCoefficients(type, frequency, 1.0, gain);
   }
   else {
-    filter_.computeCoefficients(type, frequency, resonance, 1.0);
+    filter_low_.computeCoefficients(mopo::BiquadFilter::kLowPass, frequency, resonance, 1.0);
+    filter_band_.computeCoefficients(mopo::BiquadFilter::kBandPass, frequency, resonance, 1.0);
+    filter_high_.computeCoefficients(mopo::BiquadFilter::kHighPass, frequency, resonance, 1.0);
   }
   resetResponsePath();
 }
@@ -180,34 +215,49 @@ void FilterResponse::setFilterSettingsFromPosition(Point<int> position) {
   computeFilterCoefficients();
 }
 
-void FilterResponse::sliderValueChanged(Slider* moved_slider) {
+void FilterResponse::guiChanged(SynthSlider* slider) {
   computeFilterCoefficients();
   repaint();
 }
 
-void FilterResponse::setResonanceSlider(Slider* slider) {
-  if (resonance_slider_)
-    resonance_slider_->removeListener(this);
+void FilterResponse::setResonanceSlider(SynthSlider* slider) {
   resonance_slider_ = slider;
-  resonance_slider_->addListener(this);
+  resonance_slider_->addSliderListener(this);
   computeFilterCoefficients();
   repaint();
 }
 
-void FilterResponse::setCutoffSlider(Slider* slider) {
-  if (cutoff_slider_)
-    cutoff_slider_->removeListener(this);
+void FilterResponse::setCutoffSlider(SynthSlider* slider) {
   cutoff_slider_ = slider;
-  cutoff_slider_->addListener(this);
+  cutoff_slider_->addSliderListener(this);
   computeFilterCoefficients();
   repaint();
 }
 
-void FilterResponse::setFilterTypeSlider(Slider* slider) {
-  if (filter_type_slider_)
-    filter_type_slider_->removeListener(this);
-  filter_type_slider_ = slider;
-  filter_type_slider_->addListener(this);
+void FilterResponse::setFilterBlendSlider(SynthSlider* slider) {
+  filter_blend_slider_ = slider;
+  filter_blend_slider_->addSliderListener(this);
   computeFilterCoefficients();
+  repaint();
+}
+
+void FilterResponse::setFilterShelfSlider(SynthSlider* slider) {
+  filter_shelf_slider_ = slider;
+  filter_shelf_slider_->addSliderListener(this);
+  computeFilterCoefficients();
+  repaint();
+}
+
+void FilterResponse::setStyle(mopo::StateVariableFilter::Styles style) {
+  if (style_ == style)
+    return;
+
+  style_ = style;
+  computeFilterCoefficients();
+  repaint();
+}
+
+void FilterResponse::setActive(bool active) {
+  active_ = active;
   repaint();
 }

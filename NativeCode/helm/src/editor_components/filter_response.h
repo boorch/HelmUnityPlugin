@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,11 @@
 
 #include "JuceHeader.h"
 #include "helm_common.h"
-#include "filter.h"
+#include "biquad_filter.h"
+#include "state_variable_filter.h"
+#include "synth_slider.h"
 
-class FilterResponse : public Component, SliderListener {
+class FilterResponse : public Component, SynthSlider::SliderListener {
   public:
     FilterResponse(int resolution);
     ~FilterResponse();
@@ -31,11 +33,13 @@ class FilterResponse : public Component, SliderListener {
     void resetResponsePath();
     void computeFilterCoefficients();
     void setFilterSettingsFromPosition(Point<int> position);
-    void sliderValueChanged(Slider* moved_slider) override;
+    void guiChanged(SynthSlider* slider) override;
 
-    void setResonanceSlider(Slider* slider);
-    void setCutoffSlider(Slider* slider);
-    void setFilterTypeSlider(Slider* slider);
+    void setResonanceSlider(SynthSlider* slider);
+    void setCutoffSlider(SynthSlider* slider);
+    void setFilterBlendSlider(SynthSlider* slider);
+    void setFilterShelfSlider(SynthSlider* slider);
+    void setStyle(mopo::StateVariableFilter::Styles style);
 
     void paint(Graphics& g) override;
     void paintBackground(Graphics& g);
@@ -43,15 +47,23 @@ class FilterResponse : public Component, SliderListener {
     void mouseDown(const MouseEvent& e) override;
     void mouseDrag(const MouseEvent& e) override;
 
+    void setActive(bool active);
+
   private:
     Path filter_response_path_;
     int resolution_;
+    mopo::StateVariableFilter::Styles style_;
+    bool active_;
 
-    mopo::Filter filter_;
+    mopo::BiquadFilter filter_low_;
+    mopo::BiquadFilter filter_band_;
+    mopo::BiquadFilter filter_high_;
+    mopo::BiquadFilter filter_shelf_;
 
-    Slider* filter_type_slider_;
-    Slider* cutoff_slider_;
-    Slider* resonance_slider_;
+    SynthSlider* filter_blend_slider_;
+    SynthSlider* filter_shelf_slider_;
+    SynthSlider* cutoff_slider_;
+    SynthSlider* resonance_slider_;
 
     Image background_;
 

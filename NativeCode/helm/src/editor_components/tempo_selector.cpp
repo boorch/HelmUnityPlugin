@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
  */
 
 #include "tempo_selector.h"
+
+#include "default_look_and_feel.h"
 #include "synth_gui_interface.h"
 
 namespace {
@@ -26,6 +28,10 @@ namespace {
     kTempoTriplet
   };
 
+  static void tempoTypeSelectedCallback(int result, TempoSelector* tempo_selector) {
+    if (tempo_selector != nullptr && result != kCancel)
+      tempo_selector->setValue(result - 1);
+  }
 } // namespace
 
 TempoSelector::TempoSelector(String name) : SynthSlider(name),
@@ -37,23 +43,29 @@ void TempoSelector::mouseDown(const MouseEvent& e) {
     return;
   }
   PopupMenu m;
+  m.setLookAndFeel(DefaultLookAndFeel::instance());
+
   m.addItem(kHertz, "Hertz");
   m.addItem(kTempo, "Tempo");
   m.addItem(kTempoDotted, "Tempo Dotted");
   m.addItem(kTempoTriplet, "Tempo Triplet");
 
-  int result = m.showAt(this);
-  if (result > 0)
-    setValue(result - 1);
+  m.showMenuAsync(PopupMenu::Options().withTargetComponent(this),
+                  ModalCallbackFunction::forComponent(tempoTypeSelectedCallback, this));
+}
+
+void TempoSelector::mouseUp(const MouseEvent& e) {
+  if (e.mods.isPopupMenu()) {
+    SynthSlider::mouseDown(e);
+    return;
+  }
 }
 
 void TempoSelector::valueChanged() {
   bool free_slider = getValue() == (kHertz - 1);
 
-  if (free_slider_)
-    free_slider_->setVisible(free_slider);
-  if (tempo_slider_)
-    tempo_slider_->setVisible(!free_slider);
+  free_slider_->setVisible(free_slider);
+  tempo_slider_->setVisible(!free_slider);
 }
 
 void TempoSelector::paint(Graphics& g) {
@@ -111,5 +123,19 @@ void TempoSelector::resized() {
   clock_.clear();
   clock_.addPieSegment(7.0f * getWidth() / 24.0f, getHeight() / 4.0f,
                        getWidth() / 2.0f, getHeight() / 2.0f,
-                       0.0f, clock_angle - 2.0f * mopo::PI, 0.0f);
+                       0.0f, clock_angle - 2.0f * static_cast<float>(mopo::PI), 0.0f);
+}
+
+void TempoSelector::setFreeSlider(Slider* slider) {
+  bool free_slider = getValue() == (kHertz - 1);
+
+  free_slider_ = slider;
+  free_slider_->setVisible(free_slider);
+}
+
+void TempoSelector::setTempoSlider(Slider* slider) {
+  bool free_slider = getValue() == (kHertz - 1);
+
+  tempo_slider_ = slider;
+  tempo_slider_->setVisible(!free_slider);
 }

@@ -1,27 +1,21 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   The code included in this file is provided under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license. Permission
+   To use, copy, modify, and/or distribute this software for any purpose with or
+   without fee is hereby granted provided that the above copyright notice and
+   this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
-
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
-
-   For more details, visit www.juce.com
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
@@ -161,6 +155,14 @@ Thread* JUCE_CALLTYPE Thread::getCurrentThread()
 void Thread::signalThreadShouldExit()
 {
     shouldExit = true;
+}
+
+bool Thread::currentThreadShouldExit()
+{
+    if (Thread* currentThread = getCurrentThread())
+        return currentThread->threadShouldExit();
+
+    return false;
 }
 
 bool Thread::waitForThreadToExit (const int timeOutMilliseconds) const
@@ -306,8 +308,6 @@ public:
         AtomicTester <uint32>::testInteger (*this);
         beginTest ("Atomic long");
         AtomicTester <long>::testInteger (*this);
-        beginTest ("Atomic void*");
-        AtomicTester <void*>::testInteger (*this);
         beginTest ("Atomic int*");
         AtomicTester <int*>::testInteger (*this);
         beginTest ("Atomic float");
@@ -320,6 +320,21 @@ public:
         beginTest ("Atomic double");
         AtomicTester <double>::testFloat (*this);
       #endif
+        beginTest ("Atomic pointer increment/decrement");
+        Atomic<int*> a (a2); int* b (a2);
+        expect (++a == ++b);
+
+        {
+            beginTest ("Atomic void*");
+            Atomic<void*> atomic;
+            void* c;
+
+            atomic.set ((void*) 10);
+            c = (void*) 10;
+
+            expect (atomic.value == c);
+            expect (atomic.get() == c);
+        }
     }
 
     template <typename Type>
@@ -331,22 +346,34 @@ public:
         static void testInteger (UnitTest& test)
         {
             Atomic<Type> a, b;
+            Type c;
+
             a.set ((Type) 10);
-            test.expect (a.value == (Type) 10);
-            test.expect (a.get() == (Type) 10);
-            a += (Type) 15;
-            test.expect (a.get() == (Type) 25);
+            c = (Type) 10;
+
+            test.expect (a.value == c);
+            test.expect (a.get() == c);
+
+            a += 15;
+            c += 15;
+            test.expect (a.get() == c);
             a.memoryBarrier();
-            a -= (Type) 5;
-            test.expect (a.get() == (Type) 20);
-            test.expect (++a == (Type) 21);
+
+            a -= 5;
+            c -= 5;
+            test.expect (a.get() == c);
+
+            test.expect (++a == ++c);
             ++a;
-            test.expect (--a == (Type) 21);
-            test.expect (a.get() == (Type) 21);
+            ++c;
+            test.expect (--a == --c);
+            test.expect (a.get() == c);
             a.memoryBarrier();
 
             testFloat (test);
         }
+
+
 
         static void testFloat (UnitTest& test)
         {

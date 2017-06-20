@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +31,28 @@ class FilterSection : public SynthSection {
     void paintBackground(Graphics& g) override;
     void resized() override;
     void reset() override;
+    void sliderValueChanged(Slider* changed_slider) override;
+
+    void resizeLowPass(float x, float y, float width, float height);
+    void resizeHighPass(float x, float y, float width, float height);
+
+    void setActive(bool active) override;
+    void resetResponse();
 
   private:
-    ScopedPointer<FilterSelector> filter_type_;
+    ScopedPointer<ToggleButton> filter_on_;
+    ScopedPointer<FilterSelector> filter_shelf_;
     ScopedPointer<SynthSlider> cutoff_;
     ScopedPointer<SynthSlider> resonance_;
+    ScopedPointer<SynthSlider> blend_;
     ScopedPointer<FilterResponse> filter_response_;
     ScopedPointer<SynthSlider> fil_env_depth_;
     ScopedPointer<SynthSlider> keytrack_;
+    ScopedPointer<SynthSlider> filter_style_;
+    ScopedPointer<SynthSlider> drive_;
+
+    Path low_pass_;
+    Path high_pass_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FilterSection)
 };

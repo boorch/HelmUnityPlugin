@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,8 +52,9 @@ bool HelmComputerKeyboard::keyStateChanged(bool isKeyDown, Component *origin) {
   for (int i = 0; i < layout_.length(); ++i) {
     int note = computer_keyboard_offset_ + i;
 
+    ModifierKeys modifiers = ModifierKeys::getCurrentModifiersRealtime();
     if (KeyPress::isKeyCurrentlyDown(layout_[i]) &&
-        !keys_pressed_.count(layout_[i]) && isKeyDown) {
+        !keys_pressed_.count(layout_[i]) && isKeyDown && !modifiers.isCommandDown()) {
       keys_pressed_.insert(layout_[i]);
       keyboard_state_->noteOn(KEYBOARD_MIDI_CHANNEL, note, 1.0f);
     }

@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,9 @@
 
 #include "oscillator_section.h"
 
+#include "colors.h"
 #include "fonts.h"
+#include "synth_button.h"
 #include "synth_slider.h"
 #include "tempo_selector.h"
 #include "text_look_and_feel.h"
@@ -24,11 +26,9 @@
 #define WAVE_RESOLUTION 256
 #define CROSS_MOD_WIDTH_PERCENT 0.2
 #define KNOB_SECTION_HEIGHT 75
-#define KNOB_WIDTH 40
 #define TEXT_WIDTH 56
 #define TEXT_HEIGHT 16
 #define TRANS_WIDTH 42
-#define TUNE_WIDTH 32
 #define WAVE_SELECTOR_HEIGHT 10
 
 OscillatorSection::OscillatorSection(String name) : SynthSection(name) {
@@ -38,10 +38,12 @@ OscillatorSection::OscillatorSection(String name) : SynthSection(name) {
   addSlider(wave_selector_1_ = new WaveSelector("osc_1_waveform"));
   wave_selector_1_->setSliderStyle(Slider::LinearBar);
   wave_selector_1_->setStringLookup(mopo::strings::waveforms);
+  wave_selector_1_->setPopupPlacement(BubbleComponent::above);
 
   addSlider(wave_selector_2_ = new WaveSelector("osc_2_waveform"));
   wave_selector_2_->setSliderStyle(Slider::LinearBar);
   wave_selector_2_->setStringLookup(mopo::strings::waveforms);
+  wave_selector_2_->setPopupPlacement(BubbleComponent::above);
 
   addAndMakeVisible(wave_viewer_1_ = new WaveViewer(WAVE_RESOLUTION));
   wave_viewer_1_->setWaveSlider(wave_selector_1_);
@@ -87,11 +89,11 @@ OscillatorSection::OscillatorSection(String name) : SynthSection(name) {
   unison_voices_2_->setLookAndFeel(TextLookAndFeel::instance());
   unison_voices_2_->setMouseDragSensitivity(UNISON_DRAG_SENSITIVITY);
 
-  addButton(unison_harmonize_1_ = new ToggleButton("unison_1_harmonize"));
+  addButton(unison_harmonize_1_ = new SynthButton("unison_1_harmonize"));
   unison_harmonize_1_->setLookAndFeel(TextLookAndFeel::instance());
   unison_harmonize_1_->setButtonText("H");
 
-  addButton(unison_harmonize_2_ = new ToggleButton("unison_2_harmonize"));
+  addButton(unison_harmonize_2_ = new SynthButton("unison_2_harmonize"));
   unison_harmonize_2_->setLookAndFeel(TextLookAndFeel::instance());
   unison_harmonize_2_->setButtonText("H");
 }
@@ -115,19 +117,20 @@ OscillatorSection::~OscillatorSection() {
 }
 
 void OscillatorSection::paintBackground(Graphics& g) {
-  static const float extra_knob_padding = 4.0f;
   static const DropShadow component_shadow(Colour(0x99000000), 4, Point<int>(0, 0));
+  float extra_knob_padding = size_ratio_ * 4.0f;
 
   SynthSection::paintBackground(g);
 
-  g.setColour(Colour(0xff212121));
+  g.setColour(Colors::background);
   g.fillEllipse(transpose_1_->getBounds().toFloat().expanded(extra_knob_padding));
   g.fillEllipse(tune_1_->getBounds().toFloat().expanded(extra_knob_padding));
   g.fillEllipse(transpose_2_->getBounds().toFloat().expanded(extra_knob_padding));
   g.fillEllipse(tune_2_->getBounds().toFloat().expanded(extra_knob_padding));
 
   g.setColour(Colour(0xff303030));
-  g.fillRect(0, tune_1_->getBottom() + 2, getWidth(), 5);
+  g.fillRect(0.0f, 1.0f * tune_1_->getBottom() + size_ratio_ * 2.0f,
+             1.0f * getWidth(), size_ratio_ * 5.0f);
 
   g.setColour(Colour(0xff4fc3f7));
   g.strokePath(top_left_cross_path_, PathStrokeType(1.0f));
@@ -141,8 +144,9 @@ void OscillatorSection::paintBackground(Graphics& g) {
   g.setColour(Colour(0xff4fc3f7));
   g.strokePath(bottom_right_cross_path_, PathStrokeType(1.0f));
 
-  g.setColour(Colour(0xffbbbbbb));
-  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(10.0f));
+  g.setColour(Colors::control_label_text);
+  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(size_ratio_ * 10.0f));
+  
   drawTextForComponent(g, TRANS("MOD"), cross_modulation_);
   drawTextForComponent(g, TRANS("TRANS"), transpose_1_);
   drawTextForComponent(g, TRANS("TRANS"), transpose_2_);
@@ -159,46 +163,55 @@ void OscillatorSection::paintBackground(Graphics& g) {
 }
 
 void OscillatorSection::resized() {
+  int title_width = getTitleWidth();
+  int knob_width = getStandardKnobSize();
+  int tune_width = getSmallKnobSize();
+  int text_width = size_ratio_ * TEXT_WIDTH;
+  int text_height = size_ratio_ * TEXT_HEIGHT;
+  int trans_width = size_ratio_ * TRANS_WIDTH;
+  int wave_selector_height = size_ratio_ * WAVE_SELECTOR_HEIGHT;
+  int knob_section_height = size_ratio_ * KNOB_SECTION_HEIGHT;
+
   float cross_mod_width = CROSS_MOD_WIDTH_PERCENT * getWidth();
   float osc_width = (getWidth() - cross_mod_width) / 2.0f;
-  float osc_height = getHeight() - 20 - WAVE_SELECTOR_HEIGHT - KNOB_SECTION_HEIGHT;
-  float osc_y = 20 + WAVE_SELECTOR_HEIGHT;
+  float osc_height = getHeight() - title_width - wave_selector_height - knob_section_height;
+  float osc_y = title_width + wave_selector_height;
 
-  wave_selector_1_->setBounds(0.0f, 20.0f, osc_width, WAVE_SELECTOR_HEIGHT);
-  wave_selector_2_->setBounds(getWidth() - osc_width, 20.0f, osc_width, WAVE_SELECTOR_HEIGHT);
+  wave_selector_1_->setBounds(0.0f, title_width, osc_width, wave_selector_height);
+  wave_selector_2_->setBounds(getWidth() - osc_width, title_width, osc_width, wave_selector_height);
   wave_viewer_1_->setBounds(0.0f, osc_y, osc_width, osc_height);
   wave_viewer_2_->setBounds(getWidth() - osc_width, osc_y, osc_width, osc_height);
-  cross_modulation_->setBounds((getWidth() - KNOB_WIDTH) / 2.0f,
-                               osc_y + (osc_height - KNOB_WIDTH) / 2.0f,
-                               KNOB_WIDTH, KNOB_WIDTH);
+  cross_modulation_->setBounds((getWidth() - knob_width) / 2.0f,
+                               osc_y + (osc_height - knob_width) / 2.0f,
+                               knob_width, knob_width);
 
-  float space = (getWidth() - (2.0f * TEXT_WIDTH + 2.0f * TRANS_WIDTH + 2.0f * TUNE_WIDTH)) / 5.0f;
-  int knob_bottom = getHeight() - 22.0f;
+  float space = (getWidth() - (2.0f * text_width + 2.0f * trans_width + 2.0f * tune_width)) / 5.0f;
+  int knob_bottom = getHeight() - size_ratio_ * 22.0f;
 
-  tune_1_->setBounds(space, knob_bottom - TUNE_WIDTH, TUNE_WIDTH, TUNE_WIDTH);
-  transpose_1_->setBounds(TUNE_WIDTH + space, knob_bottom - TRANS_WIDTH,
-                          TRANS_WIDTH, TRANS_WIDTH);
+  tune_1_->setBounds(space, knob_bottom - tune_width, tune_width, tune_width);
+  transpose_1_->setBounds(tune_width + space, knob_bottom - trans_width,
+                          trans_width, trans_width);
 
-  unison_detune_1_->setBounds(TRANS_WIDTH + TUNE_WIDTH + 2 * space,
-                              knob_bottom - TEXT_HEIGHT, TEXT_WIDTH, TEXT_HEIGHT);
-  unison_voices_1_->setBounds(TRANS_WIDTH + TUNE_WIDTH + 2 * space,
-                              knob_bottom - 2 * TEXT_HEIGHT, TEXT_WIDTH - TEXT_HEIGHT, TEXT_HEIGHT);
+  unison_detune_1_->setBounds(trans_width + tune_width + 2 * space,
+                              knob_bottom - text_height, text_width, text_height);
+  unison_voices_1_->setBounds(trans_width + tune_width + 2 * space,
+                              knob_bottom - 2 * text_height, text_width - text_height, text_height);
   unison_harmonize_1_->setBounds(unison_voices_1_->getX() + unison_voices_1_->getWidth(),
-                                 unison_voices_1_->getY(), TEXT_HEIGHT, TEXT_HEIGHT);
-  unison_detune_2_->setBounds(TRANS_WIDTH + TEXT_WIDTH + TUNE_WIDTH + 3 * space,
-                              knob_bottom - TEXT_HEIGHT, TEXT_WIDTH, TEXT_HEIGHT);
-  unison_voices_2_->setBounds(TRANS_WIDTH + TEXT_WIDTH + TUNE_WIDTH + 3 * space,
-                              knob_bottom - 2 * TEXT_HEIGHT, TEXT_WIDTH - TEXT_HEIGHT, TEXT_HEIGHT);
+                                 unison_voices_1_->getY(), text_height, text_height);
+  unison_detune_2_->setBounds(trans_width + text_width + tune_width + 3 * space,
+                              knob_bottom - text_height, text_width, text_height);
+  unison_voices_2_->setBounds(trans_width + text_width + tune_width + 3 * space,
+                              knob_bottom - 2 * text_height, text_width - text_height, text_height);
   unison_harmonize_2_->setBounds(unison_voices_2_->getX() + unison_voices_2_->getWidth(),
-                                 unison_voices_2_->getY(), TEXT_HEIGHT, TEXT_HEIGHT);
+                                 unison_voices_2_->getY(), text_height, text_height);
 
-  transpose_2_->setBounds(TRANS_WIDTH + 2 * TEXT_WIDTH + TUNE_WIDTH + 4 * space,
-                          knob_bottom - TRANS_WIDTH, TRANS_WIDTH, TRANS_WIDTH);
-  tune_2_->setBounds(2 * TRANS_WIDTH + 2 * TEXT_WIDTH + TUNE_WIDTH + 4 * space,
-                     knob_bottom - TUNE_WIDTH, TUNE_WIDTH, TUNE_WIDTH);
+  transpose_2_->setBounds(trans_width + 2 * text_width + tune_width + 4 * space,
+                          knob_bottom - trans_width, trans_width, trans_width);
+  tune_2_->setBounds(2 * trans_width + 2 * text_width + tune_width + 4 * space,
+                     knob_bottom - tune_width, tune_width, tune_width);
 
-  float cross_x_padding = 8.0f;
-  float cross_y_padding = 8.0f;
+  float cross_x_padding = size_ratio_ * 8.0f;
+  float cross_y_padding = size_ratio_ * 8.0f;
   float cross_width = cross_mod_width - 2.0f * cross_x_padding;
   float cross_height = osc_height - 2.0f * cross_y_padding;
   float cross_percent = 0.2f;
@@ -234,6 +247,11 @@ void OscillatorSection::resized() {
                                   cross_percent * cross_height);
 
   SynthSection::resized();
+
+  unison_detune_1_->setPopupDisplayEnabled(false, nullptr);
+  unison_detune_2_->setPopupDisplayEnabled(false, nullptr);
+  unison_voices_1_->setPopupDisplayEnabled(false, nullptr);
+  unison_voices_2_->setPopupDisplayEnabled(false, nullptr);
 }
 
 void OscillatorSection::reset() {

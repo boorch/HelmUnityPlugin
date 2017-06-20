@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ namespace mopo {
 
       HelmLfo();
 
-      virtual Processor* clone() const { return new HelmLfo(*this); }
-      void process();
+      virtual Processor* clone() const override { return new HelmLfo(*this); }
+      void process() override;
       void correctToTime(mopo_float samples);
 
     protected:

@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,15 @@
  */
 
 #include "sub_section.h"
+
+#include "colors.h"
 #include "fonts.h"
+#include "synth_button.h"
+#include "text_look_and_feel.h"
 
 #define WAVE_VIEWER_RESOLUTION 80
 #define WAVE_SELECTOR_WIDTH 10
 #define WAVE_SECTION_WIDTH 100
-#define KNOB_WIDTH 40
 
 SubSection::SubSection(String name) : SynthSection(name) {
   addSlider(wave_selector_ = new WaveSelector("sub_waveform"));
@@ -32,6 +35,10 @@ SubSection::SubSection(String name) : SynthSection(name) {
 
   addSlider(shuffle_ = new SynthSlider("sub_shuffle"));
   shuffle_->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+
+  addButton(sub_octave_ = new SynthButton("sub_octave"));
+  sub_octave_->setLookAndFeel(TextLookAndFeel::instance());
+  sub_octave_->setButtonText("-OCT");
 }
 
 SubSection::~SubSection() {
@@ -42,20 +49,29 @@ SubSection::~SubSection() {
 void SubSection::paintBackground(Graphics& g) {
   SynthSection::paintBackground(g);
 
-  g.setColour(Colour(0xffbbbbbb));
-  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(10.0f));
+  g.setColour(Colors::control_label_text);
+  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(size_ratio_ * 10.0f));
   drawTextForComponent(g, TRANS("SHUFFLE"), shuffle_);
 }
 
 void SubSection::resized() {
-  wave_selector_->setBounds(0, 20, WAVE_SECTION_WIDTH, WAVE_SELECTOR_WIDTH);
-  wave_viewer_->setBounds(0, wave_selector_->getBottom(),
-                          WAVE_SECTION_WIDTH, getHeight() - wave_selector_->getBottom());
+  int knob_y = size_ratio_ * 24;
+  int knob_width = getStandardKnobSize();
+  int title_width = getTitleWidth();
+  int wave_section_width = size_ratio_ * WAVE_SECTION_WIDTH;
+  int wave_selector_width = size_ratio_ * WAVE_SELECTOR_WIDTH;
+  int space = (getWidth() - knob_width - wave_section_width) / 2;
 
-  int knob_y = 34;
-  int space = (getWidth() - KNOB_WIDTH - WAVE_SECTION_WIDTH) / 2;
-  shuffle_->setBounds(WAVE_SECTION_WIDTH + space, knob_y,
-                      KNOB_WIDTH, KNOB_WIDTH);
+  wave_selector_->setBounds(0, title_width, wave_section_width, wave_selector_width);
+  wave_viewer_->setBounds(0, wave_selector_->getBottom(),
+                          wave_section_width, getHeight() - wave_selector_->getBottom());
+
+  shuffle_->setBounds(wave_section_width + space, knob_y,
+                      knob_width, knob_width);
+
+  int button_y = size_ratio_ * 82;
+  sub_octave_->setBounds(wave_section_width + space, button_y, knob_width, 16);
+
   SynthSection::resized();
 }
 

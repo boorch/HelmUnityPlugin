@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,14 +85,7 @@ namespace mopo {
 
       virtual Processor* clone() const override { return new Bypass(*this); }
 
-      void process() override {
-        memcpy(output()->buffer, input()->source->buffer,
-               buffer_size_ * sizeof(mopo_float));
-
-        output()->triggered = input()->source->triggered;
-        output()->trigger_value = input()->source->trigger_value;
-        output()->trigger_offset = input()->source->trigger_offset;
-      }
+      void process() override;
 
       inline void tick(int i) override {
         bufferTick(output()->buffer, input()->source->buffer, i);
@@ -161,7 +154,7 @@ namespace mopo {
       mopo_float scale_;
   };
 
-  // A processor that will raise a signal to a given power.
+  // A processor that will square a signal.
   class Square : public Operator {
     public:
       Square() : Operator(1, 1) { }
@@ -374,7 +367,7 @@ namespace mopo {
                              const mopo_float* source_left,
                              const mopo_float* source_right,
                              const mopo_float* fraction, int i) {
-        dest[i] = INTERPOLATE(source_left[i], source_right[i], fraction[i]);
+        dest[i] = utils::interpolate(source_left[i], source_right[i], fraction[i]);
       }
   };
 
@@ -400,14 +393,14 @@ namespace mopo {
       void process() override;
 
       inline void tick(int i) override {
-        float top = INTERPOLATE(input(kTopLeft)->at(i),
-                                input(kTopRight)->at(i),
-                                input(kXPosition)->at(i));
-        float bottom = INTERPOLATE(input(kBottomLeft)->at(i),
-                                   input(kBottomRight)->at(i),
-                                   input(kXPosition)->at(i));
-        output()->buffer[i] = INTERPOLATE(top, bottom,
-                                          input(kYPosition)->at(i));
+        mopo_float top = utils::interpolate(input(kTopLeft)->at(i),
+                                            input(kTopRight)->at(i),
+                                            input(kXPosition)->at(i));
+        mopo_float bottom = utils::interpolate(input(kBottomLeft)->at(i),
+                                               input(kBottomRight)->at(i),
+                                               input(kXPosition)->at(i));
+        output()->buffer[i] = utils::interpolate(top, bottom,
+                                                 input(kYPosition)->at(i));
       }
   };
 
@@ -495,7 +488,7 @@ namespace mopo {
         kNumInputs
       };
 
-      LinearSmoothBuffer() : Operator(kNumInputs, 1), last_value_(1.0) { }
+      LinearSmoothBuffer() : Operator(kNumInputs, 1), last_value_(0.0) { }
 
       virtual Processor* clone() const override {
         return new LinearSmoothBuffer(*this);
@@ -512,6 +505,100 @@ namespace mopo {
   };
 
   namespace cr {
+
+    // A processor that passes input to output.
+    class Bypass : public Operator {
+      public:
+        Bypass() : Operator(1, 1) { }
+
+        virtual Processor* clone() const override { return new Bypass(*this); }
+
+        void process() override {
+          output()->buffer[0] = input()->at(0);
+
+          output()->triggered = input()->source->triggered;
+          output()->trigger_value = input()->source->trigger_value;
+          output()->trigger_offset = input()->source->trigger_offset;
+        }
+
+        inline void tick(int i) override {
+          bufferTick(output()->buffer, input()->source->buffer, i);
+        }
+
+        inline void bufferTick(mopo_float* dest, const mopo_float* source, int i) {
+          dest[i] = source[i];
+        }
+    };
+
+    // A processor that will clamp a signal output to a given window.
+    class Clamp : public Operator {
+      public:
+        Clamp(mopo_float min = -1, mopo_float max = 1) : Operator(1, 1),
+                                                         min_(min), max_(max) { }
+
+        virtual Processor* clone() const override { return new Clamp(*this); }
+
+        void process() override {
+          tick(0);
+        }
+
+        inline void tick(int i) override {
+          bufferTick(output()->buffer, input()->source->buffer, i);
+        }
+
+        inline void bufferTick(mopo_float* dest, const mopo_float* source, int i) {
+          dest[i] = utils::clamp(source[i], min_, max_);
+        }
+
+      private:
+        mopo_float min_, max_;
+    };
+
+    // A processor that will clamp a signal to a lower bound.
+    class LowerBound : public Operator {
+      public:
+        LowerBound(mopo_float min = 0.0) : Operator(1, 1), min_(min) { }
+
+        virtual Processor* clone() const override { return new LowerBound(*this); }
+
+        void process() override {
+          tick(0);
+        }
+
+        inline void tick(int i) override {
+          bufferTick(output()->buffer, input()->source->buffer, i);
+        }
+
+        inline void bufferTick(mopo_float* dest, const mopo_float* source, int i) {
+          dest[i] = utils::max(source[i], min_);
+        }
+        
+      private:
+        mopo_float min_;
+    };
+
+    // A processor that will clamp a signal to an upper bound.
+    class UpperBound : public Operator {
+      public:
+        UpperBound(mopo_float max = 0.0) : Operator(1, 1), max_(max) { }
+
+        virtual Processor* clone() const override { return new UpperBound(*this); }
+
+        void process() override {
+          tick(0);
+        }
+
+        inline void tick(int i) override {
+          bufferTick(output()->buffer, input()->source->buffer, i);
+        }
+
+        inline void bufferTick(mopo_float* dest, const mopo_float* source, int i) {
+          dest[i] = utils::min(source[i], max_);
+        }
+        
+      private:
+        mopo_float max_;
+    };
 
     class Add : public Operator {
       public:
@@ -545,12 +632,64 @@ namespace mopo {
         }
     };
 
+    // A processor that will interpolate two streams by an interpolation stream.
+    class Interpolate : public Operator {
+    public:
+      enum Inputs {
+        kFrom,
+        kTo,
+        kFractional,
+        kNumInputs
+      };
 
-    // A processor that will raise a signal to a given power.
+      Interpolate() : Operator(kNumInputs, 1) { }
+
+      virtual Processor* clone() const override {
+        return new Interpolate(*this);
+      }
+
+      void process() override {
+        tick(0);
+      }
+
+      inline void tick(int i) override {
+        bufferTick(output()->buffer, input(kFrom)->source->buffer,
+                   input(kTo)->source->buffer,
+                   input(kFractional)->source->buffer, i);
+      }
+
+      inline void bufferTick(mopo_float* dest,
+                             const mopo_float* source_left,
+                             const mopo_float* source_right,
+                             const mopo_float* fraction, int i) {
+        dest[i] = utils::interpolate(source_left[i], source_right[i], fraction[i]);
+      }
+    };
+
+    // A processor that will square a signal.
     class Square : public Operator {
+    public:
+      Square() : Operator(1, 1, true) { }
+      virtual Processor* clone() const override { return new Square(*this); }
+
+      void process() override {
+        tick(0);
+      }
+
+      inline void tick(int i) override {
+        bufferTick(output()->buffer, input()->source->buffer, i);
+      }
+
+      inline void bufferTick(mopo_float* dest, const mopo_float* source, int i) {
+        dest[i] = source[i] * source[i];
+      }
+    };
+
+    // A processor that will quadratically scale a signal
+    class Quadratic : public Operator {
       public:
-        Square() : Operator(1, 1, true) { }
-        virtual Processor* clone() const override { return new Square(*this); }
+        Quadratic(mopo_float offset) : Operator(1, 1, true), offset_(offset) { }
+        virtual Processor* clone() const override { return new Quadratic(*this); }
 
         void process() override {
           tick(0);
@@ -561,14 +700,41 @@ namespace mopo {
         }
 
         inline void bufferTick(mopo_float* dest, const mopo_float* source, int i) {
-          dest[i] = source[i] * source[i];
+          dest[i] = source[i] * source[i] + offset_;
         }
+
+      private:
+        mopo_float offset_;
+    };
+
+
+    // A processor that will square root and scale a signal
+    class Root : public Operator {
+      public:
+        Root(mopo_float offset) : Operator(1, 1, true), offset_(offset) { }
+        virtual Processor* clone() const override { return new Root(*this); }
+
+        void process() override {
+          tick(0);
+        }
+
+        inline void tick(int i) override {
+          bufferTick(output()->buffer, input()->source->buffer, i);
+        }
+
+        inline void bufferTick(mopo_float* dest, const mopo_float* source, int i) {
+          dest[i] = sqrt(source[i]) + offset_;
+        }
+        
+      private:
+        mopo_float offset_;
     };
 
     // A processor that will raise a given number to the power of a signal.
     class ExponentialScale : public Operator {
       public:
-        ExponentialScale(mopo_float scale = 1) : Operator(1, 1, true), scale_(scale) { }
+        ExponentialScale(mopo_float scale = 1, mopo_float offset = 0.0) :
+            Operator(1, 1, true), scale_(scale), offset_(offset) { }
 
         virtual Processor* clone() const override {
           return new ExponentialScale(*this);
@@ -583,11 +749,12 @@ namespace mopo {
         }
 
         inline void bufferTick(mopo_float* dest, const mopo_float* source, int i) {
-          dest[i] = std::pow(scale_, source[i]);
+          dest[i] = std::pow(scale_, source[i]) + offset_;
         }
 
       private:
         mopo_float scale_;
+        mopo_float offset_;
     };
 
     class VariableAdd : public Operator {
@@ -600,15 +767,23 @@ namespace mopo {
         }
 
         void process() override {
-          tick(0);
+          size_t num_inputs = inputs_->size();
+          mopo_float value = 0.0;
+
+          for (int in = 0; in < num_inputs; ++in)
+            value += input(in)->at(0);
+
+          output()->buffer[0] = value;
         }
 
         inline void tick(int i) override {
           size_t num_inputs = inputs_->size();
-          output()->buffer[0] = 0.0;
+          mopo_float value = 0.0;
 
           for (int in = 0; in < num_inputs; ++in)
-            output()->buffer[0] += input(in)->at(0);
+            value += input(in)->at(0);
+
+          output()->buffer[0] = value;
         }
     };
 

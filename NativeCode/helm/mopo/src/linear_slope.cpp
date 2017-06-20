@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@ namespace mopo {
   }
 
   void LinearSlope::process() {
+    MOPO_ASSERT(inputMatchesBufferSize(kTarget));
+    MOPO_ASSERT(inputMatchesBufferSize(kRunSeconds));
+
     int i = 0;
     if (input(kTriggerJump)->source->triggered) {
       int trigger_offset = input(kTriggerJump)->source->trigger_offset;

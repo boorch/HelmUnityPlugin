@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
  */
 
 #include "feedback_section.h"
-#include "fonts.h"
 
-#define KNOB_WIDTH 40
+#include "colors.h"
+#include "fonts.h"
 
 FeedbackSection::FeedbackSection(String name) : SynthSection(name) {
   static const int TRANSPOSE_MOUSE_SENSITIVITY = 800;
@@ -34,38 +34,33 @@ FeedbackSection::FeedbackSection(String name) : SynthSection(name) {
   addSlider(tune_ = new SynthSlider("osc_feedback_tune"));
   tune_->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
   tune_->setBipolar();
-
-  addSlider(saturation_ = new SynthSlider("filter_saturation"));
-  saturation_->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
 }
 
 FeedbackSection::~FeedbackSection() {
   transpose_ = nullptr;
   amount_ = nullptr;
   tune_ = nullptr;
-  saturation_ = nullptr;
 }
 
 void FeedbackSection::paintBackground(Graphics& g) {
   SynthSection::paintBackground(g);
 
-  g.setColour(Colour(0xffbbbbbb));
-
-  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(10.0f));
+  g.setColour(Colors::control_label_text);
+  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(size_ratio_ * 10.0f));
+  
   drawTextForComponent(g, TRANS("TRANSPOSE"), transpose_);
   drawTextForComponent(g, TRANS("TUNE"), tune_);
   drawTextForComponent(g, TRANS("AMOUNT"), amount_);
-  drawTextForComponent(g, TRANS("SATURATION"), saturation_);
 }
 
 void FeedbackSection::resized() {
-  float space = (getWidth() - (4.0f * KNOB_WIDTH)) / 5.0f;
-  int y = 30;
+  int knob_width = getStandardKnobSize();
+  float space = (getWidth() - (3.0f * knob_width)) / 4.0f;
+  int y = size_ratio_ * 26;
 
-  transpose_->setBounds(space, y, KNOB_WIDTH, KNOB_WIDTH);
-  tune_->setBounds((KNOB_WIDTH + space) + space, y, KNOB_WIDTH, KNOB_WIDTH);
-  amount_->setBounds(2 * (KNOB_WIDTH + space) + space, y, KNOB_WIDTH, KNOB_WIDTH);
-  saturation_->setBounds(3 * (KNOB_WIDTH + space) + space, y, KNOB_WIDTH, KNOB_WIDTH);
+  transpose_->setBounds(space, y, knob_width, knob_width);
+  tune_->setBounds((knob_width + space) + space, y, knob_width, knob_width);
+  amount_->setBounds(2 * (knob_width + space) + space, y, knob_width, knob_width);
 
   SynthSection::resized();
 }

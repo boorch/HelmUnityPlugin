@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,10 @@ namespace mopo {
   }
 
   void ReverbComb::process() {
+    MOPO_ASSERT(inputMatchesBufferSize(kAudio));
+    MOPO_ASSERT(inputMatchesBufferSize(kFeedback));
+    MOPO_ASSERT(inputMatchesBufferSize(kDamping));
+
     mopo_float* dest = output()->buffer;
     const mopo_float* audio_buffer = input(kAudio)->source->buffer;
     int period = input(kSampleDelay)->source->buffer[0];

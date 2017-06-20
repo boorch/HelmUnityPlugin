@@ -195,14 +195,15 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
     <ClCompile Include="..\AudioPluginUtil.cpp" />
     <ClCompile Include="..\helm\mopo\src\alias.cpp" />
     <ClCompile Include="..\helm\mopo\src\arpeggiator.cpp" />
+    <ClCompile Include="..\helm\mopo\src\biquad_filter.cpp" />
     <ClCompile Include="..\helm\mopo\src\bit_crush.cpp" />
     <ClCompile Include="..\helm\mopo\src\bypass_router.cpp" />
     <ClCompile Include="..\helm\mopo\src\delay.cpp" />
     <ClCompile Include="..\helm\mopo\src\distortion.cpp" />
     <ClCompile Include="..\helm\mopo\src\envelope.cpp" />
     <ClCompile Include="..\helm\mopo\src\feedback.cpp" />
-    <ClCompile Include="..\helm\mopo\src\filter.cpp" />
     <ClCompile Include="..\helm\mopo\src\formant_manager.cpp" />
+    <ClCompile Include="..\helm\mopo\src\ladder_filter.cpp" />
     <ClCompile Include="..\helm\mopo\src\linear_slope.cpp" />
     <ClCompile Include="..\helm\mopo\src\magnitude_lookup.cpp" />
     <ClCompile Include="..\helm\mopo\src\memory.cpp" />
@@ -210,7 +211,6 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
     <ClCompile Include="..\helm\mopo\src\mono_panner.cpp" />
     <ClCompile Include="..\helm\mopo\src\operators.cpp" />
     <ClCompile Include="..\helm\mopo\src\oscillator.cpp" />
-    <ClCompile Include="..\helm\mopo\src\phaser.cpp" />
     <ClCompile Include="..\helm\mopo\src\portamento_slope.cpp" />
     <ClCompile Include="..\helm\mopo\src\processor.cpp" />
     <ClCompile Include="..\helm\mopo\src\processor_router.cpp" />
@@ -222,6 +222,7 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
     <ClCompile Include="..\helm\mopo\src\simple_delay.cpp" />
     <ClCompile Include="..\helm\mopo\src\smooth_filter.cpp" />
     <ClCompile Include="..\helm\mopo\src\smooth_value.cpp" />
+    <ClCompile Include="..\helm\mopo\src\state_variable_filter.cpp" />
     <ClCompile Include="..\helm\mopo\src\step_generator.cpp" />
     <ClCompile Include="..\helm\mopo\src\stutter.cpp" />
     <ClCompile Include="..\helm\mopo\src\trigger_operators.cpp" />
@@ -232,14 +233,17 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
     <ClCompile Include="..\helm\src\synthesis\detune_lookup.cpp" />
     <ClCompile Include="..\helm\src\synthesis\fixed_point_oscillator.cpp" />
     <ClCompile Include="..\helm\src\synthesis\fixed_point_wave.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\gate.cpp" />
     <ClCompile Include="..\helm\src\synthesis\helm_engine.cpp" />
     <ClCompile Include="..\helm\src\synthesis\helm_lfo.cpp" />
     <ClCompile Include="..\helm\src\synthesis\helm_module.cpp" />
     <ClCompile Include="..\helm\src\synthesis\helm_oscillators.cpp" />
     <ClCompile Include="..\helm\src\synthesis\helm_voice_handler.cpp" />
     <ClCompile Include="..\helm\src\synthesis\noise_oscillator.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\peak_meter.cpp" />
     <ClCompile Include="..\helm\src\synthesis\resonance_cancel.cpp" />
-    <ClCompile Include="..\helm\src\synthesis\switch.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\trigger_random.cpp" />
+    <ClCompile Include="..\helm\src\synthesis\value_switch.cpp" />
     <ClCompile Include="..\helm_plugin.cpp" />
     <ClCompile Include="..\helm_sequencer.cpp" />
   </ItemGroup>
@@ -250,15 +254,17 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
     <ClInclude Include="..\helm\concurrentqueue\concurrentqueue.h" />
     <ClInclude Include="..\helm\mopo\src\alias.h" />
     <ClInclude Include="..\helm\mopo\src\arpeggiator.h" />
+    <ClInclude Include="..\helm\mopo\src\biquad_filter.h" />
     <ClInclude Include="..\helm\mopo\src\bit_crush.h" />
     <ClInclude Include="..\helm\mopo\src\bypass_router.h" />
+    <ClInclude Include="..\helm\mopo\src\circular_queue.h" />
     <ClInclude Include="..\helm\mopo\src\common.h" />
     <ClInclude Include="..\helm\mopo\src\delay.h" />
     <ClInclude Include="..\helm\mopo\src\distortion.h" />
     <ClInclude Include="..\helm\mopo\src\envelope.h" />
     <ClInclude Include="..\helm\mopo\src\feedback.h" />
-    <ClInclude Include="..\helm\mopo\src\filter.h" />
     <ClInclude Include="..\helm\mopo\src\formant_manager.h" />
+    <ClInclude Include="..\helm\mopo\src\ladder_filter.h" />
     <ClInclude Include="..\helm\mopo\src\linear_slope.h" />
     <ClInclude Include="..\helm\mopo\src\magnitude_lookup.h" />
     <ClInclude Include="..\helm\mopo\src\memory.h" />
@@ -268,7 +274,6 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
     <ClInclude Include="..\helm\mopo\src\note_handler.h" />
     <ClInclude Include="..\helm\mopo\src\operators.h" />
     <ClInclude Include="..\helm\mopo\src\oscillator.h" />
-    <ClInclude Include="..\helm\mopo\src\phaser.h" />
     <ClInclude Include="..\helm\mopo\src\portamento_slope.h" />
     <ClInclude Include="..\helm\mopo\src\processor.h" />
     <ClInclude Include="..\helm\mopo\src\processor_router.h" />
@@ -281,6 +286,7 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
     <ClInclude Include="..\helm\mopo\src\simple_delay.h" />
     <ClInclude Include="..\helm\mopo\src\smooth_filter.h" />
     <ClInclude Include="..\helm\mopo\src\smooth_value.h" />
+    <ClInclude Include="..\helm\mopo\src\state_variable_filter.h" />
     <ClInclude Include="..\helm\mopo\src\step_generator.h" />
     <ClInclude Include="..\helm\mopo\src\stutter.h" />
     <ClInclude Include="..\helm\mopo\src\tick_router.h" />
@@ -294,19 +300,19 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
     <ClInclude Include="..\helm\src\synthesis\detune_lookup.h" />
     <ClInclude Include="..\helm\src\synthesis\fixed_point_oscillator.h" />
     <ClInclude Include="..\helm\src\synthesis\fixed_point_wave.h" />
+    <ClInclude Include="..\helm\src\synthesis\gate.h" />
     <ClInclude Include="..\helm\src\synthesis\helm_engine.h" />
     <ClInclude Include="..\helm\src\synthesis\helm_lfo.h" />
     <ClInclude Include="..\helm\src\synthesis\helm_module.h" />
     <ClInclude Include="..\helm\src\synthesis\helm_oscillators.h" />
     <ClInclude Include="..\helm\src\synthesis\helm_voice_handler.h" />
     <ClInclude Include="..\helm\src\synthesis\noise_oscillator.h" />
+    <ClInclude Include="..\helm\src\synthesis\peak_meter.h" />
     <ClInclude Include="..\helm\src\synthesis\resonance_cancel.h" />
-    <ClInclude Include="..\helm\src\synthesis\switch.h" />
+    <ClInclude Include="..\helm\src\synthesis\trigger_random.h" />
+    <ClInclude Include="..\helm\src\synthesis\value_switch.h" />
     <ClInclude Include="..\helm_sequencer.h" />
     <ClInclude Include="..\PluginList.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\helm\mopo\src\Makefile.am" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

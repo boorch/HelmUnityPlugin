@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,8 @@ HelmPlugin::HelmPlugin() {
   set_state_time_ = 0;
 
   current_program_ = 0;
-  num_programs_ = LoadSave::getNumPatches();
-  if (num_programs_ <= 0)
-    num_programs_ = 1;
+
+  loadPatches();
 
   for (auto control : controls_) {
     ValueBridge* bridge = new ValueBridge(control.first, control.second);
@@ -61,7 +60,7 @@ void HelmPlugin::endChangeGesture(const std::string& name) {
 
 void HelmPlugin::setValueNotifyHost(const std::string& name, mopo::mopo_float value) {
   mopo::mopo_float plugin_value =  bridge_lookup_[name]->convertToPluginValue(value);
-  bridge_lookup_[name]->setValueNotifyingHost(plugin_value);
+  bridge_lookup_[name]->setValueNotifyHost(plugin_value);
 }
 
 const CriticalSection& HelmPlugin::getCriticalSection() {
@@ -113,7 +112,7 @@ double HelmPlugin::getTailLengthSeconds() const {
 }
 
 int HelmPlugin::getNumPrograms() {
-  return num_programs_;
+  return std::max(1, all_patches_.size());
 }
 
 int HelmPlugin::getCurrentProgram() {
@@ -125,24 +124,29 @@ void HelmPlugin::setCurrentProgram(int index) {
   if (Time::getMillisecondCounter() - set_state_time_ < SET_PROGRAM_WAIT_MILLISECONDS)
     return;
 
-  current_program_ = index;
-  LoadSave::loadPatch(-1, -1, index, this, save_info_);
-  AudioProcessorEditor* editor = getActiveEditor();
-  if (editor) {
-    HelmEditor* t_editor = dynamic_cast<HelmEditor*>(editor);
-    t_editor->updateFullGui();
+  if (all_patches_.size() <= index) {
+    current_program_ = index;
+    LoadSave::loadPatchFile(all_patches_[current_program_], this, save_info_);
+    SynthGuiInterface* editor = getGuiInterface();
+    if (editor)
+      editor->updateFullGui();
   }
 }
 
 const String HelmPlugin::getProgramName(int index) {
-  return LoadSave::getPatchFile(-1, -1, index).getFileNameWithoutExtension();
+  if (all_patches_.size() <= index)
+    return "";
+
+  return all_patches_[index].getFileNameWithoutExtension();
 }
 
 void HelmPlugin::changeProgramName(int index, const String& new_name) {
-  File patch = LoadSave::getPatchFile(-1, -1, index);
-  File parent = patch.getParentDirectory();
-  File new_patch_location = parent.getChildFile(new_name + "." + mopo::PATCH_EXTENSION);
-  patch.moveFileTo(new_patch_location);
+  if (all_patches_.size() <= index) {
+    File patch = all_patches_[index];
+    File parent = patch.getParentDirectory();
+    File new_patch_location = parent.getChildFile(new_name + "." + mopo::PATCH_EXTENSION);
+    patch.moveFileTo(new_patch_location);
+  }
 }
 
 void HelmPlugin::prepareToPlay(double sample_rate, int buffer_size) {
@@ -161,7 +165,8 @@ void HelmPlugin::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midi_messag
   int num_channels = getTotalNumOutputChannels();
   AudioPlayHead::CurrentPositionInfo position_info;
   getPlayHead()->getCurrentPosition(position_info);
-  engine_.setBpm(position_info.bpm);
+  if (position_info.bpm)
+    engine_.setBpm(position_info.bpm);
 
   if (position_info.isPlaying || position_info.isLooping || position_info.isRecording)
     engine_.correctToTime(position_info.timeInSamples);
@@ -193,6 +198,10 @@ void HelmPlugin::parameterChanged(std::string name, mopo::mopo_float value) {
   valueChangedExternal(name, value);
 }
 
+void HelmPlugin::loadPatches() {
+  all_patches_ = LoadSave::getAllPatches();
+}
+
 void HelmPlugin::getStateInformation(MemoryBlock& dest_data) {
   var state = LoadSave::stateToVar(this, save_info_, getCallbackLock());
   String data_string = JSON::toString(state);
@@ -209,6 +218,10 @@ void HelmPlugin::setStateInformation(const void* data, int size_in_bytes) {
   var state;
   if (JSON::parse(data_string, state).wasOk())
     LoadSave::varToState(this, save_info_, state);
+
+  SynthGuiInterface* editor = getGuiInterface();
+  if (editor)
+    editor->updateFullGui();
 }
 
 AudioProcessor* JUCE_CALLTYPE createPluginFilter() {

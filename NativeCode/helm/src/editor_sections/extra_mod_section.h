@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ class ExtraModSection : public SynthSection {
     ScopedPointer<ModulationButton> velocity_mod_;
     ScopedPointer<ModulationButton> mod_wheel_mod_;
     ScopedPointer<ModulationButton> pitch_wheel_mod_;
+    ScopedPointer<ModulationButton> random_mod_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ExtraModSection)
 };

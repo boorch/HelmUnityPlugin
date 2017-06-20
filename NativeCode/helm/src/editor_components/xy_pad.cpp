@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
  */
 
 #include "xy_pad.h"
+
+#include "colors.h"
 #include "utils.h"
 
 #define GRID_CELL_WIDTH 8
@@ -41,7 +43,6 @@ void XYPad::paintBackground(Graphics& g) {
 }
 
 void XYPad::paint(Graphics& g) {
-  static const PathStrokeType stroke(1.5f, PathStrokeType::beveled, PathStrokeType::rounded);
   static const DropShadow shadow(Colour(0xbb000000), 5, Point<int>(0, 0));
 
   g.drawImage(background_,
@@ -52,22 +53,30 @@ void XYPad::paint(Graphics& g) {
   float y = (1.0f - y_slider_->getValue()) * getHeight();
 
   Path target;
-  target.addEllipse(x - 6.0f, y - 6.0f, 12.0f, 12.0f);
+  float handle_radius = 0.05f * getWidth();
+  target.addEllipse(x - handle_radius, y - handle_radius,
+                    2.0f * handle_radius, 2.0f * handle_radius);
+
   shadow.drawForPath(g, target);
 
-  g.setColour(Colour(0xff565656));
+  g.setColour(Colors::graph_fill);
   g.fillPath(target);
 
   if (active_)
-    g.setColour(Colour(0xff03a9f4));
+    g.setColour(Colors::audio);
   else
-    g.setColour(Colour(0xff777777));
+    g.setColour(Colors::graph_disable);
+
+  PathStrokeType stroke(0.01f * getWidth(), PathStrokeType::beveled, PathStrokeType::rounded);
   g.strokePath(target, stroke);
-  g.fillEllipse(x - 1.0f, y - 1.0f, 2.0f, 2.0f);
+  float dot_radius = 0.01f * getWidth();
+
+  g.fillEllipse(x - dot_radius, y - dot_radius, 2.0f * dot_radius, 2.0f * dot_radius);
 
   if (mouse_down_) {
     g.setColour(Colour(0x11ffffff));
-    g.fillEllipse(x - 20.0, y - 20.0, 40.0, 40.0);
+    float hover_radius = 0.2 * getWidth();
+    g.fillEllipse(x - hover_radius, y - hover_radius, 2.0f * hover_radius, 2.0f * hover_radius);
   }
 }
 
@@ -106,24 +115,19 @@ void XYPad::setSlidersFromPosition(Point<int> position) {
   }
 }
 
-void XYPad::sliderValueChanged(Slider* moved_slider) {
+void XYPad::guiChanged(SynthSlider* moved_slider) {
   repaint();
 }
 
-void XYPad::setXSlider(Slider* slider) {
-  if (x_slider_)
-    x_slider_->removeListener(this);
-
+void XYPad::setXSlider(SynthSlider* slider) {
   x_slider_ = slider;
-  x_slider_->addListener(this);
+  x_slider_->addSliderListener(this);
   repaint();
 }
 
-void XYPad::setYSlider(Slider* slider) {
-  if (y_slider_)
-    y_slider_->removeListener(this);
+void XYPad::setYSlider(SynthSlider* slider) {
   y_slider_ = slider;
-  y_slider_->addListener(this);
+  y_slider_->addSliderListener(this);
   repaint();
 }
 

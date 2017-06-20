@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,20 @@ class HelmEditor : public AudioProcessorEditor, public SynthGuiInterface {
     // AudioProcessorEditor
     void paint(Graphics&) override;
     void resized() override;
+    void visibilityChanged() override;
+    void focusGained(FocusChangeType cause) override;
+    void focusLost(FocusChangeType cause) override;
+    void focusOfChildComponentChanged(FocusChangeType cause) override;
+    void parentHierarchyChanged() override;
 
     // SynthGuiInterface
     void updateFullGui() override;
 
   private:
+    void checkAnimate();
+
     HelmPlugin& helm_;
+    bool was_animating_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(HelmEditor)
 };

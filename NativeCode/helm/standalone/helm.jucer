@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="GfsdNK" name="Helm" projectType="guiapp" version="0.8.6"
+<JUCERPROJECT id="GfsdNK" name="Helm" projectType="guiapp" version="0.9.0"
               bundleIdentifier="org.tytel.helm" includeBinaryInAppConfig="1"
-              jucerVersion="4.1.0" companyName="Matt Tytel" companyWebsite="tytel.org"
-              companyEmail="matthewtytel@gmail.com" defines="">
+              jucerVersion="5.0.2" companyName="Matt Tytel" companyWebsite="tytel.org"
+              companyEmail="matthewtytel@gmail.com" defines="" displaySplashScreen="1"
+              reportAppUsage="1" splashScreenColour="Dark">
   <MAINGROUP id="CeypXq" name="Helm">
     <GROUP id="{F9396290-DE03-305A-7B02-8F0D1833F92B}" name="concurrentqueue">
       <FILE id="t3qQ5F" name="blockingconcurrentqueue.h" compile="0" resource="0"
@@ -66,6 +67,9 @@
         <FILE id="rfD2YA" name="alias.h" compile="0" resource="0" file="../mopo/src/alias.h"/>
         <FILE id="gSsZeW" name="arpeggiator.cpp" compile="1" resource="0" file="../mopo/src/arpeggiator.cpp"/>
         <FILE id="sUs9IS" name="arpeggiator.h" compile="0" resource="0" file="../mopo/src/arpeggiator.h"/>
+        <FILE id="I04cEW" name="biquad_filter.cpp" compile="1" resource="0"
+              file="../mopo/src/biquad_filter.cpp"/>
+        <FILE id="KCts5P" name="biquad_filter.h" compile="0" resource="0" file="../mopo/src/biquad_filter.h"/>
         <FILE id="rXQ447" name="bit_crush.cpp" compile="1" resource="0" file="../mopo/src/bit_crush.cpp"/>
         <FILE id="YIBNAo" name="bit_crush.h" compile="0" resource="0" file="../mopo/src/bit_crush.h"/>
         <FILE id="UYNKEZ" name="bypass_router.cpp" compile="1" resource="0"
@@ -80,12 +84,13 @@
         <FILE id="pib6Ig" name="envelope.h" compile="0" resource="0" file="../mopo/src/envelope.h"/>
         <FILE id="o8RYzw" name="feedback.cpp" compile="1" resource="0" file="../mopo/src/feedback.cpp"/>
         <FILE id="PAi1Fd" name="feedback.h" compile="0" resource="0" file="../mopo/src/feedback.h"/>
-        <FILE id="NkSEh2" name="filter.cpp" compile="1" resource="0" file="../mopo/src/filter.cpp"/>
-        <FILE id="DEyNse" name="filter.h" compile="0" resource="0" file="../mopo/src/filter.h"/>
         <FILE id="azvuRt" name="formant_manager.cpp" compile="1" resource="0"
               file="../mopo/src/formant_manager.cpp"/>
         <FILE id="dSnIdf" name="formant_manager.h" compile="0" resource="0"
               file="../mopo/src/formant_manager.h"/>
+        <FILE id="OAIo68" name="ladder_filter.cpp" compile="1" resource="0"
+              file="../mopo/src/ladder_filter.cpp"/>
+        <FILE id="MvGheA" name="ladder_filter.h" compile="0" resource="0" file="../mopo/src/ladder_filter.h"/>
         <FILE id="Y2TuOh" name="linear_slope.cpp" compile="1" resource="0"
               file="../mopo/src/linear_slope.cpp"/>
         <FILE id="luOcgR" name="linear_slope.h" compile="0" resource="0" file="../mopo/src/linear_slope.h"/>
@@ -105,8 +110,6 @@
         <FILE id="EYwhsr" name="operators.h" compile="0" resource="0" file="../mopo/src/operators.h"/>
         <FILE id="FKKptw" name="oscillator.cpp" compile="1" resource="0" file="../mopo/src/oscillator.cpp"/>
         <FILE id="z41xo5" name="oscillator.h" compile="0" resource="0" file="../mopo/src/oscillator.h"/>
-        <FILE id="QMLVgN" name="phaser.cpp" compile="1" resource="0" file="../mopo/src/phaser.cpp"/>
-        <FILE id="zGmIsl" name="phaser.h" compile="0" resource="0" file="../mopo/src/phaser.h"/>
         <FILE id="KkkQ21" name="portamento_slope.cpp" compile="1" resource="0"
               file="../mopo/src/portamento_slope.cpp"/>
         <FILE id="UPxNGP" name="portamento_slope.h" compile="0" resource="0"
@@ -143,6 +146,10 @@
         <FILE id="slb38X" name="smooth_value.cpp" compile="1" resource="0"
               file="../mopo/src/smooth_value.cpp"/>
         <FILE id="pKTIhU" name="smooth_value.h" compile="0" resource="0" file="../mopo/src/smooth_value.h"/>
+        <FILE id="KUccNz" name="state_variable_filter.cpp" compile="1" resource="0"
+              file="../mopo/src/state_variable_filter.cpp"/>
+        <FILE id="cKH0EN" name="state_variable_filter.h" compile="0" resource="0"
+              file="../mopo/src/state_variable_filter.h"/>
         <FILE id="REyikp" name="step_generator.cpp" compile="1" resource="0"
               file="../mopo/src/step_generator.cpp"/>
         <FILE id="jpUYsG" name="step_generator.h" compile="0" resource="0"
@@ -165,6 +172,10 @@
     </GROUP>
     <GROUP id="{5E20F1A0-5E75-7060-2F6C-FA57FB1890B9}" name="src">
       <GROUP id="{C469F3D8-F6EF-BDCC-7C07-4B716B9C6577}" name="common">
+        <FILE id="KJg0vX" name="border_bounds_constrainer.cpp" compile="1"
+              resource="0" file="../src/common/border_bounds_constrainer.cpp"/>
+        <FILE id="LeSMMQ" name="border_bounds_constrainer.h" compile="0" resource="0"
+              file="../src/common/border_bounds_constrainer.h"/>
         <FILE id="G4r0pp" name="file_list_box_model.cpp" compile="1" resource="0"
               file="../src/common/file_list_box_model.cpp"/>
         <FILE id="SFCc4O" name="file_list_box_model.h" compile="0" resource="0"
@@ -186,6 +197,8 @@
               file="../src/common/synth_gui_interface.h"/>
       </GROUP>
       <GROUP id="{8AAEEDEE-639E-1D43-0722-1CAC55AF1E8E}" name="editor_components">
+        <FILE id="sULNdV" name="bpm_slider.cpp" compile="1" resource="0" file="../src/editor_components/bpm_slider.cpp"/>
+        <FILE id="B4zrNy" name="bpm_slider.h" compile="0" resource="0" file="../src/editor_components/bpm_slider.h"/>
         <FILE id="yQH4BO" name="filter_response.cpp" compile="1" resource="0"
               file="../src/editor_components/filter_response.cpp"/>
         <FILE id="UZZi1m" name="filter_response.h" compile="0" resource="0"
@@ -198,10 +211,6 @@
               file="../src/editor_components/global_tool_tip.cpp"/>
         <FILE id="CtvkUD" name="global_tool_tip.h" compile="0" resource="0"
               file="../src/editor_components/global_tool_tip.h"/>
-        <FILE id="LenDmM" name="graphical_envelope.cpp" compile="1" resource="0"
-              file="../src/editor_components/graphical_envelope.cpp"/>
-        <FILE id="g8iXWR" name="graphical_envelope.h" compile="0" resource="0"
-              file="../src/editor_components/graphical_envelope.h"/>
         <FILE id="LHSN74" name="graphical_step_sequencer.cpp" compile="1" resource="0"
               file="../src/editor_components/graphical_step_sequencer.cpp"/>
         <FILE id="I0Msfq" name="graphical_step_sequencer.h" compile="0" resource="0"
@@ -225,9 +234,38 @@
               file="../src/editor_components/modulation_slider.cpp"/>
         <FILE id="detWeI" name="modulation_slider.h" compile="0" resource="0"
               file="../src/editor_components/modulation_slider.h"/>
+        <FILE id="QSnrHZ" name="open_gl_background.cpp" compile="1" resource="0"
+              file="../src/editor_components/open_gl_background.cpp"/>
+        <FILE id="dup7zg" name="open_gl_background.h" compile="0" resource="0"
+              file="../src/editor_components/open_gl_background.h"/>
+        <FILE id="VsWEE6" name="open_gl_component.cpp" compile="1" resource="0"
+              file="../src/editor_components/open_gl_component.cpp"/>
+        <FILE id="kmphrs" name="open_gl_component.h" compile="0" resource="0"
+              file="../src/editor_components/open_gl_component.h"/>
+        <FILE id="rvBysf" name="open_gl_envelope.cpp" compile="1" resource="0"
+              file="../src/editor_components/open_gl_envelope.cpp"/>
+        <FILE id="GiKBcy" name="open_gl_envelope.h" compile="0" resource="0"
+              file="../src/editor_components/open_gl_envelope.h"/>
+        <FILE id="xbZlO4" name="open_gl_modulation_meter.cpp" compile="1" resource="0"
+              file="../src/editor_components/open_gl_modulation_meter.cpp"/>
+        <FILE id="kJrcA5" name="open_gl_modulation_meter.h" compile="0" resource="0"
+              file="../src/editor_components/open_gl_modulation_meter.h"/>
+        <FILE id="O6OLUt" name="open_gl_oscilloscope.cpp" compile="1" resource="0"
+              file="../src/editor_components/open_gl_oscilloscope.cpp"/>
+        <FILE id="s1PLNx" name="open_gl_oscilloscope.h" compile="0" resource="0"
+              file="../src/editor_components/open_gl_oscilloscope.h"/>
+        <FILE id="c86DVv" name="open_gl_peak_meter.cpp" compile="1" resource="0"
+              file="../src/editor_components/open_gl_peak_meter.cpp"/>
+        <FILE id="xcHCbI" name="open_gl_peak_meter.h" compile="0" resource="0"
+              file="../src/editor_components/open_gl_peak_meter.h"/>
+        <FILE id="QD60JK" name="open_gl_wave_viewer.cpp" compile="1" resource="0"
+              file="../src/editor_components/open_gl_wave_viewer.cpp"/>
+        <FILE id="N77gzd" name="open_gl_wave_viewer.h" compile="0" resource="0"
+              file="../src/editor_components/open_gl_wave_viewer.h"/>
         <FILE id="GKIniw" name="oscilloscope.cpp" compile="1" resource="0"
               file="../src/editor_components/oscilloscope.cpp"/>
         <FILE id="AMolKW" name="oscilloscope.h" compile="0" resource="0" file="../src/editor_components/oscilloscope.h"/>
+        <FILE id="I2sjJE" name="overlay.h" compile="0" resource="0" file="../src/editor_components/overlay.h"/>
         <FILE id="B2FWz6" name="patch_selector.cpp" compile="1" resource="0"
               file="../src/editor_components/patch_selector.cpp"/>
         <FILE id="FJ4l17" name="patch_selector.h" compile="0" resource="0"
@@ -236,6 +274,9 @@
               file="../src/editor_components/retrigger_selector.cpp"/>
         <FILE id="WBMhsV" name="retrigger_selector.h" compile="0" resource="0"
               file="../src/editor_components/retrigger_selector.h"/>
+        <FILE id="XKnxTE" name="synth_button.cpp" compile="1" resource="0"
+              file="../src/editor_components/synth_button.cpp"/>
+        <FILE id="SeF2yp" name="synth_button.h" compile="0" resource="0" file="../src/editor_components/synth_button.h"/>
         <FILE id="k0I8xO" name="synth_slider.cpp" compile="1" resource="0"
               file="../src/editor_components/synth_slider.cpp"/>
         <FILE id="R8YCWa" name="synth_slider.h" compile="0" resource="0" file="../src/editor_components/synth_slider.h"/>
@@ -243,6 +284,11 @@
               file="../src/editor_components/tempo_selector.cpp"/>
         <FILE id="gRo5XB" name="tempo_selector.h" compile="0" resource="0"
               file="../src/editor_components/tempo_selector.h"/>
+        <FILE id="IlqwzX" name="text_selector.cpp" compile="1" resource="0"
+              file="../src/editor_components/text_selector.cpp"/>
+        <FILE id="iYN73z" name="text_selector.h" compile="0" resource="0" file="../src/editor_components/text_selector.h"/>
+        <FILE id="iXlGVS" name="text_slider.cpp" compile="1" resource="0" file="../src/editor_components/text_slider.cpp"/>
+        <FILE id="aUAY5O" name="text_slider.h" compile="0" resource="0" file="../src/editor_components/text_slider.h"/>
         <FILE id="VXbiff" name="wave_selector.cpp" compile="1" resource="0"
               file="../src/editor_components/wave_selector.cpp"/>
         <FILE id="oXlMYR" name="wave_selector.h" compile="0" resource="0" file="../src/editor_components/wave_selector.h"/>
@@ -257,6 +303,8 @@
         <FILE id="nHr0O6" name="about_section.h" compile="0" resource="0" file="../src/editor_sections/about_section.h"/>
         <FILE id="sw0aY1" name="arp_section.cpp" compile="1" resource="0" file="../src/editor_sections/arp_section.cpp"/>
         <FILE id="XjFuqw" name="arp_section.h" compile="0" resource="0" file="../src/editor_sections/arp_section.h"/>
+        <FILE id="mJOykk" name="bpm_section.cpp" compile="1" resource="0" file="../src/editor_sections/bpm_section.cpp"/>
+        <FILE id="IM1tHw" name="bpm_section.h" compile="0" resource="0" file="../src/editor_sections/bpm_section.h"/>
         <FILE id="ljoec8" name="delay_section.cpp" compile="1" resource="0"
               file="../src/editor_sections/delay_section.cpp"/>
         <FILE id="A1R5tt" name="delay_section.h" compile="0" resource="0" file="../src/editor_sections/delay_section.h"/>
@@ -264,6 +312,10 @@
               file="../src/editor_sections/delete_section.cpp"/>
         <FILE id="zfJYDq" name="delete_section.h" compile="0" resource="0"
               file="../src/editor_sections/delete_section.h"/>
+        <FILE id="BHZHRU" name="distortion_section.cpp" compile="1" resource="0"
+              file="../src/editor_sections/distortion_section.cpp"/>
+        <FILE id="K1TmT7" name="distortion_section.h" compile="0" resource="0"
+              file="../src/editor_sections/distortion_section.h"/>
         <FILE id="mAoFxY" name="dynamic_section.cpp" compile="1" resource="0"
               file="../src/editor_sections/dynamic_section.cpp"/>
         <FILE id="qhLvsI" name="dynamic_section.h" compile="0" resource="0"
@@ -297,13 +349,13 @@
         <FILE id="SfrWqo" name="mixer_section.cpp" compile="1" resource="0"
               file="../src/editor_sections/mixer_section.cpp"/>
         <FILE id="TtSTMu" name="mixer_section.h" compile="0" resource="0" file="../src/editor_sections/mixer_section.h"/>
-        <FILE id="twzAJN" name="modulation_manager.cpp" compile="1" resource="0"
-              file="../src/editor_sections/modulation_manager.cpp"/>
-        <FILE id="ozVonc" name="modulation_manager.h" compile="0" resource="0"
-              file="../src/editor_sections/modulation_manager.h"/>
         <FILE id="L31Qlt" name="noise_section.cpp" compile="1" resource="0"
               file="../src/editor_sections/noise_section.cpp"/>
         <FILE id="sUTz4c" name="noise_section.h" compile="0" resource="0" file="../src/editor_sections/noise_section.h"/>
+        <FILE id="FMNlh9" name="open_gl_modulation_manager.cpp" compile="1"
+              resource="0" file="../src/editor_sections/open_gl_modulation_manager.cpp"/>
+        <FILE id="icoFfb" name="open_gl_modulation_manager.h" compile="0" resource="0"
+              file="../src/editor_sections/open_gl_modulation_manager.h"/>
         <FILE id="dUS4i9" name="oscillator_section.cpp" compile="1" resource="0"
               file="../src/editor_sections/oscillator_section.cpp"/>
         <FILE id="DtjxUU" name="oscillator_section.h" compile="0" resource="0"
@@ -352,6 +404,8 @@
               file="../src/look_and_feel/browser_look_and_feel.cpp"/>
         <FILE id="sLe3t0" name="browser_look_and_feel.h" compile="0" resource="0"
               file="../src/look_and_feel/browser_look_and_feel.h"/>
+        <FILE id="Xy7H0g" name="colors.cpp" compile="1" resource="0" file="../src/look_and_feel/colors.cpp"/>
+        <FILE id="gFsOWb" name="colors.h" compile="0" resource="0" file="../src/look_and_feel/colors.h"/>
         <FILE id="gVke8I" name="default_look_and_feel.cpp" compile="1" resource="0"
               file="../src/look_and_feel/default_look_and_feel.cpp"/>
         <FILE id="pLkKCS" name="default_look_and_feel.h" compile="0" resource="0"
@@ -362,21 +416,21 @@
               file="../src/look_and_feel/modulation_look_and_feel.cpp"/>
         <FILE id="qP2EgD" name="modulation_look_and_feel.h" compile="0" resource="0"
               file="../src/look_and_feel/modulation_look_and_feel.h"/>
+        <FILE id="TaXRcx" name="shaders.cpp" compile="1" resource="0" file="../src/look_and_feel/shaders.cpp"/>
+        <FILE id="TeXrAn" name="shaders.h" compile="0" resource="0" file="../src/look_and_feel/shaders.h"/>
         <FILE id="aJXsnG" name="text_look_and_feel.cpp" compile="1" resource="0"
               file="../src/look_and_feel/text_look_and_feel.cpp"/>
         <FILE id="f5ab7N" name="text_look_and_feel.h" compile="0" resource="0"
               file="../src/look_and_feel/text_look_and_feel.h"/>
       </GROUP>
-      <GROUP id="{D4677D42-F890-3A26-1BC9-D1034FBAB3B6}" name="standalone">
-        <FILE id="YSpPaK" name="helm_computer_keyboard.cpp" compile="1" resource="0"
+      <GROUP id="{5EFF4A92-F16A-124A-8AD0-271A6464C5CC}" name="standalone">
+        <FILE id="kQb91Y" name="helm_computer_keyboard.cpp" compile="1" resource="0"
               file="../src/standalone/helm_computer_keyboard.cpp"/>
-        <FILE id="LF1hEM" name="helm_computer_keyboard.h" compile="0" resource="0"
+        <FILE id="FiqrVQ" name="helm_computer_keyboard.h" compile="0" resource="0"
               file="../src/standalone/helm_computer_keyboard.h"/>
-        <FILE id="JL75Rm" name="helm_standalone_editor.cpp" compile="1" resource="0"
-              file="../src/standalone/helm_standalone_editor.cpp"/>
-        <FILE id="oQOEZ9" name="helm_standalone_editor.h" compile="0" resource="0"
-              file="../src/standalone/helm_standalone_editor.h"/>
-        <FILE id="hxYpJD" name="main.cpp" compile="1" resource="0" file="../src/standalone/main.cpp"/>
+        <FILE id="q1KDWg" name="helm_editor.cpp" compile="1" resource="0" file="../src/standalone/helm_editor.cpp"/>
+        <FILE id="L7krQA" name="helm_editor.h" compile="0" resource="0" file="../src/standalone/helm_editor.h"/>
+        <FILE id="uwNSlJ" name="main.cpp" compile="1" resource="0" file="../src/standalone/main.cpp"/>
       </GROUP>
       <GROUP id="{8CD89F15-3EE7-F179-F84F-049F31596941}" name="synthesis">
         <FILE id="TzGjvz" name="dc_filter.cpp" compile="1" resource="0" file="../src/synthesis/dc_filter.cpp"/>
@@ -392,6 +446,8 @@
               file="../src/synthesis/fixed_point_wave.cpp"/>
         <FILE id="BXZTzs" name="fixed_point_wave.h" compile="0" resource="0"
               file="../src/synthesis/fixed_point_wave.h"/>
+        <FILE id="XyYaWx" name="gate.cpp" compile="1" resource="0" file="../src/synthesis/gate.cpp"/>
+        <FILE id="LfdoR8" name="gate.h" compile="0" resource="0" file="../src/synthesis/gate.h"/>
         <FILE id="YYrPdt" name="helm_engine.cpp" compile="1" resource="0" file="../src/synthesis/helm_engine.cpp"/>
         <FILE id="Ymy9pR" name="helm_engine.h" compile="0" resource="0" file="../src/synthesis/helm_engine.h"/>
         <FILE id="XMBIS9" name="helm_lfo.cpp" compile="1" resource="0" file="../src/synthesis/helm_lfo.cpp"/>
@@ -410,24 +466,32 @@
               file="../src/synthesis/noise_oscillator.cpp"/>
         <FILE id="Q7j5lo" name="noise_oscillator.h" compile="0" resource="0"
               file="../src/synthesis/noise_oscillator.h"/>
+        <FILE id="w1Gznn" name="peak_meter.cpp" compile="1" resource="0" file="../src/synthesis/peak_meter.cpp"/>
+        <FILE id="CinQ3P" name="peak_meter.h" compile="0" resource="0" file="../src/synthesis/peak_meter.h"/>
         <FILE id="rWOeWW" name="resonance_cancel.cpp" compile="1" resource="0"
               file="../src/synthesis/resonance_cancel.cpp"/>
         <FILE id="yuS1i4" name="resonance_cancel.h" compile="0" resource="0"
               file="../src/synthesis/resonance_cancel.h"/>
-        <FILE id="z4hCnY" name="switch.cpp" compile="1" resource="0" file="../src/synthesis/switch.cpp"/>
-        <FILE id="QXiktv" name="switch.h" compile="0" resource="0" file="../src/synthesis/switch.h"/>
+        <FILE id="bFz3ly" name="trigger_random.cpp" compile="1" resource="0"
+              file="../src/synthesis/trigger_random.cpp"/>
+        <FILE id="RJcZ53" name="trigger_random.h" compile="0" resource="0"
+              file="../src/synthesis/trigger_random.h"/>
+        <FILE id="CLLCQ4" name="value_switch.cpp" compile="1" resource="0"
+              file="../src/synthesis/value_switch.cpp"/>
+        <FILE id="N1I7I8" name="value_switch.h" compile="0" resource="0" file="../src/synthesis/value_switch.h"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="builds/osx" customPList="&lt;plist&gt;&#10;  &lt;dict&gt;&#10;    &lt;key&gt;NSAppTransportSecurity&lt;/key&gt;&#10;    &lt;dict&gt;&#10;      &lt;key&gt;NSExceptionDomains&lt;/key&gt;&#10;      &lt;dict&gt;&#10;        &lt;key&gt;tytel.org&lt;/key&gt;&#10;        &lt;dict&gt;&#10;          &lt;key&gt;NSIncludeSubDomains&lt;/key&gt;&#10;          &lt;false/&gt;&#10;          &lt;key&gt;NSTemporaryExceptionAllowsInsecureHTTPLoads&lt;/key&gt;&#10;          &lt;true/&gt;&#10;          &lt;key&gt;NSTemporaryExceptionMinimumTLSVersion&lt;/key&gt;&#10;          &lt;string&gt;TLSv1.1&lt;/string&gt;&#10;        &lt;/dict&gt;&#10;      &lt;/dict&gt;&#10;    &lt;/dict&gt;&#10;  &lt;/dict&gt;&#10;&lt;/plist&gt;"
-               extraCompilerFlags="" extraLinkerFlags="">
+               extraCompilerFlags="" extraLinkerFlags="" iosDevelopmentTeamID="EFXDM6K3KJ"
+               smallIcon="" bigIcon="PwV9iC" documentExtensions="helm,helmbank">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="64BitUniversal"
-                       isDebug="1" optimisation="1" targetName="Helm" headerPath=""
+                       isDebug="1" optimisation="1" targetName="Helm" headerPath="../../../concurrentqueue&#10;../../../mopo/src&#10;../../../src&#10;../../../src/common&#10;../../../src/editor_components&#10;../../../src/editor_sections&#10;../../../src/look_and_feel&#10;../../../src/standalone&#10;../../../src/synthesis"
                        codeSigningIdentity="" fastMath="0" cppLibType="libc++"/>
         <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="64BitUniversal"
-                       isDebug="0" optimisation="3" targetName="Helm" headerPath=""
+                       isDebug="0" optimisation="3" targetName="Helm" headerPath="../../../concurrentqueue&#10;../../../mopo/src&#10;../../../src&#10;../../../src/common&#10;../../../src/editor_components&#10;../../../src/editor_sections&#10;../../../src/look_and_feel&#10;../../../src/standalone&#10;../../../src/synthesis"
                        codeSigningIdentity="" cppLibType="libc++"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -436,44 +500,19 @@
         <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
         <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
         <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
         <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
         <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
         <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2012 targetFolder="builds/vs12">
-      <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" winWarningLevel="2" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="Helm" headerPath="../../../concurrentqueue&#10;../../../mopo/src&#10;../../../src&#10;../../../src/common&#10;../../../src/editor_components&#10;../../../src/editor_sections&#10;../../../src/look_and_feel&#10;../../../src/standalone&#10;../../../src/synthesis"/>
-        <CONFIGURATION name="Release" winWarningLevel="2" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="Helm" headerPath="../../../concurrentqueue&#10;../../../mopo/src&#10;../../../src&#10;../../../src/common&#10;../../../src/editor_components&#10;../../../src/editor_sections&#10;../../../src/look_and_feel&#10;../../../src/standalone&#10;../../../src/synthesis"/>
-        <CONFIGURATION name="Release" winWarningLevel="2" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" targetName="Helm" headerPath="../../../concurrentqueue&#10;../../../mopo/src&#10;../../../src&#10;../../../src/common&#10;../../../src/editor_components&#10;../../../src/editor_sections&#10;../../../src/look_and_feel&#10;../../../src/standalone&#10;../../../src/synthesis"
-                       optimisation="3"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="../JUCE/modules"/>
-      </MODULEPATHS>
-    </VS2012>
     <LINUX_MAKE targetFolder="builds/linux" bigIcon="JqKIEw" smallIcon="oFf3hH"
-                extraCompilerFlags="$(DEBCXXFLAGS) -ffast-math -msse2" extraLinkerFlags="$(DEBLDFLAGS) -ffast-math -msse2"
+                extraCompilerFlags="$(DEBCXXFLAGS) -ffast-math -msse2 -ftree-vectorize -ftree-slp-vectorize "
+                extraLinkerFlags="$(DEBLDFLAGS) -ffast-math -msse2 -ftree-vectorize -ftree-slp-vectorize "
                 extraDefs="JUCE_JACK_CLIENT_NAME=\&quot;Helm\&quot;,&#10;JUCE_ALSA_MIDI_INPUT_NAME=\&quot;Helm\&quot;&#10;JUCE_ALSA_MIDI_OUTPUT_NAME=\&quot;Helm\&quot;&#10;JUCE_USE_XRANDR=0">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
@@ -489,17 +528,17 @@
         <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
         <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
         <MODULEPATH id="juce_cryptography" path="../JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
         <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
         <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
         <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <VS2015 targetFolder="builds/vs15">
+    <VS2015 targetFolder="builds/vs15" windowsTargetPlatformVersion="8.1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="2" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="Helm" headerPath="../../../concurrentqueue&#10;../../../mopo/src&#10;../../../src&#10;../../../src/common&#10;../../../src/editor_components&#10;../../../src/editor_sections&#10;../../../src/look_and_feel&#10;../../../src/standalone&#10;../../../src/synthesis"/>
@@ -507,13 +546,12 @@
                        isDebug="1" optimisation="1" targetName="Helm" headerPath="../../../concurrentqueue&#10;../../../mopo/src&#10;../../../src&#10;../../../src/common&#10;../../../src/editor_components&#10;../../../src/editor_sections&#10;../../../src/look_and_feel&#10;../../../src/standalone&#10;../../../src/synthesis"/>
         <CONFIGURATION name="Release" winWarningLevel="2" generateManifest="1" winArchitecture="32-bit"
                        isDebug="0" optimisation="3" targetName="Helm" headerPath="../../../concurrentqueue&#10;../../../mopo/src&#10;../../../src&#10;../../../src/common&#10;../../../src/editor_components&#10;../../../src/editor_sections&#10;../../../src/look_and_feel&#10;../../../src/standalone&#10;../../../src/synthesis"
-                       warningsAreErrors="0"/>
+                       warningsAreErrors="0" fastMath="1"/>
         <CONFIGURATION name="Release" winWarningLevel="2" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" optimisation="3" targetName="Helm" headerPath="../../../concurrentqueue&#10;../../../mopo/src&#10;../../../src&#10;../../../src/common&#10;../../../src/editor_components&#10;../../../src/editor_sections&#10;../../../src/look_and_feel&#10;../../../src/standalone&#10;../../../src/synthesis"/>
+                       isDebug="0" optimisation="3" targetName="Helm" headerPath="../../../concurrentqueue&#10;../../../mopo/src&#10;../../../src&#10;../../../src/common&#10;../../../src/editor_components&#10;../../../src/editor_sections&#10;../../../src/look_and_feel&#10;../../../src/standalone&#10;../../../src/synthesis"
+                       fastMath="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_video" path="../JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
         <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
         <MODULEPATH id="juce_events" path="../JUCE/modules"/>
@@ -525,6 +563,8 @@
         <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
       </MODULEPATHS>
     </VS2015>
   </EXPORTFORMATS>
@@ -540,9 +580,9 @@
     <MODULES id="juce_events" showAllCode="1" useLocalCopy="0"/>
     <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
     <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
-    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
-    <MODULES id="juce_video" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_WASAPI="enabled" JUCE_DIRECTSOUND="enabled" JUCE_ALSA="enabled"
-               JUCE_JACK="enabled"/>
+               JUCE_JACK="enabled" JUCE_WEB_BROWSER="disabled"/>
 </JUCERPROJECT>

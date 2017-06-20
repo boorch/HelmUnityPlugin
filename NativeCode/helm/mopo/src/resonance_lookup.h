@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +42,8 @@ namespace mopo {
         int int_index = index;
         mopo_float fraction = index - int_index;
 
-        return INTERPOLATE(q_lookup_[int_index],
-                           q_lookup_[int_index + 1], fraction);
+        return utils::interpolate(q_lookup_[int_index],
+                                  q_lookup_[int_index + 1], fraction);
       }
 
     private:

@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ namespace mopo {
       MagnitudeLookupSingleton() {
         for (int i = 0; i < MAGNITUDE_LOOKUP_RESOLUTION + 2; ++i) {
           mopo_float t = (1.0 * i) / MAGNITUDE_LOOKUP_RESOLUTION;
-          mopo_float decibels = INTERPOLATE(MIN_DB_LOOKUP, MAX_DB_LOOKUP, t);
+          mopo_float decibels = utils::interpolate(MIN_DB_LOOKUP, MAX_DB_LOOKUP, t);
           magnitude_lookup_[i] = utils::dbToGain(decibels);
         }
       }
@@ -49,8 +49,8 @@ namespace mopo {
         int int_index = index;
         mopo_float fraction = index - int_index;
 
-        return INTERPOLATE(magnitude_lookup_[int_index],
-                           magnitude_lookup_[int_index + 1], fraction);
+        return utils::interpolate(magnitude_lookup_[int_index],
+                                  magnitude_lookup_[int_index + 1], fraction);
       }
 
     private:

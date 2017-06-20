@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,16 @@ namespace mopo {
       Reverb();
       virtual ~Reverb() { }
 
+      void process() override;
+
       virtual Processor* clone() const override { return new Reverb(*this); }
+
+    protected:
+      Processor* reverb_wet_left_;
+      Processor* reverb_wet_right_;
+
+      mopo_float current_dry_;
+      mopo_float current_wet_;
   };
 } // namespace mopo
 

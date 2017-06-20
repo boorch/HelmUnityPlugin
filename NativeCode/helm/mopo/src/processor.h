@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,9 @@ namespace mopo {
     }
 
     void clearBuffer() {
-      memset(buffer, 0, buffer_size * sizeof(mopo_float));
+      VECTORIZE_LOOP
+      for (int i = 0; i < buffer_size; ++i)
+        buffer[i] = 0.0;
     }
 
     mopo_float* buffer;
@@ -113,12 +115,21 @@ namespace mopo {
           buffer_size_ = 1;
         else
           buffer_size_ = buffer_size;
+        samples_to_process_ = buffer_size;
       }
 
       virtual void setControlRate(bool control_rate = true) {
         control_rate_ = control_rate;
         if (control_rate)
           buffer_size_ = 1;
+      }
+
+      inline bool enabled() const {
+        return *enabled_;
+      }
+
+      inline void enable(bool enable) {
+        *enabled_ = enable;
       }
 
       int getSampleRate() const {
@@ -129,9 +140,15 @@ namespace mopo {
         return buffer_size_;
       }
 
+      int getSamplesToProcess() const {
+        return samples_to_process_;
+      }
+
       bool isControlRate() const {
         return control_rate_;
       }
+
+      bool inputMatchesBufferSize(int input = 0);
 
       virtual bool isPolyphonic() const;
 
@@ -145,16 +162,19 @@ namespace mopo {
       void plugNext(const Output* source);
       void plugNext(const Processor* source);
 
+      // Count how many inputs are connected to processors
+      int connectedInputs();
+
       // Remove a connection between two processors.
       virtual void unplugIndex(unsigned int input_index);
       virtual void unplug(const Output* source);
       virtual void unplug(const Processor* source);
 
       // Sets the ProcessorRouter that will own this Processor.
-      void router(ProcessorRouter* router) { router_ = router; }
+      inline void router(ProcessorRouter* router) { router_ = router; }
 
       // Returns the ProcessorRouter that owns this Processor.
-      ProcessorRouter* router() const { return router_; }
+      inline ProcessorRouter* router() const { return router_; }
 
       // Returns the ProcessorRouter that owns this Processor.
       ProcessorRouter* getTopLevelRouter() const;
@@ -164,8 +184,8 @@ namespace mopo {
       virtual void registerInput(Input* input);
       virtual Output* registerOutput(Output* output);
 
-      virtual int numInputs() const { return inputs_->size(); }
-      virtual int numOutputs() const { return outputs_->size(); }
+      inline int numInputs() const { return inputs_->size(); }
+      inline int numOutputs() const { return outputs_->size(); }
 
       // Input sample access.
       inline mopo_float getInputSample(int input, int sample) {
@@ -178,23 +198,28 @@ namespace mopo {
       }
 
       // Returns the Input port corresponding to the passed in index.
-      Input* input(unsigned int index = 0) const {
+      inline Input* input(unsigned int index = 0) const {
         MOPO_ASSERT(index < inputs_->size());
 
         return inputs_->operator[](index);
       }
 
       // Returns the Output port corresponding to the passed in index.
-      Output* output(unsigned int index = 0) const {
+      inline Output* output(unsigned int index = 0) const {
         MOPO_ASSERT(index < outputs_->size());
 
         return outputs_->operator[](index);
       }
 
     protected:
+      Output* addOutput();
+      Input* addInput();
+    
       int sample_rate_;
       int buffer_size_;
+      int samples_to_process_;
       bool control_rate_;
+      bool* enabled_;
 
       std::vector<Input*> owned_inputs_;
       std::vector<Output*> owned_outputs_;

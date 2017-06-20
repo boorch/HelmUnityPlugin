@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ class GlobalToolTip  : public Component, public Timer {
     String shown_value_text_;
     String parameter_text_;
     String value_text_;
+    int64 time_updated_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GlobalToolTip)
 };

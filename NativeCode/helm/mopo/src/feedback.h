@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #define FEEDBACK_H
 
 #include "processor.h"
+#include "utils.h"
 
 namespace mopo {
 
@@ -27,8 +28,8 @@ namespace mopo {
   // sample feedback processing.
   class Feedback : public Processor {
     public:
-      Feedback() : Processor(1, 1) {
-        memset(buffer_, 0, MAX_BUFFER_SIZE * sizeof(mopo_float));
+      Feedback(bool control_rate = false) : Processor(1, 1, control_rate) {
+        utils::zeroBuffer(buffer_, MAX_BUFFER_SIZE);
       }
 
       virtual ~Feedback() { }
@@ -53,6 +54,13 @@ namespace mopo {
     protected:
       mopo_float buffer_[MAX_BUFFER_SIZE];
   };
+
+  namespace cr {
+    class Feedback : public ::mopo::Feedback {
+      public:
+        Feedback() : ::mopo::Feedback(true) { }
+    };
+  } // namespace cr
 } // namespace mopo
 
 #endif // FEEDBACK_H

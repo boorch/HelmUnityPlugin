@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,13 @@
 
 namespace mopo {
 
-  class ModulationConnection;
+  struct ModulationConnection;
 
   struct ValueDetails {
     enum DisplaySkew {
       kLinear,
       kQuadratic,
+      kSquareRoot,
       kExponential
     };
 
@@ -42,8 +43,12 @@ namespace mopo {
     int steps;
     mopo_float default_value;
 
+    // post_offset used to offset quadratic and exponential scaling.
+    mopo_float post_offset;
+
     mopo_float display_multiply;
     DisplaySkew display_skew;
+    bool display_invert;
     std::string display_units;
     std::string display_name;
   } typedef ValueDetails;
@@ -59,6 +64,24 @@ namespace mopo {
       "off",
       "auto",
       "on"
+    };
+
+    const std::string off_auto_on_slider[] = {
+      "OFF",
+      "AUT",
+      "ON"
+    };
+
+    const std::string filter_style[] = {
+      "12dB",
+      "24dB",
+      "Shelf"
+    };
+
+    const std::string filter_style_short[] = {
+      "12",
+      "24",
+      "SH"
     };
 
     const std::string arp_patterns[] = {
@@ -81,6 +104,26 @@ namespace mopo {
       "Free",
       "Retrigger",
       "Sync to Playhead"
+    };
+
+    const std::string distortion_types_short[] = {
+      "sft clp",
+      "hrd clp",
+      "lin fld",
+      "sin fld"
+    };
+
+    const std::string distortion_types_long[] = {
+      "Soft Clip",
+      "Hard Clip",
+      "Linear Fold",
+      "Sine Fold"
+    };
+
+    const std::string filter_shelves[] = {
+      "low shelf",
+      "band shelf",
+      "high shelf"
     };
 
     const std::string filter_types[] = {
@@ -128,10 +171,12 @@ namespace mopo {
   const mopo_float MAX_STEPS = 32;
   const int NUM_FORMANTS = 4;
   const int NUM_CHANNELS = 2;
-  const int MEMORY_SAMPLE_RATE = 2205;
-  const int MEMORY_RESOLUTION = 52;
+  const int MEMORY_SAMPLE_RATE = 22000;
+  const int MEMORY_RESOLUTION = 512;
   const mopo_float STUTTER_MAX_SAMPLES = 96000.0;
   const int DEFAULT_MODULATION_CONNECTIONS = 256;
+  const int DEFAULT_WINDOW_WIDTH = 992;
+  const int DEFAULT_WINDOW_HEIGHT = 734;
 
   const int DEFAULT_KEYBOARD_OFFSET = 48;
   const std::wstring DEFAULT_KEYBOARD = L"awsedftgyhujkolp;'";

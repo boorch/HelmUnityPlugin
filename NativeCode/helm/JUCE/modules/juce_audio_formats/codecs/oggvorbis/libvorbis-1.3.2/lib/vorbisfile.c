@@ -1561,7 +1561,7 @@ int ov_pcm_seek_page(OggVorbis_File *vf,ogg_int64_t pos){
         if(op.granulepos!=-1){
           vf->pcm_offset=op.granulepos-vf->pcmlengths[vf->current_link*2];
           if(vf->pcm_offset<0)vf->pcm_offset=0;
-          vf->pcm_offset+=total;
+            vf->pcm_offset+=total;
           break;
         }else
           result=ogg_stream_packetout(&vf->os,NULL);
@@ -1922,9 +1922,16 @@ long ov_read_filter(OggVorbis_File *vf,char *buffer,int length,
         vorbis_fpu_setround(&fpu);
         for(j=0;j<samples;j++)
           for(i=0;i<channels;i++){
+            // Workaround for an ndk armeabi compiler bug which crashes on signed saturation
+           #ifdef ANDROID
+            float f = pcm[i][j];
+            f = (f <= 1.0f ? (f >= -1.0f ? f : -1.0f) : 1.0f);
+            val = vorbis_ftoi(f * 127.f);
+           #else
             val=vorbis_ftoi(pcm[i][j]*128.f);
             if(val>127)val=127;
             else if(val<-128)val=-128;
+           #endif
             *buffer++=val+off;
           }
         vorbis_fpu_restore(fpu);

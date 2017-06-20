@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,12 @@
 #include "helm_common.h"
 #include <map>
 
-#define MODULATION_BUTTON_WIDTH 32
-
+class OpenGLComponent;
 class SynthSlider;
 
 class SynthSection : public Component, public SliderListener, public ButtonListener {
   public:
-    SynthSection(String name) : Component(name), activator_(nullptr) { }
+    SynthSection(String name) : Component(name), activator_(nullptr), size_ratio_(1.0f) { }
 
     // Drawing.
     virtual void reset();
@@ -37,9 +36,16 @@ class SynthSection : public Component, public SliderListener, public ButtonListe
     virtual void paint(Graphics& g) override;
     virtual void paintBackground(Graphics& g);
     virtual void paintContainer(Graphics& g);
+    virtual void setSizeRatio(float ratio);
     void paintKnobShadows(Graphics& g);
     void drawTextForComponent(Graphics& g, String text, Component* component, int space = 4);
-    Graphics getBackgroundGraphics();
+
+    void paintChildrenBackgrounds(Graphics& g);
+    void paintChildBackground(Graphics& g, SynthSection* child);
+    void paintOpenGLBackground(Graphics& g, OpenGLComponent* child);
+    void initOpenGLComponents(OpenGLContext& open_gl_context);
+    void renderOpenGLComponents(OpenGLContext& open_gl_context, bool animate);
+    void destroyOpenGLComponents(OpenGLContext& open_gl_context);
 
     // Widget Listeners.
     virtual void sliderValueChanged(Slider* moved_slider) override;
@@ -54,17 +60,23 @@ class SynthSection : public Component, public SliderListener, public ButtonListe
     virtual void setActive(bool active = true);
     virtual void animate(bool animate = true);
     virtual void setAllValues(mopo::control_map& controls);
-    void setValue(std::string name, mopo::mopo_float value,
-                  NotificationType notification = sendNotificationAsync);
+    virtual void setValue(const std::string& name, mopo::mopo_float value,
+                          NotificationType notification = sendNotification);
 
   protected:
     void addButton(Button* button, bool show = true);
     void addModulationButton(ModulationButton* button, bool show = true);
     void addSlider(SynthSlider* slider, bool show = true);
     void addSubSection(SynthSection* section, bool show = true);
+    void addOpenGLComponent(OpenGLComponent* open_gl_component);
     void setActivator(ToggleButton* activator);
+    float getTitleWidth();
+    float getStandardKnobSize();
+    float getSmallKnobSize();
+    float getModButtonWidth();
 
     std::map<std::string, SynthSection*> sub_sections_;
+    std::set<OpenGLComponent*> open_gl_components_;
 
     std::map<std::string, SynthSlider*> slider_lookup_;
     std::map<std::string, Button*> button_lookup_;
@@ -76,6 +88,7 @@ class SynthSection : public Component, public SliderListener, public ButtonListe
     ToggleButton* activator_;
 
     Image background_;
+    float size_ratio_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SynthSection)
 };

@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,9 @@ namespace mopo {
   class Arpeggiator;
   class HelmVoiceHandler;
   class HelmLfo;
+  class PeakMeter;
   class Value;
+  class ValueSwitch;
 
   // The overall helm engine. All audio processing is contained in here.
   class HelmEngine : public HelmModule, public NoteHandler {
@@ -37,10 +39,11 @@ namespace mopo {
       void init() override;
 
       void process() override;
+      void setBufferSize(int buffer_size) override;
 
       std::set<ModulationConnection*> getModulationConnections() { return mod_connections_; }
       bool isModulationActive(ModulationConnection* connection);
-      std::list<mopo::mopo_float> getPressedNotes();
+      CircularQueue<mopo::mopo_float>& getPressedNotes();
       void connectModulation(ModulationConnection* connection);
       void disconnectModulation(ModulationConnection* connection);
       int getNumActiveVoices();
@@ -64,14 +67,16 @@ namespace mopo {
     private:
       HelmVoiceHandler* voice_handler_;
       Arpeggiator* arpeggiator_;
-      Value* arp_on_;
+      ValueSwitch* arp_on_;
       bool was_playing_arp_;
 
       Value* lfo_1_retrigger_;
       Value* lfo_2_retrigger_;
       Value* step_sequencer_retrigger_;
+      Value* bps_;
       HelmLfo* lfo_1_;
       HelmLfo* lfo_2_;
+      PeakMeter* peak_meter_;
       StepGenerator* step_sequencer_;
 
       std::set<ModulationConnection*> mod_connections_;

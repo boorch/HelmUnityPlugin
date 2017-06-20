@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,22 +15,30 @@
  */
 
 #include "dynamic_section.h"
+
+#include "colors.h"
 #include "fonts.h"
+#include "synth_button.h"
+#include "text_slider.h"
 #include "text_look_and_feel.h"
 
-#define KNOB_WIDTH 40
 #define TEXT_WIDTH 40
+#define SELECTOR_WIDTH 75
 #define TEXT_HEIGHT 16
 
 DynamicSection::DynamicSection(String name) : SynthSection(name) {
   addSlider(portamento_ = new SynthSlider("portamento"));
   portamento_->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+  portamento_->setPopupPlacement(BubbleComponent::above, 0);
 
-  addSlider(portamento_type_ = new SynthSlider("portamento_type"));
+  TextSlider* port_type = new TextSlider("portamento_type");
+  addSlider(portamento_type_ = port_type);
   portamento_type_->setSliderStyle(Slider::LinearBar);
   portamento_type_->setStringLookup(mopo::strings::off_auto_on);
+  portamento_type_->setPopupPlacement(BubbleComponent::above, 0);
+  port_type->setShortStringLookup(mopo::strings::off_auto_on_slider);
 
-  addButton(legato_ = new ToggleButton("legato"));
+  addButton(legato_ = new SynthButton("legato"));
   legato_->setLookAndFeel(TextLookAndFeel::instance());
   legato_->setButtonText("");
 }
@@ -42,37 +50,37 @@ DynamicSection::~DynamicSection() {
 }
 
 void DynamicSection::paintBackground(Graphics& g) {
-  SynthSection::paintContainer(g);
+  paintContainer(g);
+  paintKnobShadows(g);
 
-  g.setColour(Colour(0xffbbbbbb));
-  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(10.0f));
+  int knob_width = getStandardKnobSize();
+  int text_height = size_ratio_ * TEXT_HEIGHT;
+
+  g.setColour(Colors::control_label_text);
+  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(size_ratio_ * 10.0f));
+  
   drawTextForComponent(g, TRANS("PORTA"), portamento_);
   drawTextForComponent(g, TRANS("PORTA TYPE"), portamento_type_,
-                       4 + (KNOB_WIDTH - TEXT_HEIGHT) / 3);
+                       size_ratio_ * 4.0f + (knob_width - text_height) / 3.0f);
   drawTextForComponent(g, TRANS("LEGATO"), legato_,
-                       4 + (KNOB_WIDTH - TEXT_HEIGHT) / 3);
-
-  static const int ROOM = 20;
-  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(8.0f));
-  int type_y = portamento_type_->getY() - 12;
-  g.drawText(TRANS("OFF"), portamento_type_->getX() - ROOM,
-             type_y, 2 * ROOM, 10, Justification::centred, false);
-  g.drawText(TRANS("AUTO"), portamento_type_->getX() - ROOM + portamento_type_->getWidth() / 2,
-             type_y, 2 * ROOM, 10, Justification::centred, false);
-  g.drawText(TRANS("ON"), portamento_type_->getRight() - ROOM,
-             type_y, 2 * ROOM, 10, Justification::centred, false);
+                       size_ratio_ * 4.0f + (knob_width - text_height) / 3.0f);
 }
 
 void DynamicSection::resized() {
-  float space_x = (getWidth() - (3.0f * KNOB_WIDTH)) / 4.0f;
-  float space_y = (getHeight() - (KNOB_WIDTH + TEXT_HEIGHT)) / 2.0f;
-  float extra_text_space = 2 * (KNOB_WIDTH - TEXT_HEIGHT) / 3;
+  int knob_width = getStandardKnobSize();
+  int text_width = size_ratio_ * TEXT_WIDTH;
+  int text_height = size_ratio_ * TEXT_HEIGHT;
+  int selector_width = size_ratio_ * SELECTOR_WIDTH;
 
-  portamento_->setBounds(space_x, space_y, KNOB_WIDTH, KNOB_WIDTH);
-  portamento_type_->setBounds(KNOB_WIDTH + 2 * space_x, space_y + extra_text_space,
-                              TEXT_WIDTH, TEXT_HEIGHT);
-  legato_->setBounds(2 * KNOB_WIDTH + 3 * space_x, space_y + extra_text_space,
-                     TEXT_WIDTH, TEXT_HEIGHT);
+  float space_x = (getWidth() - (knob_width + selector_width + text_width)) / 4.0f;
+  float space_y = (getHeight() - (knob_width + text_height)) / 2.0f;
+  float extra_text_space = 2 * (knob_width - text_height) / 3;
+
+  portamento_->setBounds(space_x, space_y, knob_width, knob_width);
+  portamento_type_->setBounds(knob_width + 2 * space_x, space_y + extra_text_space,
+                              selector_width, text_height);
+  legato_->setBounds(knob_width + selector_width + 3 * space_x, space_y + extra_text_space,
+                     text_width, text_height);
 
   SynthSection::resized();
 }

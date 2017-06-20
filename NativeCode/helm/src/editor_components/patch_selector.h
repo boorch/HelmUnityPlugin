@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,16 +27,21 @@ class PatchSelector : public SynthSection, public PatchBrowser::PatchSelectedLis
     PatchSelector();
     ~PatchSelector();
 
+    void paint(Graphics& g) override;
     void paintBackground(Graphics& g) override;
     void resized() override;
     void mouseUp(const MouseEvent& event) override;
     void buttonClicked(Button* buttonThatWasClicked) override;
     void newPatchSelected(File patch) override;
+    void setModified(bool modified);
     void setSaveSection(SaveSection* save_section) { save_section_ = save_section; }
     void setBrowser(PatchBrowser* browser) {
       browser_ = browser;
       browser_->setListener(this);
     }
+    int getBrowseHeight();
+
+    void initPatch();
 
   private:
     void loadFromFile(File& patch);
@@ -47,9 +52,11 @@ class PatchSelector : public SynthSection, public PatchBrowser::PatchSelectedLis
     ScopedPointer<TextButton> prev_patch_;
     ScopedPointer<TextButton> next_patch_;
     ScopedPointer<TextButton> save_;
+    ScopedPointer<TextButton> export_;
     ScopedPointer<TextButton> browse_;
     PatchBrowser* browser_;
     SaveSection* save_section_;
+    bool modified_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PatchSelector)
 };

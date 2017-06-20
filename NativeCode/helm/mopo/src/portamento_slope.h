@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ namespace mopo {
       void processTriggers();
       void processBypass(int start);
       virtual void process() override;
-      void tick(int i);
+      void tick(int i, mopo_float target, mopo_float increment, mopo_float decay);
 
     private:
       mopo_float last_value_;

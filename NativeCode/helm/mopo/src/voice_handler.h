@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 #ifndef VOICE_HANDLER_H
 #define VOICE_HANDLER_H
 
+#include "circular_queue.h"
 #include "note_handler.h"
 #include "processor_router.h"
 #include "value.h"
@@ -137,7 +138,7 @@ namespace mopo {
       virtual void setSampleRate(int sample_rate) override;
       virtual void setBufferSize(int buffer_size) override;
       int getNumActiveVoices();
-      std::list<mopo_float> getPressedNotes() { return pressed_notes_; }
+      CircularQueue<mopo_float>& getPressedNotes() { return pressed_notes_; }
       bool isNotePlaying(mopo_float note);
 
       void allNotesOff(int sample = 0) override;
@@ -185,6 +186,9 @@ namespace mopo {
 
       bool isPolyphonic(const Processor* processor) const override;
 
+    protected:
+      virtual bool shouldAccumulate(Output* output);
+
     private:
       VoiceHandler() { }
 
@@ -197,14 +201,16 @@ namespace mopo {
       void clearNonaccumulatedOutputs();
       void accumulateOutputs();
       void writeNonaccumulatedOutputs();
-      bool shouldAccumulate(Output* output);
 
       size_t polyphony_;
       bool sustain_;
       bool legato_;
-      std::vector<Output*> voice_outputs_;
+      std::map<Output*, Output*> last_voice_outputs_;
+      std::map<Output*, Output*> accumulated_outputs_;
       const Output* voice_killer_;
       mopo_float last_played_note_;
+      int last_num_voices_;
+
       Output voice_event_;
       Output note_;
       Output last_note_;
@@ -213,12 +219,11 @@ namespace mopo {
       Output velocity_;
       Output aftertouch_;
 
-      std::list<mopo_float> pressed_notes_;
-      std::vector<Voice*> all_voices_;
+      CircularQueue<mopo_float> pressed_notes_;
+      CircularQueue<Voice*> all_voices_;
 
-      std::list<Voice*> free_voices_;
-      std::list<Voice*> active_voices_;
-      std::vector<Output*> accumulated_outputs_;
+      CircularQueue<Voice*> free_voices_;
+      CircularQueue<Voice*> active_voices_;
 
       ProcessorRouter voice_router_;
       ProcessorRouter global_router_;

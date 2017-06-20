@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #define LINUX_FACTORY_PATCH_DIRECTORY "/usr/share/helm/patches"
 #define USER_BANK_NAME "User Patches"
 #define LINUX_BANK_DIRECTORY "~/.helm/patches"
+#define EXPORTED_BANK_EXTENSION "helmbank"
 
 namespace {
 
@@ -44,7 +45,7 @@ var LoadSave::stateToVar(SynthBase* synth,
   DynamicObject* settings_object = new DynamicObject();
 
   ScopedLock lock(critical_section);
-  for (auto control : controls)
+  for (auto& control : controls)
     settings_object->setProperty(String(control.first), control.second->value());
 
   std::set<mopo::ModulationConnection*> modulations = synth->getModulationConnections();
@@ -73,7 +74,7 @@ var LoadSave::stateToVar(SynthBase* synth,
 void LoadSave::loadControls(SynthBase* synth,
                             const NamedValueSet& properties) {
   mopo::control_map controls = synth->getControls();
-  for (auto control : controls) {
+  for (auto& control : controls) {
     String name = control.first;
     if (properties.contains(name)) {
       mopo::mopo_float value = properties[name];
@@ -109,6 +110,20 @@ void LoadSave::loadSaveState(std::map<std::string, String>& state,
     state["patch_name"] = properties["patch_name"];
   if (properties.contains("folder_name"))
     state["folder_name"] = properties["folder_name"];
+}
+
+void LoadSave::initSynth(SynthBase* synth, std::map<std::string, String>& save_info) {
+  synth->clearModulations();
+
+  mopo::control_map controls = synth->getControls();
+  for (auto& control : controls) {
+    mopo::ValueDetails details = mopo::Parameters::getDetails(control.first);
+    control.second->set(details.default_value);
+  }
+
+  save_info["author"] = "";
+  save_info["patch_name"] = TRANS("init");
+  save_info["folder_name"] = "";
 }
 
 void LoadSave::varToState(SynthBase* synth,
@@ -188,6 +203,116 @@ void LoadSave::varToState(SynthBase* synth,
       settings_properties.set("stutter_resample_sync", 0);
       settings_properties.set("stutter_sync", 0);
     }
+  }
+
+  if (compareVersionStrings(version, "0.8.6") <= 0) {
+    // Fix unison and volume change.
+    mopo::mopo_float voices1 = settings_properties["osc_1_unison_voices"];
+    mopo::mopo_float voices2 = settings_properties["osc_2_unison_voices"];
+
+    mopo::mopo_float old_volume1 = settings_properties["osc_1_volume"];
+    mopo::mopo_float old_volume2 = settings_properties["osc_2_volume"];
+    old_volume1 *= old_volume1;
+    old_volume2 *= old_volume2;
+
+    mopo::mopo_float ratio1 = (voices1 + 1.0) / 2.0;
+    mopo::mopo_float ratio2 = (voices2 + 1.0) / 2.0;
+    mopo::mopo_float new_volume1 = old_volume1 * sqrt(0.5 / ratio1);
+    mopo::mopo_float new_volume2 = old_volume2 * sqrt(0.5 / ratio2);
+    settings_properties.set("osc_1_volume", sqrt(new_volume1));
+    settings_properties.set("osc_2_volume", sqrt(new_volume2));
+
+    mopo::mopo_float sub_volume = settings_properties["sub_volume"];
+    settings_properties.set("sub_volume", sqrt(0.5) * sub_volume);
+
+    if (compareVersionStrings(version, "0.5.0") <= 0) {
+      settings_properties.set("sub_octave", 1.0);
+      mopo::mopo_float cutoff = settings_properties["cutoff"];
+      mopo::mopo_float keytrack = settings_properties["keytrack"];
+      settings_properties.set("cutoff", cutoff - keytrack * mopo::NOTES_PER_OCTAVE);
+    }
+
+    // Map to new filter styles.
+    mopo::mopo_float filter_type = settings_properties["filter_type"];
+    if (filter_type >= 6.0)
+      settings_properties.set("filter_on", 0.0);
+    else if (filter_type >= 3.0) {
+      if (filter_type >= 5.0)
+        settings_properties.set("filter_shelf", 1.0);
+      else if (filter_type >= 4.0)
+        settings_properties.set("filter_shelf", 2.0);
+      else
+        settings_properties.set("filter_shelf", 0.0);
+
+      settings_properties.set("filter_on", 1.0);
+      settings_properties.set("filter_style", 2.0);
+    }
+    else {
+      if (filter_type >= 2.0)
+        settings_properties.set("filter_blend", 1.0);
+      else if (filter_type >= 1.0)
+        settings_properties.set("filter_blend", 2.0);
+
+      settings_properties.set("filter_on", 1.0);
+      settings_properties.set("filter_style", 0.0);
+    }
+
+    // Move saturation to distortion.
+    settings_properties.set("distortion_on", 1.0);
+    settings_properties.set("distortion_type", 0.0);
+    settings_properties.set("distortion_mix", 1.0);
+    mopo::mopo_float saturation = settings_properties["filter_saturation"];
+
+    if (filter_type >= 6.0)
+      settings_properties.set("distortion_drive", saturation);
+    else {
+      settings_properties.set("distortion_drive", saturation + 12.0);
+      settings_properties.set("filter_drive", -12.0);
+    }
+
+    // Move modulating saturation to distortion.
+    var* modulation = modulations->begin();
+    for (; modulation != modulations->end(); ++modulation) {
+      DynamicObject* mod = modulation->getDynamicObject();
+      String destination = mod->getProperty("destination").toString();
+
+      if (destination == "filter_saturation") {
+        String source = mod->getProperty("source").toString();
+        mod->setProperty("destination", "distortion_drive");
+      }
+    }
+
+    // Fixing reverb and delay mixing ratios.
+    mopo::mopo_float volume = settings_properties["volume"];
+    mopo::mopo_float delay_wet = settings_properties["delay_dry_wet"];
+    mopo::mopo_float delay_on = settings_properties["delay_on"];
+
+    if (delay_on && delay_wet != 0.0 && delay_wet != 1.0) {
+      mopo::mopo_float ratio = delay_wet / (1.0 - delay_wet);
+      mopo::mopo_float new_ratio = ratio * ratio;
+      mopo::mopo_float new_wet = 1.0 - 1.0 / (1.0 + new_ratio);
+      settings_properties.set("delay_dry_wet", new_wet);
+
+      volume *= sqrt(delay_wet / sqrt(new_wet));
+    }
+
+    mopo::mopo_float reverb_wet = settings_properties["reverb_dry_wet"];
+    mopo::mopo_float reverb_on = settings_properties["reverb_on"];
+
+    if (reverb_on && reverb_wet != 0.0 && reverb_wet != 1.0) {
+      mopo::mopo_float ratio = reverb_wet / (1.0 - reverb_wet);
+      mopo::mopo_float new_ratio = ratio * ratio;
+      mopo::mopo_float new_wet = 1.0 - 1.0 / (1.0 + new_ratio);
+      settings_properties.set("reverb_dry_wet", new_wet);
+
+      volume *= sqrt(reverb_wet / sqrt(new_wet));
+    }
+
+    settings_properties.set("volume", volume);
+
+    // Fixing bpm.
+    mopo::mopo_float old_bpm = settings_properties["beats_per_minute"];
+    settings_properties.set("beats_per_minute", old_bpm / 60.0);
   }
 
   loadControls(synth, settings_properties);
@@ -286,6 +411,16 @@ void LoadSave::saveAnimateWidgets(bool animate_widgets) {
   saveVarToConfig(config_object);
 }
 
+void LoadSave::saveWindowSize(float window_size) {
+  var config_var = getConfigVar();
+  if (!config_var.isObject())
+    config_var = new DynamicObject();
+
+  DynamicObject* config_object = config_var.getDynamicObject();
+  config_object->setProperty("window_size", window_size);
+  saveVarToConfig(config_object);
+}
+
 void LoadSave::saveLayoutConfig(mopo::StringLayout* layout) {
   if (layout == nullptr)
     return;
@@ -328,13 +463,13 @@ void LoadSave::saveMidiMapConfig(MidiManager* midi_manager) {
   DynamicObject* config_object = config_var.getDynamicObject();
 
   Array<var> midi_learn_object;
-  for (auto midi_mapping : midi_learn_map) {
+  for (auto& midi_mapping : midi_learn_map) {
     DynamicObject* midi_map_object = new DynamicObject();
     Array<var> midi_destinations_object;
 
     midi_map_object->setProperty("source", midi_mapping.first);
 
-    for (auto midi_destination : midi_mapping.second) {
+    for (auto& midi_destination : midi_mapping.second) {
       DynamicObject* midi_destination_object = new DynamicObject();
 
       midi_destination_object->setProperty("destination", String(midi_destination.first));
@@ -446,6 +581,18 @@ bool LoadSave::shouldAnimateWidgets() {
   return config_object->getProperty("animate_widgets");
 }
 
+float LoadSave::loadWindowSize() {
+  var config_state = getConfigVar();
+  DynamicObject* config_object = config_state.getDynamicObject();
+  if (!config_state.isObject())
+    return 1.0f;
+
+  if (!config_object->hasProperty("window_size"))
+    return 1.0f;
+
+  return config_object->getProperty("window_size");
+}
+
 std::wstring LoadSave::getComputerKeyboardLayout() {
   var config_state = getConfigVar();
 
@@ -534,6 +681,34 @@ File LoadSave::getUserBankDirectory() {
   return folder_dir;
 }
 
+void LoadSave::exportBank(String bank_name) {
+  File banks_dir = getBankDirectory();
+  File bank = banks_dir.getChildFile(bank_name);
+  Array<File> patches;
+  bank.findChildFiles(patches, File::findFiles, true, String("*.") + mopo::PATCH_EXTENSION);
+  ZipFile::Builder zip_builder;
+
+  for (File patch : patches)
+    zip_builder.addFile(patch, 2, patch.getRelativePathFrom(banks_dir));
+
+  FileChooser save_box("Export Bank As", File::getSpecialLocation(File::userHomeDirectory),
+                       String("*.") + EXPORTED_BANK_EXTENSION);
+  if (save_box.browseForFileToSave(true)) {
+    FileOutputStream out_stream(save_box.getResult().withFileExtension(EXPORTED_BANK_EXTENSION));
+    double *progress = nullptr;
+    zip_builder.writeToStream(out_stream, progress);
+  }
+}
+
+void LoadSave::importBank() {
+  FileChooser open_box("Import Bank", File::getSpecialLocation(File::userHomeDirectory),
+                       String("*.") + EXPORTED_BANK_EXTENSION);
+  if (open_box.browseForFileToOpen()) {
+    ZipFile zip_file(open_box.getResult());
+    zip_file.uncompressTo(getBankDirectory());
+  }
+}
+
 int LoadSave::compareVersionStrings(String a, String b) {
   a.trim();
   b.trim();
@@ -619,13 +794,44 @@ File LoadSave::getPatchFile(int bank_index, int folder_index, int patch_index) {
   return patches[std::min(patch_index, patches.size() - 1)];
 }
 
+Array<File> LoadSave::getAllPatches() {
+  static const FileSorterAscending file_sorter;
+
+  File bank_directory = getBankDirectory();
+  Array<File> banks;
+  bank_directory.findChildFiles(banks, File::findDirectories, false);
+  banks.sort(file_sorter);
+
+  Array<File> folders;
+  for (File bank : banks) {
+    Array<File> bank_folders;
+    bank.findChildFiles(bank_folders, File::findDirectories, false);
+    bank_folders.sort(file_sorter);
+    folders.addArray(bank_folders);
+  }
+
+  Array<File> patches;
+  for (File folder : folders) {
+    Array<File> folder_patches;
+    folder.findChildFiles(folder_patches, File::findFiles, false,
+                          String("*.") + mopo::PATCH_EXTENSION);
+    folder_patches.sort(file_sorter);
+    patches.addArray(folder_patches);
+  }
+
+  return patches;
+}
+
 File LoadSave::loadPatch(int bank_index, int folder_index, int patch_index,
                          SynthBase* synth, std::map<std::string, String>& save_info) {
   File patch = getPatchFile(bank_index, folder_index, patch_index);
-
-  var parsed_json_state;
-  if (JSON::parse(patch.loadFileAsString(), parsed_json_state).wasOk())
-    varToState(synth, save_info, parsed_json_state);
-
+  loadPatchFile(patch, synth, save_info);
   return patch;
+}
+
+void LoadSave::loadPatchFile(File file, SynthBase* synth,
+                             std::map<std::string, String>& save_info) {
+  var parsed_json_state;
+  if (JSON::parse(file.loadFileAsString(), parsed_json_state).wasOk())
+    varToState(synth, save_info, parsed_json_state);
 }

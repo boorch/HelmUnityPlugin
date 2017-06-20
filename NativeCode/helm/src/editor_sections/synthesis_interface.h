@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "helm_engine.h"
 
 #include "delay_section.h"
+#include "distortion_section.h"
 #include "dynamic_section.h"
 #include "envelope_section.h"
 #include "extra_mod_section.h"
@@ -48,6 +49,13 @@ class SynthesisInterface  : public SynthSection {
     void paintBackground(Graphics& g) override;
     void resized() override;
 
+    void setFocus() { grabKeyboardFocus(); }
+  
+    void setPadding(int padding) { padding_ = padding; }
+    void setSectionOneWidth(int width) { section_one_width_ = width; }
+    void setSectionTwoWidth(int width) { section_two_width_ = width; }
+    void setSectionThreeWidth(int width) { section_three_width_ = width; }
+
   private:
     ScopedPointer<EnvelopeSection> amplitude_envelope_section_;
     ScopedPointer<DelaySection> delay_section_;
@@ -65,11 +73,16 @@ class SynthesisInterface  : public SynthSection {
     ScopedPointer<OscillatorSection> oscillator_section_;
     ScopedPointer<LfoSection> poly_lfo_section_;
     ScopedPointer<ReverbSection> reverb_section_;
+    ScopedPointer<DistortionSection> distortion_section_;
     ScopedPointer<StepSequencerSection> step_sequencer_section_;
     ScopedPointer<StutterSection> stutter_section_;
     ScopedPointer<SubSection> sub_section_;
     ScopedPointer<VoiceSection> voice_section_;
-    ScopedPointer<VolumeSection> volume_section_;
+
+    int padding_;
+    int section_one_width_;
+    int section_two_width_;
+    int section_three_width_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SynthesisInterface)
 };

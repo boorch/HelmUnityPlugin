@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,10 @@
 
 VolumeSection::VolumeSection(String name) : SynthSection(name) {
   addSlider(volume_ = new SynthSlider("volume"));
+  addOpenGLComponent(peak_meter_left_ = new OpenGLPeakMeter(true));
+  addOpenGLComponent(peak_meter_right_ = new OpenGLPeakMeter(false));
   volume_->setSliderStyle(Slider::LinearBar);
+  volume_->setPopupPlacement(BubbleComponent::below, 0);
 }
 
 VolumeSection::~VolumeSection() {
@@ -27,7 +30,13 @@ VolumeSection::~VolumeSection() {
 }
 
 void VolumeSection::resized() {
-  volume_->setBounds(0, 20, getWidth(), getHeight() - 20);
+  int title_width = getTitleWidth();
+  int height = getHeight() - title_width;
+  int meter_height = height / 4;
+  int volume_height = height - 2 * meter_height;
+  peak_meter_left_->setBounds(0, title_width, getWidth(), meter_height);
+  peak_meter_right_->setBounds(0, title_width + meter_height, getWidth(), meter_height);
+  volume_->setBounds(0, title_width + 2 * meter_height, getWidth(), volume_height);
 
   SynthSection::resized();
 }

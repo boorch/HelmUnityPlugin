@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,17 +15,22 @@
  */
 
 #include "arp_section.h"
+
+#include "colors.h"
 #include "fonts.h"
+#include "synth_button.h"
 #include "text_look_and_feel.h"
+#include "text_selector.h"
 
 #define KNOB_WIDTH 40
 #define TEXT_WIDTH 42
 #define TEXT_HEIGHT 16
 
-#define TITLE_WIDTH 20
 #define SHADOW_WIDTH 3
 
 ArpSection::ArpSection(String name) : SynthSection(name) {
+  static const int INDEX_DRAG_SENSITIVITY = 60;
+
   addSlider(frequency_ = new SynthSlider("arp_frequency"));
   frequency_->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
   frequency_->setLookAndFeel(TextLookAndFeel::instance());
@@ -45,12 +50,15 @@ ArpSection::ArpSection(String name) : SynthSection(name) {
 
   addSlider(octaves_ = new SynthSlider("arp_octaves"));
   octaves_->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+  octaves_->setMouseDragSensitivity(INDEX_DRAG_SENSITIVITY);
 
-  addSlider(pattern_ = new SynthSlider("arp_pattern"));
-  pattern_->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
+  addSlider(pattern_ = new TextSelector("arp_pattern"));
+  pattern_->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
   pattern_->setStringLookup(mopo::strings::arp_patterns);
+  pattern_->setMouseDragSensitivity(INDEX_DRAG_SENSITIVITY);
+  pattern_->setLookAndFeel(TextLookAndFeel::instance());
 
-  addButton(on_ = new ToggleButton("arp_on"));
+  addButton(on_ = new SynthButton("arp_on"));
   setActivator(on_);
 }
 
@@ -66,48 +74,66 @@ ArpSection::~ArpSection() {
 
 void ArpSection::paintBackground(Graphics& g) {
   SynthSection::paintContainer(g);
+  float knob_width = getStandardKnobSize();
+  float text_height = size_ratio_ * TEXT_HEIGHT;
 
-  float shadow_left = TITLE_WIDTH - SHADOW_WIDTH;
-  float shadow_right = TITLE_WIDTH;
+  int title_width = getTitleWidth();
+  float shadow_left = getTitleWidth() - size_ratio_ * SHADOW_WIDTH;
+
   g.setGradientFill(ColourGradient(Colour(0x22000000), shadow_left, 0.0f,
-                                   Colour(0x66000000), shadow_right, 0.0f,
+                                   Colour(0x66000000), title_width, 0.0f,
                                    false));
-  g.fillRoundedRectangle(0, 0, TITLE_WIDTH, getHeight(), 1.0f);
+  g.fillRoundedRectangle(0, 0, title_width, getHeight(), 1.0f);
 
-  g.setColour(Colour(0xffbbbbbb));
-  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(10.0f));
+  g.setColour(Colors::control_label_text);
+  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(size_ratio_ * 10.0f));
+  
   drawTextForComponent(g, TRANS("GATE"), gate_);
   drawTextForComponent(g, TRANS("OCTAVES"), octaves_);
-  drawTextForComponent(g, TRANS("PATTERN"), pattern_);
+  
+  int font_y = gate_->getBounds().getY() + knob_width + size_ratio_ * 4;
   g.drawText(TRANS("FREQUENCY"),
-             frequency_->getBounds().getX() - 5, gate_->getBounds().getY() + KNOB_WIDTH + 4,
-             frequency_->getBounds().getWidth() + TEXT_HEIGHT + 10,
-             10, Justification::centred, false);
+             frequency_->getBounds().getX() - size_ratio_ * 5, font_y,
+             frequency_->getBounds().getWidth() + text_height + size_ratio_ * 10,
+             size_ratio_ * 10, Justification::centred, false);
+  g.drawText(TRANS("PATTERN"),
+             pattern_->getBounds().getX() - size_ratio_ * 5, font_y,
+             pattern_->getBounds().getWidth() + size_ratio_ * 10,
+             size_ratio_ * 10, Justification::centred, false);
 
   g.saveState();
-  g.addTransform(AffineTransform::rotation(-mopo::PI / 2.0f, 0, 0));
-  g.setColour(Colour(0xff999999));
-  g.setFont(Fonts::instance()->proportional_light().withPointHeight(13.40f));
-  g.drawText(TRANS("ARP"), -getHeight(), 0, getHeight() - 20, 20, Justification::centred, false);
+  g.addTransform(AffineTransform::rotation(-static_cast<float>(mopo::PI) / 2.0f, 0, 0));
+  g.setColour(Colors::tab_heading_text);
+  g.setFont(Fonts::instance()->proportional_light().withPointHeight(size_ratio_ * 13.40f));
+  g.drawText(getName(), -getHeight(), 0, getHeight() - title_width, title_width,
+             Justification::centred, false);
   g.restoreState();
 
   paintKnobShadows(g);
 }
 
 void ArpSection::resized() {
-  float space = (getWidth() - TEXT_WIDTH - TEXT_HEIGHT - (3.0f * KNOB_WIDTH) - 20) / 5.0f;
-  int y = 4;
+  int knob_width = getStandardKnobSize();
+  int title_width = getTitleWidth();
+  int text_width = size_ratio_ * TEXT_WIDTH;
+  int text_height = size_ratio_ * TEXT_HEIGHT;
 
-  int text_y = y + (KNOB_WIDTH - TEXT_HEIGHT) / 2;
-  frequency_->setBounds(20 + space, text_y, TEXT_WIDTH, TEXT_HEIGHT);
-  sync_->setBounds(20 + space + TEXT_WIDTH, text_y, TEXT_HEIGHT, TEXT_HEIGHT);
-  gate_->setBounds(20 + 2 * space + TEXT_HEIGHT + TEXT_WIDTH, y, KNOB_WIDTH, KNOB_WIDTH);
-  octaves_->setBounds(20 + 3 * space + TEXT_HEIGHT + TEXT_WIDTH + KNOB_WIDTH, y,
-                      KNOB_WIDTH, KNOB_WIDTH);
-  pattern_->setBounds(20 + 4 * space + TEXT_HEIGHT + TEXT_WIDTH + 2 * KNOB_WIDTH, y,
-                      KNOB_WIDTH, KNOB_WIDTH);
+  float space = (getWidth() - 2 * (text_width + text_height + knob_width) - title_width) / 5.0f;
+  int y = size_ratio_ * 4;
+
+  int text_y = y + size_ratio_ * 12;
+  frequency_->setBounds(title_width + space, text_y, text_width, text_height);
+  sync_->setBounds(title_width + space + text_width, text_y, text_height, text_height);
+  gate_->setBounds(title_width + 2 * space + text_height + text_width, y, knob_width, knob_width);
+  octaves_->setBounds(title_width + 3 * space + text_height + text_width + knob_width, y,
+                      knob_width, knob_width);
+  pattern_->setBounds(title_width + 4 * space + text_height + text_width + 2 * knob_width, text_y,
+                      text_width + text_height, text_height);
   tempo_->setBounds(frequency_->getBounds());
-  on_->setBounds(0, 2, 20, 20);
+  on_->setBounds(0, size_ratio_ * 2, title_width, title_width);
 
   SynthSection::resized();
+
+  frequency_->setPopupDisplayEnabled(false, nullptr);
+  tempo_->setPopupDisplayEnabled(false, nullptr);
 }

@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,10 @@
 #include "JuceHeader.h"
 #include "delete_section.h"
 #include "file_list_box_model.h"
+#include "overlay.h"
 #include "save_section.h"
 
-class PatchBrowser : public Component,
+class PatchBrowser : public Overlay,
                      public FileListBoxModel::Listener,
                      public TextEditor::Listener,
                      public KeyListener,
@@ -50,27 +51,35 @@ class PatchBrowser : public Component,
 
     void selectedFilesChanged(FileListBoxModel* model) override;
     void textEditorTextChanged(TextEditor& editor) override;
+    void textEditorEscapeKeyPressed(TextEditor& editor) override;
 
     void fileSaved(File saved_file) override;
     void fileDeleted(File deleted_file) override;
 
     void buttonClicked(Button* clicked_button) override;
 
-    bool isPatchSelected() { return patches_view_->getSelectedRows().size(); }
+    bool isPatchSelected();
     File getSelectedPatch();
+    void jumpToPatch(int indices);
     void loadNextPatch();
     void loadPrevPatch();
+    void externalPatchLoaded(File file);
 
     void setListener(PatchSelectedListener* listener) { listener_ = listener; }
     void setSaveSection(SaveSection* save_section);
     void setDeleteSection(DeleteSection* delete_section);
 
   private:
-    void loadFromFile(File& patch);
+    bool loadFromFile(File& patch);
+    void setPatchInfo(File& patch);
+    void scanBanks();
     void scanFolders();
     void scanPatches();
-    float getNarrowWidth();
-    float getWideWidth();
+    void scanAll();
+    float getBanksWidth();
+    float getFoldersWidth();
+    float getPatchesWidth();
+    float getPatchInfoWidth();
 
     ScopedPointer<ListBox> banks_view_;
     ScopedPointer<FileListBoxModel> banks_model_;
@@ -91,9 +100,13 @@ class PatchBrowser : public Component,
     DeleteSection* delete_section_;
     ScopedPointer<TextButton> save_as_button_;
     ScopedPointer<TextButton> delete_patch_button_;
+    ScopedPointer<TextButton> import_bank_button_;
+    ScopedPointer<TextButton> export_bank_button_;
 
     ScopedPointer<TextButton> hide_button_;
+    ScopedPointer<TextButton> done_button_;
 
+    File external_patch_;
     String author_;
     String license_;
 

@@ -2,29 +2,30 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
 
 
-#ifndef MPESETUPCOMPONENT_H_INCLUDED
-#define MPESETUPCOMPONENT_H_INCLUDED
+#pragma once
 
 
 class MPESetupComponent : public Component,
@@ -33,7 +34,7 @@ class MPESetupComponent : public Component,
                           private ComboBox::Listener
 {
 public:
-    //==========================================================================
+    //==============================================================================
     class Listener
     {
     public:
@@ -48,20 +49,20 @@ public:
     void addListener (Listener* listenerToAdd)         { listeners.add (listenerToAdd); }
     void removeListener (Listener* listenerToRemove)   { listeners.remove (listenerToRemove); }
 
-    //==========================================================================
+    //==============================================================================
     MPESetupComponent()
-        : masterChannelLabel (String::empty, "Master channel:"),
-          noteChannelsLabel (String::empty, "Nr. of note channels:"),
-          masterPitchbendRangeLabel (String::empty, "Master pitchbend range (semitones):"),
-          notePitchbendRangeLabel (String::empty, "Note pitchbend range (semitones):"),
+        : masterChannelLabel (String(), "Master channel:"),
+          noteChannelsLabel (String(), "Nr. of note channels:"),
+          masterPitchbendRangeLabel (String(), "Master pitchbend range (semitones):"),
+          notePitchbendRangeLabel (String(), "Note pitchbend range (semitones):"),
           addZoneButton ("Add this zone"),
           clearAllZonesButton ("Clear all zones"),
-          legacyStartChannelLabel (String::empty, "First channel:"),
-          legacyEndChannelLabel (String::empty, "Last channel:"),
-          legacyPitchbendRangeLabel (String::empty, "Pitchbend range (semitones):"),
+          legacyStartChannelLabel (String(), "First channel:"),
+          legacyEndChannelLabel (String(), "Last channel:"),
+          legacyPitchbendRangeLabel (String(), "Pitchbend range (semitones):"),
           legacyModeEnabledToggle ("Enable Legacy Mode"),
           voiceStealingEnabledToggle ("Enable synth voice stealing"),
-          numberOfVoicesLabel (String::empty, "Number of synth voices")
+          numberOfVoicesLabel (String(), "Number of synth voices")
     {
 
         initialiseComboBoxWithConsecutiveIntegers (masterChannel, masterChannelLabel, 1, 15, defaultMasterChannel);
@@ -82,7 +83,7 @@ public:
         numberOfVoices.addListener (this);
     }
 
-    //==========================================================================
+    //==============================================================================
     void resized() override
     {
         Rectangle<int> r (proportionOfWidth (0.65f), 15, proportionOfWidth (0.25f), 3000);
@@ -122,7 +123,7 @@ public:
     }
 
 private:
-    //==========================================================================
+    //==============================================================================
     void initialiseComboBoxWithConsecutiveIntegers (ComboBox& comboBox, Label& labelToAttach,
                                                     int firstValue, int numValues, int valueToSelect,
                                                     bool makeVisible = true)
@@ -141,14 +142,14 @@ private:
         comboBox.addListener (this);
     }
 
-    //==========================================================================
+    //==============================================================================
     void initialiseButton (Button& button)
     {
         addAndMakeVisible (button);
         button.addListener (this);
     }
 
-    //==========================================================================
+    //==============================================================================
     void buttonClicked (Button* button) override
     {
         if (button == &addZoneButton)
@@ -161,7 +162,7 @@ private:
             voiceStealingEnabledToggleClicked();
     }
 
-    //==========================================================================
+    //==============================================================================
     void addZoneButtonClicked()
     {
         if (areMPEParametersValid())
@@ -180,14 +181,14 @@ private:
         }
     }
 
-    //==========================================================================
+    //==============================================================================
     void clearAllZonesButtonClicked()
     {
         zoneLayout.clearAllZones();
         listeners.call (&MPESetupComponent::Listener::allZonesCleared);
     }
 
-    //==========================================================================
+    //==============================================================================
     void legacyModeEnabledToggleClicked()
     {
         bool legacyModeEnabled = legacyModeEnabledToggle.getToggleState();
@@ -216,14 +217,14 @@ private:
         }
     }
 
-    //==========================================================================
+    //==============================================================================
     void voiceStealingEnabledToggleClicked()
     {
         listeners.call (&MPESetupComponent::Listener::voiceStealingEnabledChanged,
                         voiceStealingEnabledToggle.getToggleState());
     }
 
-    //==========================================================================
+    //==============================================================================
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override
     {
         if (comboBoxThatHasChanged == &numberOfVoices)
@@ -239,7 +240,7 @@ private:
         }
     }
 
-    //==========================================================================
+    //==============================================================================
     void numberOfVoicesChanged()
     {
         listeners.call (&MPESetupComponent::Listener::numberOfVoicesChanged,
@@ -271,7 +272,7 @@ private:
         }
     }
 
-    //==========================================================================
+    //==============================================================================
     bool areMPEParametersValid() const
     {
         int maxPossibleNumNoteChannels = 16 - masterChannel.getText().getIntValue();
@@ -301,14 +302,14 @@ private:
                                           "Got it");
     }
 
-    //==========================================================================
+    //==============================================================================
     Range<int> getLegacyModeChannelRange() const
     {
         return Range<int> (legacyStartChannel.getText().getIntValue(),
                            legacyEndChannel.getText().getIntValue() + 1);
     }
 
-    //==========================================================================
+    //==============================================================================
     MPEZoneLayout zoneLayout;
 
     ComboBox masterChannel, noteChannels, masterPitchbendRange, notePitchbendRange;
@@ -330,6 +331,3 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MPESetupComponent)
 
 };
-
-
-#endif  // MPESETUPCOMPONENT_H_INCLUDED

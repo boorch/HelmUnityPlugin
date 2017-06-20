@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,9 +15,11 @@
  */
 
 #include "graphical_step_sequencer.h"
+
+#include "colors.h"
 #include "synth_gui_interface.h"
 
-#define FRAMES_PER_SECOND 60
+#define FRAMES_PER_SECOND 24
 
 GraphicalStepSequencer::GraphicalStepSequencer() {
   num_steps_slider_ = nullptr;
@@ -39,6 +41,7 @@ void GraphicalStepSequencer::paintBackground(Graphics& g) {
   g.fillAll(Colour(0xff424242));
 
   float x_inc = getWidth() / (1.0f * num_steps_);
+  float line_width = 1.5f * getHeight() / 80.0f;
   g.setColour(Colour(0xff545454));
   for (int i = 1; i * x_inc < getWidth(); ++i)
     g.drawLine(i * x_inc, 0, i * x_inc, getHeight());
@@ -58,18 +61,17 @@ void GraphicalStepSequencer::paintBackground(Graphics& g) {
   for (int i = 0; i < num_steps_; ++i) {
     float val = sequence_[i]->getValue();
     float bar_position = (getHeight() - 1.0f) * ((1.0f - val) / 2.0f);
-    if (val >= 0) {
-      g.setColour(Colour(0xff565656));
+    g.setColour(Colors::graph_fill);
+
+    if (val >= 0)
       g.fillRect(x, bar_position, x_inc, proportionOfHeight(0.5f) - bar_position);
-    }
     else {
       float half_height = proportionOfHeight(0.5f);
-      g.setColour(Colour(0xff565656));
       g.fillRect(x, half_height, x_inc, bar_position - half_height);
     }
 
-    g.setColour(Colour(0xff00e676));
-    g.fillRect(x, bar_position, x_inc, 1.5f);
+    g.setColour(Colors::modulation);
+    g.fillRect(x, bar_position, x_inc, line_width);
 
     x += x_inc;
   }
@@ -139,6 +141,7 @@ void GraphicalStepSequencer::setStepSliders(std::vector<Slider*> sliders) {
   sequence_ = sliders;
   for (int i = 0; i < sliders.size(); ++i)
     sequence_[i]->addListener(this);
+  ensureMinSize();
   resetBackground();
 }
 
@@ -147,11 +150,16 @@ void GraphicalStepSequencer::sliderValueChanged(Slider* moved_slider) {
   resetBackground();
 }
 
-void GraphicalStepSequencer::setNumStepsSlider(Slider* num_steps_slider) {
+void GraphicalStepSequencer::guiChanged(SynthSlider* moved_slider) {
+  ensureMinSize();
+  resetBackground();
+}
+
+void GraphicalStepSequencer::setNumStepsSlider(SynthSlider* num_steps_slider) {
   if (num_steps_slider_)
     num_steps_slider_->removeListener(this);
   num_steps_slider_ = num_steps_slider;
-  num_steps_slider_->addListener(this);
+  num_steps_slider_->addSliderListener(this);
 
   ensureMinSize();
   resetBackground();
@@ -168,6 +176,7 @@ void GraphicalStepSequencer::resetBackground() {
   if (!background_.isValid())
     return;
 
+  ensureMinSize();
   const Desktop::Displays::Display& display = Desktop::getInstance().getDisplays().getMainDisplay();
   float scale = display.scale;
   Graphics g(background_);
@@ -201,7 +210,9 @@ void GraphicalStepSequencer::changeStep(const MouseEvent& e) {
   for (int step = selected_step; step != from_step + direction; step += direction) {
     if (step >= 0 && step < num_steps_) {
       float new_value = -2.0f * y / getHeight() + 1.0f;
-      sequence_[step]->setValue(std::max(std::min(new_value, 1.0f), -1.0f));
+      new_value = std::max(std::min(new_value, 1.0f), -1.0f);
+      new_value = sequence_[step]->snapValue(new_value, Slider::DragMode::absoluteDrag);
+      sequence_[step]->setValue(new_value);
     }
     y += inc_x * slope;
     inc_x = direction * getWidth() * 1.0f / num_steps_;

@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 
 // Utilities.
 #define UNUSED(x) (void)(x)
-#define INTERPOLATE(s, e, f) ((s) + (f) * ((e) - (s)))
 
 // Debugging.
 #if DEBUG
@@ -29,6 +28,14 @@
 #else
 #define MOPO_ASSERT(x) ((void)0)
 #endif // DEBUG
+
+#ifdef __clang__
+#define VECTORIZE_LOOP _Pragma("clang loop vectorize(enable) interleave(enable)")
+#elif _MSC_VER
+#define VECTORIZE_LOOP __pragma(loop(hint_parallel(8)))
+#else
+#define VECTORIZE_LOOP
+#endif
 
 namespace mopo {
 
@@ -40,6 +47,8 @@ namespace mopo {
   const int DEFAULT_SAMPLE_RATE = 44100;
   const int MAX_SAMPLE_RATE = 192000;
   const int MIDI_SIZE = 128;
+  const int MAX_POLYPHONY = 33;
+
   const int PPQ = 960; // Pulses per quarter note.
   const mopo_float VOICE_KILL_TIME = 0.02;
   const int NUM_MIDI_CHANNELS = 16;

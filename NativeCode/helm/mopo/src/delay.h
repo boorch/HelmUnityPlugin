@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include "memory.h"
 #include "processor.h"
+#include "utils.h"
 
 namespace mopo {
 
@@ -42,19 +43,14 @@ namespace mopo {
       virtual Processor* clone() const override { return new Delay(*this); }
       virtual void process() override;
 
-      void tick(int i) {
-        mopo_float audio = input(kAudio)->at(i);
-        mopo_float wet = input(kWet)->at(i);
-        mopo_float period = input(kSampleDelay)->at(i);
-        mopo_float feedback = input(kFeedback)->at(i);
-
-        mopo_float read = memory_->get(period);
-        memory_->push(audio + read * feedback);
-        output(0)->buffer[i] = INTERPOLATE(audio, read, wet);
-      }
+      inline void tick(int i, const mopo_float* audio, mopo_float* dest);
 
     protected:
       Memory* memory_;
+      mopo_float current_feedback_;
+      mopo_float current_wet_;
+      mopo_float current_dry_;
+      mopo_float current_period_;
   };
 } // namespace mopo
 

@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +50,8 @@ class ModulationMeter : public Component {
     const SynthSlider* destination_;
 
     double current_value_;
-    double knob_percent_;
-    double mod_percent_;
+    float knob_percent_;
+    float mod_percent_;
 
     PathStrokeType knob_stroke_;
     float full_radius_;

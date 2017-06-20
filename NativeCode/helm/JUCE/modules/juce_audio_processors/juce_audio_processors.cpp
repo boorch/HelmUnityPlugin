@@ -2,22 +2,24 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
@@ -31,10 +33,12 @@
  #error "Incorrect use of JUCE cpp file"
 #endif
 
+#include "AppConfig.h"
+
 #define JUCE_CORE_INCLUDE_NATIVE_HEADERS 1
 
 #include "juce_audio_processors.h"
-#include "../juce_gui_extra/juce_gui_extra.h"
+#include <juce_gui_extra/juce_gui_extra.h>
 
 //==============================================================================
 #if JUCE_MAC
@@ -70,9 +74,18 @@ static inline bool arrayContainsPlugin (const OwnedArray<PluginDescription>& lis
     return false;
 }
 
-#if JUCE_MAC
+#if JUCE_MAC || JUCE_IOS
+
+#if JUCE_IOS
+ #define JUCE_IOS_MAC_VIEW  UIView
+ typedef UIViewComponent  ViewComponentBaseClass;
+#else
+ #define JUCE_IOS_MAC_VIEW  NSView
+ typedef NSViewComponent  ViewComponentBaseClass;
+#endif
+
 //==============================================================================
-    
+
 struct AutoResizingNSViewComponent : public NSViewComponent,
                                      private AsyncUpdater {
     AutoResizingNSViewComponent();
@@ -84,7 +97,7 @@ struct AutoResizingNSViewComponent : public NSViewComponent,
 struct AutoResizingNSViewComponentWithParent : public AutoResizingNSViewComponent,
                                                private Timer {
     AutoResizingNSViewComponentWithParent();
-    NSView* getChildView() const;
+    JUCE_IOS_MAC_VIEW* getChildView() const;
     void timerCallback() override;
 };
 
@@ -112,18 +125,20 @@ void AutoResizingNSViewComponent::handleAsyncUpdate()
     resizeToFitView();
 }
 
+//==============================================================================
+
 AutoResizingNSViewComponentWithParent::AutoResizingNSViewComponentWithParent()
 {
-    NSView* v = [[NSView alloc] init];
+    JUCE_IOS_MAC_VIEW* v = [[JUCE_IOS_MAC_VIEW alloc] init];
     setView (v);
     [v release];
     
-    startTimer(500);
+    startTimer(30);
 }
 
-NSView* AutoResizingNSViewComponentWithParent::getChildView() const
+JUCE_IOS_MAC_VIEW* AutoResizingNSViewComponentWithParent::getChildView() const
 {
-    if (NSView* parent = (NSView*)getView())
+    if (JUCE_IOS_MAC_VIEW* parent = (JUCE_IOS_MAC_VIEW*)getView())
         if ([[parent subviews] count] > 0)
             return [[parent subviews] objectAtIndex: 0];
     
@@ -132,7 +147,7 @@ NSView* AutoResizingNSViewComponentWithParent::getChildView() const
 
 void AutoResizingNSViewComponentWithParent::timerCallback()
 {
-    if (NSView* child = getChildView())
+    if (JUCE_IOS_MAC_VIEW* child = getChildView())
     {
         stopTimer();
         setView(child);
@@ -148,7 +163,6 @@ void AutoResizingNSViewComponentWithParent::timerCallback()
 #include "format/juce_AudioPluginFormat.cpp"
 #include "format/juce_AudioPluginFormatManager.cpp"
 #include "processors/juce_AudioProcessor.cpp"
-#include "processors/juce_AudioChannelSet.cpp"
 #include "processors/juce_AudioProcessorEditor.cpp"
 #include "processors/juce_AudioProcessorGraph.cpp"
 #include "processors/juce_GenericAudioProcessorEditor.cpp"
@@ -160,7 +174,7 @@ void AutoResizingNSViewComponentWithParent::timerCallback()
 #include "scanning/juce_KnownPluginList.cpp"
 #include "scanning/juce_PluginDirectoryScanner.cpp"
 #include "scanning/juce_PluginListComponent.cpp"
-#include "utilities/juce_AudioProcessorValueTreeState.cpp"
 #include "utilities/juce_AudioProcessorParameters.cpp"
+#include "utilities/juce_AudioProcessorValueTreeState.cpp"
 
 }

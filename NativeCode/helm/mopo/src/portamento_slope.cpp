@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ namespace mopo {
   void PortamentoSlope::processBypass(int start) {
     mopo_float* dest = output(0)->buffer;
     const mopo_float* src = input(kTarget)->source->buffer;
-    memcpy(dest + start, src, (buffer_size_ - start) * sizeof(mopo_float));
+    utils::copyBuffer(dest + start, src, (buffer_size_ - start));
     last_value_ = dest[buffer_size_ - 1];
   }
 
@@ -48,12 +48,19 @@ namespace mopo {
   }
 
   void PortamentoSlope::process() {
+    MOPO_ASSERT(inputMatchesBufferSize(kTarget));
+
     processTriggers();
     int state = static_cast<int>(input(kPortamentoType)->at(0));
-    if (state == kPortamentoOff) {
+    mopo_float run_seconds = input(kRunSeconds)->at(0);
+    if (state == kPortamentoOff || utils::closeToZero(run_seconds)) {
       processBypass(0);
       return;
     }
+
+    mopo_float increment = 0.4 / (sample_rate_ * input(kRunSeconds)->at(0));
+    mopo_float decay = 0.07 / (sample_rate_ * input(kRunSeconds)->at(0));
+    const mopo_float* targets = input(kTarget)->source->buffer;
 
     int i = 0;
     int note_number = static_cast<int>(input(kNoteNumber)->source->trigger_value);
@@ -61,14 +68,14 @@ namespace mopo {
     if (state == kPortamentoAuto && note_number <= 1 && input(kTriggerJump)->source->triggered) {
       int trigger_offset = input(kTriggerJump)->source->trigger_offset;
       for (; i < trigger_offset; ++i)
-        tick(i);
+        tick(i, targets[i], increment, decay);
 
       last_value_ = input(kTarget)->at(trigger_offset);
     }
     else if (input(kTriggerStart)->source->triggered) {
       int trigger_offset = input(kTriggerStart)->source->trigger_offset;
       for (; i < trigger_offset; ++i)
-        tick(i);
+        tick(i, targets[i], increment, decay);
 
       last_value_ = input(kTriggerStart)->source->trigger_value;
     }
@@ -79,16 +86,12 @@ namespace mopo {
     }
     else {
       for (; i < buffer_size_; ++i)
-        tick(i);
+        tick(i, targets[i], increment, decay);
     }
   }
 
-  inline void PortamentoSlope::tick(int i) {
-    mopo_float target = input(kTarget)->at(i);
-    if (utils::closeToZero(input(kRunSeconds)->at(i)))
-      last_value_ = target;
-
-    mopo_float increment = 0.4 / (sample_rate_ * input(kRunSeconds)->at(0));
+  inline void PortamentoSlope::tick(int i, mopo_float target,
+                                    mopo_float increment, mopo_float decay) {
     if (target <= last_value_)
       last_value_ = utils::clamp(last_value_ - increment, target, last_value_);
     else
@@ -96,7 +99,7 @@ namespace mopo {
 
     mopo_float movement = target - last_value_;
     movement *= fabs(movement);
-    last_value_ += 0.07 * movement / (sample_rate_ * input(kRunSeconds)->at(0));
+    last_value_ += movement * decay;
     output()->buffer[i] = last_value_;
   }
 } // namespace mopo

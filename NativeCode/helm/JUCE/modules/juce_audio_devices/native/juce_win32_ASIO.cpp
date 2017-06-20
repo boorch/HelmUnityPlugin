@@ -2,22 +2,20 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   The code included in this file is provided under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license. Permission
+   To use, copy, modify, and/or distribute this software for any purpose with or
+   without fee is hereby granted provided that the above copyright notice and
+   this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-   ------------------------------------------------------------------------------
-
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
@@ -341,6 +339,8 @@ public:
          insideControlPanelModalLoop (false),
          shouldUsePreferredSize (false)
     {
+        ::CoInitialize (nullptr);
+
         name = devName;
         inBuffers.calloc (4);
         outBuffers.calloc (4);
@@ -365,17 +365,18 @@ public:
     void updateSampleRates()
     {
         // find a list of sample rates..
-        const int possibleSampleRates[] = { 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000 };
         Array<double> newRates;
 
         if (asioObject != nullptr)
         {
+            const int possibleSampleRates[] = { 32000, 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000 };
+
             for (int index = 0; index < numElementsInArray (possibleSampleRates); ++index)
                 if (asioObject->canSampleRate ((double) possibleSampleRates[index]) == 0)
                     newRates.add ((double) possibleSampleRates[index]);
         }
 
-        if (newRates.size() == 0)
+        if (newRates.isEmpty())
         {
             double cr = getSampleRate();
             JUCE_ASIO_LOG ("No sample rates supported - current rate: " + String ((int) cr));
@@ -1571,7 +1572,7 @@ private:
                             DWORD dsize = sizeof (pathName);
 
                             if (RegQueryValueEx (pathKey, 0, 0, &dtype, (LPBYTE) pathName, &dsize) == ERROR_SUCCESS)
-                                // In older code, this used to check for the existance of the file, but there are situations
+                                // In older code, this used to check for the existence of the file, but there are situations
                                 // where our process doesn't have access to it, but where the driver still loads ok..
                                 ok = (pathName[0] != 0);
 

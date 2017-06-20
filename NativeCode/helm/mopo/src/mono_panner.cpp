@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,9 @@ namespace mopo {
       Processor(MonoPanner::kNumInputs, MonoPanner::kNumOutputs) { }
 
   void MonoPanner::process() {
+    MOPO_ASSERT(inputMatchesBufferSize(kAudio));
+    MOPO_ASSERT(inputMatchesBufferSize(kPan));
+
     mopo_float integral;
     for (int i = 0; i < buffer_size_; ++i) {
       mopo_float audio = input(kAudio)->at(i);

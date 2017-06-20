@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "utils.h"
+
 namespace mopo {
 
   // A processor utility to store a stream of data for later lookup.
@@ -37,18 +39,44 @@ namespace mopo {
         memory_[offset_] = sample;
       }
 
+      void pushBlock(const mopo_float* samples, int num) {
+        int next_offset = (offset_ + num) & bitmask_;
+        if (next_offset < offset_) {
+          int block1 = num - next_offset - 1;
+          memcpy(memory_ + offset_ + 1, samples, sizeof(mopo_float) * block1);
+          memcpy(memory_, samples + block1, sizeof(mopo_float) * next_offset);
+        }
+        else
+          memcpy(memory_ + offset_ + 1, samples, sizeof(mopo_float) * num);
+
+        offset_ = next_offset;
+      }
+
+      void pushZero(int num) {
+        int next_offset = (offset_ + num) & bitmask_;
+        if (next_offset < offset_) {
+          int block1 = num - next_offset - 1;
+          memset(memory_ + offset_ + 1, 0, sizeof(mopo_float) * block1);
+          memset(memory_, 0, sizeof(mopo_float) * next_offset);
+        }
+        else
+          memset(memory_ + offset_ + 1, 0, sizeof(mopo_float) * num);
+
+        offset_ = next_offset;
+      }
+
       mopo_float getIndex(int index) const {
         return memory_[(offset_ - index) & bitmask_];
       }
 
       mopo_float get(mopo_float past) const {
         MOPO_ASSERT(past >= 0.0);
-        int index = std::max<int>(past, 1);
+        int index = utils::imax(past, 1);
         mopo_float sample_fraction = past - index;
 
         mopo_float from = getIndex(index - 1);
         mopo_float to = getIndex(index);
-        return INTERPOLATE(from, to, sample_fraction);
+        return utils::interpolate(from, to, sample_fraction);
       }
 
       unsigned int getOffset() const { return offset_; }

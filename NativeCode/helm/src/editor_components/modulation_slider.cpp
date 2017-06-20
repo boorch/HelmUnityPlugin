@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,20 @@ ModulationSlider::ModulationSlider(SynthSlider* destination) : SynthSlider(desti
 
   float destination_range = destination->getMaximum() - destination->getMinimum();
   setName(destination->getName());
-  setRange(-destination_range, destination_range);
+  if (details_.steps)
+    setRange(-destination_range, destination_range,
+             destination_range / (details_.steps - 1));
+  else
+    setRange(-destination_range, destination_range);
   setDoubleClickReturnValue(true, 0.0f);
   setSliderStyle(destination->getSliderStyle());
   setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
-  setStringLookup(destination->getStringLookup());
   setPostMultiply(destination->getPostMultiply());
   setUnits(destination->getUnits());
   setScalingType(destination->getScalingType());
+  setPopupPlacement(destination->getPopupPlacement(), destination->getPopupBuffer());
+
+  destination->addListener(this);
 
   if (destination->isRotary())
     setMouseDragSensitivity(2.0f * getMouseDragSensitivity());
@@ -39,6 +45,11 @@ ModulationSlider::ModulationSlider(SynthSlider* destination) : SynthSlider(desti
 }
 
 ModulationSlider::~ModulationSlider() {
+}
+
+void ModulationSlider::sliderValueChanged(Slider* moved_slider) {
+  if (isVisible())
+    repaint();
 }
 
 void ModulationSlider::mouseDown(const juce::MouseEvent &e) {

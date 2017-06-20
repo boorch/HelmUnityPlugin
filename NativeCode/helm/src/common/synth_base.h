@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,9 +51,12 @@ class SynthBase : public MidiManager::Listener {
   
     mopo::Output* getModSource(const std::string& name);
 
-    var saveToVar(String author);
-    void loadFromVar(var state);
-    void loadFromFile(File patch_file);
+    void loadInitPatch();
+    bool loadFromFile(File patch);
+    bool exportToFile();
+    bool saveToFile(File patch);
+    bool saveToActiveFile();
+    File getActiveFile() { return active_file_; }
 
     virtual void beginChangeGesture(const std::string& name) { }
     virtual void endChangeGesture(const std::string& name) { }
@@ -91,6 +94,8 @@ class SynthBase : public MidiManager::Listener {
   protected:
     virtual const CriticalSection& getCriticalSection() = 0;
     virtual SynthGuiInterface* getGuiInterface() = 0;
+    var saveToVar(String author);
+    void loadFromVar(var state);
     mopo::ModulationConnection* getConnection(const std::string& source,
                                               const std::string& destination);
 
@@ -115,9 +120,11 @@ class SynthBase : public MidiManager::Listener {
     ScopedPointer<MidiManager> midi_manager_;
     ScopedPointer<MidiKeyboardState> keyboard_state_;
 
+    File active_file_;
     float output_memory_[2 * mopo::MEMORY_RESOLUTION];
     float output_memory_write_[2 * mopo::MEMORY_RESOLUTION];
     mopo::mopo_float last_played_note_;
+    int last_num_pressed_;
     mopo::mopo_float memory_reset_period_;
     mopo::mopo_float memory_input_offset_;
     int memory_index_;

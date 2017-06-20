@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 class SynthGuiInterface {
   public:
-    SynthGuiInterface(SynthBase* synth);
+    SynthGuiInterface(SynthBase* synth, bool use_gui = true);
     virtual ~SynthGuiInterface() { }
 
     virtual AudioDeviceManager* getAudioDeviceManager() { return nullptr; }
@@ -30,6 +30,12 @@ class SynthGuiInterface {
     SynthBase* getSynth() { return synth_; }
     virtual void updateFullGui();
     virtual void updateGuiControl(const std::string& name, mopo::mopo_float value);
+    mopo::mopo_float getControlValue(const std::string& name);
+    void setFocus();
+    void notifyChange();
+    void notifyFresh();
+    void externalPatchLoaded(File patch);
+    void setGuiSize(int width, int height);
 
   protected:
     SynthBase* synth_;

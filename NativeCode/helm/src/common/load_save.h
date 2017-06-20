@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,8 @@ class LoadSave {
     static void loadSaveState(std::map<std::string, String>& save_info,
                               const NamedValueSet& properties);
 
+    static void initSynth(SynthBase* synth, std::map<std::string, String>& save_info);
+  
     static void varToState(SynthBase* synth,
                            std::map<std::string, String>& save_info,
                            var state);
@@ -66,11 +68,13 @@ class LoadSave {
     static bool wasUpgraded();
     static bool shouldCheckForUpdates();
     static bool shouldAnimateWidgets();
+    static float loadWindowSize();
     static void saveVarToConfig(var config_state);
     static void saveLayoutConfig(mopo::StringLayout* layout);
     static void saveVersionConfig();
     static void saveUpdateCheckConfig(bool check_for_updates);
     static void saveAnimateWidgets(bool check_for_updates);
+    static void saveWindowSize(float window_size);
     static void saveMidiMapConfig(MidiManager* midi_manager);
     static void loadConfig(MidiManager* midi_manager, mopo::StringLayout* layout = nullptr);
 
@@ -80,12 +84,17 @@ class LoadSave {
     static File getFactoryBankDirectory();
     static File getBankDirectory();
     static File getUserBankDirectory();
+    static void exportBank(String bank_name);
+    static void importBank();
     static int compareVersionStrings(String a, String b);
 
     static int getNumPatches();
     static File getPatchFile(int bank_index, int folder_index, int patch_index);
+    static Array<File> getAllPatches();
     static File loadPatch(int bank_index, int folder_index, int patch_index,
                           SynthBase* synth, std::map<std::string, String>& gui_state);
+    static void loadPatchFile(File file, SynthBase* synth,
+                              std::map<std::string, String>& gui_state);
 };
 
 #endif  // LOAD_SAVE_H

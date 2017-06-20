@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ namespace mopo {
         kAudio,
         kSampleDelay,
         kFeedback,
+        kReset,
         kNumInputs
       };
 
@@ -44,15 +45,14 @@ namespace mopo {
 
       virtual void process() override;
 
-      void tick(int i) {
-        mopo_float audio = input(kAudio)->at(i);
-        mopo_float period = input(kSampleDelay)->at(i);
-        mopo_float feedback = input(kFeedback)->at(i);
-
-        mopo_float read = memory_->get(period);
-        mopo_float value = audio + read * feedback;
+      inline void tick(int i, mopo_float* dest,
+                       const mopo_float* audio,
+                       const mopo_float* period,
+                       const mopo_float* feedback) {
+        mopo_float read = memory_->get(period[i]);
+        mopo_float value = audio[i] + read * feedback[i];
         memory_->push(value);
-        output(0)->buffer[i] = value;
+        dest[i] = value;
         MOPO_ASSERT(std::isfinite(value));
       }
 

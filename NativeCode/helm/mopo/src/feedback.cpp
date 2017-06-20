@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,20 @@
 namespace mopo {
 
   void Feedback::process() {
-    memcpy(buffer_, input(0)->source->buffer,
-           buffer_size_ * sizeof(mopo_float));
+    MOPO_ASSERT(inputMatchesBufferSize());
+
     refreshOutput();
+
+    if (control_rate_)
+      buffer_[0] = input(0)->at(0);
+    else
+      utils::copyBuffer(buffer_, input(0)->source->buffer, buffer_size_);
   }
 
   void Feedback::refreshOutput() {
-    memcpy(output(0)->buffer, buffer_,
-           MAX_BUFFER_SIZE * sizeof(mopo_float));
+    if (control_rate_)
+      output(0)->buffer[0] = buffer_[0];
+    else
+      utils::copyBuffer(output(0)->buffer, buffer_, MAX_BUFFER_SIZE);
   }
 } // namespace mopo

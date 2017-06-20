@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,20 +18,28 @@
 
 namespace mopo {
 
-  const mopo_float FixedPointOscillator::SCALE_OUT = 0.5 / (FixedPointWaveLookup::SCALE * INT_MAX);
-
   FixedPointOscillator::FixedPointOscillator() : Processor(kNumInputs, 1), phase_(0) { }
 
   void FixedPointOscillator::process() {
-    int phase_inc = UINT_MAX * input(kPhaseInc)->source->buffer[0];
-    mopo_float shuffle = utils::clamp(1.0 - input(kShuffle)->source->buffer[0], 0.0, 1.0);
+    const mopo_float* amplitude = input(kAmplitude)->source->buffer;
     mopo_float* dest = output()->buffer;
 
+    int phase_inc = UINT_MAX * input(kPhaseInc)->at(0);
+    if (input(kLowOctave)->at(0))
+      phase_inc /= 2.0;
+
+    if (amplitude[0] == 0.0 && amplitude[buffer_size_ - 1] == 0.0) {
+      phase_ += phase_inc * buffer_size_;
+      utils::zeroBuffer(dest, buffer_size_);
+      return;
+    }
+
+    mopo_float shuffle = utils::clamp(1.0 - input(kShuffle)->source->buffer[0], 0.0, 1.0);
     unsigned int shuffle_index = INT_MAX * shuffle;
 
     int waveform = static_cast<int>(input(kWaveform)->source->buffer[0] + 0.5);
-    waveform = mopo::utils::clamp(waveform, 0, FixedPointWaveLookup::kWhiteNoise - 1);
-    int* wave_buffer = FixedPointWave::getBuffer(waveform, 2.0 * phase_inc);
+    waveform = mopo::utils::iclamp(waveform, 0, FixedPointWaveLookup::kWhiteNoise - 1);
+    mopo_float* wave_buffer = FixedPointWave::getBuffer(waveform, 2.0 * phase_inc);
 
     mopo_float first_adjust = bool(shuffle) * 2.0 / shuffle;
     mopo_float second_adjust = 1.0 / (1.0 - 0.5 * shuffle);
@@ -49,7 +57,8 @@ namespace mopo {
         for (; i < samples; ++i) {
           phase_ += phase_inc;
           current_phase = phase_ * first_adjust;
-          dest[i] = SCALE_OUT * wave_buffer[FixedPointWave::getIndex(current_phase)];
+          mopo_float wave_read = wave_buffer[FixedPointWave::getIndex(current_phase)];
+          dest[i] = amplitude[i] * wave_read;
         }
       }
 
@@ -58,7 +67,8 @@ namespace mopo {
       for (; i < samples; ++i) {
         phase_ += phase_inc;
         current_phase = (phase_ - shuffle_index) * second_adjust;
-        dest[i] = SCALE_OUT * wave_buffer[FixedPointWave::getIndex(current_phase)];
+        mopo_float wave_read = wave_buffer[FixedPointWave::getIndex(current_phase)];
+        dest[i] = amplitude[i] * wave_read;
       }
     }
   }

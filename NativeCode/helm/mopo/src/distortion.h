@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,21 +24,23 @@
 
 namespace mopo {
 
-  // Implements RBJ biquad filters of different types.
   class Distortion : public Processor {
     public:
       enum Inputs {
         kAudio,
+        kOn,
         kType,
-        kThreshold,
+        kDrive,
+        kMix,
         kNumInputs
       };
 
       enum Type {
-        kTanh,
+        kSoftClip,
         kHardClip,
-        kVelTanh,
-        kNumTypes,
+        kLinearFold,
+        kSinFold,
+        kNumTypes
       };
 
       Distortion();
@@ -50,21 +52,14 @@ namespace mopo {
 
       virtual void process() override;
 
-      void processTanh();
+      void processSoftClip();
       void processHardClip();
-      void processVelTanh();
-
-      void tick(int i) {
-      }
+      void processLinearFold();
+      void processSinFold();
 
     private:
-      void reset();
-
-      Type current_type_;
-
-      mopo_float past_in_;
-      mopo_float past_out_;
-      mopo_float tmp_buffer_[MAX_BUFFER_SIZE];
+      mopo_float last_mix_;
+      mopo_float last_drive_;
   };
 } // namespace mopo
 

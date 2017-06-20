@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "load_save.h"
 #include "startup.h"
 #include "synth_gui_interface.h"
+#include "utils.h"
 
 #define OUTPUT_WINDOW_MIN_NOTE 16.0
 
@@ -29,6 +30,7 @@ SynthBase::SynthBase() {
   midi_manager_ = new MidiManager(this, keyboard_state_, &save_info_, this);
 
   last_played_note_ = 0.0;
+  last_num_pressed_ = 0;
   memset(output_memory_, 0, 2 * mopo::MEMORY_RESOLUTION * sizeof(float));
   memset(output_memory_write_, 0, 2 * mopo::MEMORY_RESOLUTION * sizeof(float));
   memory_reset_period_ = mopo::MEMORY_RESOLUTION;
@@ -56,8 +58,10 @@ void SynthBase::valueChangedThroughMidi(const std::string& name, mopo::mopo_floa
 
 void SynthBase::patchChangedThroughMidi(File patch) {
   SynthGuiInterface* gui_interface = getGuiInterface();
-  if (gui_interface)
+  if (gui_interface) {
     gui_interface->updateFullGui();
+    gui_interface->notifyFresh();
+  }
 }
 
 void SynthBase::valueChangedExternal(const std::string& name, mopo::mopo_float value) {
@@ -145,14 +149,74 @@ var SynthBase::saveToVar(String author) {
   return LoadSave::stateToVar(this, save_info_, getCriticalSection());
 }
 
+void SynthBase::loadInitPatch() {
+  getCriticalSection().enter();
+  LoadSave::initSynth(this, save_info_);
+  getCriticalSection().exit();
+}
+
 void SynthBase::loadFromVar(juce::var state) {
   getCriticalSection().enter();
   LoadSave::varToState(this, save_info_, state);
   getCriticalSection().exit();
+}
+
+bool SynthBase::loadFromFile(File patch) {
+  var parsed_json_state;
+  if (patch.exists() && JSON::parse(patch.loadFileAsString(), parsed_json_state).wasOk()) {
+    active_file_ = patch;
+    File parent = patch.getParentDirectory();
+    loadFromVar(parsed_json_state);
+    setFolderName(parent.getFileNameWithoutExtension());
+    setPatchName(patch.getFileNameWithoutExtension());
+
+    SynthGuiInterface* gui_interface = getGuiInterface();
+    if (gui_interface) {
+      gui_interface->updateFullGui();
+      gui_interface->notifyFresh();
+    }
+
+    return true;
+  }
+  return false;
+}
+
+bool SynthBase::exportToFile() {
+  File active_file = getActiveFile();
+  FileChooser save_box("Export Patch", File(), String("*.") + mopo::PATCH_EXTENSION);
+  if (!save_box.browseForFileToSave(true))
+    return false;
+
+  saveToFile(save_box.getResult());
+  return true;
+}
+
+bool SynthBase::saveToFile(File patch) {
+  if (patch.getFileExtension() != mopo::PATCH_EXTENSION)
+    patch = patch.withFileExtension(String(mopo::PATCH_EXTENSION));
+
+  File parent = patch.getParentDirectory();
+  setFolderName(parent.getFileNameWithoutExtension());
+  setPatchName(patch.getFileNameWithoutExtension());
 
   SynthGuiInterface* gui_interface = getGuiInterface();
-  if (gui_interface)
+  if (gui_interface) {
     gui_interface->updateFullGui();
+    gui_interface->notifyFresh();
+  }
+
+  if (patch.replaceWithText(JSON::toString(saveToVar(save_info_["author"])))) {
+    active_file_ = patch;
+    return true;
+  }
+  return false;
+}
+
+bool SynthBase::saveToActiveFile() {
+  if (!active_file_.exists() || !active_file_.hasWriteAccess())
+    return false;
+
+  return saveToFile(active_file_);
 }
 
 void SynthBase::processAudio(AudioSampleBuffer* buffer, int channels, int samples, int offset) {
@@ -167,7 +231,7 @@ void SynthBase::processAudio(AudioSampleBuffer* buffer, int channels, int sample
     float* channelData = buffer->getWritePointer(channel, offset);
     const mopo::mopo_float* synth_output = (channel % 2) ? engine_output_right : engine_output_left;
 
-    #pragma clang loop vectorize(enable) interleave(enable)
+    VECTORIZE_LOOP
     for (int i = 0; i < samples; ++i) {
       channelData[i] = synth_output[i];
       MOPO_ASSERT(std::isfinite(synth_output[i]));
@@ -191,9 +255,9 @@ void SynthBase::processMidi(MidiBuffer& midi_messages, int start_sample, int end
 void SynthBase::processKeyboardEvents(MidiBuffer& buffer, int num_samples) {
   MidiBuffer keyboard_messages;
   midi_manager_->replaceKeyboardMessages(keyboard_messages, num_samples);
-  processMidi(keyboard_messages);
-
   midi_manager_->replaceKeyboardMessages(buffer, num_samples);
+
+  processMidi(keyboard_messages);
 }
 
 void SynthBase::processControlChanges() {
@@ -220,9 +284,10 @@ void SynthBase::processModulationChanges() {
 void SynthBase::updateMemoryOutput(int samples, const mopo::mopo_float* left,
                                                 const mopo::mopo_float* right) {
   mopo::mopo_float last_played = std::max(engine_.getLastActiveNote(), OUTPUT_WINDOW_MIN_NOTE);
-  int output_inc = engine_.getSampleRate() / mopo::MEMORY_SAMPLE_RATE;
+  int num_pressed = engine_.getPressedNotes().size();
+  int output_inc = std::max<int>(1, engine_.getSampleRate() / mopo::MEMORY_SAMPLE_RATE);
 
-  if (last_played && last_played_note_ != last_played) {
+  if (last_played && (last_played_note_ != last_played || num_pressed > last_num_pressed_)) {
     last_played_note_ = last_played;
     
     mopo::mopo_float frequency = mopo::utils::midiNoteToFrequency(last_played_note_);
@@ -235,7 +300,9 @@ void SynthBase::updateMemoryOutput(int samples, const mopo::mopo_float* left,
 
     memory_reset_period_ = std::min(memory_reset_period_, 2.0 * window_length);
     memory_index_ = 0;
+    mopo::utils::copyBufferf(output_memory_, output_memory_write_, 2 * mopo::MEMORY_RESOLUTION);
   }
+  last_num_pressed_ = num_pressed;
 
   for (; memory_input_offset_ < samples; memory_input_offset_ += output_inc) {
     int input_index = mopo::utils::iclamp(memory_input_offset_, 0, samples);
@@ -244,12 +311,12 @@ void SynthBase::updateMemoryOutput(int samples, const mopo::mopo_float* left,
     MOPO_ASSERT(input_index < samples);
     MOPO_ASSERT(memory_index_ >= 0);
     MOPO_ASSERT(memory_index_ < 2 * mopo::MEMORY_RESOLUTION);
-    output_memory_write_[memory_index_++] = left[input_index] + right[input_index];
+    output_memory_write_[memory_index_++] = (left[input_index] + right[input_index]) / 2.0;
 
     if (memory_index_ * output_inc >= memory_reset_period_) {
       memory_input_offset_ += memory_reset_period_ - memory_index_ * output_inc;
       memory_index_ = 0;
-      memcpy(output_memory_, output_memory_write_, 2 * mopo::MEMORY_RESOLUTION * sizeof(float));
+      mopo::utils::copyBufferf(output_memory_, output_memory_write_, 2 * mopo::MEMORY_RESOLUTION);
     }
   }
 
@@ -300,7 +367,9 @@ String SynthBase::getFolderName() {
 void SynthBase::ValueChangedCallback::messageCallback() {
   if (listener) {
     SynthGuiInterface* gui_interface = listener->getGuiInterface();
-    if (gui_interface)
+    if (gui_interface) {
       gui_interface->updateGuiControl(control_name, value);
+      gui_interface->notifyChange();
+    }
   }
 }

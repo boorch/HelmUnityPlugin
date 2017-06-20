@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,12 +32,17 @@ namespace mopo {
       sustain_(false), phase_(1.0), note_index_(-1),
       current_octave_(0), octave_up_(true), last_played_note_(0) {
     MOPO_ASSERT(note_handler);
+    pressed_notes_.reserve(MIDI_SIZE);
+    sustained_notes_.reserve(MIDI_SIZE);
   }
 
   void Arpeggiator::process() {
+    if (input(kOn)->at(0) == 0.0)
+      return;
+    
     mopo_float frequency = input(kFrequency)->at(0);
-    float min_gate = (MIN_VOICE_TIME + VOICE_KILL_TIME) * frequency;
-    mopo_float gate = INTERPOLATE(min_gate, 1.0, input(kGate)->at(0));
+    mopo_float min_gate = (MIN_VOICE_TIME + VOICE_KILL_TIME) * frequency;
+    mopo_float gate = utils::interpolate(min_gate, 1.0, input(kGate)->at(0));
 
     mopo_float delta_phase = frequency / sample_rate_;
     mopo_float new_phase = phase_ + buffer_size_ * delta_phase;
@@ -62,7 +67,7 @@ namespace mopo {
   }
 
   std::pair<mopo_float, mopo_float> Arpeggiator::getNextNote() {
-    int octaves = std::max<int>(1, input(kOctaves)->at(0));
+    int octaves = utils::imax(1, input(kOctaves)->at(0));
     Pattern type =
         static_cast<Pattern>(static_cast<int>(input(kPattern)->at(0)));
     std::vector<mopo_float>* pattern = &as_played_;
@@ -113,11 +118,8 @@ namespace mopo {
     return std::pair<mopo_float, mopo_float>(note, velocity);
   }
 
-  std::list<mopo_float> Arpeggiator::getPressedNotes() {
-    std::list<mopo_float> notes;
-    for (mopo_float note : pressed_notes_)
-      notes.push_back(note);
-    return notes;
+  CircularQueue<mopo_float>& Arpeggiator::getPressedNotes() {
+    return pressed_notes_;
   }
 
   void Arpeggiator::addNoteToPatterns(mopo_float note) {
@@ -167,7 +169,7 @@ namespace mopo {
       phase_ = 1.0;
     }
     active_notes_[note] = velocity;
-    pressed_notes_.insert(note);
+    pressed_notes_.push_back(note);
     addNoteToPatterns(note);
   }
 
@@ -176,13 +178,13 @@ namespace mopo {
       return kVoiceOff;
 
     if (sustain_)
-      sustained_notes_.insert(note);
+      sustained_notes_.push_back(note);
     else {
       active_notes_.erase(note);
       removeNoteFromPatterns(note);
     }
 
-    pressed_notes_.erase(note);
+    pressed_notes_.remove(note);
     return kVoiceOff;
   }
 } // namespace mopo

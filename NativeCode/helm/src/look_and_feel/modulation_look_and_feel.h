@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,12 +38,20 @@ class ModulationLookAndFeel : public LookAndFeel_V3 {
                           Slider& slider) override;
 
     void drawToggleButton(Graphics& g, ToggleButton& button,
-                          bool isMouseOverButton, bool isButtonDown) override;
+                          bool hover, bool is_down) override;
+
+    int getSliderPopupPlacement(Slider& slider) override;
+
+    Font getPopupMenuFont() override;
+    Font getSliderPopupFont(Slider& slider) override;
 
     static ModulationLookAndFeel* instance() {
       static ModulationLookAndFeel instance;
       return &instance;
     }
+
+  protected:
+    ModulationLookAndFeel();
 };
 
 #endif // MODULATION_LOOK_AND_FEEL_H

@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ namespace mopo {
     public:
       enum Inputs {
         kReset,
+        kAmplitude,
         kNumInputs
       };
 
@@ -38,11 +39,11 @@ namespace mopo {
       virtual Processor* clone() const { return new NoiseOscillator(*this); }
 
     protected:
-      inline void tick(int i) {
+      inline void tick(int i, mopo_float* dest, mopo_float amplitude) {
         current_noise_value_ *= current_noise_value_;
-        current_noise_value_ = current_noise_value_ - int(current_noise_value_);
+        current_noise_value_ = current_noise_value_ - floor(current_noise_value_);
 
-        output()->buffer[i] = 2.0 * current_noise_value_ - 1.0;
+        dest[i] = amplitude * (2.0 * current_noise_value_ - 1.0);
 
         current_noise_value_ += NOISE_INT_CONSTANT;
       }

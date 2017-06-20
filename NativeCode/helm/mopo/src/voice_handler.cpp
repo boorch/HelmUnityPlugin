@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,10 +38,15 @@ namespace mopo {
   VoiceHandler::VoiceHandler(size_t polyphony) :
       ProcessorRouter(kNumInputs, 0), polyphony_(0), sustain_(false),
       legato_(false), voice_killer_(0), last_played_note_(-1.0) {
+    pressed_notes_.reserve(MIDI_SIZE);
+    all_voices_.reserve(MAX_POLYPHONY);
+    free_voices_.reserve(MAX_POLYPHONY);
+    active_voices_.reserve(MAX_POLYPHONY);
+
     setPolyphony(polyphony);
     voice_router_.router(this);
     global_router_.router(this);
-  }
+}
 
   VoiceHandler::~VoiceHandler() {
     voice_router_.destroy();
@@ -50,8 +55,11 @@ namespace mopo {
     for (Voice* voice : all_voices_)
       delete voice;
 
-    for (Output* output : accumulated_outputs_)
-      delete output;
+    for (auto& output : accumulated_outputs_)
+      delete output.second;
+
+    for (auto& output : last_voice_outputs_)
+      delete output.second;
   }
 
   void VoiceHandler::prepareVoiceTriggers(Voice* voice) {
@@ -86,37 +94,34 @@ namespace mopo {
   }
 
   void VoiceHandler::clearAccumulatedOutputs() {
-    for (int i = 0; i < numOutputs(); ++i) {
-      if (shouldAccumulate(voice_outputs_[i])) {
-        int buffer_size = voice_outputs_[i]->owner->getBufferSize();
-        memset(output(i)->buffer, 0, buffer_size * sizeof(mopo_float));
-      }
-    }
+    for (auto& output : accumulated_outputs_)
+      utils::zeroBuffer(output.second->buffer, MAX_BUFFER_SIZE);
   }
 
   void VoiceHandler::clearNonaccumulatedOutputs() {
-    for (int i = 0; i < numOutputs(); ++i) {
-      if (!shouldAccumulate(voice_outputs_[i]))
-        output(i)->buffer[0] = 0.0;
-    }
+    for (auto& output : last_voice_outputs_)
+      utils::zeroBuffer(output.second->buffer, MAX_BUFFER_SIZE);
   }
 
   void VoiceHandler::accumulateOutputs() {
-    for (int out = 0; out < numOutputs(); ++out) {
-      if (shouldAccumulate(voice_outputs_[out])) {
-        int buffer_size = voice_outputs_[out]->owner->getBufferSize();
-        for (int i = 0; i < buffer_size; ++i)
-          output(out)->buffer[i] += voice_outputs_[out]->buffer[i];
-      }
+    for (auto& output : accumulated_outputs_) {
+      int buffer_size = output.first->owner->getBufferSize();
+      mopo_float* dest = output.second->buffer;
+      const mopo_float* source = output.first->buffer;
+
+      VECTORIZE_LOOP
+      for (int i = 0; i < buffer_size; ++i)
+        dest[i] += source[i];
     }
   }
 
   void VoiceHandler::writeNonaccumulatedOutputs() {
-    for (int i = 0; i < numOutputs(); ++i) {
-      if (!shouldAccumulate(voice_outputs_[i])) {
-        if (active_voices_.size())
-          output(i)->buffer[0] = voice_outputs_[i]->buffer[0];
-      }
+    for (auto& output : last_voice_outputs_) {
+      int buffer_size = output.first->owner->getBufferSize();
+      mopo_float* dest = output.second->buffer;
+      const mopo_float* source = output.first->buffer;
+
+      utils::copyBuffer(dest, source, buffer_size);
     }
   }
 
@@ -127,11 +132,22 @@ namespace mopo {
   void VoiceHandler::process() {
     global_router_.process();
 
+    int num_voices = active_voices_.size();
+    if (num_voices == 0) {
+      if (last_num_voices_) {
+        clearNonaccumulatedOutputs();
+        clearAccumulatedOutputs();
+      }
+
+      last_num_voices_ = num_voices;
+      return;
+    }
+
     int polyphony = static_cast<int>(input(kPolyphony)->at(0));
     setPolyphony(utils::iclamp(polyphony, 1, polyphony));
     clearAccumulatedOutputs();
 
-    std::list<Voice*>::iterator iter = active_voices_.begin();
+    auto iter = active_voices_.begin();
     while (iter != active_voices_.end()) {
       Voice* voice = *iter;
       prepareVoiceTriggers(voice);
@@ -150,8 +166,8 @@ namespace mopo {
 
     if (active_voices_.size())
       writeNonaccumulatedOutputs();
-    else
-      clearNonaccumulatedOutputs();
+
+    last_num_voices_ = num_voices;
   }
 
   void VoiceHandler::setSampleRate(int sample_rate) {
@@ -206,15 +222,14 @@ namespace mopo {
 
     // First check free voices.
     if (free_voices_.size() &&
-       (!legato_ || pressed_notes_.size() == 0 || active_voices_.size() < polyphony_)) {
+       (!legato_ || pressed_notes_.size() < polyphony_ || active_voices_.size() < polyphony_)) {
       voice = free_voices_.front();
       free_voices_.pop_front();
       return voice;
     }
 
     // Next check released voices.
-    std::list<Voice*>::iterator iter = active_voices_.begin();
-    for (; iter != active_voices_.end(); ++iter) {
+    for (auto iter = active_voices_.begin(); iter != active_voices_.end(); ++iter) {
       voice = *iter;
       if (voice->key_state() == Voice::kReleased) {
         active_voices_.erase(iter);
@@ -223,8 +238,7 @@ namespace mopo {
     }
 
     // Then check sustained voices.
-    iter = active_voices_.begin();
-    for (; iter != active_voices_.end(); ++iter) {
+    for (auto iter = active_voices_.begin(); iter != active_voices_.end(); ++iter) {
       voice = *iter;
       if (voice->key_state() == Voice::kSustained) {
         active_voices_.erase(iter);
@@ -245,8 +259,7 @@ namespace mopo {
     Voice* oldest_sustained = 0;
     Voice* oldest_held = 0;
 
-    std::list<Voice*>::iterator iter = active_voices_.begin();
-    for (; iter != active_voices_.end(); ++iter) {
+    for (auto iter = active_voices_.begin(); iter != active_voices_.end(); ++iter) {
       Voice* voice = *iter;
       if (voice->state().event == kVoiceKill)
         excess_voices--;
@@ -294,6 +307,8 @@ namespace mopo {
   VoiceEvent VoiceHandler::noteOff(mopo_float note, int sample) {
     pressed_notes_.remove(note);
 
+    VoiceEvent voice_event = kVoiceOff;
+
     for (Voice* voice : active_voices_) {
       if (voice->state().note == note) {
         if (sustain_)
@@ -311,14 +326,14 @@ namespace mopo {
                                 pressed_notes_.size() + 1, sample);
             last_played_note_ = old_note;
 
-            return kVoiceReset;
+            voice_event = kVoiceReset;
           }
           else
             voice->deactivate(sample);
         }
       }
     }
-    return kVoiceOff;
+    return voice_event;
   }
 
   void VoiceHandler::setAftertouch(mopo_float note, mopo_float aftertouch, int sample) {
@@ -373,8 +388,10 @@ namespace mopo {
     Output* new_output = new Output();
     new_output->owner = this;
     ProcessorRouter::registerOutput(new_output);
-    accumulated_outputs_.push_back(new_output);
-    voice_outputs_.push_back(output);
+    if (shouldAccumulate(output))
+      accumulated_outputs_[output] = new_output;
+    else
+      last_voice_outputs_[output] = new_output;
     return new_output;
   }
 

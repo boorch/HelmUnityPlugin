@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ void MidiManager::cancelMidiLearn() {
 }
 
 void MidiManager::clearMidiLearn(const std::string& name) {
-  for (auto controls : midi_learn_map_) {
+  for (auto& controls : midi_learn_map_) {
     if (controls.second.count(name)) {
       midi_learn_map_[controls.first].erase(name);
       LoadSave::saveMidiMapConfig(this);
@@ -66,7 +66,7 @@ void MidiManager::midiInput(int midi_id, mopo::mopo_float value) {
   }
 
   if (midi_learn_map_.count(midi_id)) {
-    for (auto control : midi_learn_map_[midi_id]) {
+    for (auto& control : midi_learn_map_[midi_id]) {
       midi_range range = control.second;
       mopo::mopo_float percent = value / (mopo::MIDI_SIZE - 1);
       mopo::mopo_float translated = percent * (range.second - range.first) + range.first;
@@ -76,7 +76,7 @@ void MidiManager::midiInput(int midi_id, mopo::mopo_float value) {
 }
 
 bool MidiManager::isMidiMapped(const std::string& name) const {
-  for (auto controls : midi_learn_map_) {
+  for (auto& controls : midi_learn_map_) {
     if (controls.second.count(name))
       return true;
   }

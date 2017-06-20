@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
  */
 
 #include "file_list_box_model.h"
+
+#include "colors.h"
 #include "fonts.h"
 #include "load_save.h"
 
@@ -28,11 +30,11 @@ void FileListBoxModel::paintListBoxItem(int row_number, Graphics& g,
   g.setColour(Colour(0xffdddddd));
   if (selected) {
     g.fillAll(Colour(0xff444444));
-    g.setColour(Colour(0xff03a9f4));
+    g.setColour(Colors::audio);
   }
 
   g.setFont(Fonts::instance()->monospace().withPointHeight(12.0f));
-  g.drawText(files_[row_number].getFileName(),
+  g.drawText(files_[row_number].getFileNameWithoutExtension(),
              5, 0, width, height,
              Justification::centredLeft, true);
 

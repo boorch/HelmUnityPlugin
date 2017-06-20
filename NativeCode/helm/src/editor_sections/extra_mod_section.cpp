@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,10 @@
  */
 
 #include "extra_mod_section.h"
+
+#include "colors.h"
 #include "fonts.h"
 #include "modulation_look_and_feel.h"
-
-#define BUTTON_WIDTH 32
 
 ExtraModSection::ExtraModSection(String name) : SynthSection(name) {
   addModulationButton(aftertouch_mod_ = new ModulationButton("aftertouch"));
@@ -35,6 +35,9 @@ ExtraModSection::ExtraModSection(String name) : SynthSection(name) {
 
   addModulationButton(pitch_wheel_mod_ = new ModulationButton("pitch_wheel"));
   pitch_wheel_mod_->setLookAndFeel(ModulationLookAndFeel::instance());
+
+  addModulationButton(random_mod_ = new ModulationButton("random"));
+  random_mod_->setLookAndFeel(ModulationLookAndFeel::instance());
 }
 
 ExtraModSection::~ExtraModSection() {
@@ -43,36 +46,42 @@ ExtraModSection::~ExtraModSection() {
   velocity_mod_ = nullptr;
   mod_wheel_mod_ = nullptr;
   pitch_wheel_mod_ = nullptr;
+  random_mod_ = nullptr;
 }
 
 void ExtraModSection::drawTextToRightOfComponent(Graphics& g, Component* component, String text) {
-  static const int SPACE = 6;
-  g.drawText(text, component->getRight() + SPACE, component->getY(), getWidth() / 2,
+  float space = size_ratio_ * 6.0f;
+  g.drawText(text, component->getRight() + space, component->getY(), getWidth() / 2,
              component->getHeight(), Justification::centredLeft, false);
 }
 
 void ExtraModSection::paintBackground(Graphics& g) {
   SynthSection::paintBackground(g);
 
-  g.setColour(Colour(0xffbbbbbb));
-  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(10.0f));
+  g.setColour(Colors::control_label_text);
+  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(size_ratio_ * 10.0f));
+  
   drawTextToRightOfComponent(g, aftertouch_mod_, TRANS("AFTERTOUCH"));
   drawTextToRightOfComponent(g, note_mod_, TRANS("NOTE"));
   drawTextToRightOfComponent(g, velocity_mod_, TRANS("VELOCITY"));
   drawTextToRightOfComponent(g, mod_wheel_mod_, TRANS("MOD WHEEL"));
   drawTextToRightOfComponent(g, pitch_wheel_mod_, TRANS("PITCH WHEEL"));
+  drawTextToRightOfComponent(g, random_mod_, TRANS("RANDOM"));
 }
 
 void ExtraModSection::resized() {
-  int x = 30;
-  int x2 = getWidth() / 2 + 15;
-  float space = (getHeight() - 20 - (3.0f * BUTTON_WIDTH)) / 4.0f;
+  int button_width = getModButtonWidth();
+  int title_width = getTitleWidth();
+  int x = size_ratio_ * 30;
+  int x2 = getWidth() / 2 + size_ratio_ * 15.0f;
+  float space = (getHeight() - title_width - (3.0f * button_width)) / 4.0f;
 
-  aftertouch_mod_->setBounds(x, 20 + space, BUTTON_WIDTH, BUTTON_WIDTH);
-  note_mod_->setBounds(x, aftertouch_mod_->getBottom() + space, BUTTON_WIDTH, BUTTON_WIDTH);
-  velocity_mod_->setBounds(x, note_mod_->getBottom() + space, BUTTON_WIDTH, BUTTON_WIDTH);
-  mod_wheel_mod_->setBounds(x2, 20 + space, BUTTON_WIDTH, BUTTON_WIDTH);
-  pitch_wheel_mod_->setBounds(x2, mod_wheel_mod_->getBottom() + space, BUTTON_WIDTH, BUTTON_WIDTH);
+  aftertouch_mod_->setBounds(x, title_width + space, button_width, button_width);
+  note_mod_->setBounds(x, aftertouch_mod_->getBottom() + space, button_width, button_width);
+  velocity_mod_->setBounds(x, note_mod_->getBottom() + space, button_width, button_width);
+  mod_wheel_mod_->setBounds(x2, title_width + space, button_width, button_width);
+  pitch_wheel_mod_->setBounds(x2, mod_wheel_mod_->getBottom() + space, button_width, button_width);
+  random_mod_->setBounds(x2, pitch_wheel_mod_->getBottom() + space, button_width, button_width);
 
   SynthSection::resized();
 }

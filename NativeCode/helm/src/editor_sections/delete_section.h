@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,9 @@
 #define DELETE_SECTION_H
 
 #include "JuceHeader.h"
+#include "overlay.h"
 
-class DeleteSection : public Component, public ButtonListener {
+class DeleteSection : public Overlay, public ButtonListener {
   public:
     class Listener {
       public:
@@ -41,8 +42,8 @@ class DeleteSection : public Component, public ButtonListener {
 
     Rectangle<int> getDeleteRect();
 
-    void addListener(Listener* listener) { listeners_.add(listener); }
-    void removeListener(Listener* listener) { listeners_.removeAllInstancesOf(listener); }
+    void addDeleteListener(Listener* listener) { listeners_.add(listener); }
+    void removeDeleteListener(Listener* listener) { listeners_.removeAllInstancesOf(listener); }
 
   private:
     File file_;

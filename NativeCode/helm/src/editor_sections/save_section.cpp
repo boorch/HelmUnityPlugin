@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
  */
 
 #include "save_section.h"
+
+#include "colors.h"
 #include "fonts.h"
 #include "helm_common.h"
 #include "load_save.h"
@@ -22,7 +24,7 @@
 #include "text_look_and_feel.h"
 
 #define SAVE_WIDTH 420
-#define SAVE_HEIGHT 300
+#define SAVE_HEIGHT 420
 #define TEXT_EDITOR_HEIGHT 24
 #define BUTTON_HEIGHT 30
 #define ADD_FOLDER_HEIGHT 20
@@ -30,12 +32,17 @@
 #define PADDING_X 25
 #define PADDING_Y 15
 
-SaveSection::SaveSection(String name) : Component(name) {
+SaveSection::SaveSection(String name) : Overlay(name) {
   listener_ = nullptr;
+  banks_model_ = new FileListBoxModel();
+  banks_model_->setListener(this);
   folders_model_ = new FileListBoxModel();
+  banks_view_ = new ListBox("banks", banks_model_);
   folders_view_ = new ListBox("folders", folders_model_);
   rescanFolders();
+  banks_view_->setColour(ListBox::backgroundColourId, Colour(0xff323232));
   folders_view_->setColour(ListBox::backgroundColourId, Colour(0xff323232));
+  addAndMakeVisible(banks_view_);
   addAndMakeVisible(folders_view_);
 
   patch_name_ = new TextEditor("Patch Name");
@@ -43,7 +50,7 @@ SaveSection::SaveSection(String name) : Component(name) {
   patch_name_->setTextToShowWhenEmpty(TRANS("Patch Name"), Colour(0xff777777));
   patch_name_->setFont(Fonts::instance()->monospace().withPointHeight(16.0f));
   patch_name_->setColour(CaretComponent::caretColourId, Colour(0xff888888));
-  patch_name_->setColour(TextEditor::textColourId, Colour(0xff03a9f4));
+  patch_name_->setColour(TextEditor::textColourId, Colors::audio);
   patch_name_->setColour(TextEditor::highlightedTextColourId, Colour(0xff03a9f4));
   patch_name_->setColour(TextEditor::highlightColourId, Colour(0xff888888));
   patch_name_->setColour(TextEditor::backgroundColourId, Colour(0xff323232));
@@ -63,6 +70,19 @@ SaveSection::SaveSection(String name) : Component(name) {
   author_->setColour(TextEditor::outlineColourId, Colour(0xff888888));
   author_->setColour(TextEditor::focusedOutlineColourId, Colour(0xff888888));
   addAndMakeVisible(author_);
+
+  add_bank_name_ = new TextEditor("Add Bank");
+  add_bank_name_->addListener(this);
+  add_bank_name_->setTextToShowWhenEmpty(TRANS("New Bank"), Colour(0xff777777));
+  add_bank_name_->setFont(Fonts::instance()->monospace().withPointHeight(12.0f));
+  add_bank_name_->setColour(CaretComponent::caretColourId, Colour(0xff888888));
+  add_bank_name_->setColour(TextEditor::textColourId, Colour(0xffcccccc));
+  add_bank_name_->setColour(TextEditor::highlightedTextColourId, Colour(0xffcccccc));
+  add_bank_name_->setColour(TextEditor::highlightColourId, Colour(0xff888888));
+  add_bank_name_->setColour(TextEditor::backgroundColourId, Colour(0xff323232));
+  add_bank_name_->setColour(TextEditor::outlineColourId, Colour(0xff888888));
+  add_bank_name_->setColour(TextEditor::focusedOutlineColourId, Colour(0xff888888));
+  addAndMakeVisible(add_bank_name_);
 
   add_folder_name_ = new TextEditor("Add Folder");
   add_folder_name_->addListener(this);
@@ -85,6 +105,10 @@ SaveSection::SaveSection(String name) : Component(name) {
   cancel_button_->addListener(this);
   addAndMakeVisible(cancel_button_);
 
+  add_bank_button_ = new TextButton("+");
+  add_bank_button_->addListener(this);
+  addAndMakeVisible(add_bank_button_);
+
   add_folder_button_ = new TextButton("+");
   add_folder_button_->addListener(this);
   addAndMakeVisible(add_folder_button_);
@@ -93,12 +117,12 @@ SaveSection::SaveSection(String name) : Component(name) {
 void SaveSection::paint(Graphics& g) {
   static const DropShadow shadow(Colour(0xff000000), 5, Point<int>(0, 0));
 
-  g.setColour(Colour(0xbb111111));
+  g.setColour(Colors::overlay_screen);
   g.fillAll();
 
   Rectangle<int> save_rect = getSaveRect();
   shadow.drawForRectangle(g, save_rect);
-  g.setColour(Colour(0xff212121));
+  g.setColour(Colour(0xff303030));
   g.fillRect(save_rect);
 
   g.saveState();
@@ -113,8 +137,13 @@ void SaveSection::paint(Graphics& g) {
   g.drawText(TRANS("AUTHOR"),
              0, 2 * PADDING_Y + TEXT_EDITOR_HEIGHT, DIVISION - 10, TEXT_EDITOR_HEIGHT,
              Justification::centredRight, false);
+  g.drawText(TRANS("BANK"),
+             0, banks_view_->getY() - save_rect.getY() - PADDING_Y,
+             DIVISION - 10, TEXT_EDITOR_HEIGHT,
+             Justification::centredRight, false);
   g.drawText(TRANS("FOLDER"),
-             0, 3 * PADDING_Y + 2 * TEXT_EDITOR_HEIGHT, DIVISION - 10, TEXT_EDITOR_HEIGHT,
+             0, folders_view_->getY() - save_rect.getY() - PADDING_Y,
+             DIVISION - 10, TEXT_EDITOR_HEIGHT,
              Justification::centredRight, false);
 
   g.restoreState();
@@ -146,12 +175,22 @@ void SaveSection::resized() {
   add_folder_name_->setBounds(folder_x + ADD_FOLDER_HEIGHT, add_folder_y,
                               folder_width - ADD_FOLDER_HEIGHT, ADD_FOLDER_HEIGHT);
 
-  float folder_y = save_rect.getY() + 4 * PADDING_Y + 2 * TEXT_EDITOR_HEIGHT;
-  folders_view_->setBounds(folder_x, folder_y, folder_width, add_folder_y - folder_y);
+  float bank_y = save_rect.getY() + 4 * PADDING_Y + 2 * TEXT_EDITOR_HEIGHT;
+  float bank_folder_height = (add_folder_y - bank_y - PADDING_Y - ADD_FOLDER_HEIGHT) / 2.0f;
+  float folder_y = bank_y + bank_folder_height + PADDING_Y + ADD_FOLDER_HEIGHT;
+  banks_view_->setBounds(folder_x, bank_y, folder_width, bank_folder_height);
+  add_bank_button_->setBounds(folder_x, bank_y + bank_folder_height, ADD_FOLDER_HEIGHT, ADD_FOLDER_HEIGHT);
+  add_bank_name_->setBounds(folder_x + ADD_FOLDER_HEIGHT, bank_y + bank_folder_height,
+                            folder_width - ADD_FOLDER_HEIGHT, ADD_FOLDER_HEIGHT);
+  folders_view_->setBounds(folder_x, folder_y, folder_width, bank_folder_height);
 }
 
 void SaveSection::visibilityChanged() {
   if (isVisible()) {
+    SparseSet<int> selected_banks = banks_view_->getSelectedRows();
+    if (selected_banks.size() == 0)
+      banks_view_->selectRow(0);
+
     SparseSet<int> selected_rows = folders_view_->getSelectedRows();
     if (selected_rows.size() == 0)
       folders_view_->selectRow(0);
@@ -172,11 +211,18 @@ void SaveSection::textEditorReturnKeyPressed(TextEditor& editor) {
     save();
 }
 
+void SaveSection::selectedFilesChanged(FileListBoxModel* list_box) {
+  if (list_box == banks_model_)
+    rescanFolders();
+}
+
 void SaveSection::buttonClicked(Button* clicked_button) {
   if (clicked_button == save_button_)
     save();
   else if (clicked_button == cancel_button_)
     setVisible(false);
+  else if (clicked_button == add_bank_button_)
+    createNewBank();
   else if (clicked_button == add_folder_button_)
     createNewFolder();
 }
@@ -202,9 +248,8 @@ void SaveSection::save() {
     return;
 
   File save_file = folder.getChildFile(patch_name);
-  if (save_file.getFileExtension() != mopo::PATCH_EXTENSION)
-    save_file = save_file.withFileExtension(String(mopo::PATCH_EXTENSION));
-  save_file.replaceWithText(JSON::toString(parent->getSynth()->saveToVar(author_->getText())));
+  parent->getSynth()->setAuthor(author_->getText());
+  parent->getSynth()->saveToFile(save_file);
 
   patch_name_->clear();
   setVisible(false);
@@ -212,12 +257,34 @@ void SaveSection::save() {
     listener_->fileSaved(save_file);
 }
 
+void SaveSection::createNewBank() {
+  String bank_name = add_bank_name_->getText();
+  if (bank_name.length() == 0)
+    return;
+
+  File banks_dir = LoadSave::getBankDirectory();
+  File new_bank = banks_dir.getChildFile(bank_name);
+  if (!new_bank.exists())
+    new_bank.createDirectory();
+
+  add_bank_name_->clear();
+
+  rescanFolders();
+  int row = banks_model_->getIndexOfFile(new_bank);
+  banks_view_->selectRow(row);
+  banks_view_->updateContent();
+}
+
 void SaveSection::createNewFolder() {
   String folder_name = add_folder_name_->getText();
   if (folder_name.length() == 0)
     return;
 
-  File bank_dir = LoadSave::getUserBankDirectory();
+  SparseSet<int> selected_rows = banks_view_->getSelectedRows();
+  if (selected_rows.size() == 0)
+    return;
+  File bank_dir = banks_model_->getFileAtRow(selected_rows[0]);
+
   File new_folder = bank_dir.getChildFile(folder_name);
   if (!new_folder.exists())
     new_folder.createDirectory();
@@ -230,9 +297,22 @@ void SaveSection::createNewFolder() {
   folders_view_->updateContent();
 }
 
+void SaveSection::rescanBanks() {
+  Array<File> bank_locations;
+  File banks_dir = LoadSave::getBankDirectory();
+  bank_locations.add(banks_dir);
+  banks_model_->rescanFiles(bank_locations);
+  banks_view_->updateContent();
+}
+
 void SaveSection::rescanFolders() {
+  rescanBanks();
+  SparseSet<int> selected_rows = banks_view_->getSelectedRows();
+  if (selected_rows.size() == 0)
+    return;
+  File bank_dir = banks_model_->getFileAtRow(selected_rows[0]);
+
   Array<File> folder_locations;
-  File bank_dir = LoadSave::getUserBankDirectory();
   folder_locations.add(bank_dir);
   folders_model_->rescanFiles(folder_locations);
   folders_view_->updateContent();

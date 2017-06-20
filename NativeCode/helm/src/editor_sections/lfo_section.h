@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #define LFO_SECTION_H
 
 #include "JuceHeader.h"
+#include "open_gl_wave_viewer.h"
 #include "synth_section.h"
 #include "retrigger_selector.h"
 #include "tempo_selector.h"
@@ -27,16 +28,16 @@
 
 class LfoSection : public SynthSection {
   public:
-    LfoSection(String name, std::string value_preprend, bool retrigger);
+    LfoSection(String name, std::string value_preprend, bool retrigger, bool can_animate = false);
     ~LfoSection();
 
     void paintBackground(Graphics& g) override;
     void resized() override;
-    void animate(bool animate = true) override;
     void reset() override;
 
   private:
-    ScopedPointer<WaveViewer> wave_viewer_;
+    bool can_animate_;
+    ScopedPointer<OpenGLWaveViewer> wave_viewer_;
     ScopedPointer<WaveSelector> wave_selector_;
 
     ScopedPointer<RetriggerSelector> retrigger_;

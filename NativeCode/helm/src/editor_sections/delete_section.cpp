@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
  */
 
 #include "delete_section.h"
+
+#include "colors.h"
 #include "fonts.h"
 #include "helm_common.h"
 #include "text_look_and_feel.h"
@@ -25,7 +27,7 @@
 #define PADDING_Y 20
 #define BUTTON_HEIGHT 30
 
-DeleteSection::DeleteSection(String name) : Component(name) {
+DeleteSection::DeleteSection(String name) : Overlay(name) {
   delete_button_ = new TextButton(TRANS("Delete"));
   delete_button_->addListener(this);
   addAndMakeVisible(delete_button_);
@@ -38,7 +40,7 @@ DeleteSection::DeleteSection(String name) : Component(name) {
 void DeleteSection::paint(Graphics& g) {
   static const DropShadow shadow(Colour(0xff000000), 5, Point<int>(0, 0));
 
-  g.setColour(Colour(0xbb212121));
+  g.setColour(Colors::overlay_screen);
   g.fillAll();
 
   Rectangle<int> delete_rect = getDeleteRect();
@@ -62,7 +64,7 @@ void DeleteSection::paint(Graphics& g) {
              Justification::centred, false);
 
   g.setFont(Fonts::instance()->monospace().withPointHeight(16.0f));
-  g.setColour(Colour(0xff03a9f4));
+  g.setColour(Colors::audio);
   g.drawText(file_.getFileNameWithoutExtension(),
              0, 20.0f, delete_rect.getWidth() - 2 * PADDING_X, 22.0f,
              Justification::centred, false);

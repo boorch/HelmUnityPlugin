@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@ namespace mopo {
         int full_cents = clamped_cents;
         mopo_float fraction_cents = clamped_cents - full_cents;
 
-        return INTERPOLATE(frequency_lookup_[full_cents],
-                           frequency_lookup_[full_cents + 1], fraction_cents);
+        return utils::interpolate(frequency_lookup_[full_cents],
+                                  frequency_lookup_[full_cents + 1], fraction_cents);
       }
 
     private:

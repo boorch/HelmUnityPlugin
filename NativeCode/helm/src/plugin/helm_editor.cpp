@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,30 +21,64 @@
 #include "helm_plugin.h"
 #include "load_save.h"
 
-#define WIDTH 992
-#define HEIGHT 734
-
 HelmEditor::HelmEditor(HelmPlugin& helm) : AudioProcessorEditor(&helm), SynthGuiInterface(&helm),
-                                           helm_(helm) {
+                                           helm_(helm), was_animating_(true) {
   setLookAndFeel(DefaultLookAndFeel::instance());
 
   addAndMakeVisible(gui_);
   gui_->setOutputMemory(helm.getOutputMemory());
   gui_->animate(LoadSave::shouldAnimateWidgets());
-  setSize(WIDTH, HEIGHT);
+
+  float window_size = LoadSave::loadWindowSize();
+  setSize(window_size * mopo::DEFAULT_WINDOW_WIDTH, window_size * mopo::DEFAULT_WINDOW_HEIGHT);
+  setResizable(true, true);
+
   repaint();
 }
 
 void HelmEditor::paint(Graphics& g) {
-  setSize(WIDTH, HEIGHT);
   g.fillAll(Colours::white);
 }
 
 void HelmEditor::resized() {
-  gui_->setBounds(0, 0, getWidth(), getHeight());
+  gui_->setBounds(getLocalBounds());
+}
+
+void HelmEditor::visibilityChanged() {
+  checkAnimate();
+  AudioProcessorEditor::visibilityChanged();
+}
+
+void HelmEditor::focusGained(FocusChangeType cause) {
+  checkAnimate();
+  AudioProcessorEditor::focusGained(cause);
+}
+
+void HelmEditor::focusLost(FocusChangeType cause) {
+  checkAnimate();
+  AudioProcessorEditor::focusLost(cause);
+}
+
+void HelmEditor::focusOfChildComponentChanged(FocusChangeType cause) {
+  checkAnimate();
+  AudioProcessorEditor::focusOfChildComponentChanged(cause);
+}
+
+void HelmEditor::parentHierarchyChanged() {
+  checkAnimate();
+  AudioProcessorEditor::parentHierarchyChanged();
 }
 
 void HelmEditor::updateFullGui() {
   SynthGuiInterface::updateFullGui();
   helm_.updateHostDisplay();
+}
+
+void HelmEditor::checkAnimate() {
+  Component* top_level = getTopLevelComponent();
+  bool should_animate = top_level->hasKeyboardFocus(true) && top_level->isShowing();
+  if (was_animating_ != should_animate) {
+    gui_->animate(should_animate && LoadSave::shouldAnimateWidgets());
+    was_animating_ = should_animate;
+  }
 }

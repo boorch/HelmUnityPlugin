@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,14 @@ namespace mopo {
       ProcessorRouter(num_inputs, num_outputs) { }
 
   void BypassRouter::process() {
+    MOPO_ASSERT(inputMatchesBufferSize(kAudio));
+
     mopo_float should_process = input(kOn)->at(0);
     if (should_process)
       ProcessorRouter::process();
     else  {
-      for (int i = 0; i < numOutputs(); ++i) {
-        memcpy(output(i)->buffer, input(kAudio)->source->buffer,
-               buffer_size_ * sizeof(mopo_float));
-      }
+      for (int i = 0; i < numOutputs(); ++i)
+        utils::copyBuffer(output(i)->buffer, input(kAudio)->source->buffer, buffer_size_);
     }
   }
 } // namespace mopo

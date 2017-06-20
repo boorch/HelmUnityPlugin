@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@ namespace mopo {
                          magnification_(0.0) { }
 
   void BitCrush::process() {
+    MOPO_ASSERT(inputMatchesBufferSize(kAudio));
+    MOPO_ASSERT(inputMatchesBufferSize(kWet));
+
     mopo_float bits = input(kBits)->at(0);
     magnification_ = pow(2.0, bits / 2.0);
 

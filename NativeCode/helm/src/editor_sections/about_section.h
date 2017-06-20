@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,9 @@
 #define ABOUT_SECTION_H
 
 #include "JuceHeader.h"
+#include "overlay.h"
 
-class AboutSection : public Component, public ButtonListener {
+class AboutSection : public Overlay, public ButtonListener {
   public:
     AboutSection(String name);
     ~AboutSection() { }
@@ -34,11 +35,18 @@ class AboutSection : public Component, public ButtonListener {
     void buttonClicked(Button* clicked_button) override;
 
   private:
+    void setGuiSize(float multiplier);
+
     ScopedPointer<HyperlinkButton> developer_link_;
     ScopedPointer<HyperlinkButton> free_software_link_;
     ScopedPointer<AudioDeviceSelectorComponent> device_selector_;
     ScopedPointer<Button> check_for_updates_;
     ScopedPointer<Button> animate_;
+
+    ScopedPointer<Button> size_button_small_;
+    ScopedPointer<Button> size_button_normal_;
+    ScopedPointer<Button> size_button_large_;
+    ScopedPointer<Button> size_button_extra_large_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AboutSection)
 };

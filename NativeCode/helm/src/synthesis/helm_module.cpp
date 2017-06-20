@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,8 @@
 
 #include "helm_module.h"
 
-#include "switch.h"
+#include "value_switch.h"
+#include "gate.h"
 #include "helm_common.h"
 
 namespace mopo {
@@ -39,7 +40,16 @@ namespace mopo {
     return val;
   }
 
-  Processor* HelmModule::createBaseModControl(std::string name, bool smooth_value) {
+  ValueSwitch* HelmModule::createBaseSwitchControl(std::string name) {
+    mopo_float default_value = Parameters::getDetails(name).default_value;
+    
+    ValueSwitch* val = new ValueSwitch(default_value);
+    getMonoRouter()->addIdleProcessor(val);
+    controls_[name] = val;
+    return val;
+  }
+
+  Output* HelmModule::createBaseModControl(std::string name, bool smooth_value) {
     Processor* base_val = createBaseControl(name, smooth_value);
 
     cr::VariableAdd* mono_total = new cr::VariableAdd();
@@ -47,41 +57,62 @@ namespace mopo {
     getMonoRouter()->addProcessor(mono_total);
     mono_mod_destinations_[name] = mono_total;
     mono_modulation_readout_[name] = mono_total->output();
-    return mono_total;
+
+    ValueSwitch* control_switch = new ValueSwitch(0.0);
+    control_switch->plugNext(base_val);
+    control_switch->plugNext(mono_total);
+    control_switch->addProcessor(mono_total);
+    getMonoRouter()->addProcessor(control_switch);
+    control_switch->set(0);
+    mono_modulation_switches_[name] = control_switch;
+
+    return control_switch->output(ValueSwitch::kSwitch);
   }
 
-  Processor* HelmModule::createMonoModControl(std::string name, bool control_rate,
-                                              bool smooth_value) {
+  Output* HelmModule::createMonoModControl(std::string name, bool control_rate,
+                                           bool smooth_value) {
     ProcessorRouter* mono_owner = getMonoRouter();
     ValueDetails details = Parameters::getDetails(name);
-
-    Processor* base_control = createBaseModControl(name, smooth_value);
-    Processor* control_rate_total = base_control;
+    Output* control_rate_total = createBaseModControl(name, smooth_value);
 
     if (details.display_skew == ValueDetails::kQuadratic) {
-      control_rate_total = new cr::Square();
-      control_rate_total->plug(base_control);
-      mono_owner->addProcessor(control_rate_total);
+      Processor* scale = nullptr;
+      if (details.post_offset)
+        scale = new cr::Quadratic(details.post_offset);
+      else
+        scale = new cr::Square();
+      
+      scale->plug(control_rate_total);
+      mono_owner->addProcessor(scale);
+      control_rate_total = scale->output();
     }
     else if (details.display_skew == ValueDetails::kExponential) {
-      control_rate_total = new cr::ExponentialScale(2.0);
-      control_rate_total->plug(base_control);
-      mono_owner->addProcessor(control_rate_total);
+      cr::ExponentialScale* exponential = new cr::ExponentialScale(2.0);
+      exponential->plug(control_rate_total);
+      mono_owner->addProcessor(exponential);
+      control_rate_total = exponential->output();
+    }
+    else if (details.display_skew == ValueDetails::kSquareRoot) {
+      cr::Root* root = new cr::Root(details.post_offset);
+      root->plug(control_rate_total);
+      mono_owner->addProcessor(root);
+      control_rate_total = root->output();
     }
 
     if (control_rate)
       return control_rate_total;
 
-    LinearSmoothBuffer* audio_rate = new LinearSmoothBuffer();
+    SampleAndHoldBuffer* audio_rate = new SampleAndHoldBuffer();
     audio_rate->plug(control_rate_total);
     mono_owner->addProcessor(audio_rate);
-    return audio_rate;
+
+    return audio_rate->output();
   }
 
-  Processor* HelmModule::createPolyModControl(std::string name, bool control_rate,
-                                              bool smooth_value) {
+  Output* HelmModule::createPolyModControl(std::string name, bool control_rate,
+                                           bool smooth_value) {
     ValueDetails details = Parameters::getDetails(name);
-    Processor* base_control = createBaseModControl(name, smooth_value);
+    Output* base_control = createBaseModControl(name, smooth_value);
     ProcessorRouter* poly_owner = getPolyRouter();
 
     cr::VariableAdd* poly_total = new cr::VariableAdd();
@@ -95,16 +126,38 @@ namespace mopo {
 
     poly_modulation_readout_[name] = poly_total->output();
 
-    Processor* control_rate_total = modulation_total;
+    ValueSwitch* control_switch = new ValueSwitch(0.0);
+    control_switch->plugNext(base_control);
+    control_switch->plugNext(modulation_total);
+    control_switch->addProcessor(poly_total);
+    control_switch->addProcessor(modulation_total);
+    control_switch->set(0);
+    poly_owner->addProcessor(control_switch);
+    poly_modulation_switches_[name] = control_switch;
+
+    Output* control_rate_total = control_switch->output(ValueSwitch::kSwitch);
     if (details.display_skew == ValueDetails::kQuadratic) {
-      control_rate_total = new cr::Square();
-      control_rate_total->plug(modulation_total);
-      poly_owner->addProcessor(control_rate_total);
+      Processor* scale = nullptr;
+      if (details.post_offset)
+        scale = new cr::Quadratic(details.post_offset);
+      else
+        scale = new cr::Square();
+      
+      scale->plug(control_rate_total);
+      poly_owner->addProcessor(scale);
+      control_rate_total = scale->output();
     }
     else if (details.display_skew == ValueDetails::kExponential) {
-      control_rate_total = new cr::ExponentialScale(2.0);
-      control_rate_total->plug(modulation_total);
-      poly_owner->addProcessor(control_rate_total);
+      cr::ExponentialScale* exponential = new cr::ExponentialScale(2.0, details.post_offset);
+      exponential->plug(control_rate_total);
+      poly_owner->addProcessor(exponential);
+      control_rate_total = exponential->output();
+    }
+    else if (details.display_skew == ValueDetails::kSquareRoot) {
+      cr::Root* root = new cr::Root(details.post_offset);
+      root->plug(control_rate_total);
+      poly_owner->addProcessor(root);
+      control_rate_total = root->output();
     }
 
     if (control_rate)
@@ -113,31 +166,31 @@ namespace mopo {
     SampleAndHoldBuffer* audio_rate = new SampleAndHoldBuffer();
     audio_rate->plug(control_rate_total);
     poly_owner->addProcessor(audio_rate);
-    return audio_rate;
+    return audio_rate->output();
   }
 
-  Processor* HelmModule::createTempoSyncSwitch(std::string name, Processor* frequency,
-                                               Processor* bps, bool poly) {
+  Output* HelmModule::createTempoSyncSwitch(std::string name, Processor* frequency,
+                                            Output* bps, bool poly, ValueSwitch* owner) {
     static const Value dotted_ratio(2.0 / 3.0);
     static const Value triplet_ratio(3.0 / 2.0);
 
-    ProcessorRouter* owner = poly ? getPolyRouter() : getMonoRouter();
-    Processor* tempo = nullptr;
+    ProcessorRouter* router = poly ? getPolyRouter() : getMonoRouter();
+    Output* tempo = nullptr;
     if (poly)
       tempo = createPolyModControl(name + "_tempo", frequency->isControlRate());
     else
       tempo = createMonoModControl(name + "_tempo", frequency->isControlRate());
 
-    Switch* choose_tempo = new Switch();
-    choose_tempo->plug(tempo, Switch::kSource);
+    Gate* choose_tempo = new Gate();
+    choose_tempo->plug(tempo, Gate::kChoice);
 
     for (int i = 0; i < sizeof(synced_freq_ratios) / sizeof(Value); ++i)
       choose_tempo->plugNext(&synced_freq_ratios[i]);
 
-    Switch* choose_modifier = new Switch();
+    Gate* choose_modifier = new Gate();
     Value* sync = new cr::Value(1);
-    owner->addIdleProcessor(sync);
-    choose_modifier->plug(sync, Switch::kSource);
+    router->addIdleProcessor(sync);
+    choose_modifier->plug(sync, Gate::kChoice);
     choose_modifier->plugNext(&utils::value_one);
     choose_modifier->plugNext(&utils::value_one);
     choose_modifier->plugNext(&dotted_ratio);
@@ -152,21 +205,30 @@ namespace mopo {
     tempo_frequency->plug(modified_tempo, 0);
     tempo_frequency->plug(bps, 1);
 
-    owner->addProcessor(choose_modifier);
-    owner->addProcessor(choose_tempo);
-    owner->addProcessor(modified_tempo);
-    owner->addProcessor(tempo_frequency);
+    getMonoRouter()->addProcessor(choose_modifier);
+    getMonoRouter()->addProcessor(choose_tempo);
+    router->addProcessor(modified_tempo);
+    router->addProcessor(tempo_frequency);
 
-    Switch* choose_frequency = new Switch();
-    choose_frequency->plug(sync, Switch::kSource);
+    Gate* choose_frequency = new Gate();
+    choose_frequency->plug(sync, Gate::kChoice);
     choose_frequency->plugNext(frequency);
     choose_frequency->plugNext(tempo_frequency);
     choose_frequency->plugNext(tempo_frequency);
     choose_frequency->plugNext(tempo_frequency);
 
-    owner->addProcessor(choose_frequency);
+    if (owner) {
+      owner->addProcessor(choose_tempo);
+      owner->addProcessor(choose_modifier);
+      owner->addProcessor(modified_tempo);
+      owner->addProcessor(tempo_frequency);
+      owner->addProcessor(choose_frequency);
+      owner->set(owner->value());
+    }
+
+    getMonoRouter()->addProcessor(choose_frequency);
     controls_[name + "_sync"] = sync;
-    return choose_frequency;
+    return choose_frequency->output();
   }
 
   void HelmModule::init() {
@@ -198,8 +260,11 @@ namespace mopo {
   }
 
   Processor* HelmModule::getModulationDestination(std::string name, bool poly) {
-    if (poly)
-      return getPolyModulationDestination(name);
+    Processor* poly_destination = getPolyModulationDestination(name);
+
+    if (poly && poly_destination)
+      return poly_destination;
+
     return getMonoModulationDestination(name);
   }
 
@@ -227,6 +292,53 @@ namespace mopo {
     }
 
     return 0;
+  }
+
+  ValueSwitch* HelmModule::getModulationSwitch(std::string name, bool poly) {
+    if (poly)
+      return getPolyModulationSwitch(name);
+    return getMonoModulationSwitch(name);
+  }
+
+  ValueSwitch* HelmModule::getMonoModulationSwitch(std::string name) {
+    if (mono_modulation_switches_.count(name))
+      return mono_modulation_switches_[name];
+
+    for (HelmModule* sub_module : sub_modules_) {
+      ValueSwitch* value_switch = sub_module->getMonoModulationSwitch(name);
+      if (value_switch)
+        return value_switch;
+    }
+
+    return 0;
+  }
+
+  ValueSwitch* HelmModule::getPolyModulationSwitch(std::string name) {
+    if (poly_modulation_switches_.count(name))
+      return poly_modulation_switches_[name];
+
+    for (HelmModule* sub_module : sub_modules_) {
+      ValueSwitch* value_switch = sub_module->getPolyModulationSwitch(name);
+      if (value_switch)
+        return value_switch;
+    }
+
+    return 0;
+  }
+
+  void HelmModule::updateAllModulationSwitches() {
+    for (auto& mod_switch : mono_modulation_switches_) {
+      bool enable = mono_mod_destinations_[mod_switch.first]->connectedInputs() > 1;
+      if (poly_mod_destinations_.count(mod_switch.first))
+        enable = enable || poly_mod_destinations_[mod_switch.first]->connectedInputs() > 0;
+      mod_switch.second->set(enable);
+    }
+
+    for (auto& mod_switch : poly_modulation_switches_)
+      mod_switch.second->set(poly_mod_destinations_[mod_switch.first]->connectedInputs() > 0);
+
+    for (HelmModule* sub_module : sub_modules_)
+      sub_module->updateAllModulationSwitches();
   }
 
   output_map HelmModule::getModulationSources() {

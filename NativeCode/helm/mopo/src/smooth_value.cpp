@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 #include "smooth_value.h"
 
 #include <cmath>
+
+#include "utils.h"
 
 #define SMOOTH_CUTOFF 3.0
 
@@ -40,16 +42,14 @@ namespace mopo {
   }
 
   inline void SmoothValue::tick(int i) {
-    value_ = INTERPOLATE(value_, target_value_, decay_);
+    value_ = utils::interpolate(value_, target_value_, decay_);
     output()->buffer[i] = value_;
   }
 
   namespace cr {
 
     SmoothValue::SmoothValue(mopo_float value) :
-        Value(value), target_value_(value), decay_(1.0), num_samples_(1) {
-      setControlRate(true);
-    }
+        Value(value), target_value_(value), decay_(1.0), num_samples_(1) { }
 
     void SmoothValue::setSampleRate(int sample_rate) {
       Value::setSampleRate(sample_rate);
@@ -63,7 +63,7 @@ namespace mopo {
     }
 
     void SmoothValue::process() {
-      value_ = INTERPOLATE(value_, target_value_, decay_);
+      value_ = utils::interpolate(value_, target_value_, decay_);
       output()->buffer[0] = value_;
     }
 

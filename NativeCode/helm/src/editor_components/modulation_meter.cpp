@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,14 @@
  */
 
 #include "modulation_meter.h"
+
+#include "colors.h"
 #include "mopo.h"
 #include "synth_gui_interface.h"
 #include "text_look_and_feel.h"
+#include "utils.h"
 
 #define ANGLE 2.51327412f
-#define ROTARY_MOD_COLOR 0xff00e676
 #define SLIDER_MOD_COLOR 0xff69f0ae
 
 ModulationMeter::ModulationMeter(const mopo::Output* mono_total,
@@ -127,14 +129,14 @@ void ModulationMeter::drawSlider(Graphics& g) {
 }
 
 void ModulationMeter::drawKnob(Graphics& g) {
-  float current_mod_angle = INTERPOLATE(-ANGLE, ANGLE, mod_percent_);
-  float current_knob_angle = INTERPOLATE(-ANGLE, ANGLE, knob_percent_);
+  float current_mod_angle = mopo::utils::interpolate(-ANGLE, ANGLE, mod_percent_);
+  float current_knob_angle = mopo::utils::interpolate(-ANGLE, ANGLE, knob_percent_);
 
   if (current_mod_angle != current_knob_angle) {
     Path mod_section;
     mod_section.addCentredArc(full_radius_, full_radius_, outer_radius_, outer_radius_,
                               0.0f, current_mod_angle, current_knob_angle, true);
-    g.setColour(Colour(ROTARY_MOD_COLOR));
+    g.setColour(Colors::modulation);
     g.strokePath(mod_section, knob_stroke_);
   }
 }

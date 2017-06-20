@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
  */
 
 #include "retrigger_selector.h"
+
+#include "default_look_and_feel.h"
 #include "fonts.h"
 #include "synth_gui_interface.h"
 
@@ -26,6 +28,10 @@ namespace {
     kSyncToPlayhead
   };
 
+  static void retriggerTypeSelectedCallback(int result, RetriggerSelector* retrigger_selector) {
+    if (retrigger_selector != nullptr && result != kCancel)
+      retrigger_selector->setValue(result - 1);
+  }
 } // namespace
 
 RetriggerSelector::RetriggerSelector(String name) : SynthSlider(name) { }
@@ -36,13 +42,14 @@ void RetriggerSelector::mouseDown(const MouseEvent& e) {
     return;
   }
   PopupMenu m;
+  m.setLookAndFeel(DefaultLookAndFeel::instance());
+
   m.addItem(kFree, TRANS("Free"));
   m.addItem(kRetrigger, TRANS("Retrigger"));
   m.addItem(kSyncToPlayhead, TRANS("Sync to Playhead"));
 
-  int result = m.showAt(this);
-  if (result > 0)
-    setValue(result - 1);
+  m.showMenuAsync(PopupMenu::Options().withTargetComponent(this),
+                  ModalCallbackFunction::forComponent(retriggerTypeSelectedCallback, this));
 }
 
 void RetriggerSelector::paint(Graphics& g) {

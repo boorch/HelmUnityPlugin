@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,13 @@ class TempoSelector : public SynthSlider {
     TempoSelector(String name);
 
     void mouseDown(const MouseEvent& e) override;
+    void mouseUp(const MouseEvent& e) override;
     void paint(Graphics& g) override;
     void valueChanged() override;
     void resized() override;
 
-    void setFreeSlider(Slider* slider) { free_slider_ = slider; }
-    void setTempoSlider(Slider* slider) { tempo_slider_ = slider; }
+    void setFreeSlider(Slider* slider);
+    void setTempoSlider(Slider* slider);
 
   private:
     Slider* free_slider_;

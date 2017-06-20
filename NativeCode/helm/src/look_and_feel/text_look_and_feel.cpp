@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,18 @@
  */
 
 #include "text_look_and_feel.h"
+
+#include "colors.h"
 #include "fonts.h"
 #include "synth_slider.h"
 
 TextLookAndFeel::TextLookAndFeel() {
-  setColour(ComboBox::backgroundColourId, Colour(0xff212121));
+  setColour(ComboBox::backgroundColourId, Colors::background);
   setColour(ComboBox::arrowColourId, Colour(0xff888888));
   setColour(ComboBox::outlineColourId, Colour(0xff888888));
-  setColour(ComboBox::textColourId, Colour(0xffbbbbbb));
+  setColour(ComboBox::textColourId, Colors::control_label_text);
   setColour(Label::textColourId, Colour(0xffaaaaaa));
-  setColour(ListBox::backgroundColourId, Colour(0xff212121));
+  setColour(ListBox::backgroundColourId, Colors::background);
   setColour(ListBox::textColourId, Colour(0xffaaaaaa));
 }
 
@@ -32,16 +34,15 @@ void TextLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
                                        float slider_t, float start_angle, float end_angle,
                                        Slider& slider) {
   static const float text_percentage = 0.7f;
+  static const int mod_buffer = 5;
 
   bool active = true;
   SynthSlider* s_slider = dynamic_cast<SynthSlider*>(&slider);
   if (s_slider)
     active = s_slider->isActive();
 
-  if (active)
-    g.fillAll(Colour(0xff424242));
-  else
-    g.fillAll(Colour(0xff333333));
+  g.setColour(Colour(0xff333333));
+  g.fillRect(x + mod_buffer, y, width - 2 * mod_buffer, height);
 
   if (active)
     g.setColour(Colour(0xff565656));
@@ -60,7 +61,9 @@ void TextLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int width, int
 }
 
 void TextLookAndFeel::drawToggleButton(Graphics& g, ToggleButton& button,
-                                       bool isMouseOverButton, bool isButtonDown) {
+                                       bool hover, bool is_down) {
+  static const float text_percentage = 0.7f;
+
   if (button.getToggleState())
     g.setColour(Colour(0xffffc400));
   else
@@ -68,18 +71,19 @@ void TextLookAndFeel::drawToggleButton(Graphics& g, ToggleButton& button,
   g.fillRect(button.getLocalBounds());
 
   g.setColour(Colours::white);
-  g.setFont(Fonts::instance()->monospace());
+  int height = button.getHeight();
+  g.setFont(Fonts::instance()->monospace().withPointHeight(height * text_percentage));
   g.drawText(button.getButtonText(), 0, 0,
              button.getWidth(), button.getHeight(), Justification::centred);
 
   g.setColour(Colour(0xff565656));
   g.drawRect(button.getLocalBounds());
 
-  if (isButtonDown) {
+  if (is_down) {
     g.setColour(Colour(0x11000000));
     g.fillRect(button.getLocalBounds());
   }
-  else if (isMouseOverButton) {
+  else if (hover) {
     g.setColour(Colour(0x11ffffff));
     g.fillRect(button.getLocalBounds());
   }

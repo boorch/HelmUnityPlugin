@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,19 @@ namespace mopo {
       tick(i);
   }
 
+  void Bypass::process() {
+    MOPO_ASSERT(inputMatchesBufferSize());
+
+    utils::copyBuffer(output()->buffer, input()->source->buffer, buffer_size_);
+
+    output()->triggered = input()->source->triggered;
+    output()->trigger_value = input()->source->trigger_value;
+    output()->trigger_offset = input()->source->trigger_offset;
+  }
+
   void Clamp::process() {
+    MOPO_ASSERT(inputMatchesBufferSize());
+
 #ifdef USE_APPLE_ACCELERATE
     vDSP_vclipD(input()->source->buffer, 1,
                 &min_, &max_,
@@ -46,6 +58,8 @@ namespace mopo {
   }
 
   void Negate::process() {
+    MOPO_ASSERT(inputMatchesBufferSize());
+
 #ifdef USE_APPLE_ACCELERATE
     vDSP_vnegD(input()->source->buffer, 1,
                output()->buffer, 1, buffer_size_);
@@ -57,6 +71,8 @@ namespace mopo {
   }
 
   void LinearScale::process() {
+    MOPO_ASSERT(inputMatchesBufferSize());
+
 #ifdef USE_APPLE_ACCELERATE
     vDSP_vsmulD(input()->source->buffer, 1, &scale_,
                 output()->buffer, 1, buffer_size_);
@@ -68,23 +84,24 @@ namespace mopo {
   }
 
   void Add::process() {
-#ifdef USE_APPLE_ACCELERATE
-    vDSP_vaddD(input(0)->source->buffer, 1,
-               input(1)->source->buffer, 1,
-               output()->buffer, 1, buffer_size_);
-#else
+    MOPO_ASSERT(inputMatchesBufferSize(0));
+    MOPO_ASSERT(inputMatchesBufferSize(1));
+
     mopo_float* dest = output()->buffer;
     const mopo_float* source_left = input(0)->source->buffer;
     const mopo_float* source_right = input(1)->source->buffer;
 
-#pragma clang loop vectorize(enable) interleave(enable)
+    VECTORIZE_LOOP
     for (int i = 0; i < buffer_size_; ++i)
       bufferTick(dest, source_left, source_right, i);
-#endif
+
     processTriggers();
   }
 
   void Subtract::process() {
+    MOPO_ASSERT(inputMatchesBufferSize(0));
+    MOPO_ASSERT(inputMatchesBufferSize(1));
+
 #ifdef USE_APPLE_ACCELERATE
     vDSP_vsubD(input(0)->source->buffer, 1,
                input(1)->source->buffer, 1,
@@ -97,54 +114,49 @@ namespace mopo {
   }
 
   void Multiply::process() {
-#ifdef USE_APPLE_ACCELERATE
-    vDSP_vmulD(input(0)->source->buffer, 1,
-               input(1)->source->buffer, 1,
-               output()->buffer, 1, buffer_size_);
-#else
+    MOPO_ASSERT(inputMatchesBufferSize(0));
+    MOPO_ASSERT(inputMatchesBufferSize(1));
+
     mopo_float* dest = output()->buffer;
     const mopo_float* source_left = input(0)->source->buffer;
     const mopo_float* source_right = input(1)->source->buffer;
 
-#pragma clang loop vectorize(enable) interleave(enable)
+    VECTORIZE_LOOP
     for (int i = 0; i < buffer_size_; ++i)
       bufferTick(dest, source_left, source_right, i);
-#endif
+
     processTriggers();
   }
 
   void Interpolate::process() {
-#ifdef USE_APPLE_ACCELERATE
-    vDSP_vsbmD(input(kTo)->source->buffer, 1,
-               input(kFrom)->source->buffer, 1,
-               input(kFractional)->source->buffer, 1,
-               output()->buffer, 1, buffer_size_);
+    MOPO_ASSERT(inputMatchesBufferSize(0));
+    MOPO_ASSERT(inputMatchesBufferSize(1));
+    MOPO_ASSERT(inputMatchesBufferSize(2));
 
-    vDSP_vaddD(input(kFrom)->source->buffer, 1,
-               output()->buffer, 1,
-               output()->buffer, 1, buffer_size_);
-#else
-#define INTERPOLATE(s, e, f) ((s) + (f) * ((e) - (s)))
     mopo_float* dest = output()->buffer;
     const mopo_float* from = input(kFrom)->source->buffer;
     const mopo_float* to = input(kTo)->source->buffer;
     const mopo_float* fractional = input(kFractional)->source->buffer;
 
-#pragma clang loop vectorize(enable) interleave(enable)
+    VECTORIZE_LOOP
     for (int i = 0; i < buffer_size_; ++i)
       bufferTick(dest, from, to, fractional, i);
-#endif
+
     processTriggers();
   }
 
   void BilinearInterpolate::process() {
-#pragma clang loop vectorize(enable) interleave(enable)
     for (int i = 0; i < buffer_size_; ++i)
       tick(i);
     processTriggers();
   }
 
   void VariableAdd::process() {
+#if DEBUG
+    for (int i = 0; i < inputs_->size(); ++i)
+      MOPO_ASSERT(inputMatchesBufferSize(i));
+#endif
+
     mopo_float* dest = output()->buffer;
 
     if (isControlRate()) {
@@ -155,7 +167,7 @@ namespace mopo {
         dest[0] += input(i)->at(0);
     }
     else {
-      memset(dest, 0, buffer_size_ * sizeof(mopo_float));
+      utils::zeroBuffer(dest, buffer_size_);
 
       int num_inputs = inputs_->size();
       for (int i = 0; i < num_inputs; ++i) {
@@ -167,7 +179,7 @@ namespace mopo {
 #else
           const mopo_float* source = input(i)->source->buffer;
 
-#pragma clang loop vectorize(enable) interleave(enable)
+          VECTORIZE_LOOP
           for (int s = 0; s < buffer_size_; ++s)
             dest[s] += source[s];
 #endif
@@ -190,6 +202,8 @@ namespace mopo {
   }
 
   void FrequencyToSamples::process() {
+    MOPO_ASSERT(inputMatchesBufferSize());
+
 #ifdef USE_APPLE_ACCELERATE
     mopo_float sample_rate = sample_rate_;
     vDSP_svdivD(&sample_rate, input()->source->buffer, 1,
@@ -202,6 +216,8 @@ namespace mopo {
   }
 
   void TimeToSamples::process() {
+    MOPO_ASSERT(inputMatchesBufferSize());
+
 #ifdef USE_APPLE_ACCELERATE
     mopo_float sample_rate = sample_rate_;
     vDSP_vsmulD(input()->source->buffer, 1, &sample_rate,
@@ -219,7 +235,7 @@ namespace mopo {
     if (value == dest[0])
       return;
 
-#pragma clang loop vectorize(enable) interleave(enable)
+    VECTORIZE_LOOP
     for (int i = 0; i < buffer_size_; ++i)
       bufferTick(dest, value, i);
     processTriggers();
@@ -227,34 +243,40 @@ namespace mopo {
 
   void LinearSmoothBuffer::process() {
     mopo_float new_value = input(kValue)->source->buffer[0];
+    mopo_float* dest = output()->buffer;
 
     if (input(kTrigger)->source->triggered) {
       int trigger_samples = input(kTrigger)->source->trigger_offset;
       int i = 0;
+
+      mopo_float val = last_value_;
+      VECTORIZE_LOOP
       for (; i < trigger_samples; ++i)
-        output()->buffer[i] = last_value_;
+        dest[i] = val;
 
-      last_value_ = new_value;
+      val = new_value;
 
+      VECTORIZE_LOOP
       for (; i < buffer_size_; ++i)
-        output()->buffer[i] = last_value_;
+        dest[i] = val;
     }
     else if (last_value_ == new_value &&
              new_value == output()->buffer[0] &&
              new_value == output()->buffer[buffer_size_ - 1] &&
              (buffer_size_ <= 1 || new_value == output()->buffer[buffer_size_ - 2])) {
+      last_value_ = new_value;
       return;
     }
     else {
       mopo_float inc = (new_value - last_value_) / buffer_size_;
+      mopo_float val = last_value_ + inc;
 
-      for (int i = 0; i < buffer_size_; ++i) {
-        last_value_ += inc;
-        output()->buffer[i] = last_value_;
-      }
-
-      last_value_ = new_value;
+      VECTORIZE_LOOP
+      for (int i = 0; i < buffer_size_; ++i)
+        dest[i] = val + i * inc;
     }
+
+    last_value_ = new_value;
     processTriggers();
   }
 } // namespace mopo

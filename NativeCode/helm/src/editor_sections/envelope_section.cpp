@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@
 
 #include "envelope_section.h"
 
+#include "colors.h"
 #include "fonts.h"
 #include "modulation_look_and_feel.h"
 #include "synth_slider.h"
 
 #define SLIDER_SECTION_WIDTH 70
 #define MOD_SECTION_WIDTH 36
-#define MOD_BUTTON_WIDTH 32
 #define TEXT_WIDTH 10
 #define SLIDER_WIDTH 20
 
@@ -30,17 +30,22 @@ EnvelopeSection::EnvelopeSection(String name, std::string value_prepend) : Synth
 
   addSlider(attack_ = new SynthSlider(value_prepend + "_attack"));
   attack_->setSliderStyle(Slider::LinearBar);
+  attack_->setPopupPlacement(BubbleComponent::below);
 
   addSlider(decay_ = new SynthSlider(value_prepend + "_decay"));
   decay_->setSliderStyle(Slider::LinearBar);
+  decay_->setPopupPlacement(BubbleComponent::below);
 
   addSlider(release_ = new SynthSlider(value_prepend + "_release"));
   release_->setSliderStyle(Slider::LinearBar);
+  release_->setPopupPlacement(BubbleComponent::below);
 
   addSlider(sustain_ = new SynthSlider(value_prepend + "_sustain"));
   sustain_->setSliderStyle(Slider::LinearBar);
+  sustain_->setPopupPlacement(BubbleComponent::below);
 
-  addAndMakeVisible(envelope_ = new GraphicalEnvelope());
+  addOpenGLComponent(envelope_ = new OpenGLEnvelope());
+  envelope_->setName(value_prepend + "_envelope");
   envelope_->setAttackSlider(attack_);
   envelope_->setDecaySlider(decay_);
   envelope_->setSustainSlider(sustain_);
@@ -61,43 +66,57 @@ EnvelopeSection::~EnvelopeSection() {
 void EnvelopeSection::paintBackground(Graphics& g) {
   static const DropShadow component_shadow(Colour(0x88000000), 2, Point<int>(0, 1));
 
+  int title_width = getTitleWidth();
+  int text_width = size_ratio_ * TEXT_WIDTH;
+  int slider_section_width = size_ratio_ * SLIDER_SECTION_WIDTH;
+
   SynthSection::paintBackground(g);
   component_shadow.drawForRectangle(g, envelope_->getBounds());
 
-  g.setColour(Colour(0xff212121));
-  g.fillRect(getWidth() - TEXT_WIDTH - SLIDER_SECTION_WIDTH, 20, TEXT_WIDTH, getHeight() - 20);
+  g.setColour(Colors::background);
+  g.fillRect(getWidth() - text_width - slider_section_width, title_width,
+             text_width, getHeight() - title_width);
 
-  g.setColour(Colour(0xffbbbbbb));
-  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(10.0f));
+  g.setColour(Colors::control_label_text);
+  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(size_ratio_ * 10.0f));
 
-  g.drawText(TRANS("A"), attack_->getX() - TEXT_WIDTH, attack_->getY(),
-             TEXT_WIDTH, attack_->getHeight(),
+  g.drawText(TRANS("A"), attack_->getX() - text_width, attack_->getY(),
+             text_width, attack_->getHeight(),
              Justification::centred, true);
-  g.drawText(TRANS("D"), decay_->getX() - TEXT_WIDTH, decay_->getY(),
-             TEXT_WIDTH, decay_->getHeight(),
+  g.drawText(TRANS("D"), decay_->getX() - text_width, decay_->getY(),
+             text_width, decay_->getHeight(),
              Justification::centred, true);
-  g.drawText(TRANS("S"), sustain_->getX() - TEXT_WIDTH, sustain_->getY(),
-             TEXT_WIDTH, sustain_->getHeight(),
+  g.drawText(TRANS("S"), sustain_->getX() - text_width, sustain_->getY(),
+             text_width, sustain_->getHeight(),
              Justification::centred, true);
-  g.drawText(TRANS("R"), release_->getX() - TEXT_WIDTH, release_->getY(),
-             TEXT_WIDTH, release_->getHeight(),
+  g.drawText(TRANS("R"), release_->getX() - text_width, release_->getY(),
+             text_width, release_->getHeight(),
              Justification::centred, true);
 }
 
 void EnvelopeSection::resized() {
-  int envelope_width = getWidth() - SLIDER_SECTION_WIDTH - TEXT_WIDTH - MOD_SECTION_WIDTH;
-  envelope_->setBounds(MOD_SECTION_WIDTH, 20, envelope_width, getHeight() - 20);
+  int title_width = getTitleWidth();
+  int text_width = size_ratio_ * TEXT_WIDTH;
+  int slider_section_width = size_ratio_ * SLIDER_SECTION_WIDTH;
+  int slider_width = size_ratio_ * SLIDER_WIDTH;
+  int mod_section_width = size_ratio_ * MOD_SECTION_WIDTH;
+  int mod_button_width = getModButtonWidth();
 
-  float space = (getHeight() - (4.0f * SLIDER_WIDTH) - 20) / 3.0f;
-  int x = getWidth() - SLIDER_SECTION_WIDTH;
+  int envelope_width = getWidth() - slider_section_width - text_width - mod_section_width;
+  envelope_->setBounds(mod_section_width, title_width, envelope_width, getHeight() - title_width);
 
-  float mod_button_x = (MOD_SECTION_WIDTH - MOD_BUTTON_WIDTH) / 2.0f;
-  float mod_button_y = (getHeight() - MOD_BUTTON_WIDTH + 20) / 2.0f;
-  modulation_button_->setBounds(mod_button_x, mod_button_y, MOD_BUTTON_WIDTH, MOD_BUTTON_WIDTH);
-  attack_->setBounds(x, 20, SLIDER_SECTION_WIDTH, SLIDER_WIDTH);
-  decay_->setBounds(x, 20 + space + SLIDER_WIDTH, SLIDER_SECTION_WIDTH, SLIDER_WIDTH);
-  sustain_->setBounds(x, 20 + 2 * (space + SLIDER_WIDTH), SLIDER_SECTION_WIDTH, SLIDER_WIDTH);
-  release_->setBounds(x, 20 + 3 * (space + SLIDER_WIDTH), SLIDER_SECTION_WIDTH, SLIDER_WIDTH);
+  float space = (getHeight() - (4.0f * slider_width) - title_width) / 3.0f;
+  int x = getWidth() - slider_section_width;
+
+  float mod_button_x = (mod_section_width - mod_button_width) / 2.0f;
+  float mod_button_y = (getHeight() - mod_button_width + title_width) / 2.0f;
+  modulation_button_->setBounds(mod_button_x, mod_button_y, mod_button_width, mod_button_width);
+  attack_->setBounds(x, title_width, slider_section_width, slider_width);
+  decay_->setBounds(x, title_width + space + slider_width, slider_section_width, slider_width);
+  sustain_->setBounds(x, title_width + 2 * (space + slider_width),
+                      slider_section_width, slider_width);
+  release_->setBounds(x, title_width + 3 * (space + slider_width),
+                      slider_section_width, slider_width);
 
   SynthSection::resized();
 }

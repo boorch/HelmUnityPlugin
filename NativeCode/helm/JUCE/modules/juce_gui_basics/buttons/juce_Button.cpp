@@ -2,22 +2,24 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
@@ -175,8 +177,15 @@ void Button::setToggleState (const bool shouldBeOn, const NotificationType notif
                 return;
         }
 
-        if (getToggleState() != shouldBeOn)  // this test means that if the value is void rather than explicitly set to
-            isOn = shouldBeOn;               // false, it won't be changed unless the required value is true.
+        // This test is done so that if the value is void rather than explicitly set to
+        // false, the value won't be changed unless the required value is true.
+        if (getToggleState() != shouldBeOn)
+        {
+            isOn = shouldBeOn;
+
+            if (deletionWatcher == nullptr)
+                return;
+        }
 
         lastToggleState = shouldBeOn;
         repaint();
@@ -456,7 +465,7 @@ void Button::mouseUp (const MouseEvent& e)
 {
     const bool wasDown = isDown();
     const bool wasOver = isOver();
-    updateState (isMouseOver(), false);
+    updateState (isMouseOrTouchOver (e), false);
 
     if (wasDown && wasOver && ! triggerOnMouseDown)
     {
@@ -467,13 +476,21 @@ void Button::mouseUp (const MouseEvent& e)
     }
 }
 
-void Button::mouseDrag (const MouseEvent&)
+void Button::mouseDrag (const MouseEvent& e)
 {
     const ButtonState oldState = buttonState;
-    updateState (isMouseOver(), true);
+    updateState (isMouseOrTouchOver (e), true);
 
     if (autoRepeatDelay >= 0 && buttonState != oldState && isDown())
         callbackHelper->startTimer (autoRepeatSpeed);
+}
+
+bool Button::isMouseOrTouchOver (const MouseEvent& e)
+{
+    if (e.source.isTouch())
+        return getLocalBounds().toFloat().contains (e.position);
+
+    return isMouseOver();
 }
 
 void Button::focusGained (FocusChangeType)

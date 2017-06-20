@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,13 @@
 #include "JuceHeader.h"
 #include "synth_slider.h"
 
-class ModulationSlider : public SynthSlider {
+class ModulationSlider : public SynthSlider, public Slider::Listener {
   public:
     ModulationSlider(SynthSlider* source);
     ~ModulationSlider();
 
     virtual void mouseDown(const MouseEvent& e) override;
+    void sliderValueChanged(Slider* moved_slider) override;
 
     SynthSlider* getDestinationSlider() { return destination_slider_; }
 

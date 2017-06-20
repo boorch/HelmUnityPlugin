@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,9 +15,10 @@
  */
 
 #include "reverb_section.h"
-#include "fonts.h"
 
-#define KNOB_WIDTH 40
+#include "colors.h"
+#include "fonts.h"
+#include "synth_button.h"
 
 ReverbSection::ReverbSection(String name) : SynthSection(name) {
 
@@ -30,7 +31,7 @@ ReverbSection::ReverbSection(String name) : SynthSection(name) {
   addSlider(dry_wet_ = new SynthSlider("reverb_dry_wet"));
   dry_wet_->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
 
-  addButton(on_ = new ToggleButton("reverb_on"));
+  addButton(on_ = new SynthButton("reverb_on"));
   setActivator(on_);
 }
 
@@ -44,23 +45,25 @@ ReverbSection::~ReverbSection() {
 void ReverbSection::paintBackground(Graphics& g) {
   SynthSection::paintBackground(g);
 
-  g.setColour(Colour(0xffbbbbbb));
-
-  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(10.0f));
+  g.setColour(Colors::control_label_text);
+  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(size_ratio_ * 10.0f));
+  
   drawTextForComponent(g, TRANS("FEEDB"), feedback_);
   drawTextForComponent(g, TRANS("DAMP"), damping_);
-  drawTextForComponent(g, TRANS("WET"), dry_wet_);
+  drawTextForComponent(g, TRANS("MIX"), dry_wet_);
 }
 
 void ReverbSection::resized() {
-  on_->setBounds(2, 0, 20, 20);
+  int title_width = getTitleWidth();
+  on_->setBounds(size_ratio_ * 2.0f, 0, title_width, title_width);
 
-  float space = (getWidth() - (3.0f * KNOB_WIDTH)) / 4.0f;
-  int y = 36;
+  int knob_width = getStandardKnobSize();
+  float space = (getWidth() - (3.0f * knob_width)) / 4.0f;
+  int y = size_ratio_ * 30;
 
-  feedback_->setBounds(space, y, KNOB_WIDTH, KNOB_WIDTH);
-  damping_->setBounds((KNOB_WIDTH + space) + space, y, KNOB_WIDTH, KNOB_WIDTH);
-  dry_wet_->setBounds(2 * (KNOB_WIDTH + space) + space, y, KNOB_WIDTH, KNOB_WIDTH);
+  feedback_->setBounds(space, y, knob_width, knob_width);
+  damping_->setBounds((knob_width + space) + space, y, knob_width, knob_width);
+  dry_wet_->setBounds(2 * (knob_width + space) + space, y, knob_width, knob_width);
 
   SynthSection::resized();
 }

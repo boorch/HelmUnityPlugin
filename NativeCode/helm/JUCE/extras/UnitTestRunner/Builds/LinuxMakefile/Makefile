@@ -1,160 +1,181 @@
-# Automatically generated makefile, created by the Introjucer
-# Don't edit this file! Your changes will be overwritten when you re-save the Introjucer project!
+# Automatically generated makefile, created by the Projucer
+# Don't edit this file! Your changes will be overwritten when you re-save the Projucer project!
+
+# build with "V=1" for verbose builds
+ifeq ($(V), 1)
+V_AT =
+else
+V_AT = @
+endif
 
 # (this disables dependency generation if multiple architectures are set)
 DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
+
+ifndef STRIP
+  STRIP=strip
+endif
+
+ifndef AR
+  AR=ar
+endif
 
 ifndef CONFIG
   CONFIG=Debug
 endif
 
 ifeq ($(CONFIG),Debug)
-  BINDIR := build
-  LIBDIR := build
-  OBJDIR := build/intermediate/Debug
-  OUTDIR := build
+  JUCE_BINDIR := build
+  JUCE_LIBDIR := build
+  JUCE_OBJDIR := build/intermediate/Debug
+  JUCE_OUTDIR := build
 
   ifeq ($(TARGET_ARCH),)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCE_UNIT_TESTS=1" -D "JUCER_LINUX_MAKE_6D53C8B4=1" -D "JUCE_APP_VERSION=1.0.0" -D "JUCE_APP_VERSION_HEX=0x10000" -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../../../modules
-  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -O0
-  CXXFLAGS += $(CFLAGS) -std=c++11
-  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -L/usr/X11R6/lib/ -lGL -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt 
+  JUCE_CPPFLAGS := $(DEPFLAGS) -DLINUX=1 -DDEBUG=1 -D_DEBUG=1 -DJUCE_UNIT_TESTS=1 -DJUCER_LINUX_MAKE_6D53C8B4=1 -DJUCE_APP_VERSION=1.0.0 -DJUCE_APP_VERSION_HEX=0x10000 $(shell pkg-config --cflags alsa freetype2 libcurl x11 xext xinerama webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../../modules $(CPPFLAGS)
+  JUCE_CPPFLAGS_CONSOLEAPP := -DJucePlugin_Build_VST=0 -DJucePlugin_Build_VST3=0 -DJucePlugin_Build_AU=0 -DJucePlugin_Build_AUv3=0 -DJucePlugin_Build_RTAS=0 -DJucePlugin_Build_AAX=0 -DJucePlugin_Build_Standalone=0
+  JUCE_TARGET_CONSOLEAPP := UnitTestRunner
 
-  TARGET := UnitTestRunner
-  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(TARGET_ARCH)
-  CLEANCMD = rm -rf $(OUTDIR)/$(TARGET) $(OBJDIR)
+  JUCE_CFLAGS += $(JUCE_CPPFLAGS) $(TARGET_ARCH) -g -ggdb -O0 $(CFLAGS)
+  JUCE_CXXFLAGS += $(CXXFLAGS) $(JUCE_CFLAGS) -std=c++11 $(CXXFLAGS)
+  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -L/usr/X11R6/lib/ $(shell pkg-config --libs alsa freetype2 libcurl x11 xext xinerama webkit2gtk-4.0 gtk+-x11-3.0) -lGL -ldl -lpthread -lrt  $(LDFLAGS)
+
+  CLEANCMD = rm -rf $(JUCE_OUTDIR)/$(TARGET) $(JUCE_OBJDIR)
 endif
 
 ifeq ($(CONFIG),Release)
-  BINDIR := build
-  LIBDIR := build
-  OBJDIR := build/intermediate/Release
-  OUTDIR := build
+  JUCE_BINDIR := build
+  JUCE_LIBDIR := build
+  JUCE_OBJDIR := build/intermediate/Release
+  JUCE_OUTDIR := build
 
   ifeq ($(TARGET_ARCH),)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -D "LINUX=1" -D "NDEBUG=1" -D "JUCE_UNIT_TESTS=1" -D "JUCER_LINUX_MAKE_6D53C8B4=1" -D "JUCE_APP_VERSION=1.0.0" -D "JUCE_APP_VERSION_HEX=0x10000" -I /usr/include -I /usr/include/freetype2 -I ../../JuceLibraryCode -I ../../../../modules
-  CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -O3
-  CXXFLAGS += $(CFLAGS) -std=c++11
-  LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -fvisibility=hidden -L/usr/X11R6/lib/ -lGL -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt 
+  JUCE_CPPFLAGS := $(DEPFLAGS) -DLINUX=1 -DNDEBUG=1 -DJUCE_UNIT_TESTS=1 -DJUCER_LINUX_MAKE_6D53C8B4=1 -DJUCE_APP_VERSION=1.0.0 -DJUCE_APP_VERSION_HEX=0x10000 $(shell pkg-config --cflags alsa freetype2 libcurl x11 xext xinerama webkit2gtk-4.0 gtk+-x11-3.0) -pthread -I../../JuceLibraryCode -I../../../../modules $(CPPFLAGS)
+  JUCE_CPPFLAGS_CONSOLEAPP := -DJucePlugin_Build_VST=0 -DJucePlugin_Build_VST3=0 -DJucePlugin_Build_AU=0 -DJucePlugin_Build_AUv3=0 -DJucePlugin_Build_RTAS=0 -DJucePlugin_Build_AAX=0 -DJucePlugin_Build_Standalone=0
+  JUCE_TARGET_CONSOLEAPP := UnitTestRunner
 
-  TARGET := UnitTestRunner
-  BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(TARGET_ARCH)
-  CLEANCMD = rm -rf $(OUTDIR)/$(TARGET) $(OBJDIR)
+  JUCE_CFLAGS += $(JUCE_CPPFLAGS) $(TARGET_ARCH) -O3 $(CFLAGS)
+  JUCE_CXXFLAGS += $(CXXFLAGS) $(JUCE_CFLAGS) -std=c++11 $(CXXFLAGS)
+  JUCE_LDFLAGS += $(TARGET_ARCH) -L$(JUCE_BINDIR) -L$(JUCE_LIBDIR) -fvisibility=hidden -L/usr/X11R6/lib/ $(shell pkg-config --libs alsa freetype2 libcurl x11 xext xinerama webkit2gtk-4.0 gtk+-x11-3.0) -lGL -ldl -lpthread -lrt  $(LDFLAGS)
+
+  CLEANCMD = rm -rf $(JUCE_OUTDIR)/$(TARGET) $(JUCE_OBJDIR)
 endif
 
-OBJECTS := \
-  $(OBJDIR)/Main_90ebc5c2.o \
-  $(OBJDIR)/juce_audio_basics_399a455e.o \
-  $(OBJDIR)/juce_audio_devices_c1c9ba9c.o \
-  $(OBJDIR)/juce_audio_formats_f04b043c.o \
-  $(OBJDIR)/juce_audio_processors_eb9ae116.o \
-  $(OBJDIR)/juce_core_1ee54a40.o \
-  $(OBJDIR)/juce_cryptography_3b1f489a.o \
-  $(OBJDIR)/juce_data_structures_84790dfc.o \
-  $(OBJDIR)/juce_events_584896b4.o \
-  $(OBJDIR)/juce_graphics_f9afc18.o \
-  $(OBJDIR)/juce_gui_basics_90929794.o \
-  $(OBJDIR)/juce_gui_extra_b81d9e1c.o \
-  $(OBJDIR)/juce_opengl_1890bee0.o \
-  $(OBJDIR)/juce_osc_72ef0f3c.o \
-  $(OBJDIR)/juce_video_86a19d3c.o \
+OBJECTS_CONSOLEAPP := \
+  $(JUCE_OBJDIR)/Main_90ebc5c2.o \
+  $(JUCE_OBJDIR)/include_juce_audio_basics_8a4e984a.o \
+  $(JUCE_OBJDIR)/include_juce_audio_devices_63111d02.o \
+  $(JUCE_OBJDIR)/include_juce_audio_formats_15f82001.o \
+  $(JUCE_OBJDIR)/include_juce_audio_processors_10c03666.o \
+  $(JUCE_OBJDIR)/include_juce_core_f26d17db.o \
+  $(JUCE_OBJDIR)/include_juce_cryptography_8cb807a8.o \
+  $(JUCE_OBJDIR)/include_juce_data_structures_7471b1e3.o \
+  $(JUCE_OBJDIR)/include_juce_events_fd7d695.o \
+  $(JUCE_OBJDIR)/include_juce_graphics_f817e147.o \
+  $(JUCE_OBJDIR)/include_juce_gui_basics_e3f79785.o \
+  $(JUCE_OBJDIR)/include_juce_gui_extra_6dee1c1a.o \
+  $(JUCE_OBJDIR)/include_juce_opengl_a8a032b.o \
+  $(JUCE_OBJDIR)/include_juce_osc_f3df604d.o \
+  $(JUCE_OBJDIR)/include_juce_video_be78589.o \
 
-.PHONY: clean
+.PHONY: clean all
 
-$(OUTDIR)/$(TARGET): $(OBJECTS) $(RESOURCES)
-	@echo Linking UnitTestRunner
-	-@mkdir -p $(BINDIR)
-	-@mkdir -p $(LIBDIR)
-	-@mkdir -p $(OUTDIR)
-	@$(BLDCMD)
+$(JUCE_OUTDIR)/$(JUCE_TARGET_CONSOLEAPP) : check-pkg-config $(OBJECTS_CONSOLEAPP) $(RESOURCES)
+	@echo Linking "UnitTestRunner - ConsoleApp"
+	-$(V_AT)mkdir -p $(JUCE_BINDIR)
+	-$(V_AT)mkdir -p $(JUCE_LIBDIR)
+	-$(V_AT)mkdir -p $(JUCE_OUTDIR)
+	$(V_AT)$(CXX) -o $(JUCE_OUTDIR)/$(JUCE_TARGET_CONSOLEAPP) $(OBJECTS_CONSOLEAPP) $(JUCE_LDFLAGS) $(RESOURCES) $(TARGET_ARCH)
+
+$(JUCE_OBJDIR)/Main_90ebc5c2.o: ../../Source/Main.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling Main.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_audio_basics_8a4e984a.o: ../../JuceLibraryCode/include_juce_audio_basics.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_audio_basics.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_audio_devices_63111d02.o: ../../JuceLibraryCode/include_juce_audio_devices.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_audio_devices.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_audio_formats_15f82001.o: ../../JuceLibraryCode/include_juce_audio_formats.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_audio_formats.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_audio_processors_10c03666.o: ../../JuceLibraryCode/include_juce_audio_processors.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_audio_processors.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_core_f26d17db.o: ../../JuceLibraryCode/include_juce_core.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_core.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_cryptography_8cb807a8.o: ../../JuceLibraryCode/include_juce_cryptography.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_cryptography.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_data_structures_7471b1e3.o: ../../JuceLibraryCode/include_juce_data_structures.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_data_structures.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_events_fd7d695.o: ../../JuceLibraryCode/include_juce_events.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_events.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_graphics_f817e147.o: ../../JuceLibraryCode/include_juce_graphics.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_graphics.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_gui_basics_e3f79785.o: ../../JuceLibraryCode/include_juce_gui_basics.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_gui_basics.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_gui_extra_6dee1c1a.o: ../../JuceLibraryCode/include_juce_gui_extra.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_gui_extra.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_opengl_a8a032b.o: ../../JuceLibraryCode/include_juce_opengl.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_opengl.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_osc_f3df604d.o: ../../JuceLibraryCode/include_juce_osc.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_osc.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/include_juce_video_be78589.o: ../../JuceLibraryCode/include_juce_video.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling include_juce_video.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_CONSOLEAPP) $(JUCE_CFLAGS_CONSOLEAPP) -o "$@" -c "$<"
+
+check-pkg-config:
+	@command -v pkg-config >/dev/null 2>&1 || { echo >&2 "pkg-config not installed. Please, install it."; exit 1; }
+	@pkg-config --print-errors alsa freetype2 libcurl x11 xext xinerama
 
 clean:
 	@echo Cleaning UnitTestRunner
-	@$(CLEANCMD)
+	$(V_AT)$(CLEANCMD)
 
 strip:
 	@echo Stripping UnitTestRunner
-	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
+	-$(V_AT)$(STRIP) --strip-unneeded $(JUCE_OUTDIR)/$(TARGET)
 
-$(OBJDIR)/Main_90ebc5c2.o: ../../Source/Main.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling Main.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_audio_basics_399a455e.o: ../../../../modules/juce_audio_basics/juce_audio_basics.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_audio_basics.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_audio_devices_c1c9ba9c.o: ../../../../modules/juce_audio_devices/juce_audio_devices.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_audio_devices.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_audio_formats_f04b043c.o: ../../../../modules/juce_audio_formats/juce_audio_formats.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_audio_formats.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_audio_processors_eb9ae116.o: ../../../../modules/juce_audio_processors/juce_audio_processors.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_audio_processors.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_core_1ee54a40.o: ../../../../modules/juce_core/juce_core.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_core.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_cryptography_3b1f489a.o: ../../../../modules/juce_cryptography/juce_cryptography.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_cryptography.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_data_structures_84790dfc.o: ../../../../modules/juce_data_structures/juce_data_structures.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_data_structures.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_events_584896b4.o: ../../../../modules/juce_events/juce_events.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_events.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_graphics_f9afc18.o: ../../../../modules/juce_graphics/juce_graphics.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_graphics.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_gui_basics_90929794.o: ../../../../modules/juce_gui_basics/juce_gui_basics.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_gui_basics.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_gui_extra_b81d9e1c.o: ../../../../modules/juce_gui_extra/juce_gui_extra.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_gui_extra.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_opengl_1890bee0.o: ../../../../modules/juce_opengl/juce_opengl.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_opengl.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_osc_72ef0f3c.o: ../../../../modules/juce_osc/juce_osc.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_osc.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/juce_video_86a19d3c.o: ../../../../modules/juce_video/juce_video.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling juce_video.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
--include $(OBJECTS:%.o=%.d)
+-include $(OBJECTS_CONSOLEAPP:%.o=%.d)

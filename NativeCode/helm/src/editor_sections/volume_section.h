@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include "JuceHeader.h"
 #include "synth_section.h"
+#include "open_gl_peak_meter.h"
 
 class VolumeSection : public SynthSection {
   public:
@@ -30,6 +31,8 @@ class VolumeSection : public SynthSection {
 
   private:
     ScopedPointer<SynthSlider> volume_;
+    ScopedPointer<OpenGLPeakMeter> peak_meter_left_;
+    ScopedPointer<OpenGLPeakMeter> peak_meter_right_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VolumeSection)
 };

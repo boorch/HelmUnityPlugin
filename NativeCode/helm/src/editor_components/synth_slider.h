@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +24,21 @@ class FullInterface;
 
 class SynthSlider : public Slider {
   public:
+    static const float rotary_angle;
+    static const float linear_rail_width;
+
     class SliderListener {
       public:
         virtual ~SliderListener() { }
-        virtual void hoverStarted(const std::string& name) = 0;
-        virtual void hoverEnded(const std::string& name) = 0;
-        virtual void modulationsChanged(const std::string& name) = 0;
+        virtual void hoverStarted(const std::string& name) { }
+        virtual void hoverEnded(const std::string& name) { }
+        virtual void modulationsChanged(const std::string& name) { }
+        virtual void guiChanged(SynthSlider* slider) { }
     };
 
     SynthSlider(String name);
 
+    virtual void resized() override;
     virtual void mouseDown(const MouseEvent& e) override;
     virtual void mouseEnter(const MouseEvent& e) override;
     virtual void mouseExit(const MouseEvent& e) override;
@@ -41,26 +46,33 @@ class SynthSlider : public Slider {
     void valueChanged() override;
     String getTextFromValue(double value) override;
 
+    virtual double snapValue(double attemptedValue, DragMode dragMode) override;
+
     void drawShadow(Graphics& g);
     void drawRotaryShadow(Graphics& g);
     void drawRectangularShadow(Graphics& g);
-
-    void setScalingType(mopo::ValueDetails::DisplaySkew scaling_type) {
-      scaling_type_ = scaling_type;
+    void snapToValue(bool snap, float value = 0.0) {
+      snap_to_value_ = snap;
+      snap_value_ = value;
     }
 
-    mopo::ValueDetails::DisplaySkew getScalingType() const { return scaling_type_; }
+    void setScalingType(mopo::ValueDetails::DisplaySkew scaling_type) {
+      details_.display_skew = scaling_type;
+    }
+
+    mopo::ValueDetails::DisplaySkew getScalingType() const { return details_.display_skew; }
 
     void setStringLookup(const std::string* lookup) {
       string_lookup_ = lookup;
     }
     const std::string* getStringLookup() const { return string_lookup_; }
 
-    void setPostMultiply(float post_multiply) { post_multiply_ = post_multiply; }
-    float getPostMultiply() const { return post_multiply_; }
+    void setPostMultiply(float post_multiply) { details_.display_multiply = post_multiply; }
+    float getPostMultiply() const { return details_.display_multiply; }
 
-    void setUnits(String units) { units_ = units; }
-    String getUnits() const { return units_; }
+    void setUnits(String units) { details_.display_units = units.toStdString(); }
+    String getUnits() const { return details_.display_units; }
+    String formatValue(float value);
 
     void flipColoring(bool flip_coloring = true);
     void setBipolar(bool bipolar = true);
@@ -71,16 +83,29 @@ class SynthSlider : public Slider {
     bool isBipolar() const { return bipolar_; }
     bool isFlippedColor() const { return flip_coloring_; }
     bool isActive() const { return active_; }
+    void setPopupPlacement(int placement, int buffer = 0) {
+      popup_placement_ = placement;
+      popup_buffer_ = buffer;
+    }
+    int getPopupPlacement() { return popup_placement_; }
+    int getPopupBuffer() { return popup_buffer_; }
 
-  private:
+    void notifyGuis();
+    void handlePopupResult(int result);
+
+  protected:
     void notifyTooltip();
 
     bool bipolar_;
     bool flip_coloring_;
     bool active_;
-    String units_;
-    mopo::ValueDetails::DisplaySkew scaling_type_;
-    float post_multiply_;
+    bool snap_to_value_;
+    float snap_value_;
+    int popup_placement_;
+    int popup_buffer_;
+
+    mopo::ValueDetails details_;
+
     const std::string* string_lookup_;
     Point<float> click_position_;
 

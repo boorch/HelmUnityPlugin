@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,18 @@
  */
 
 #include "modulation_look_and_feel.h"
+
+#include "colors.h"
+#include "fonts.h"
 #include "modulation_slider.h"
 #include "mopo.h"
 #include "synth_gui_interface.h"
 #include "text_look_and_feel.h"
+
+ModulationLookAndFeel::ModulationLookAndFeel() {
+  setColour(BubbleComponent::backgroundColourId, Colour(0xff222222));
+  setColour(TooltipWindow::textColourId, Colour(0xffdddddd));
+}
 
 void ModulationLookAndFeel::drawLinearSlider(Graphics& g, int x, int y, int width, int height,
                                              float slider_pos, float min, float max,
@@ -40,7 +48,7 @@ void ModulationLookAndFeel::drawLinearSlider(Graphics& g, int x, int y, int widt
   else {
     g.setColour(Colour(0x1100e676));
     g.fillRect(0, 0, slider.getWidth(), slider.getHeight());
-    g.setColour(Colour(0xff00e676));
+    g.setColour(Colors::modulation);
     g.drawRect(0.0f, 0.0f, float(slider.getWidth()), float(slider.getHeight()), 2.5f);
   }
 
@@ -83,7 +91,7 @@ void ModulationLookAndFeel::drawTextModulation(Graphics& g, Slider& slider, floa
   else {
     g.setColour(Colour(0x1100e676));
     g.fillRect(0, 0, slider.getWidth(), slider.getHeight());
-    g.setColour(Colour(0xff00e676));
+    g.setColour(Colors::modulation);
     g.drawRect(0.0f, 0.0f, float(slider.getWidth()), float(slider.getHeight()), 2.5f);
   }
 
@@ -127,7 +135,7 @@ void ModulationLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int widt
     g.setColour(Colour(0x33b9f6ca));
     g.fillEllipse(width / 2.0f - knob_radius, height / 2.0f - knob_radius,
                   2.0 * knob_radius, 2.0 * knob_radius);
-    g.setColour(Colour(0xff00e676));
+    g.setColour(Colors::modulation);
     g.drawEllipse(width / 2.0f - knob_radius + 0.5f, height / 2.0f - knob_radius + 0.5f,
                   2.0f * knob_radius - 1.0f, 2.0f * knob_radius - 1.0f, 1.0f);
   }
@@ -135,7 +143,7 @@ void ModulationLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int widt
     g.setColour(Colour(0xaa00e676));
     g.fillEllipse(width / 2.0f - knob_radius, height / 2.0f - knob_radius,
                   2.0 * knob_radius, 2.0 * knob_radius);
-    g.setColour(Colour(0xff00e676));
+    g.setColour(Colors::modulation);
     g.drawEllipse(width / 2.0f - knob_radius + 1.5f, height / 2.0f - knob_radius + 1.5f,
                   2.0f * knob_radius - 3.0f, 2.0f * knob_radius - 3.0f, 3.0f);
   }
@@ -145,7 +153,7 @@ void ModulationLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int widt
   float center_x = x + draw_radius;
   float center_y = y + draw_radius;
   if (destination_angle > mopo::PI)
-    destination_angle -= 2.0 * mopo::PI;
+    destination_angle -= 2.0f * static_cast<float>(mopo::PI);
   active_section.addCentredArc(center_x, center_y, knob_radius / 2.0, knob_radius / 2.0,
                                destination_angle, mod_diff, 0, true);
 
@@ -159,7 +167,7 @@ void ModulationLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int widt
 }
 
 void ModulationLookAndFeel::drawToggleButton(Graphics& g, ToggleButton& button,
-                                             bool isMouseOverButton, bool isButtonDown) {
+                                             bool hover, bool is_down) {
   static const DropShadow shadow(Colour(0x88000000), 2, Point<int>(0, 0));
 
   static const Image on_active_2x =
@@ -171,39 +179,33 @@ void ModulationLookAndFeel::drawToggleButton(Graphics& g, ToggleButton& button,
   static const Image off_active_2x =
       ImageCache::getFromMemory(BinaryData::modulation_unselected_active_2x_png,
                                 BinaryData::modulation_unselected_active_2x_pngSize);
-  static const Image off_active_1x =
-      ImageCache::getFromMemory(BinaryData::modulation_unselected_active_1x_png,
-                                BinaryData::modulation_unselected_active_1x_pngSize);
   static const Image on_inactive_2x =
       ImageCache::getFromMemory(BinaryData::modulation_selected_inactive_2x_png,
                                 BinaryData::modulation_selected_inactive_2x_pngSize);
-  static const Image on_inactive_1x =
-      ImageCache::getFromMemory(BinaryData::modulation_selected_inactive_1x_png,
-                                BinaryData::modulation_selected_inactive_1x_pngSize);
   static const Image off_inactive_2x =
       ImageCache::getFromMemory(BinaryData::modulation_unselected_inactive_2x_png,
                                 BinaryData::modulation_unselected_inactive_2x_pngSize);
-  static const Image off_inactive_1x =
-      ImageCache::getFromMemory(BinaryData::modulation_unselected_inactive_1x_png,
-                                BinaryData::modulation_unselected_inactive_1x_pngSize);
 
+
+  g.saveState();
+  float ratio = (1.0f * button.getWidth()) / on_active_1x.getWidth();
+  g.addTransform(AffineTransform::scale(ratio, ratio));
   shadow.drawForImage(g, on_active_1x);
-  const Desktop::Displays::Display& display = Desktop::getInstance().getDisplays().getMainDisplay();
+  g.restoreState();
 
-  bool is_2x = display.scale > 1.5;
   Image button_image;
   SynthGuiInterface* parent = button.findParentComponentOfClass<SynthGuiInterface>();
   if (parent && parent->getSynth()->getSourceConnections(button.getName().toStdString()).size()) {
     if (button.getToggleState())
-      button_image = is_2x ? on_active_2x : on_active_1x;
+      button_image = on_active_2x;
     else
-      button_image = is_2x ? off_active_2x : off_active_1x;
+      button_image = off_active_2x;
   }
   else {
     if (button.getToggleState())
-      button_image = is_2x ? on_inactive_2x : on_inactive_1x;
+      button_image = on_inactive_2x;
     else
-      button_image = is_2x ? off_inactive_2x : off_inactive_1x;
+      button_image = off_inactive_2x;
   }
 
   g.setColour(Colours::white);
@@ -211,12 +213,28 @@ void ModulationLookAndFeel::drawToggleButton(Graphics& g, ToggleButton& button,
               0, 0, button.getWidth(), button.getHeight(),
               0, 0, button_image.getWidth(), button_image.getHeight());
 
-  if (isButtonDown) {
+  if (is_down) {
     g.setColour(Colour(0x11000000));
     g.fillEllipse(1, 2, button.getWidth() - 2, button.getHeight() - 2);
   }
-  else if (isMouseOverButton) {
+  else if (hover) {
     g.setColour(Colour(0x11ffffff));
     g.fillEllipse(1, 2, button.getWidth() - 2, button.getHeight() - 2);
   }
+}
+
+int ModulationLookAndFeel::getSliderPopupPlacement(Slider& slider) {
+  SynthSlider* s_slider = dynamic_cast<SynthSlider*>(&slider);
+  if (s_slider)
+    return s_slider->getPopupPlacement();
+
+  return LookAndFeel_V3::getSliderPopupPlacement(slider);
+}
+
+Font ModulationLookAndFeel::getPopupMenuFont() {
+  return Fonts::instance()->proportional_regular().withPointHeight(14.0f);
+}
+
+Font ModulationLookAndFeel::getSliderPopupFont(Slider& slider) {
+  return Fonts::instance()->proportional_regular().withPointHeight(14.0f);
 }

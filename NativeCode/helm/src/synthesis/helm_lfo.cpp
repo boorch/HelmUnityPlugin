@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 
 #include "helm_lfo.h"
 #include "common.h"
+#include "utils.h"
 
 #include <cmath>
 
@@ -28,14 +29,14 @@ namespace mopo {
   } // namespace
 
 
-  HelmLfo::HelmLfo() : Processor(kNumInputs, kNumOutputs), offset_(0.0),
+  HelmLfo::HelmLfo() : Processor(kNumInputs, kNumOutputs, true), offset_(0.0),
                        last_random_value_(0.0), current_random_value_(0.0) { }
 
   void HelmLfo::process() {
-    int num_samples = buffer_size_;
+    int num_samples = samples_to_process_;
 
     if (input(kReset)->source->triggered) {
-      num_samples = buffer_size_ - input(kReset)->source->trigger_offset;
+      num_samples = samples_to_process_ - input(kReset)->source->trigger_offset;
       offset_ = 0.0;
       last_random_value_ = current_random_value_;
       current_random_value_ = randomLfoValue();
@@ -66,8 +67,9 @@ namespace mopo {
         output(kValue)->buffer[0] = current_random_value_;
       else {
         // Smooth random value.
-        float t = (1.0 - cos(PI * phased_offset)) / 2.0;
-        output(kValue)->buffer[0] = INTERPOLATE(last_random_value_, current_random_value_, t);
+        mopo_float t = (1.0 - cos(PI * phased_offset)) / 2.0;
+        output(kValue)->buffer[0] = utils::interpolate(last_random_value_,
+                                                       current_random_value_, t);
       }
     }
   }

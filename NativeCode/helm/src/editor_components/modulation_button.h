@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "JuceHeader.h"
 
 namespace mopo {
-  class ModulationConnection;
+  struct ModulationConnection;
 } // namespace mopo
 
 class ModulationButton : public ToggleButton {
@@ -38,6 +38,7 @@ class ModulationButton : public ToggleButton {
     void mouseDown(const MouseEvent& e) override;
     void mouseUp(const MouseEvent& e) override;
     void addDisconnectListener(ModulationDisconnectListener* listener);
+    void disconnectIndex(int index);
 
   private:
     void disconnectModulation(mopo::ModulationConnection* connection);

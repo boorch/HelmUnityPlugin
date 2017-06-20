@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,12 +77,16 @@ namespace mopo {
 
     // Run all the main processors.
     int num_processors = local_order_.size();
-    for (int i = 0; i < num_processors; ++i)
-      local_order_[i]->process();
+    for (int i = 0; i < num_processors; ++i) {
+      if (local_order_[i]->enabled())
+        local_order_[i]->process();
+    }
 
     // Store the outputs into the Feedback objects for next time.
-    for (int i = 0; i < num_feedbacks; ++i)
-      local_feedback_order_[i]->process();
+    for (int i = 0; i < num_feedbacks; ++i) {
+      if (global_feedback_order_->at(i)->enabled())
+        local_feedback_order_[i]->process();
+    }
 
     MOPO_ASSERT(num_processors != 0);
   }
@@ -143,6 +147,9 @@ namespace mopo {
   }
 
   void ProcessorRouter::removeProcessor(const Processor* processor) {
+    for (int i = 0; i < processor->numInputs(); ++i)
+      disconnect(processor, processor->input(i)->source);
+
     MOPO_ASSERT(processor->router() == this);
     (*global_changes_)++;
     local_changes_++;
@@ -163,7 +170,11 @@ namespace mopo {
                                 const Output* source, int index) {
     if (isDownstream(destination, source->owner)) {
       // We are introducing a cycle so insert a Feedback node.
-      Feedback* feedback = new Feedback();
+      Feedback* feedback = nullptr;
+      if (source->owner->isControlRate() || destination->isControlRate())
+        feedback = new cr::Feedback();
+      else
+        feedback = new Feedback();
       feedback->plug(source);
       destination->plug(feedback, index);
       addFeedback(feedback);
@@ -174,7 +185,7 @@ namespace mopo {
     }
   }
 
-  void ProcessorRouter::disconnect(Processor* destination,
+  void ProcessorRouter::disconnect(const Processor* destination,
                                    const Output* source) {
     if (isDownstream(destination, source->owner)) {
       // We're fine unless there is a cycle and need to delete a Feedback node.

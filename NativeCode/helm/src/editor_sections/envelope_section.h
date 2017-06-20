@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #define ENVELOPE_SECTION_H
 
 #include "JuceHeader.h"
-#include "graphical_envelope.h"
+#include "open_gl_envelope.h"
 #include "synth_section.h"
 
 class EnvelopeSection : public SynthSection {
@@ -32,7 +32,7 @@ class EnvelopeSection : public SynthSection {
     void reset() override;
 
   private:
-    ScopedPointer<GraphicalEnvelope> envelope_;
+    ScopedPointer<OpenGLEnvelope> envelope_;
     ScopedPointer<SynthSlider> attack_;
     ScopedPointer<SynthSlider> decay_;
     ScopedPointer<SynthSlider> sustain_;

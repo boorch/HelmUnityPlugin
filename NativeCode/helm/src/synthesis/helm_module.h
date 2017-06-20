@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 #include <vector>
 
 namespace mopo {
+  class ValueSwitch;
+
   class HelmModule : public virtual ProcessorRouter {
     public:
       HelmModule();
@@ -40,6 +42,11 @@ namespace mopo {
       Processor* getMonoModulationDestination(std::string name);
       Processor* getPolyModulationDestination(std::string name);
 
+      ValueSwitch* getModulationSwitch(std::string name, bool poly);
+      ValueSwitch* getMonoModulationSwitch(std::string name);
+      ValueSwitch* getPolyModulationSwitch(std::string name);
+      void updateAllModulationSwitches();
+
       output_map getModulationSources();
       virtual output_map getMonoModulations();
       virtual output_map getPolyModulations();
@@ -49,20 +56,24 @@ namespace mopo {
       // Creates a basic linear non-scaled control.
       Value* createBaseControl(std::string name, bool smooth_value = false);
 
+      // Creates a basic control for switching something on and off.
+      ValueSwitch* createBaseSwitchControl(std::string name);
+
       // Creates a basic non-scaled linear control that you can modulate monophonically
-      Processor* createBaseModControl(std::string name, bool smooth_value = false);
+      Output* createBaseModControl(std::string name, bool smooth_value = false);
 
       // Creates any control that you can modulate monophonically.
-      Processor* createMonoModControl(std::string name, bool control_rate,
-                                      bool smooth_value = false);
+      Output* createMonoModControl(std::string name, bool control_rate,
+                                   bool smooth_value = false);
 
       // Creates any control that you can modulate polyphonically and monophonically.
-      Processor* createPolyModControl(std::string name, bool control_rate,
-                                      bool smooth_value = false);
+      Output* createPolyModControl(std::string name, bool control_rate,
+                                   bool smooth_value = false);
 
       // Creates a switch from free running frequencies to tempo synced frequencies.
-      Processor* createTempoSyncSwitch(std::string name, Processor* frequency,
-                                       Processor* bps, bool poly = false);
+      Output* createTempoSyncSwitch(std::string name, Processor* frequency,
+                                    Output* bps, bool poly = false,
+                                    ValueSwitch* owner = nullptr);
 
       void addSubmodule(HelmModule* module) { sub_modules_.push_back(module); }
 
@@ -74,6 +85,8 @@ namespace mopo {
       input_map poly_mod_destinations_;
       output_map mono_modulation_readout_;
       output_map poly_modulation_readout_;
+      std::map<std::string, ValueSwitch*> mono_modulation_switches_;
+      std::map<std::string, ValueSwitch*> poly_modulation_switches_;
   };
 } // namespace mopo
 

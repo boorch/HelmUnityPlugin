@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
  */
 
 #include "modulation_button.h"
+
+#include "default_look_and_feel.h"
 #include "synth_gui_interface.h"
 
 namespace {
@@ -24,6 +26,10 @@ namespace {
     kModulationList
   };
 
+  static void initPatchCallback(int result, ModulationButton* button) {
+    if (button != nullptr && result != 0)
+      button->disconnectIndex(result);
+  }
 } // namespace
 
 ModulationButton::ModulationButton(String name) : ToggleButton(name) { }
@@ -31,15 +37,18 @@ ModulationButton::ModulationButton(String name) : ToggleButton(name) { }
 void ModulationButton::mouseDown(const MouseEvent& e) {
   if (e.mods.isPopupMenu()) {
     SynthGuiInterface* parent = findParentComponentOfClass<SynthGuiInterface>();
-    std::vector<mopo::ModulationConnection*> connections;
     if (parent == nullptr)
       return;
 
-    connections = parent->getSynth()->getSourceConnections(getName().toStdString());
+    std::vector<mopo::ModulationConnection*> connections =
+        parent->getSynth()->getSourceConnections(getName().toStdString());
+
     if (connections.size() == 0)
       return;
 
     PopupMenu m;
+    m.setLookAndFeel(DefaultLookAndFeel::instance());
+
     String disconnect("Disconnect from ");
     for (int i = 0; i < connections.size(); ++i)
       m.addItem(kModulationList + i, disconnect + connections[i]->destination);
@@ -47,17 +56,8 @@ void ModulationButton::mouseDown(const MouseEvent& e) {
     if (connections.size() > 1)
       m.addItem(kDisconnect, "Disconnect all");
 
-    int result = m.show();
-    if (result == kDisconnect) {
-      for (mopo::ModulationConnection* connection : connections)
-        disconnectModulation(connection);
-      repaint();
-    }
-    else if (result >= kModulationList) {
-      int connection_index = result - kModulationList;
-      disconnectModulation(connections[connection_index]);
-      repaint();
-    }
+    m.showMenuAsync(PopupMenu::Options(),
+                    ModalCallbackFunction::forComponent(initPatchCallback, this));
   }
   else
     ToggleButton::mouseDown(e);
@@ -70,6 +70,26 @@ void ModulationButton::mouseUp(const MouseEvent& e) {
 
 void ModulationButton::addDisconnectListener(ModulationDisconnectListener* listener) {
   listeners_.push_back(listener);
+}
+
+void ModulationButton::disconnectIndex(int index) {
+  SynthGuiInterface* parent = findParentComponentOfClass<SynthGuiInterface>();
+  if (parent == nullptr)
+    return;
+
+  std::vector<mopo::ModulationConnection*> connections =
+      parent->getSynth()->getSourceConnections(getName().toStdString());
+
+  if (index == kDisconnect) {
+    for (mopo::ModulationConnection* connection : connections)
+      disconnectModulation(connection);
+    repaint();
+  }
+  else if (index >= kModulationList) {
+    int connection_index = index - kModulationList;
+    disconnectModulation(connections[connection_index]);
+    repaint();
+  }
 }
 
 void ModulationButton::disconnectModulation(mopo::ModulationConnection* connection) {

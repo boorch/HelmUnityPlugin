@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
 
 class MidiKeyboard : public MidiKeyboardComponent {
   public:
-    MidiKeyboard(MidiKeyboardState& state, Orientation orientation) :
-        MidiKeyboardComponent(state, orientation) { }
+    MidiKeyboard(MidiKeyboardState& state, Orientation orientation);
 
     virtual void drawBlackNote(int midiNoteNumber, Graphics& g,
                                int x, int y, int w, int h,

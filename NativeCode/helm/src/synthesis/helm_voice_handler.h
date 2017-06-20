@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,20 +31,22 @@ namespace mopo {
   class Envelope;
   class Filter;
   class FormantManager;
+  class Gate;
+  class HelmLfo;
+  class LadderFilter;
   class LinearSlope;
   class Oscillator;
   class SmoothValue;
   class StepGenerator;
   class TriggerCombiner;
   class HelmOscillators;
-  class Switch;
 
   // The voice handler duplicates processors to produce polyphony.
   // Everything in the synthesizer we want per-voice instances of must be
   // contained in here.
   class HelmVoiceHandler : public virtual VoiceHandler, public virtual HelmModule {
     public:
-      HelmVoiceHandler(Processor* beats_per_second);
+      HelmVoiceHandler(Output* beats_per_second);
       virtual ~HelmVoiceHandler() { } // Should probably delete things.
 
       void init() override;
@@ -53,6 +55,7 @@ namespace mopo {
       void noteOn(mopo_float note, mopo_float velocity = 1,
                   int sample = 0, int channel = 0) override;
       VoiceEvent noteOff(mopo_float note, int sample = 0) override;
+      bool shouldAccumulate(Output* output) override;
       void setModWheel(mopo_float value, int channel = 0);
       void setPitchWheel(mopo_float value, int channel = 0);
       Output* note_retrigger() { return &note_retriggered_; }
@@ -76,15 +79,15 @@ namespace mopo {
 
       void setupPolyModulationReadouts();
 
-      Processor* beats_per_second_;
+      Output* beats_per_second_;
 
       Processor* note_from_center_;
-      Switch* choose_pitch_wheel_;
+      Gate* choose_pitch_wheel_;
       Value* mod_wheel_amounts_[mopo::NUM_MIDI_CHANNELS];
       Value* pitch_wheel_amounts_[mopo::NUM_MIDI_CHANNELS];
       Processor* current_frequency_;
       Envelope* amplitude_envelope_;
-      Multiply* amplitude_;
+      Processor* amplitude_;
       SimpleDelay* osc_feedback_;
 
       TriggerCombiner* env_trigger_;
@@ -96,6 +99,7 @@ namespace mopo {
       Envelope* filter_envelope_;
       BypassRouter* formant_container_;
       Output note_retriggered_;
+      HelmLfo* poly_lfo_;
 
       Multiply* output_;
 

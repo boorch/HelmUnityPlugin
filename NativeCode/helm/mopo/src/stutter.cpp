@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
  */
 
 #include "stutter.h"
+#include "utils.h"
 
 #define MIN_SOFTNESS 0.00001
 
@@ -23,7 +24,7 @@ namespace mopo {
   namespace {
     inline mopo_float computeAmplitude(mopo_float offset, mopo_float period, mopo_float softness) {
       mopo_float progress = offset / period;
-      mopo_float phase_setup = std::fabs(INTERPOLATE(-softness, softness, progress));
+      mopo_float phase_setup = std::fabs(utils::interpolate(-softness, softness, progress));
       mopo_float phase = utils::clamp(phase_setup - softness + PI, 0.0, PI);
       return 0.5 * cos(phase) + 0.5;
     }
@@ -50,6 +51,8 @@ namespace mopo {
   }
 
   void Stutter::process() {
+    MOPO_ASSERT(inputMatchesBufferSize(kAudio));
+
     // A hack to save memory until stutter is used.
     if (memory_ == nullptr)
       memory_ = new Memory(size_);
@@ -59,10 +62,10 @@ namespace mopo {
 
     mopo_float sample_period = sample_rate_ / input(kResampleFrequency)->at(0);
     mopo_float end_stutter_period = sample_rate_ / input(kStutterFrequency)->at(0);
-    end_stutter_period = std::min(sample_period, end_stutter_period);
-    end_stutter_period = std::min(max_memory_write, end_stutter_period);
-    mopo_float read_softenss = std::max(input(kWindowSoftness)->at(0), MIN_SOFTNESS);
-    mopo_float end_softness = PI * std::max(1.0, 1.0 / read_softenss);
+    end_stutter_period = utils::min(sample_period, end_stutter_period);
+    end_stutter_period = utils::min(max_memory_write, end_stutter_period);
+    mopo_float read_softenss = utils::max(input(kWindowSoftness)->at(0), MIN_SOFTNESS);
+    mopo_float end_softness = PI * utils::max(1.0, 1.0 / read_softenss);
 
     mopo_float stutter_period = end_stutter_period;
     if (last_stutter_period_)

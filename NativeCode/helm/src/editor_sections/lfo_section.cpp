@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,19 +16,19 @@
 
 #include "lfo_section.h"
 
+#include "colors.h"
 #include "fonts.h"
 #include "modulation_look_and_feel.h"
 #include "text_look_and_feel.h"
 
 #define WAVE_VIEWER_RESOLUTION 128
-#define KNOB_SECTION_WIDTH 45
-#define KNOB_WIDTH 32
+#define CONTROL_SECTION_WIDTH 45
 #define SLIDER_WIDTH 10
 #define TEXT_HEIGHT 16
 #define TEXT_WIDTH 42
 
-LfoSection::LfoSection(String name, std::string value_prepend, bool retrigger) :
-    SynthSection(name) {
+LfoSection::LfoSection(String name, std::string value_prepend, bool retrigger, bool can_animate) :
+    SynthSection(name), can_animate_(can_animate) {
   static const int TEMPO_DRAG_SENSITIVITY = 150;
 
   retrigger_ = new RetriggerSelector(value_prepend + "_retrigger");
@@ -40,6 +40,7 @@ LfoSection::LfoSection(String name, std::string value_prepend, bool retrigger) :
   addSlider(amplitude_ = new SynthSlider(value_prepend + "_amplitude"));
   amplitude_->setSliderStyle(Slider::LinearBarVertical);
   amplitude_->setBipolar();
+  amplitude_->snapToValue(true, 0.0);
 
   addSlider(frequency_ = new SynthSlider(value_prepend + "_frequency"));
   frequency_->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
@@ -61,11 +62,10 @@ LfoSection::LfoSection(String name, std::string value_prepend, bool retrigger) :
   wave_selector_->setSliderStyle(Slider::LinearBar);
   wave_selector_->setStringLookup(mopo::strings::waveforms);
 
-  addAndMakeVisible(wave_viewer_ = new WaveViewer(WAVE_VIEWER_RESOLUTION));
-  wave_viewer_->setName(value_prepend);
+  addOpenGLComponent(wave_viewer_ = new OpenGLWaveViewer(WAVE_VIEWER_RESOLUTION));
   wave_viewer_->setAmplitudeSlider(amplitude_);
   wave_viewer_->setWaveSlider(wave_selector_);
-  wave_viewer_->setControlRate();
+  wave_viewer_->setName(value_prepend);
 
   addModulationButton(modulation_button_ = new ModulationButton(value_prepend));
   modulation_button_->setLookAndFeel(ModulationLookAndFeel::instance());
@@ -84,19 +84,25 @@ void LfoSection::paintBackground(Graphics& g) {
   static const DropShadow component_shadow(Colour(0x88000000), 2, Point<int>(0, 1));
 
   SynthSection::paintBackground(g);
-  g.setColour(Colour(0xffbbbbbb));
-  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(10.0f));
+  g.setColour(Colors::control_label_text);
+  float text_height = size_ratio_ * 10.0f;
+  g.setFont(Fonts::instance()->proportional_regular().withPointHeight(text_height));
+  float text_slider_height = size_ratio_ * TEXT_HEIGHT;
+  float text_buffer = size_ratio_ * 6.0f;
 
   if (retrigger_->isVisible()) {
     g.drawText(TRANS("FREQUENCY"),
-               retrigger_->getBounds().getX(), frequency_->getBounds().getY() + TEXT_HEIGHT + 6,
-               frequency_->getBounds().getWidth() + 2 * TEXT_HEIGHT, 10,
+               retrigger_->getBounds().getX(), frequency_->getBounds().getBottom() + text_buffer,
+               frequency_->getBounds().getWidth() + 2 * text_slider_height, text_height + 1,
                Justification::centred, false);
   }
   else {
+    float extra_bump = size_ratio_ * 5.0f;
     g.drawText(TRANS("FREQUENCY"),
-               frequency_->getBounds().getX() - 5, frequency_->getBounds().getY() + TEXT_HEIGHT + 6,
-               frequency_->getBounds().getWidth() + TEXT_HEIGHT + 10, 10,
+               frequency_->getBounds().getX() - extra_bump,
+               frequency_->getBounds().getBottom() + text_buffer,
+               frequency_->getBounds().getWidth() + text_slider_height + 2 * extra_bump,
+               text_height + 1,
                Justification::centred, false);
   }
 
@@ -104,31 +110,42 @@ void LfoSection::paintBackground(Graphics& g) {
 }
 
 void LfoSection::resized() {
-  int wave_height = getHeight() - 20 - KNOB_SECTION_WIDTH - SLIDER_WIDTH;
-  wave_selector_->setBounds(SLIDER_WIDTH, 20, getWidth() - SLIDER_WIDTH, SLIDER_WIDTH);
-  wave_viewer_->setBounds(SLIDER_WIDTH, 20 + SLIDER_WIDTH, getWidth() - SLIDER_WIDTH, wave_height);
-  amplitude_->setBounds(0, 20 + SLIDER_WIDTH, SLIDER_WIDTH, wave_height);
+  int control_section_width = size_ratio_ * CONTROL_SECTION_WIDTH;
+  int y = getHeight() - control_section_width + size_ratio_ * 6.0f;
+  int mod_button_width = getModButtonWidth();
+  int text_width = size_ratio_ * TEXT_WIDTH;
+  int text_height = size_ratio_ * TEXT_HEIGHT;
+  int slider_width = size_ratio_ * SLIDER_WIDTH;
+  int title_width = getTitleWidth();
+  int mod_button_x = size_ratio_ * 10.0f;
 
-  int y = getHeight() - (KNOB_SECTION_WIDTH + KNOB_WIDTH) / 2;
-  modulation_button_->setBounds(10.0f, y, MODULATION_BUTTON_WIDTH, MODULATION_BUTTON_WIDTH);
-  retrigger_->setBounds(proportionOfWidth(0.5f) - TEXT_HEIGHT, y, TEXT_HEIGHT, TEXT_HEIGHT);
+  int wave_height = getHeight() - title_width - control_section_width - slider_width;
+  wave_selector_->setBounds(slider_width, title_width, getWidth() - slider_width, slider_width);
+  wave_viewer_->setBounds(slider_width, title_width + slider_width,
+                          getWidth() - slider_width, wave_height);
 
-  frequency_->setBounds(proportionOfWidth(0.5f), y, TEXT_WIDTH, TEXT_HEIGHT);
-  sync_->setBounds(frequency_->getBounds().getX() + TEXT_WIDTH, frequency_->getBounds().getY(),
-                   TEXT_HEIGHT, TEXT_HEIGHT);
+  amplitude_->setBounds(0, title_width + slider_width, slider_width, wave_height);
+
+  modulation_button_->setBounds(mod_button_x, y, mod_button_width, mod_button_width);
+  retrigger_->setBounds(proportionOfWidth(0.5f) - text_height, y, text_height, text_height);
+
+  frequency_->setBounds(proportionOfWidth(0.5f), y, text_width, text_height);
+  sync_->setBounds(frequency_->getBounds().getX() + text_width, frequency_->getBounds().getY(),
+                   text_height, text_height);
 
   tempo_->setBounds(frequency_->getBounds());
 
   SynthSection::resized();
-}
 
-void LfoSection::animate(bool animate) {
-  SynthSection::animate(animate);
-  wave_viewer_->showRealtimeFeedback(animate);
+  frequency_->setPopupDisplayEnabled(false, nullptr);
+  tempo_->setPopupDisplayEnabled(false, nullptr);
 }
 
 void LfoSection::reset() {
-  wave_viewer_->resetWavePath();
-  wave_viewer_->repaint();
+  if (wave_viewer_) {
+    wave_viewer_->resetWavePath();
+    wave_viewer_->repaint();
+  }
+
   SynthSection::reset();
 }

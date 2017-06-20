@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ namespace mopo {
         mopo_float damping = damping_buffer[i];
 
         mopo_float read = memory_->getIndex(period);
-        filtered_sample_ = INTERPOLATE(read, filtered_sample_, damping);
+        filtered_sample_ = utils::interpolate(read, filtered_sample_, damping);
 
         mopo_float value = audio + filtered_sample_ * feedback;
         memory_->push(value);

@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ ModulationManager::ModulationManager(
   modulation_buttons_ = modulation_buttons;
   modulation_sources_ = modulation_sources;
   setInterceptsMouseClicks(false, true);
-  startTimerHz(FRAMES_PER_SECOND);
+  // startTimerHz(FRAMES_PER_SECOND);
 
   current_modulator_ = "";
 
@@ -45,7 +45,7 @@ ModulationManager::ModulationManager(
   monophonic_destinations_ = new Component();
   monophonic_destinations_->setInterceptsMouseClicks(false, true);
 
-  for (auto mod_button : modulation_buttons_) {
+  for (auto& mod_button : modulation_buttons_) {
     mod_button.second->addListener(this);
     mod_button.second->addDisconnectListener(this);
 
@@ -60,7 +60,7 @@ ModulationManager::ModulationManager(
   }
 
   slider_model_lookup_ = sliders;
-  for (auto slider : slider_model_lookup_) {
+  for (auto& slider : slider_model_lookup_) {
     std::string name = slider.first;
     const mopo::Output* mono_total = mono_modulations[name];
     const mopo::Output* poly_total = poly_modulations[name];
@@ -174,6 +174,7 @@ void ModulationManager::modulationDisconnected(mopo::ModulationConnection* conne
   }
 
   meter_lookup_[connection->destination]->setModulated(!last);
+  meter_lookup_[connection->destination]->setVisible(!last);
 }
 
 void ModulationManager::hoverStarted(const std::string& name) {
@@ -285,7 +286,6 @@ void ModulationManager::changeModulator(std::string new_modulator) {
 
   polyphonic_destinations_->setVisible(true);
   polyphonic_destinations_->repaint();
-  bool source_is_poly = modulation_sources_[current_modulator_]->owner->isPolyphonic();
-  monophonic_destinations_->setVisible(!source_is_poly);
+  monophonic_destinations_->setVisible(true);
   monophonic_destinations_->repaint();
 }

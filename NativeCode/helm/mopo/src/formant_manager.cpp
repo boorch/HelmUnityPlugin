@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
 
 #include "formant_manager.h"
 
-#include "filter.h"
+#include "biquad_filter.h"
 #include "operators.h"
 
 namespace mopo {
 
   FormantManager::FormantManager(int num_formants) : ProcessorRouter(0, 0) {
     Bypass* audio_input = new Bypass();
-    Bypass* reset_input = new Bypass();
+    cr::Bypass* reset_input = new cr::Bypass();
 
     registerInput(audio_input->input(), kAudio);
     registerInput(reset_input->input(), kReset);
@@ -33,9 +33,9 @@ namespace mopo {
 
     VariableAdd* total = new VariableAdd(num_formants);
     for (int i = 0; i < num_formants; ++i) {
-      Filter* formant = new Filter();
-      formant->plug(audio_input, Filter::kAudio);
-      formant->plug(reset_input, Filter::kReset);
+      BiquadFilter* formant = new BiquadFilter();
+      formant->plug(audio_input, BiquadFilter::kAudio);
+      formant->plug(reset_input, BiquadFilter::kReset);
       formants_.push_back(formant);
 
       addProcessor(formant);

@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 class Fonts {
   public:
-    Fonts();
     virtual ~Fonts() { }
 
     Font& proportional_regular() { return proportional_regular_; }
@@ -34,6 +33,8 @@ class Fonts {
     }
 
   private:
+    Fonts();
+
     static ScopedPointer<Fonts> instance_;
 
     Font proportional_regular_;

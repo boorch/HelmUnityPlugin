@@ -4,22 +4,42 @@
     project - if you alter its contents, your changes may be overwritten!
 
     There's a section below where you can add your own custom code safely, and the
-    Introjucer will preserve the contents of that block, but the best way to change
-    any of these definitions is by using the Introjucer's project settings.
+    Projucer will preserve the contents of that block, but the best way to change
+    any of these definitions is by using the Projucer's project settings.
 
     Any commented-out settings will assume their default values.
 
 */
 
-#ifndef __JUCE_APPCONFIG_NXASZK__
-#define __JUCE_APPCONFIG_NXASZK__
+#pragma once
 
 //==============================================================================
 // [BEGIN_USER_CODE_SECTION]
 
-// (You can add your own code in this section, and the Introjucer will not overwrite it)
+// (You can add your own code in this section, and the Projucer will not overwrite it)
 
 // [END_USER_CODE_SECTION]
+
+/*
+  ==============================================================================
+
+   In accordance with the terms of the JUCE 5 End-Use License Agreement, the
+   JUCE Code in SECTION A cannot be removed, changed or otherwise rendered
+   ineffective unless you have a JUCE Indie or Pro license, or are using JUCE
+   under the GPL v3 license.
+
+   End User License Agreement: www.juce.com/juce-5-licence
+  ==============================================================================
+*/
+
+// BEGIN SECTION A
+
+#define JUCE_DISPLAY_SPLASH_SCREEN 0
+#define JUCE_REPORT_APP_USAGE 0
+
+// END SECTION A
+
+#define JUCE_USE_DARK_SPLASH_SCREEN 1
 
 //==============================================================================
 #define JUCE_MODULE_AVAILABLE_juce_audio_basics             1
@@ -37,10 +57,7 @@
 #define JUCE_MODULE_AVAILABLE_juce_opengl                   1
 #define JUCE_MODULE_AVAILABLE_juce_video                    1
 
-//==============================================================================
-#ifndef    JUCE_STANDALONE_APPLICATION
- #define   JUCE_STANDALONE_APPLICATION 0
-#endif
+#define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
 
 //==============================================================================
 // juce_audio_devices flags:
@@ -73,12 +90,8 @@
  //#define JUCE_USE_ANDROID_OPENSLES
 #endif
 
-#ifndef    JUCE_USE_CDREADER
- //#define JUCE_USE_CDREADER
-#endif
-
-#ifndef    JUCE_USE_CDBURNER
- //#define JUCE_USE_CDBURNER
+#ifndef    JUCE_USE_WINRT_MIDI
+ //#define JUCE_USE_WINRT_MIDI
 #endif
 
 //==============================================================================
@@ -102,6 +115,17 @@
 
 #ifndef    JUCE_USE_WINDOWS_MEDIA_FORMAT
  //#define JUCE_USE_WINDOWS_MEDIA_FORMAT
+#endif
+
+//==============================================================================
+// juce_audio_plugin_client flags:
+
+#ifndef    JUCE_FORCE_USE_LEGACY_PARAM_IDS
+ //#define JUCE_FORCE_USE_LEGACY_PARAM_IDS
+#endif
+
+#ifndef    JUCE_USE_STUDIO_ONE_COMPATIBLE_PARAMETERS
+ //#define JUCE_USE_STUDIO_ONE_COMPATIBLE_PARAMETERS
 #endif
 
 //==============================================================================
@@ -144,6 +168,21 @@
 
 #ifndef    JUCE_USE_CURL
  //#define JUCE_USE_CURL
+#endif
+
+#ifndef    JUCE_CATCH_UNHANDLED_EXCEPTIONS
+ //#define JUCE_CATCH_UNHANDLED_EXCEPTIONS
+#endif
+
+#ifndef    JUCE_ALLOW_STATIC_NULL_VARIABLES
+ //#define JUCE_ALLOW_STATIC_NULL_VARIABLES
+#endif
+
+//==============================================================================
+// juce_events flags:
+
+#ifndef    JUCE_EXECUTE_APP_SUSPEND_ON_IOS_BACKGROUND_TASK
+ //#define JUCE_EXECUTE_APP_SUSPEND_ON_IOS_BACKGROUND_TASK
 #endif
 
 //==============================================================================
@@ -205,7 +244,14 @@
 #ifndef    JUCE_USE_CAMERA
  //#define JUCE_USE_CAMERA
 #endif
-
+//==============================================================================
+#ifndef    JUCE_STANDALONE_APPLICATION
+ #if defined(JucePlugin_Name) && defined(JucePlugin_Build_Standalone)
+  #define  JUCE_STANDALONE_APPLICATION JucePlugin_Build_Standalone
+ #else
+  #define  JUCE_STANDALONE_APPLICATION 0
+ #endif
+#endif
 
 //==============================================================================
 // Audio plugin settings..
@@ -214,16 +260,25 @@
  #define JucePlugin_Build_VST              1
 #endif
 #ifndef  JucePlugin_Build_VST3
- #define JucePlugin_Build_VST3             1
+ #define JucePlugin_Build_VST3             0
 #endif
 #ifndef  JucePlugin_Build_AU
  #define JucePlugin_Build_AU               1
+#endif
+#ifndef  JucePlugin_Build_AUv3
+ #define JucePlugin_Build_AUv3             0
 #endif
 #ifndef  JucePlugin_Build_RTAS
  #define JucePlugin_Build_RTAS             0
 #endif
 #ifndef  JucePlugin_Build_AAX
- #define JucePlugin_Build_AAX              1
+ #define JucePlugin_Build_AAX              0
+#endif
+#ifndef  JucePlugin_Build_Standalone
+ #define JucePlugin_Build_Standalone       0
+#endif
+#ifndef  JucePlugin_Enable_IAA
+ #define JucePlugin_Enable_IAA             0
 #endif
 #ifndef  JucePlugin_Name
  #define JucePlugin_Name                   "Arpeggiator"
@@ -241,10 +296,10 @@
  #define JucePlugin_ManufacturerEmail      "info@juce.com"
 #endif
 #ifndef  JucePlugin_ManufacturerCode
- #define JucePlugin_ManufacturerCode       'ROLI'
+ #define JucePlugin_ManufacturerCode       0x524f4c49 // 'ROLI'
 #endif
 #ifndef  JucePlugin_PluginCode
- #define JucePlugin_PluginCode             'Arpg'
+ #define JucePlugin_PluginCode             0x41727067 // 'Arpg'
 #endif
 #ifndef  JucePlugin_IsSynth
  #define JucePlugin_IsSynth                0
@@ -277,7 +332,7 @@
  #define JucePlugin_VSTCategory            kPlugCategEffect
 #endif
 #ifndef  JucePlugin_AUMainType
- #define JucePlugin_AUMainType             kAudioUnitType_Effect
+ #define JucePlugin_AUMainType             'aumi'
 #endif
 #ifndef  JucePlugin_AUSubType
  #define JucePlugin_AUSubType              JucePlugin_PluginCode
@@ -292,7 +347,7 @@
  #define JucePlugin_AUManufacturerCode     JucePlugin_ManufacturerCode
 #endif
 #ifndef  JucePlugin_CFBundleIdentifier
- #define JucePlugin_CFBundleIdentifier     com.ROLI.Arpeggiator
+ #define JucePlugin_CFBundleIdentifier     com.roli.Arpeggiator
 #endif
 #ifndef  JucePlugin_RTASCategory
  #define JucePlugin_RTASCategory           ePlugInCategory_None
@@ -310,7 +365,7 @@
  #define JucePlugin_RTASDisableMultiMono   0
 #endif
 #ifndef  JucePlugin_AAXIdentifier
- #define JucePlugin_AAXIdentifier          com.ROLI.Arpeggiator
+ #define JucePlugin_AAXIdentifier          com.roli.Arpeggiator
 #endif
 #ifndef  JucePlugin_AAXManufacturerCode
  #define JucePlugin_AAXManufacturerCode    JucePlugin_ManufacturerCode
@@ -327,5 +382,12 @@
 #ifndef  JucePlugin_AAXDisableMultiMono
  #define JucePlugin_AAXDisableMultiMono    0
 #endif
-
-#endif  // __JUCE_APPCONFIG_NXASZK__
+#ifndef  JucePlugin_IAAType
+ #define JucePlugin_IAAType                0x61757278 // 'aurx'
+#endif
+#ifndef  JucePlugin_IAASubType
+ #define JucePlugin_IAASubType             JucePlugin_PluginCode
+#endif
+#ifndef  JucePlugin_IAAName
+ #define JucePlugin_IAAName                "ROLI Ltd.: Arpeggiator"
+#endif

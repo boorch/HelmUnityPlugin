@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ namespace mopo {
         kNumInputs
       };
 
-      Value(mopo_float value = 0.0, bool conrol_rate = false);
+      Value(mopo_float value = 0.0, bool control_rate = false);
 
       virtual Processor* clone() const override { return new Value(*this); }
       virtual void process() override;

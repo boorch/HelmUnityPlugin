@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * helm is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,14 @@
  */
 
 #include "synth_slider.h"
+
+#include "default_look_and_feel.h"
 #include "full_interface.h"
 #include "helm_common.h"
 #include "synth_gui_interface.h"
 #include "text_look_and_feel.h"
+
+#define DEFAULT_POPUP_BUFFER 10
 
 namespace {
   enum MenuIds {
@@ -30,34 +34,45 @@ namespace {
     kModulationList
   };
 
-  mopo::mopo_float synthRound(mopo::mopo_float value) {
-    static const mopo::mopo_float round_scale = 1000.0;
-    int scaled_rounded = round_scale * value;
-    return scaled_rounded / round_scale;
+  static void sliderPopupCallback(int result, SynthSlider* slider) {
+    if (slider != nullptr && result != kCancel)
+      slider->handlePopupResult(result);
   }
 } // namespace
 
+const float SynthSlider::rotary_angle = 0.8f * static_cast<float>(mopo::PI);
+const float SynthSlider::linear_rail_width = 2.0f;
+
 SynthSlider::SynthSlider(String name) : Slider(name), bipolar_(false), flip_coloring_(false),
-                                        active_(true),
+                                        active_(true), snap_to_value_(false), snap_value_(0.0),
                                         string_lookup_(nullptr), parent_(nullptr) {
+  popup_placement_ = BubbleComponent::below;
+  popup_buffer_ = DEFAULT_POPUP_BUFFER;
+
   if (!mopo::Parameters::isParameter(name.toStdString()))
     return;
 
-  mopo::ValueDetails details = mopo::Parameters::getDetails(name.toStdString());
-  if (details.steps)
-    setRange(details.min, details.max, (details.max - details.min) / (details.steps - 1));
+  setRotaryParameters(2.0f * mopo::PI - rotary_angle, 2.0f * mopo::PI + rotary_angle, true);
+  details_ = mopo::Parameters::getDetails(name.toStdString());
+  if (details_.steps)
+    setRange(details_.min, details_.max, (details_.max - details_.min) / (details_.steps - 1));
   else
-    setRange(details.min, details.max);
+    setRange(details_.min, details_.max);
 
-  post_multiply_ = details.display_multiply;
-  scaling_type_ = details.display_skew;
-  units_ = details.display_units;
-  setDoubleClickReturnValue(true, details.default_value);
+  setDoubleClickReturnValue(true, details_.default_value);
   setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 
   setBufferedToImage(true);
   setColour(Slider::backgroundColourId, Colour(0xff303030));
   setColour(Slider::textBoxOutlineColourId, Colour(0x00000000));
+}
+
+void SynthSlider::resized() {
+  if (parent_ == nullptr)
+    parent_ = findParentComponentOfClass<FullInterface>();
+
+  setPopupDisplayEnabled(true, parent_);
+  Slider::resized();
 }
 
 void SynthSlider::mouseDown(const MouseEvent& e) {
@@ -68,6 +83,7 @@ void SynthSlider::mouseDown(const MouseEvent& e) {
 
   if (e.mods.isPopupMenu()) {
     PopupMenu m;
+    m.setLookAndFeel(DefaultLookAndFeel::instance());
 
     if (isDoubleClickReturnEnabled())
       m.addItem(kDefaultValue, "Set to Default Value");
@@ -86,29 +102,8 @@ void SynthSlider::mouseDown(const MouseEvent& e) {
     if (connections.size() > 1)
       m.addItem(kClearModulations, "Disconnect all modulations");
 
-    int result = m.show();
-    if (result == kArmMidiLearn)
-      synth->armMidiLearn(getName().toStdString(), getMinimum(), getMaximum());
-    else if (result == kClearMidiLearn)
-      synth->clearMidiLearn(getName().toStdString());
-    else if (result == kDefaultValue)
-      setValue(getDoubleClickReturnValue());
-    else if (result == kClearModulations) {
-      for (mopo::ModulationConnection* connection : connections) {
-        std::string source = connection->source;
-        synth->disconnectModulation(connection);
-      }
-      for (SynthSlider::SliderListener* listener : slider_listeners_)
-        listener->modulationsChanged(getName().toStdString());
-    }
-    else if (result >= kModulationList) {
-      int connection_index = result - kModulationList;
-      std::string source = connections[connection_index]->source;
-      synth->disconnectModulation(connections[connection_index]);
-
-      for (SynthSlider::SliderListener* listener : slider_listeners_)
-        listener->modulationsChanged(getName().toStdString());
-    }
+    m.showMenuAsync(PopupMenu::Options(),
+                    ModalCallbackFunction::forComponent(sliderPopupCallback, this));
   }
   else {
     Slider::mouseDown(e);
@@ -125,13 +120,15 @@ void SynthSlider::mouseDown(const MouseEvent& e) {
 void SynthSlider::mouseUp(const MouseEvent& e) {
   Slider::mouseUp(e);
 
-  if (isRotary() && !e.mods.isPopupMenu()) {
+  if (!e.mods.isPopupMenu()) {
     SynthGuiInterface* parent = findParentComponentOfClass<SynthGuiInterface>();
     if (parent)
       parent->getSynth()->endChangeGesture(getName().toStdString());
 
-    setMouseCursor(MouseCursor::ParentCursor);
-    Desktop::getInstance().getMainMouseSource().setScreenPosition(click_position_);
+    if (isRotary()) {
+      setMouseCursor(MouseCursor::ParentCursor);
+      Desktop::getInstance().getMainMouseSource().setScreenPosition(click_position_);
+    }
   }
 }
 
@@ -151,6 +148,19 @@ void SynthSlider::mouseExit(const MouseEvent &e) {
 void SynthSlider::valueChanged() {
   Slider::valueChanged();
   notifyTooltip();
+  notifyGuis();
+
+  if (popup_placement_ == BubbleComponent::below && popup_buffer_) {
+    Component* popup = getCurrentPopupDisplay();
+    if (popup) {
+      Rectangle<int> bounds = popup->getBounds();
+      Rectangle<int> local_bounds = getLocalArea(popup, popup->getLocalBounds());
+
+      int y_diff = getHeight() + popup_buffer_ - local_bounds.getY();
+      bounds.setY(bounds.getY() + y_diff);
+      popup->setBounds(bounds);
+    }
+  }
 }
 
 String SynthSlider::getTextFromValue(double value) {
@@ -160,19 +170,37 @@ String SynthSlider::getTextFromValue(double value) {
   }
 
   float display_value = value;
-  switch (scaling_type_) {
+  switch (details_.display_skew) {
     case mopo::ValueDetails::kQuadratic:
       display_value = powf(display_value, 2.0f);
       break;
     case mopo::ValueDetails::kExponential:
       display_value = powf(2.0f, display_value);
       break;
+    case mopo::ValueDetails::kSquareRoot:
+      display_value = sqrt(display_value);
+      break;
     default:
       break;
   }
-  display_value *= post_multiply_;
+  display_value += details_.post_offset;
+  if (details_.display_invert)
+    display_value = 1.0 / display_value;
+  display_value *= details_.display_multiply;
 
-  return String(synthRound(display_value)) + " " + units_;
+  return formatValue(display_value);
+}
+
+double SynthSlider::snapValue(double attempted_value, DragMode drag_mode) {
+  const double percent = 0.05;
+  if (!snap_to_value_ || drag_mode != DragMode::absoluteDrag)
+    return attempted_value;
+
+  double range = getMaximum() - getMinimum();
+  double radius = percent * range;
+  if (attempted_value - snap_value_ <= radius && attempted_value - snap_value_ >= -radius)
+    return snap_value_;
+  return attempted_value;
 }
 
 void SynthSlider::drawShadow(Graphics &g) {
@@ -180,21 +208,38 @@ void SynthSlider::drawShadow(Graphics &g) {
     drawRectangularShadow(g);
   else if (isRotary())
     drawRotaryShadow(g);
+  else {
+    g.setColour(Colour(0xff222222));
+    g.fillRect(getBounds());
+  }
 }
 
 void SynthSlider::drawRotaryShadow(Graphics &g) {
-  static const DropShadow shadow(Colour(0xbb000000), 3, Point<int>(0, 0));
-  static const float shadow_angle = mopo::PI / 1.3f;
+  static const DropShadow shadow(Colour(0xee000000), 3, Point<int>(0, 0));
+  static const float stroke_percent = 0.12f;
 
   g.saveState();
   g.setOrigin(getX(), getY());
 
   float full_radius = std::min(getWidth() / 2.0f, getHeight() / 2.0f);
+  float stroke_width = 2.0f * full_radius * stroke_percent;
   Path shadow_path;
+  float outer_radius = full_radius - stroke_width;
   shadow_path.addCentredArc(full_radius, full_radius,
-                            0.87f * full_radius, 0.85f * full_radius,
-                            0, -shadow_angle, shadow_angle, true);
+                            0.89f * full_radius, 0.87f * full_radius,
+                            0, -rotary_angle, rotary_angle, true);
   shadow.drawForPath(g, shadow_path);
+
+  Path rail_outer;
+  rail_outer.addCentredArc(full_radius, full_radius, outer_radius, outer_radius,
+                           0.0f, -rotary_angle, rotary_angle, true);
+
+  g.setColour(Colour(0xff333333));
+
+  PathStrokeType outer_stroke =
+      PathStrokeType(stroke_width, PathStrokeType::beveled, PathStrokeType::butt);
+  g.strokePath(rail_outer, outer_stroke);
+
   g.restoreState();
 }
 
@@ -204,6 +249,8 @@ void SynthSlider::drawRectangularShadow(Graphics &g) {
   g.saveState();
   g.setOrigin(getX(), getY());
   shadow.drawForRectangle(g, getLocalBounds());
+  g.setColour(Colour(0xff333333));
+  g.fillRect(getLocalBounds());
 
   g.restoreState();
 }
@@ -227,8 +274,63 @@ void SynthSlider::addSliderListener(SynthSlider::SliderListener* listener) {
   slider_listeners_.push_back(listener);
 }
 
+String SynthSlider::formatValue(float value) {
+  static const int number_length = 5;
+  static const int max_decimals = 3;
+
+  if (details_.steps)
+    return String(value) + " " + details_.display_units;
+
+  String format = String(value, max_decimals);
+  format = format.substring(0, number_length);
+  int spaces = number_length - format.length();
+  
+  for (int i = 0; i < spaces; ++i)
+    format = " " + format;
+  
+  return format + " " + details_.display_units;
+}
+
+void SynthSlider::notifyGuis() {
+  for (SynthSlider::SliderListener* listener : slider_listeners_)
+    listener->guiChanged(this);
+}
+
+void SynthSlider::handlePopupResult(int result) {
+  SynthGuiInterface* parent = findParentComponentOfClass<SynthGuiInterface>();
+  if (parent == nullptr)
+    return;
+
+  SynthBase* synth = parent->getSynth();
+  std::vector<mopo::ModulationConnection*> connections =
+      parent->getSynth()->getDestinationConnections(getName().toStdString());
+
+  if (result == kArmMidiLearn)
+    synth->armMidiLearn(getName().toStdString(), getMinimum(), getMaximum());
+  else if (result == kClearMidiLearn)
+    synth->clearMidiLearn(getName().toStdString());
+  else if (result == kDefaultValue)
+    setValue(getDoubleClickReturnValue());
+  else if (result == kClearModulations) {
+    for (mopo::ModulationConnection* connection : connections) {
+      std::string source = connection->source;
+      synth->disconnectModulation(connection);
+    }
+    for (SynthSlider::SliderListener* listener : slider_listeners_)
+      listener->modulationsChanged(getName().toStdString());
+  }
+  else if (result >= kModulationList) {
+    int connection_index = result - kModulationList;
+    std::string source = connections[connection_index]->source;
+    synth->disconnectModulation(connections[connection_index]);
+
+    for (SynthSlider::SliderListener* listener : slider_listeners_)
+      listener->modulationsChanged(getName().toStdString());
+  }
+}
+
 void SynthSlider::notifyTooltip() {
-  if (!parent_)
+  if (parent_ == nullptr)
     parent_ = findParentComponentOfClass<FullInterface>();
   if (parent_) {
     std::string name = getName().toStdString();

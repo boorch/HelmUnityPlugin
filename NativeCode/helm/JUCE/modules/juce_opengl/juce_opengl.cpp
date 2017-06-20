@@ -2,22 +2,24 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
@@ -140,6 +142,54 @@ static const char* getGLErrorMessage (const GLenum e) noexcept
     return "Unknown error";
 }
 
+#if JUCE_MAC || JUCE_IOS
+
+ #ifndef JUCE_IOS_MAC_VIEW
+  #if JUCE_IOS
+   #define JUCE_IOS_MAC_VIEW    UIView
+   #define JUCE_IOS_MAC_WINDOW  UIWindow
+  #else
+   #define JUCE_IOS_MAC_VIEW    NSView
+   #define JUCE_IOS_MAC_WINDOW  NSWindow
+  #endif
+ #endif
+
+#endif
+
+static bool checkPeerIsValid (OpenGLContext* context)
+{
+    jassert (context != nullptr);
+
+    if (context != nullptr)
+    {
+        if (auto* comp = context->getTargetComponent())
+        {
+            if (auto* peer = comp->getPeer())
+            {
+               #if JUCE_MAC || JUCE_IOS
+                if (auto* nsView = (JUCE_IOS_MAC_VIEW*) peer->getNativeHandle())
+                {
+                    if (auto* nsWindow = [nsView window])
+                    {
+                       #if JUCE_MAC
+                        return ([nsWindow isVisible]
+                                  && (! [nsWindow hidesOnDeactivate] || [NSApp isActive]));
+                       #else
+                        ignoreUnused (nsWindow);
+                        return true;
+                       #endif
+                    }
+                }
+               #else
+                return true;
+               #endif
+            }
+        }
+    }
+
+    return false;
+}
+
 static void checkGLError (const char* file, const int line)
 {
     for (;;)
@@ -148,6 +198,10 @@ static void checkGLError (const char* file, const int line)
 
         if (e == GL_NO_ERROR)
             break;
+
+        // if the peer is not valid then ignore errors
+        if (! checkPeerIsValid (OpenGLContext::getCurrentContext()))
+            continue;
 
         DBG ("***** " << getGLErrorMessage (e) << "  at " << file << " : " << line);
         jassertfalse;
@@ -198,17 +252,26 @@ private:
 //==============================================================================
 #if JUCE_MAC || JUCE_IOS
 
+ #if JUCE_CLANG
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wundeclared-selector"
+ #endif
+
  #if JUCE_MAC
   #include "native/juce_OpenGL_osx.h"
  #else
   #include "native/juce_OpenGL_ios.h"
  #endif
 
+ #if JUCE_CLANG
+  #pragma clang diagnostic pop
+ #endif
+
 #elif JUCE_WINDOWS
  #include "native/juce_OpenGL_win32.h"
 
 #elif JUCE_LINUX
- #include "native/juce_OpenGL_linux.h"
+ #include "native/juce_OpenGL_linux_X11.h"
 
 #elif JUCE_ANDROID
  #include "native/juce_OpenGL_android.h"

@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ namespace mopo {
 
       enum Outputs {
         kValue,
+        kPhase,
         kFinished,
         kNumOutputs
       };
@@ -53,24 +54,19 @@ namespace mopo {
         kAttacking,
         kDecaying,
         kReleasing,
-        kKilling,
+        kKilling
       };
 
       Envelope();
       virtual ~Envelope() { }
 
       virtual Processor* clone() const override { return new Envelope(*this); }
-      void processSection(mopo_float* output_buffer, int start, int end);
       void process() override;
-      void trigger(mopo_float event, int offset);
+      void trigger(mopo_float event);
 
     protected:
       State state_;
-      State next_life_state_;
       mopo_float current_value_;
-      mopo_float decay_decay_;
-      mopo_float release_decay_;
-      mopo_float kill_decrement_;
   };
 } // namespace mopo
 

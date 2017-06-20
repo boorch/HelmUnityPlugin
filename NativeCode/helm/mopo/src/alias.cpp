@@ -1,4 +1,4 @@
-/* Copyright 2013-2016 Matt Tytel
+/* Copyright 2013-2017 Matt Tytel
  *
  * mopo is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,10 @@ namespace mopo {
                    current_sample_(0.0), static_samples_(0.0) { }
 
   void Alias::process() {
+    MOPO_ASSERT(inputMatchesBufferSize(kAudio));
+    MOPO_ASSERT(inputMatchesBufferSize(kWet));
+    MOPO_ASSERT(inputMatchesBufferSize(kFrequency));
+
     for (int i = 0; i < buffer_size_; ++i)
       tick(i);
   }
