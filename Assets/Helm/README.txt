@@ -34,7 +34,7 @@ Variable BPM without resyncing
 Sequencer references player instead of on same game object?
 UI widgets for better tweaking in Unity?
 Load MIDI Files
-iOS/android/ps4/xbox support?
+iOS/ps4/xbox support?
 
 ## Known Issues
 
