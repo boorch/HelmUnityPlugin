@@ -7,56 +7,59 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D10098661E662D62003830AE /* dc_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100984E1E662D62003830AE /* dc_filter.cpp */; };
-		D10098671E662D62003830AE /* detune_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098501E662D62003830AE /* detune_lookup.cpp */; };
-		D10098681E662D62003830AE /* fixed_point_oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098521E662D62003830AE /* fixed_point_oscillator.cpp */; };
-		D10098691E662D62003830AE /* fixed_point_wave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098541E662D62003830AE /* fixed_point_wave.cpp */; };
-		D100986A1E662D62003830AE /* helm_engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098561E662D62003830AE /* helm_engine.cpp */; };
-		D100986B1E662D62003830AE /* helm_lfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098581E662D62003830AE /* helm_lfo.cpp */; };
-		D100986C1E662D62003830AE /* helm_module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100985A1E662D62003830AE /* helm_module.cpp */; };
-		D100986D1E662D62003830AE /* helm_oscillators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100985C1E662D62003830AE /* helm_oscillators.cpp */; };
-		D100986E1E662D62003830AE /* helm_voice_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100985E1E662D62003830AE /* helm_voice_handler.cpp */; };
-		D100986F1E662D62003830AE /* noise_oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098601E662D62003830AE /* noise_oscillator.cpp */; };
-		D10098701E662D62003830AE /* resonance_cancel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098621E662D62003830AE /* resonance_cancel.cpp */; };
-		D10098711E662D62003830AE /* switch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098641E662D62003830AE /* switch.cpp */; };
 		D10098841E662D88003830AE /* helm_common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098771E662D88003830AE /* helm_common.cpp */; };
 		D100988B1E662DA4003830AE /* helm_plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100988A1E662DA4003830AE /* helm_plugin.cpp */; };
-		D10098D91E662DCD003830AE /* alias.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100988D1E662DCD003830AE /* alias.cpp */; };
-		D10098DA1E662DCD003830AE /* arpeggiator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100988F1E662DCD003830AE /* arpeggiator.cpp */; };
-		D10098DB1E662DCD003830AE /* bit_crush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098911E662DCD003830AE /* bit_crush.cpp */; };
-		D10098DC1E662DCD003830AE /* bypass_router.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098931E662DCD003830AE /* bypass_router.cpp */; };
-		D10098DD1E662DCD003830AE /* delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098961E662DCD003830AE /* delay.cpp */; };
-		D10098DE1E662DCD003830AE /* distortion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098981E662DCD003830AE /* distortion.cpp */; };
-		D10098DF1E662DCD003830AE /* envelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100989A1E662DCD003830AE /* envelope.cpp */; };
-		D10098E01E662DCD003830AE /* feedback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100989C1E662DCD003830AE /* feedback.cpp */; };
-		D10098E11E662DCD003830AE /* filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D100989E1E662DCD003830AE /* filter.cpp */; };
-		D10098E21E662DCD003830AE /* formant_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098A01E662DCD003830AE /* formant_manager.cpp */; };
-		D10098E31E662DCD003830AE /* linear_slope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098A21E662DCD003830AE /* linear_slope.cpp */; };
-		D10098E41E662DCD003830AE /* magnitude_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098A41E662DCD003830AE /* magnitude_lookup.cpp */; };
-		D10098E51E662DCD003830AE /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = D10098A61E662DCD003830AE /* Makefile.am */; };
-		D10098E61E662DCD003830AE /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098A71E662DCD003830AE /* memory.cpp */; };
-		D10098E71E662DCD003830AE /* midi_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098A91E662DCD003830AE /* midi_lookup.cpp */; };
-		D10098E81E662DCD003830AE /* mono_panner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098AB1E662DCD003830AE /* mono_panner.cpp */; };
-		D10098E91E662DCD003830AE /* operators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098AF1E662DCD003830AE /* operators.cpp */; };
-		D10098EA1E662DCD003830AE /* oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098B11E662DCD003830AE /* oscillator.cpp */; };
-		D10098EB1E662DCD003830AE /* phaser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098B31E662DCD003830AE /* phaser.cpp */; };
-		D10098EC1E662DCD003830AE /* portamento_slope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098B51E662DCD003830AE /* portamento_slope.cpp */; };
-		D10098ED1E662DCD003830AE /* processor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098B71E662DCD003830AE /* processor.cpp */; };
-		D10098EE1E662DCD003830AE /* processor_router.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098B91E662DCD003830AE /* processor_router.cpp */; };
-		D10098EF1E662DCD003830AE /* resonance_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098BB1E662DCD003830AE /* resonance_lookup.cpp */; };
-		D10098F01E662DCD003830AE /* reverb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098BD1E662DCD003830AE /* reverb.cpp */; };
-		D10098F11E662DCD003830AE /* reverb_all_pass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098BF1E662DCD003830AE /* reverb_all_pass.cpp */; };
-		D10098F21E662DCD003830AE /* reverb_comb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098C11E662DCD003830AE /* reverb_comb.cpp */; };
-		D10098F31E662DCD003830AE /* sample_decay_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098C41E662DCD003830AE /* sample_decay_lookup.cpp */; };
-		D10098F41E662DCD003830AE /* simple_delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098C61E662DCD003830AE /* simple_delay.cpp */; };
-		D10098F51E662DCD003830AE /* smooth_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098C81E662DCD003830AE /* smooth_filter.cpp */; };
-		D10098F61E662DCD003830AE /* smooth_value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098CA1E662DCD003830AE /* smooth_value.cpp */; };
-		D10098F71E662DCD003830AE /* step_generator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098CC1E662DCD003830AE /* step_generator.cpp */; };
-		D10098F81E662DCD003830AE /* stutter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098CE1E662DCD003830AE /* stutter.cpp */; };
-		D10098F91E662DCD003830AE /* trigger_operators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098D11E662DCD003830AE /* trigger_operators.cpp */; };
-		D10098FA1E662DCD003830AE /* value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098D41E662DCD003830AE /* value.cpp */; };
-		D10098FB1E662DCD003830AE /* voice_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098D61E662DCD003830AE /* voice_handler.cpp */; };
 		D10099011E6717BD003830AE /* AudioPluginUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D10098FF1E6717BD003830AE /* AudioPluginUtil.cpp */; };
+		D167777F1F13BCC3006907C1 /* alias.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777311F13BCC3006907C1 /* alias.cpp */; };
+		D16777801F13BCC3006907C1 /* arpeggiator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777331F13BCC3006907C1 /* arpeggiator.cpp */; };
+		D16777811F13BCC3006907C1 /* biquad_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777351F13BCC3006907C1 /* biquad_filter.cpp */; };
+		D16777821F13BCC3006907C1 /* bit_crush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777371F13BCC3006907C1 /* bit_crush.cpp */; };
+		D16777831F13BCC3006907C1 /* bypass_router.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777391F13BCC3006907C1 /* bypass_router.cpp */; };
+		D16777841F13BCC3006907C1 /* delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167773D1F13BCC3006907C1 /* delay.cpp */; };
+		D16777851F13BCC3006907C1 /* distortion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167773F1F13BCC3006907C1 /* distortion.cpp */; };
+		D16777861F13BCC3006907C1 /* envelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777411F13BCC3006907C1 /* envelope.cpp */; };
+		D16777871F13BCC3006907C1 /* feedback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777431F13BCC3006907C1 /* feedback.cpp */; };
+		D16777881F13BCC3006907C1 /* formant_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777451F13BCC3006907C1 /* formant_manager.cpp */; };
+		D16777891F13BCC3006907C1 /* ladder_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777471F13BCC3006907C1 /* ladder_filter.cpp */; };
+		D167778A1F13BCC3006907C1 /* linear_slope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777491F13BCC3006907C1 /* linear_slope.cpp */; };
+		D167778B1F13BCC3006907C1 /* magnitude_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167774B1F13BCC3006907C1 /* magnitude_lookup.cpp */; };
+		D167778C1F13BCC3006907C1 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167774D1F13BCC3006907C1 /* memory.cpp */; };
+		D167778D1F13BCC3006907C1 /* midi_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167774F1F13BCC3006907C1 /* midi_lookup.cpp */; };
+		D167778E1F13BCC3006907C1 /* mono_panner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777511F13BCC3006907C1 /* mono_panner.cpp */; };
+		D167778F1F13BCC3006907C1 /* operators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777551F13BCC3006907C1 /* operators.cpp */; };
+		D16777901F13BCC3006907C1 /* oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777571F13BCC3006907C1 /* oscillator.cpp */; };
+		D16777911F13BCC3006907C1 /* portamento_slope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777591F13BCC3006907C1 /* portamento_slope.cpp */; };
+		D16777921F13BCC3006907C1 /* processor_router.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167775B1F13BCC3006907C1 /* processor_router.cpp */; };
+		D16777931F13BCC3006907C1 /* processor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167775D1F13BCC3006907C1 /* processor.cpp */; };
+		D16777941F13BCC3006907C1 /* resonance_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167775F1F13BCC3006907C1 /* resonance_lookup.cpp */; };
+		D16777951F13BCC3006907C1 /* reverb_all_pass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777611F13BCC3006907C1 /* reverb_all_pass.cpp */; };
+		D16777961F13BCC3006907C1 /* reverb_comb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777631F13BCC3006907C1 /* reverb_comb.cpp */; };
+		D16777971F13BCC3006907C1 /* reverb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777661F13BCC3006907C1 /* reverb.cpp */; };
+		D16777981F13BCC3006907C1 /* sample_decay_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777681F13BCC3006907C1 /* sample_decay_lookup.cpp */; };
+		D16777991F13BCC3006907C1 /* simple_delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167776A1F13BCC3006907C1 /* simple_delay.cpp */; };
+		D167779A1F13BCC3006907C1 /* smooth_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167776C1F13BCC3006907C1 /* smooth_filter.cpp */; };
+		D167779B1F13BCC3006907C1 /* smooth_value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167776E1F13BCC3006907C1 /* smooth_value.cpp */; };
+		D167779C1F13BCC3006907C1 /* state_variable_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777701F13BCC3006907C1 /* state_variable_filter.cpp */; };
+		D167779D1F13BCC3006907C1 /* step_generator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777721F13BCC3006907C1 /* step_generator.cpp */; };
+		D167779E1F13BCC3006907C1 /* stutter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777741F13BCC3006907C1 /* stutter.cpp */; };
+		D167779F1F13BCC3006907C1 /* trigger_operators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777771F13BCC3006907C1 /* trigger_operators.cpp */; };
+		D16777A01F13BCC3006907C1 /* value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167777A1F13BCC3006907C1 /* value.cpp */; };
+		D16777A11F13BCC3006907C1 /* voice_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D167777C1F13BCC3006907C1 /* voice_handler.cpp */; };
+		D16777C01F13BCD6006907C1 /* dc_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777A21F13BCD6006907C1 /* dc_filter.cpp */; };
+		D16777C11F13BCD6006907C1 /* detune_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777A41F13BCD6006907C1 /* detune_lookup.cpp */; };
+		D16777C21F13BCD6006907C1 /* fixed_point_oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777A61F13BCD6006907C1 /* fixed_point_oscillator.cpp */; };
+		D16777C31F13BCD6006907C1 /* fixed_point_wave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777A81F13BCD6006907C1 /* fixed_point_wave.cpp */; };
+		D16777C41F13BCD6006907C1 /* gate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777AA1F13BCD6006907C1 /* gate.cpp */; };
+		D16777C51F13BCD6006907C1 /* helm_engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777AC1F13BCD6006907C1 /* helm_engine.cpp */; };
+		D16777C61F13BCD6006907C1 /* helm_lfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777AE1F13BCD6006907C1 /* helm_lfo.cpp */; };
+		D16777C71F13BCD6006907C1 /* helm_module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777B01F13BCD6006907C1 /* helm_module.cpp */; };
+		D16777C81F13BCD6006907C1 /* helm_oscillators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777B21F13BCD6006907C1 /* helm_oscillators.cpp */; };
+		D16777C91F13BCD6006907C1 /* helm_voice_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777B41F13BCD6006907C1 /* helm_voice_handler.cpp */; };
+		D16777CA1F13BCD6006907C1 /* noise_oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777B61F13BCD6006907C1 /* noise_oscillator.cpp */; };
+		D16777CB1F13BCD6006907C1 /* peak_meter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777B81F13BCD6006907C1 /* peak_meter.cpp */; };
+		D16777CC1F13BCD6006907C1 /* resonance_cancel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777BA1F13BCD6006907C1 /* resonance_cancel.cpp */; };
+		D16777CD1F13BCD6006907C1 /* trigger_random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777BC1F13BCD6006907C1 /* trigger_random.cpp */; };
+		D16777CE1F13BCD6006907C1 /* value_switch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777BE1F13BCD6006907C1 /* value_switch.cpp */; };
 		D171C37C1E6F3A6F000987FD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D171C37B1E6F3A6F000987FD /* Accelerate.framework */; };
 		D1CAEEE21E6F74F10053B7E0 /* helm_sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1CAEEE01E6F74F10053B7E0 /* helm_sequencer.cpp */; };
 /* End PBXBuildFile section */
@@ -68,111 +71,119 @@
 		3DA35E0E175F7CA000FA3842 /* AudioPluginInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioPluginInterface.h; path = ../AudioPluginInterface.h; sourceTree = "<group>"; };
 		8D576316048677EA00EA77CD /* AudioPluginHelm.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AudioPluginHelm.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D576317048677EA00EA77CD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D100984E1E662D62003830AE /* dc_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dc_filter.cpp; sourceTree = "<group>"; };
-		D100984F1E662D62003830AE /* dc_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dc_filter.h; sourceTree = "<group>"; };
-		D10098501E662D62003830AE /* detune_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = detune_lookup.cpp; sourceTree = "<group>"; };
-		D10098511E662D62003830AE /* detune_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = detune_lookup.h; sourceTree = "<group>"; };
-		D10098521E662D62003830AE /* fixed_point_oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fixed_point_oscillator.cpp; sourceTree = "<group>"; };
-		D10098531E662D62003830AE /* fixed_point_oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixed_point_oscillator.h; sourceTree = "<group>"; };
-		D10098541E662D62003830AE /* fixed_point_wave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fixed_point_wave.cpp; sourceTree = "<group>"; };
-		D10098551E662D62003830AE /* fixed_point_wave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixed_point_wave.h; sourceTree = "<group>"; };
-		D10098561E662D62003830AE /* helm_engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helm_engine.cpp; sourceTree = "<group>"; };
-		D10098571E662D62003830AE /* helm_engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helm_engine.h; sourceTree = "<group>"; };
-		D10098581E662D62003830AE /* helm_lfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helm_lfo.cpp; sourceTree = "<group>"; };
-		D10098591E662D62003830AE /* helm_lfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helm_lfo.h; sourceTree = "<group>"; };
-		D100985A1E662D62003830AE /* helm_module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helm_module.cpp; sourceTree = "<group>"; };
-		D100985B1E662D62003830AE /* helm_module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helm_module.h; sourceTree = "<group>"; };
-		D100985C1E662D62003830AE /* helm_oscillators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helm_oscillators.cpp; sourceTree = "<group>"; };
-		D100985D1E662D62003830AE /* helm_oscillators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helm_oscillators.h; sourceTree = "<group>"; };
-		D100985E1E662D62003830AE /* helm_voice_handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helm_voice_handler.cpp; sourceTree = "<group>"; };
-		D100985F1E662D62003830AE /* helm_voice_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helm_voice_handler.h; sourceTree = "<group>"; };
-		D10098601E662D62003830AE /* noise_oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = noise_oscillator.cpp; sourceTree = "<group>"; };
-		D10098611E662D62003830AE /* noise_oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = noise_oscillator.h; sourceTree = "<group>"; };
-		D10098621E662D62003830AE /* resonance_cancel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resonance_cancel.cpp; sourceTree = "<group>"; };
-		D10098631E662D62003830AE /* resonance_cancel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resonance_cancel.h; sourceTree = "<group>"; };
-		D10098641E662D62003830AE /* switch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = switch.cpp; sourceTree = "<group>"; };
-		D10098651E662D62003830AE /* switch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = switch.h; sourceTree = "<group>"; };
 		D10098771E662D88003830AE /* helm_common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helm_common.cpp; sourceTree = "<group>"; };
 		D10098781E662D88003830AE /* helm_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helm_common.h; sourceTree = "<group>"; };
 		D100988A1E662DA4003830AE /* helm_plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = helm_plugin.cpp; path = ../helm_plugin.cpp; sourceTree = "<group>"; };
-		D100988D1E662DCD003830AE /* alias.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = alias.cpp; sourceTree = "<group>"; };
-		D100988E1E662DCD003830AE /* alias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alias.h; sourceTree = "<group>"; };
-		D100988F1E662DCD003830AE /* arpeggiator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = arpeggiator.cpp; sourceTree = "<group>"; };
-		D10098901E662DCD003830AE /* arpeggiator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = arpeggiator.h; sourceTree = "<group>"; };
-		D10098911E662DCD003830AE /* bit_crush.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bit_crush.cpp; sourceTree = "<group>"; };
-		D10098921E662DCD003830AE /* bit_crush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bit_crush.h; sourceTree = "<group>"; };
-		D10098931E662DCD003830AE /* bypass_router.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bypass_router.cpp; sourceTree = "<group>"; };
-		D10098941E662DCD003830AE /* bypass_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bypass_router.h; sourceTree = "<group>"; };
-		D10098951E662DCD003830AE /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
-		D10098961E662DCD003830AE /* delay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = delay.cpp; sourceTree = "<group>"; };
-		D10098971E662DCD003830AE /* delay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = delay.h; sourceTree = "<group>"; };
-		D10098981E662DCD003830AE /* distortion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = distortion.cpp; sourceTree = "<group>"; };
-		D10098991E662DCD003830AE /* distortion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = distortion.h; sourceTree = "<group>"; };
-		D100989A1E662DCD003830AE /* envelope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = envelope.cpp; sourceTree = "<group>"; };
-		D100989B1E662DCD003830AE /* envelope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = envelope.h; sourceTree = "<group>"; };
-		D100989C1E662DCD003830AE /* feedback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = feedback.cpp; sourceTree = "<group>"; };
-		D100989D1E662DCD003830AE /* feedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = feedback.h; sourceTree = "<group>"; };
-		D100989E1E662DCD003830AE /* filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = filter.cpp; sourceTree = "<group>"; };
-		D100989F1E662DCD003830AE /* filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filter.h; sourceTree = "<group>"; };
-		D10098A01E662DCD003830AE /* formant_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = formant_manager.cpp; sourceTree = "<group>"; };
-		D10098A11E662DCD003830AE /* formant_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = formant_manager.h; sourceTree = "<group>"; };
-		D10098A21E662DCD003830AE /* linear_slope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = linear_slope.cpp; sourceTree = "<group>"; };
-		D10098A31E662DCD003830AE /* linear_slope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linear_slope.h; sourceTree = "<group>"; };
-		D10098A41E662DCD003830AE /* magnitude_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = magnitude_lookup.cpp; sourceTree = "<group>"; };
-		D10098A51E662DCD003830AE /* magnitude_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = magnitude_lookup.h; sourceTree = "<group>"; };
-		D10098A61E662DCD003830AE /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
-		D10098A71E662DCD003830AE /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memory.cpp; sourceTree = "<group>"; };
-		D10098A81E662DCD003830AE /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
-		D10098A91E662DCD003830AE /* midi_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = midi_lookup.cpp; sourceTree = "<group>"; };
-		D10098AA1E662DCD003830AE /* midi_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midi_lookup.h; sourceTree = "<group>"; };
-		D10098AB1E662DCD003830AE /* mono_panner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mono_panner.cpp; sourceTree = "<group>"; };
-		D10098AC1E662DCD003830AE /* mono_panner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mono_panner.h; sourceTree = "<group>"; };
-		D10098AD1E662DCD003830AE /* mopo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mopo.h; sourceTree = "<group>"; };
-		D10098AE1E662DCD003830AE /* note_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = note_handler.h; sourceTree = "<group>"; };
-		D10098AF1E662DCD003830AE /* operators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = operators.cpp; sourceTree = "<group>"; };
-		D10098B01E662DCD003830AE /* operators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = operators.h; sourceTree = "<group>"; };
-		D10098B11E662DCD003830AE /* oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = oscillator.cpp; sourceTree = "<group>"; };
-		D10098B21E662DCD003830AE /* oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oscillator.h; sourceTree = "<group>"; };
-		D10098B31E662DCD003830AE /* phaser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = phaser.cpp; sourceTree = "<group>"; };
-		D10098B41E662DCD003830AE /* phaser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = phaser.h; sourceTree = "<group>"; };
-		D10098B51E662DCD003830AE /* portamento_slope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = portamento_slope.cpp; sourceTree = "<group>"; };
-		D10098B61E662DCD003830AE /* portamento_slope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = portamento_slope.h; sourceTree = "<group>"; };
-		D10098B71E662DCD003830AE /* processor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = processor.cpp; sourceTree = "<group>"; };
-		D10098B81E662DCD003830AE /* processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = processor.h; sourceTree = "<group>"; };
-		D10098B91E662DCD003830AE /* processor_router.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = processor_router.cpp; sourceTree = "<group>"; };
-		D10098BA1E662DCD003830AE /* processor_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = processor_router.h; sourceTree = "<group>"; };
-		D10098BB1E662DCD003830AE /* resonance_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resonance_lookup.cpp; sourceTree = "<group>"; };
-		D10098BC1E662DCD003830AE /* resonance_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resonance_lookup.h; sourceTree = "<group>"; };
-		D10098BD1E662DCD003830AE /* reverb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reverb.cpp; sourceTree = "<group>"; };
-		D10098BE1E662DCD003830AE /* reverb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reverb.h; sourceTree = "<group>"; };
-		D10098BF1E662DCD003830AE /* reverb_all_pass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reverb_all_pass.cpp; sourceTree = "<group>"; };
-		D10098C01E662DCD003830AE /* reverb_all_pass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reverb_all_pass.h; sourceTree = "<group>"; };
-		D10098C11E662DCD003830AE /* reverb_comb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reverb_comb.cpp; sourceTree = "<group>"; };
-		D10098C21E662DCD003830AE /* reverb_comb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reverb_comb.h; sourceTree = "<group>"; };
-		D10098C31E662DCD003830AE /* reverb_tuning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reverb_tuning.h; sourceTree = "<group>"; };
-		D10098C41E662DCD003830AE /* sample_decay_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample_decay_lookup.cpp; sourceTree = "<group>"; };
-		D10098C51E662DCD003830AE /* sample_decay_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sample_decay_lookup.h; sourceTree = "<group>"; };
-		D10098C61E662DCD003830AE /* simple_delay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simple_delay.cpp; sourceTree = "<group>"; };
-		D10098C71E662DCD003830AE /* simple_delay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simple_delay.h; sourceTree = "<group>"; };
-		D10098C81E662DCD003830AE /* smooth_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smooth_filter.cpp; sourceTree = "<group>"; };
-		D10098C91E662DCD003830AE /* smooth_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smooth_filter.h; sourceTree = "<group>"; };
-		D10098CA1E662DCD003830AE /* smooth_value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smooth_value.cpp; sourceTree = "<group>"; };
-		D10098CB1E662DCD003830AE /* smooth_value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smooth_value.h; sourceTree = "<group>"; };
-		D10098CC1E662DCD003830AE /* step_generator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = step_generator.cpp; sourceTree = "<group>"; };
-		D10098CD1E662DCD003830AE /* step_generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = step_generator.h; sourceTree = "<group>"; };
-		D10098CE1E662DCD003830AE /* stutter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stutter.cpp; sourceTree = "<group>"; };
-		D10098CF1E662DCD003830AE /* stutter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stutter.h; sourceTree = "<group>"; };
-		D10098D01E662DCD003830AE /* tick_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tick_router.h; sourceTree = "<group>"; };
-		D10098D11E662DCD003830AE /* trigger_operators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = trigger_operators.cpp; sourceTree = "<group>"; };
-		D10098D21E662DCD003830AE /* trigger_operators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trigger_operators.h; sourceTree = "<group>"; };
-		D10098D31E662DCD003830AE /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
-		D10098D41E662DCD003830AE /* value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = value.cpp; sourceTree = "<group>"; };
-		D10098D51E662DCD003830AE /* value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = value.h; sourceTree = "<group>"; };
-		D10098D61E662DCD003830AE /* voice_handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = voice_handler.cpp; sourceTree = "<group>"; };
-		D10098D71E662DCD003830AE /* voice_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = voice_handler.h; sourceTree = "<group>"; };
-		D10098D81E662DCD003830AE /* wave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wave.h; sourceTree = "<group>"; };
 		D10098FF1E6717BD003830AE /* AudioPluginUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioPluginUtil.cpp; path = ../AudioPluginUtil.cpp; sourceTree = "<group>"; };
 		D10099001E6717BD003830AE /* AudioPluginUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioPluginUtil.h; path = ../AudioPluginUtil.h; sourceTree = "<group>"; };
+		D16777311F13BCC3006907C1 /* alias.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = alias.cpp; sourceTree = "<group>"; };
+		D16777321F13BCC3006907C1 /* alias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alias.h; sourceTree = "<group>"; };
+		D16777331F13BCC3006907C1 /* arpeggiator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = arpeggiator.cpp; sourceTree = "<group>"; };
+		D16777341F13BCC3006907C1 /* arpeggiator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = arpeggiator.h; sourceTree = "<group>"; };
+		D16777351F13BCC3006907C1 /* biquad_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = biquad_filter.cpp; sourceTree = "<group>"; };
+		D16777361F13BCC3006907C1 /* biquad_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = biquad_filter.h; sourceTree = "<group>"; };
+		D16777371F13BCC3006907C1 /* bit_crush.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bit_crush.cpp; sourceTree = "<group>"; };
+		D16777381F13BCC3006907C1 /* bit_crush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bit_crush.h; sourceTree = "<group>"; };
+		D16777391F13BCC3006907C1 /* bypass_router.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bypass_router.cpp; sourceTree = "<group>"; };
+		D167773A1F13BCC3006907C1 /* bypass_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bypass_router.h; sourceTree = "<group>"; };
+		D167773B1F13BCC3006907C1 /* circular_queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = circular_queue.h; sourceTree = "<group>"; };
+		D167773C1F13BCC3006907C1 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		D167773D1F13BCC3006907C1 /* delay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = delay.cpp; sourceTree = "<group>"; };
+		D167773E1F13BCC3006907C1 /* delay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = delay.h; sourceTree = "<group>"; };
+		D167773F1F13BCC3006907C1 /* distortion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = distortion.cpp; sourceTree = "<group>"; };
+		D16777401F13BCC3006907C1 /* distortion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = distortion.h; sourceTree = "<group>"; };
+		D16777411F13BCC3006907C1 /* envelope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = envelope.cpp; sourceTree = "<group>"; };
+		D16777421F13BCC3006907C1 /* envelope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = envelope.h; sourceTree = "<group>"; };
+		D16777431F13BCC3006907C1 /* feedback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = feedback.cpp; sourceTree = "<group>"; };
+		D16777441F13BCC3006907C1 /* feedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = feedback.h; sourceTree = "<group>"; };
+		D16777451F13BCC3006907C1 /* formant_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = formant_manager.cpp; sourceTree = "<group>"; };
+		D16777461F13BCC3006907C1 /* formant_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = formant_manager.h; sourceTree = "<group>"; };
+		D16777471F13BCC3006907C1 /* ladder_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ladder_filter.cpp; sourceTree = "<group>"; };
+		D16777481F13BCC3006907C1 /* ladder_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ladder_filter.h; sourceTree = "<group>"; };
+		D16777491F13BCC3006907C1 /* linear_slope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = linear_slope.cpp; sourceTree = "<group>"; };
+		D167774A1F13BCC3006907C1 /* linear_slope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linear_slope.h; sourceTree = "<group>"; };
+		D167774B1F13BCC3006907C1 /* magnitude_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = magnitude_lookup.cpp; sourceTree = "<group>"; };
+		D167774C1F13BCC3006907C1 /* magnitude_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = magnitude_lookup.h; sourceTree = "<group>"; };
+		D167774D1F13BCC3006907C1 /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memory.cpp; sourceTree = "<group>"; };
+		D167774E1F13BCC3006907C1 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
+		D167774F1F13BCC3006907C1 /* midi_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = midi_lookup.cpp; sourceTree = "<group>"; };
+		D16777501F13BCC3006907C1 /* midi_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midi_lookup.h; sourceTree = "<group>"; };
+		D16777511F13BCC3006907C1 /* mono_panner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mono_panner.cpp; sourceTree = "<group>"; };
+		D16777521F13BCC3006907C1 /* mono_panner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mono_panner.h; sourceTree = "<group>"; };
+		D16777531F13BCC3006907C1 /* mopo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mopo.h; sourceTree = "<group>"; };
+		D16777541F13BCC3006907C1 /* note_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = note_handler.h; sourceTree = "<group>"; };
+		D16777551F13BCC3006907C1 /* operators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = operators.cpp; sourceTree = "<group>"; };
+		D16777561F13BCC3006907C1 /* operators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = operators.h; sourceTree = "<group>"; };
+		D16777571F13BCC3006907C1 /* oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = oscillator.cpp; sourceTree = "<group>"; };
+		D16777581F13BCC3006907C1 /* oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oscillator.h; sourceTree = "<group>"; };
+		D16777591F13BCC3006907C1 /* portamento_slope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = portamento_slope.cpp; sourceTree = "<group>"; };
+		D167775A1F13BCC3006907C1 /* portamento_slope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = portamento_slope.h; sourceTree = "<group>"; };
+		D167775B1F13BCC3006907C1 /* processor_router.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = processor_router.cpp; sourceTree = "<group>"; };
+		D167775C1F13BCC3006907C1 /* processor_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = processor_router.h; sourceTree = "<group>"; };
+		D167775D1F13BCC3006907C1 /* processor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = processor.cpp; sourceTree = "<group>"; };
+		D167775E1F13BCC3006907C1 /* processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = processor.h; sourceTree = "<group>"; };
+		D167775F1F13BCC3006907C1 /* resonance_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resonance_lookup.cpp; sourceTree = "<group>"; };
+		D16777601F13BCC3006907C1 /* resonance_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resonance_lookup.h; sourceTree = "<group>"; };
+		D16777611F13BCC3006907C1 /* reverb_all_pass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reverb_all_pass.cpp; sourceTree = "<group>"; };
+		D16777621F13BCC3006907C1 /* reverb_all_pass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reverb_all_pass.h; sourceTree = "<group>"; };
+		D16777631F13BCC3006907C1 /* reverb_comb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reverb_comb.cpp; sourceTree = "<group>"; };
+		D16777641F13BCC3006907C1 /* reverb_comb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reverb_comb.h; sourceTree = "<group>"; };
+		D16777651F13BCC3006907C1 /* reverb_tuning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reverb_tuning.h; sourceTree = "<group>"; };
+		D16777661F13BCC3006907C1 /* reverb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reverb.cpp; sourceTree = "<group>"; };
+		D16777671F13BCC3006907C1 /* reverb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reverb.h; sourceTree = "<group>"; };
+		D16777681F13BCC3006907C1 /* sample_decay_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample_decay_lookup.cpp; sourceTree = "<group>"; };
+		D16777691F13BCC3006907C1 /* sample_decay_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sample_decay_lookup.h; sourceTree = "<group>"; };
+		D167776A1F13BCC3006907C1 /* simple_delay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simple_delay.cpp; sourceTree = "<group>"; };
+		D167776B1F13BCC3006907C1 /* simple_delay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simple_delay.h; sourceTree = "<group>"; };
+		D167776C1F13BCC3006907C1 /* smooth_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smooth_filter.cpp; sourceTree = "<group>"; };
+		D167776D1F13BCC3006907C1 /* smooth_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smooth_filter.h; sourceTree = "<group>"; };
+		D167776E1F13BCC3006907C1 /* smooth_value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smooth_value.cpp; sourceTree = "<group>"; };
+		D167776F1F13BCC3006907C1 /* smooth_value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smooth_value.h; sourceTree = "<group>"; };
+		D16777701F13BCC3006907C1 /* state_variable_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = state_variable_filter.cpp; sourceTree = "<group>"; };
+		D16777711F13BCC3006907C1 /* state_variable_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = state_variable_filter.h; sourceTree = "<group>"; };
+		D16777721F13BCC3006907C1 /* step_generator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = step_generator.cpp; sourceTree = "<group>"; };
+		D16777731F13BCC3006907C1 /* step_generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = step_generator.h; sourceTree = "<group>"; };
+		D16777741F13BCC3006907C1 /* stutter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stutter.cpp; sourceTree = "<group>"; };
+		D16777751F13BCC3006907C1 /* stutter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stutter.h; sourceTree = "<group>"; };
+		D16777761F13BCC3006907C1 /* tick_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tick_router.h; sourceTree = "<group>"; };
+		D16777771F13BCC3006907C1 /* trigger_operators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = trigger_operators.cpp; sourceTree = "<group>"; };
+		D16777781F13BCC3006907C1 /* trigger_operators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trigger_operators.h; sourceTree = "<group>"; };
+		D16777791F13BCC3006907C1 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		D167777A1F13BCC3006907C1 /* value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = value.cpp; sourceTree = "<group>"; };
+		D167777B1F13BCC3006907C1 /* value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = value.h; sourceTree = "<group>"; };
+		D167777C1F13BCC3006907C1 /* voice_handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = voice_handler.cpp; sourceTree = "<group>"; };
+		D167777D1F13BCC3006907C1 /* voice_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = voice_handler.h; sourceTree = "<group>"; };
+		D167777E1F13BCC3006907C1 /* wave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wave.h; sourceTree = "<group>"; };
+		D16777A21F13BCD6006907C1 /* dc_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dc_filter.cpp; sourceTree = "<group>"; };
+		D16777A31F13BCD6006907C1 /* dc_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dc_filter.h; sourceTree = "<group>"; };
+		D16777A41F13BCD6006907C1 /* detune_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = detune_lookup.cpp; sourceTree = "<group>"; };
+		D16777A51F13BCD6006907C1 /* detune_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = detune_lookup.h; sourceTree = "<group>"; };
+		D16777A61F13BCD6006907C1 /* fixed_point_oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fixed_point_oscillator.cpp; sourceTree = "<group>"; };
+		D16777A71F13BCD6006907C1 /* fixed_point_oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixed_point_oscillator.h; sourceTree = "<group>"; };
+		D16777A81F13BCD6006907C1 /* fixed_point_wave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fixed_point_wave.cpp; sourceTree = "<group>"; };
+		D16777A91F13BCD6006907C1 /* fixed_point_wave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixed_point_wave.h; sourceTree = "<group>"; };
+		D16777AA1F13BCD6006907C1 /* gate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gate.cpp; sourceTree = "<group>"; };
+		D16777AB1F13BCD6006907C1 /* gate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gate.h; sourceTree = "<group>"; };
+		D16777AC1F13BCD6006907C1 /* helm_engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helm_engine.cpp; sourceTree = "<group>"; };
+		D16777AD1F13BCD6006907C1 /* helm_engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helm_engine.h; sourceTree = "<group>"; };
+		D16777AE1F13BCD6006907C1 /* helm_lfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helm_lfo.cpp; sourceTree = "<group>"; };
+		D16777AF1F13BCD6006907C1 /* helm_lfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helm_lfo.h; sourceTree = "<group>"; };
+		D16777B01F13BCD6006907C1 /* helm_module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helm_module.cpp; sourceTree = "<group>"; };
+		D16777B11F13BCD6006907C1 /* helm_module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helm_module.h; sourceTree = "<group>"; };
+		D16777B21F13BCD6006907C1 /* helm_oscillators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helm_oscillators.cpp; sourceTree = "<group>"; };
+		D16777B31F13BCD6006907C1 /* helm_oscillators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helm_oscillators.h; sourceTree = "<group>"; };
+		D16777B41F13BCD6006907C1 /* helm_voice_handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helm_voice_handler.cpp; sourceTree = "<group>"; };
+		D16777B51F13BCD6006907C1 /* helm_voice_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helm_voice_handler.h; sourceTree = "<group>"; };
+		D16777B61F13BCD6006907C1 /* noise_oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = noise_oscillator.cpp; sourceTree = "<group>"; };
+		D16777B71F13BCD6006907C1 /* noise_oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = noise_oscillator.h; sourceTree = "<group>"; };
+		D16777B81F13BCD6006907C1 /* peak_meter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = peak_meter.cpp; sourceTree = "<group>"; };
+		D16777B91F13BCD6006907C1 /* peak_meter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = peak_meter.h; sourceTree = "<group>"; };
+		D16777BA1F13BCD6006907C1 /* resonance_cancel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resonance_cancel.cpp; sourceTree = "<group>"; };
+		D16777BB1F13BCD6006907C1 /* resonance_cancel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resonance_cancel.h; sourceTree = "<group>"; };
+		D16777BC1F13BCD6006907C1 /* trigger_random.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = trigger_random.cpp; sourceTree = "<group>"; };
+		D16777BD1F13BCD6006907C1 /* trigger_random.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trigger_random.h; sourceTree = "<group>"; };
+		D16777BE1F13BCD6006907C1 /* value_switch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = value_switch.cpp; sourceTree = "<group>"; };
+		D16777BF1F13BCD6006907C1 /* value_switch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = value_switch.h; sourceTree = "<group>"; };
 		D171C37B1E6F3A6F000987FD /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		D1CAEEE01E6F74F10053B7E0 /* helm_sequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = helm_sequencer.cpp; path = ../helm_sequencer.cpp; sourceTree = "<group>"; };
 		D1CAEEE11E6F74F10053B7E0 /* helm_sequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = helm_sequencer.h; path = ../helm_sequencer.h; sourceTree = "<group>"; };
@@ -245,30 +256,36 @@
 		D100984D1E662D62003830AE /* synthesis */ = {
 			isa = PBXGroup;
 			children = (
-				D100984E1E662D62003830AE /* dc_filter.cpp */,
-				D100984F1E662D62003830AE /* dc_filter.h */,
-				D10098501E662D62003830AE /* detune_lookup.cpp */,
-				D10098511E662D62003830AE /* detune_lookup.h */,
-				D10098521E662D62003830AE /* fixed_point_oscillator.cpp */,
-				D10098531E662D62003830AE /* fixed_point_oscillator.h */,
-				D10098541E662D62003830AE /* fixed_point_wave.cpp */,
-				D10098551E662D62003830AE /* fixed_point_wave.h */,
-				D10098561E662D62003830AE /* helm_engine.cpp */,
-				D10098571E662D62003830AE /* helm_engine.h */,
-				D10098581E662D62003830AE /* helm_lfo.cpp */,
-				D10098591E662D62003830AE /* helm_lfo.h */,
-				D100985A1E662D62003830AE /* helm_module.cpp */,
-				D100985B1E662D62003830AE /* helm_module.h */,
-				D100985C1E662D62003830AE /* helm_oscillators.cpp */,
-				D100985D1E662D62003830AE /* helm_oscillators.h */,
-				D100985E1E662D62003830AE /* helm_voice_handler.cpp */,
-				D100985F1E662D62003830AE /* helm_voice_handler.h */,
-				D10098601E662D62003830AE /* noise_oscillator.cpp */,
-				D10098611E662D62003830AE /* noise_oscillator.h */,
-				D10098621E662D62003830AE /* resonance_cancel.cpp */,
-				D10098631E662D62003830AE /* resonance_cancel.h */,
-				D10098641E662D62003830AE /* switch.cpp */,
-				D10098651E662D62003830AE /* switch.h */,
+				D16777A21F13BCD6006907C1 /* dc_filter.cpp */,
+				D16777A31F13BCD6006907C1 /* dc_filter.h */,
+				D16777A41F13BCD6006907C1 /* detune_lookup.cpp */,
+				D16777A51F13BCD6006907C1 /* detune_lookup.h */,
+				D16777A61F13BCD6006907C1 /* fixed_point_oscillator.cpp */,
+				D16777A71F13BCD6006907C1 /* fixed_point_oscillator.h */,
+				D16777A81F13BCD6006907C1 /* fixed_point_wave.cpp */,
+				D16777A91F13BCD6006907C1 /* fixed_point_wave.h */,
+				D16777AA1F13BCD6006907C1 /* gate.cpp */,
+				D16777AB1F13BCD6006907C1 /* gate.h */,
+				D16777AC1F13BCD6006907C1 /* helm_engine.cpp */,
+				D16777AD1F13BCD6006907C1 /* helm_engine.h */,
+				D16777AE1F13BCD6006907C1 /* helm_lfo.cpp */,
+				D16777AF1F13BCD6006907C1 /* helm_lfo.h */,
+				D16777B01F13BCD6006907C1 /* helm_module.cpp */,
+				D16777B11F13BCD6006907C1 /* helm_module.h */,
+				D16777B21F13BCD6006907C1 /* helm_oscillators.cpp */,
+				D16777B31F13BCD6006907C1 /* helm_oscillators.h */,
+				D16777B41F13BCD6006907C1 /* helm_voice_handler.cpp */,
+				D16777B51F13BCD6006907C1 /* helm_voice_handler.h */,
+				D16777B61F13BCD6006907C1 /* noise_oscillator.cpp */,
+				D16777B71F13BCD6006907C1 /* noise_oscillator.h */,
+				D16777B81F13BCD6006907C1 /* peak_meter.cpp */,
+				D16777B91F13BCD6006907C1 /* peak_meter.h */,
+				D16777BA1F13BCD6006907C1 /* resonance_cancel.cpp */,
+				D16777BB1F13BCD6006907C1 /* resonance_cancel.h */,
+				D16777BC1F13BCD6006907C1 /* trigger_random.cpp */,
+				D16777BD1F13BCD6006907C1 /* trigger_random.h */,
+				D16777BE1F13BCD6006907C1 /* value_switch.cpp */,
+				D16777BF1F13BCD6006907C1 /* value_switch.h */,
 			);
 			name = synthesis;
 			path = ../helm/src/synthesis;
@@ -305,82 +322,84 @@
 		D100988C1E662DCD003830AE /* src */ = {
 			isa = PBXGroup;
 			children = (
-				D100988D1E662DCD003830AE /* alias.cpp */,
-				D100988E1E662DCD003830AE /* alias.h */,
-				D100988F1E662DCD003830AE /* arpeggiator.cpp */,
-				D10098901E662DCD003830AE /* arpeggiator.h */,
-				D10098911E662DCD003830AE /* bit_crush.cpp */,
-				D10098921E662DCD003830AE /* bit_crush.h */,
-				D10098931E662DCD003830AE /* bypass_router.cpp */,
-				D10098941E662DCD003830AE /* bypass_router.h */,
-				D10098951E662DCD003830AE /* common.h */,
-				D10098961E662DCD003830AE /* delay.cpp */,
-				D10098971E662DCD003830AE /* delay.h */,
-				D10098981E662DCD003830AE /* distortion.cpp */,
-				D10098991E662DCD003830AE /* distortion.h */,
-				D100989A1E662DCD003830AE /* envelope.cpp */,
-				D100989B1E662DCD003830AE /* envelope.h */,
-				D100989C1E662DCD003830AE /* feedback.cpp */,
-				D100989D1E662DCD003830AE /* feedback.h */,
-				D100989E1E662DCD003830AE /* filter.cpp */,
-				D100989F1E662DCD003830AE /* filter.h */,
-				D10098A01E662DCD003830AE /* formant_manager.cpp */,
-				D10098A11E662DCD003830AE /* formant_manager.h */,
-				D10098A21E662DCD003830AE /* linear_slope.cpp */,
-				D10098A31E662DCD003830AE /* linear_slope.h */,
-				D10098A41E662DCD003830AE /* magnitude_lookup.cpp */,
-				D10098A51E662DCD003830AE /* magnitude_lookup.h */,
-				D10098A61E662DCD003830AE /* Makefile.am */,
-				D10098A71E662DCD003830AE /* memory.cpp */,
-				D10098A81E662DCD003830AE /* memory.h */,
-				D10098A91E662DCD003830AE /* midi_lookup.cpp */,
-				D10098AA1E662DCD003830AE /* midi_lookup.h */,
-				D10098AB1E662DCD003830AE /* mono_panner.cpp */,
-				D10098AC1E662DCD003830AE /* mono_panner.h */,
-				D10098AD1E662DCD003830AE /* mopo.h */,
-				D10098AE1E662DCD003830AE /* note_handler.h */,
-				D10098AF1E662DCD003830AE /* operators.cpp */,
-				D10098B01E662DCD003830AE /* operators.h */,
-				D10098B11E662DCD003830AE /* oscillator.cpp */,
-				D10098B21E662DCD003830AE /* oscillator.h */,
-				D10098B31E662DCD003830AE /* phaser.cpp */,
-				D10098B41E662DCD003830AE /* phaser.h */,
-				D10098B51E662DCD003830AE /* portamento_slope.cpp */,
-				D10098B61E662DCD003830AE /* portamento_slope.h */,
-				D10098B71E662DCD003830AE /* processor.cpp */,
-				D10098B81E662DCD003830AE /* processor.h */,
-				D10098B91E662DCD003830AE /* processor_router.cpp */,
-				D10098BA1E662DCD003830AE /* processor_router.h */,
-				D10098BB1E662DCD003830AE /* resonance_lookup.cpp */,
-				D10098BC1E662DCD003830AE /* resonance_lookup.h */,
-				D10098BD1E662DCD003830AE /* reverb.cpp */,
-				D10098BE1E662DCD003830AE /* reverb.h */,
-				D10098BF1E662DCD003830AE /* reverb_all_pass.cpp */,
-				D10098C01E662DCD003830AE /* reverb_all_pass.h */,
-				D10098C11E662DCD003830AE /* reverb_comb.cpp */,
-				D10098C21E662DCD003830AE /* reverb_comb.h */,
-				D10098C31E662DCD003830AE /* reverb_tuning.h */,
-				D10098C41E662DCD003830AE /* sample_decay_lookup.cpp */,
-				D10098C51E662DCD003830AE /* sample_decay_lookup.h */,
-				D10098C61E662DCD003830AE /* simple_delay.cpp */,
-				D10098C71E662DCD003830AE /* simple_delay.h */,
-				D10098C81E662DCD003830AE /* smooth_filter.cpp */,
-				D10098C91E662DCD003830AE /* smooth_filter.h */,
-				D10098CA1E662DCD003830AE /* smooth_value.cpp */,
-				D10098CB1E662DCD003830AE /* smooth_value.h */,
-				D10098CC1E662DCD003830AE /* step_generator.cpp */,
-				D10098CD1E662DCD003830AE /* step_generator.h */,
-				D10098CE1E662DCD003830AE /* stutter.cpp */,
-				D10098CF1E662DCD003830AE /* stutter.h */,
-				D10098D01E662DCD003830AE /* tick_router.h */,
-				D10098D11E662DCD003830AE /* trigger_operators.cpp */,
-				D10098D21E662DCD003830AE /* trigger_operators.h */,
-				D10098D31E662DCD003830AE /* utils.h */,
-				D10098D41E662DCD003830AE /* value.cpp */,
-				D10098D51E662DCD003830AE /* value.h */,
-				D10098D61E662DCD003830AE /* voice_handler.cpp */,
-				D10098D71E662DCD003830AE /* voice_handler.h */,
-				D10098D81E662DCD003830AE /* wave.h */,
+				D16777311F13BCC3006907C1 /* alias.cpp */,
+				D16777321F13BCC3006907C1 /* alias.h */,
+				D16777331F13BCC3006907C1 /* arpeggiator.cpp */,
+				D16777341F13BCC3006907C1 /* arpeggiator.h */,
+				D16777351F13BCC3006907C1 /* biquad_filter.cpp */,
+				D16777361F13BCC3006907C1 /* biquad_filter.h */,
+				D16777371F13BCC3006907C1 /* bit_crush.cpp */,
+				D16777381F13BCC3006907C1 /* bit_crush.h */,
+				D16777391F13BCC3006907C1 /* bypass_router.cpp */,
+				D167773A1F13BCC3006907C1 /* bypass_router.h */,
+				D167773B1F13BCC3006907C1 /* circular_queue.h */,
+				D167773C1F13BCC3006907C1 /* common.h */,
+				D167773D1F13BCC3006907C1 /* delay.cpp */,
+				D167773E1F13BCC3006907C1 /* delay.h */,
+				D167773F1F13BCC3006907C1 /* distortion.cpp */,
+				D16777401F13BCC3006907C1 /* distortion.h */,
+				D16777411F13BCC3006907C1 /* envelope.cpp */,
+				D16777421F13BCC3006907C1 /* envelope.h */,
+				D16777431F13BCC3006907C1 /* feedback.cpp */,
+				D16777441F13BCC3006907C1 /* feedback.h */,
+				D16777451F13BCC3006907C1 /* formant_manager.cpp */,
+				D16777461F13BCC3006907C1 /* formant_manager.h */,
+				D16777471F13BCC3006907C1 /* ladder_filter.cpp */,
+				D16777481F13BCC3006907C1 /* ladder_filter.h */,
+				D16777491F13BCC3006907C1 /* linear_slope.cpp */,
+				D167774A1F13BCC3006907C1 /* linear_slope.h */,
+				D167774B1F13BCC3006907C1 /* magnitude_lookup.cpp */,
+				D167774C1F13BCC3006907C1 /* magnitude_lookup.h */,
+				D167774D1F13BCC3006907C1 /* memory.cpp */,
+				D167774E1F13BCC3006907C1 /* memory.h */,
+				D167774F1F13BCC3006907C1 /* midi_lookup.cpp */,
+				D16777501F13BCC3006907C1 /* midi_lookup.h */,
+				D16777511F13BCC3006907C1 /* mono_panner.cpp */,
+				D16777521F13BCC3006907C1 /* mono_panner.h */,
+				D16777531F13BCC3006907C1 /* mopo.h */,
+				D16777541F13BCC3006907C1 /* note_handler.h */,
+				D16777551F13BCC3006907C1 /* operators.cpp */,
+				D16777561F13BCC3006907C1 /* operators.h */,
+				D16777571F13BCC3006907C1 /* oscillator.cpp */,
+				D16777581F13BCC3006907C1 /* oscillator.h */,
+				D16777591F13BCC3006907C1 /* portamento_slope.cpp */,
+				D167775A1F13BCC3006907C1 /* portamento_slope.h */,
+				D167775B1F13BCC3006907C1 /* processor_router.cpp */,
+				D167775C1F13BCC3006907C1 /* processor_router.h */,
+				D167775D1F13BCC3006907C1 /* processor.cpp */,
+				D167775E1F13BCC3006907C1 /* processor.h */,
+				D167775F1F13BCC3006907C1 /* resonance_lookup.cpp */,
+				D16777601F13BCC3006907C1 /* resonance_lookup.h */,
+				D16777611F13BCC3006907C1 /* reverb_all_pass.cpp */,
+				D16777621F13BCC3006907C1 /* reverb_all_pass.h */,
+				D16777631F13BCC3006907C1 /* reverb_comb.cpp */,
+				D16777641F13BCC3006907C1 /* reverb_comb.h */,
+				D16777651F13BCC3006907C1 /* reverb_tuning.h */,
+				D16777661F13BCC3006907C1 /* reverb.cpp */,
+				D16777671F13BCC3006907C1 /* reverb.h */,
+				D16777681F13BCC3006907C1 /* sample_decay_lookup.cpp */,
+				D16777691F13BCC3006907C1 /* sample_decay_lookup.h */,
+				D167776A1F13BCC3006907C1 /* simple_delay.cpp */,
+				D167776B1F13BCC3006907C1 /* simple_delay.h */,
+				D167776C1F13BCC3006907C1 /* smooth_filter.cpp */,
+				D167776D1F13BCC3006907C1 /* smooth_filter.h */,
+				D167776E1F13BCC3006907C1 /* smooth_value.cpp */,
+				D167776F1F13BCC3006907C1 /* smooth_value.h */,
+				D16777701F13BCC3006907C1 /* state_variable_filter.cpp */,
+				D16777711F13BCC3006907C1 /* state_variable_filter.h */,
+				D16777721F13BCC3006907C1 /* step_generator.cpp */,
+				D16777731F13BCC3006907C1 /* step_generator.h */,
+				D16777741F13BCC3006907C1 /* stutter.cpp */,
+				D16777751F13BCC3006907C1 /* stutter.h */,
+				D16777761F13BCC3006907C1 /* tick_router.h */,
+				D16777771F13BCC3006907C1 /* trigger_operators.cpp */,
+				D16777781F13BCC3006907C1 /* trigger_operators.h */,
+				D16777791F13BCC3006907C1 /* utils.h */,
+				D167777A1F13BCC3006907C1 /* value.cpp */,
+				D167777B1F13BCC3006907C1 /* value.h */,
+				D167777C1F13BCC3006907C1 /* voice_handler.cpp */,
+				D167777D1F13BCC3006907C1 /* voice_handler.h */,
+				D167777E1F13BCC3006907C1 /* wave.h */,
 			);
 			name = src;
 			path = ../helm/mopo/src;
@@ -476,7 +495,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D10098E51E662DCD003830AE /* Makefile.am in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -487,56 +505,60 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D10098F31E662DCD003830AE /* sample_decay_lookup.cpp in Sources */,
-				D100986C1E662D62003830AE /* helm_module.cpp in Sources */,
-				D10098E11E662DCD003830AE /* filter.cpp in Sources */,
-				D10098E81E662DCD003830AE /* mono_panner.cpp in Sources */,
-				D10098671E662D62003830AE /* detune_lookup.cpp in Sources */,
-				D10098DF1E662DCD003830AE /* envelope.cpp in Sources */,
-				D10098D91E662DCD003830AE /* alias.cpp in Sources */,
-				D10098E31E662DCD003830AE /* linear_slope.cpp in Sources */,
-				D10098711E662D62003830AE /* switch.cpp in Sources */,
-				D10098681E662D62003830AE /* fixed_point_oscillator.cpp in Sources */,
-				D100986F1E662D62003830AE /* noise_oscillator.cpp in Sources */,
-				D10098F11E662DCD003830AE /* reverb_all_pass.cpp in Sources */,
-				D10098701E662D62003830AE /* resonance_cancel.cpp in Sources */,
-				D10098E41E662DCD003830AE /* magnitude_lookup.cpp in Sources */,
-				D100986D1E662D62003830AE /* helm_oscillators.cpp in Sources */,
+				D167777F1F13BCC3006907C1 /* alias.cpp in Sources */,
+				D16777891F13BCC3006907C1 /* ladder_filter.cpp in Sources */,
+				D16777C01F13BCD6006907C1 /* dc_filter.cpp in Sources */,
+				D16777C51F13BCD6006907C1 /* helm_engine.cpp in Sources */,
+				D16777C21F13BCD6006907C1 /* fixed_point_oscillator.cpp in Sources */,
+				D16777CE1F13BCD6006907C1 /* value_switch.cpp in Sources */,
+				D167778A1F13BCC3006907C1 /* linear_slope.cpp in Sources */,
+				D16777851F13BCC3006907C1 /* distortion.cpp in Sources */,
+				D16777C61F13BCD6006907C1 /* helm_lfo.cpp in Sources */,
+				D16777CB1F13BCD6006907C1 /* peak_meter.cpp in Sources */,
+				D16777931F13BCC3006907C1 /* processor.cpp in Sources */,
+				D16777C81F13BCD6006907C1 /* helm_oscillators.cpp in Sources */,
+				D16777921F13BCC3006907C1 /* processor_router.cpp in Sources */,
+				D167779E1F13BCC3006907C1 /* stutter.cpp in Sources */,
+				D167779C1F13BCC3006907C1 /* state_variable_filter.cpp in Sources */,
+				D16777C91F13BCD6006907C1 /* helm_voice_handler.cpp in Sources */,
+				D16777861F13BCC3006907C1 /* envelope.cpp in Sources */,
+				D16777871F13BCC3006907C1 /* feedback.cpp in Sources */,
+				D16777951F13BCC3006907C1 /* reverb_all_pass.cpp in Sources */,
+				D16777801F13BCC3006907C1 /* arpeggiator.cpp in Sources */,
+				D16777C41F13BCD6006907C1 /* gate.cpp in Sources */,
+				D16777911F13BCC3006907C1 /* portamento_slope.cpp in Sources */,
+				D16777991F13BCC3006907C1 /* simple_delay.cpp in Sources */,
+				D167779D1F13BCC3006907C1 /* step_generator.cpp in Sources */,
+				D16777971F13BCC3006907C1 /* reverb.cpp in Sources */,
+				D16777A01F13BCC3006907C1 /* value.cpp in Sources */,
+				D167779F1F13BCC3006907C1 /* trigger_operators.cpp in Sources */,
+				D16777941F13BCC3006907C1 /* resonance_lookup.cpp in Sources */,
+				D16777881F13BCC3006907C1 /* formant_manager.cpp in Sources */,
+				D16777821F13BCC3006907C1 /* bit_crush.cpp in Sources */,
+				D16777CA1F13BCD6006907C1 /* noise_oscillator.cpp in Sources */,
+				D16777CD1F13BCD6006907C1 /* trigger_random.cpp in Sources */,
 				D1CAEEE21E6F74F10053B7E0 /* helm_sequencer.cpp in Sources */,
-				D10098DE1E662DCD003830AE /* distortion.cpp in Sources */,
-				D100986E1E662D62003830AE /* helm_voice_handler.cpp in Sources */,
-				D10098DA1E662DCD003830AE /* arpeggiator.cpp in Sources */,
-				D10098EA1E662DCD003830AE /* oscillator.cpp in Sources */,
-				D10098DD1E662DCD003830AE /* delay.cpp in Sources */,
-				D10098F71E662DCD003830AE /* step_generator.cpp in Sources */,
-				D10098F91E662DCD003830AE /* trigger_operators.cpp in Sources */,
-				D10098E61E662DCD003830AE /* memory.cpp in Sources */,
-				D100986B1E662D62003830AE /* helm_lfo.cpp in Sources */,
-				D10098F51E662DCD003830AE /* smooth_filter.cpp in Sources */,
-				D10098F41E662DCD003830AE /* simple_delay.cpp in Sources */,
-				D10098F21E662DCD003830AE /* reverb_comb.cpp in Sources */,
-				D10098691E662D62003830AE /* fixed_point_wave.cpp in Sources */,
-				D10098E01E662DCD003830AE /* feedback.cpp in Sources */,
-				D10098FA1E662DCD003830AE /* value.cpp in Sources */,
+				D16777C31F13BCD6006907C1 /* fixed_point_wave.cpp in Sources */,
+				D16777841F13BCC3006907C1 /* delay.cpp in Sources */,
+				D16777811F13BCC3006907C1 /* biquad_filter.cpp in Sources */,
+				D16777981F13BCC3006907C1 /* sample_decay_lookup.cpp in Sources */,
+				D167778F1F13BCC3006907C1 /* operators.cpp in Sources */,
+				D16777CC1F13BCD6006907C1 /* resonance_cancel.cpp in Sources */,
+				D167779A1F13BCC3006907C1 /* smooth_filter.cpp in Sources */,
+				D167778C1F13BCC3006907C1 /* memory.cpp in Sources */,
+				D16777C71F13BCD6006907C1 /* helm_module.cpp in Sources */,
+				D16777A11F13BCC3006907C1 /* voice_handler.cpp in Sources */,
+				D167778B1F13BCC3006907C1 /* magnitude_lookup.cpp in Sources */,
+				D16777961F13BCC3006907C1 /* reverb_comb.cpp in Sources */,
+				D16777831F13BCC3006907C1 /* bypass_router.cpp in Sources */,
+				D16777C11F13BCD6006907C1 /* detune_lookup.cpp in Sources */,
 				D10099011E6717BD003830AE /* AudioPluginUtil.cpp in Sources */,
-				D10098EE1E662DCD003830AE /* processor_router.cpp in Sources */,
-				D10098E21E662DCD003830AE /* formant_manager.cpp in Sources */,
-				D10098DC1E662DCD003830AE /* bypass_router.cpp in Sources */,
-				D10098FB1E662DCD003830AE /* voice_handler.cpp in Sources */,
-				D10098EB1E662DCD003830AE /* phaser.cpp in Sources */,
-				D10098E71E662DCD003830AE /* midi_lookup.cpp in Sources */,
-				D10098F01E662DCD003830AE /* reverb.cpp in Sources */,
-				D10098661E662D62003830AE /* dc_filter.cpp in Sources */,
-				D100986A1E662D62003830AE /* helm_engine.cpp in Sources */,
+				D167778E1F13BCC3006907C1 /* mono_panner.cpp in Sources */,
 				D100988B1E662DA4003830AE /* helm_plugin.cpp in Sources */,
-				D10098E91E662DCD003830AE /* operators.cpp in Sources */,
-				D10098EC1E662DCD003830AE /* portamento_slope.cpp in Sources */,
-				D10098F61E662DCD003830AE /* smooth_value.cpp in Sources */,
-				D10098ED1E662DCD003830AE /* processor.cpp in Sources */,
-				D10098F81E662DCD003830AE /* stutter.cpp in Sources */,
-				D10098EF1E662DCD003830AE /* resonance_lookup.cpp in Sources */,
 				D10098841E662D88003830AE /* helm_common.cpp in Sources */,
-				D10098DB1E662DCD003830AE /* bit_crush.cpp in Sources */,
+				D167778D1F13BCC3006907C1 /* midi_lookup.cpp in Sources */,
+				D167779B1F13BCC3006907C1 /* smooth_value.cpp in Sources */,
+				D16777901F13BCC3006907C1 /* oscillator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
