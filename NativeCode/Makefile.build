@@ -10,8 +10,8 @@ SYNTHESIS_OBJS := $(patsubst $(SYNTHESIS_DIR)/%.cpp,$(OUTPUT_DIR)/$(SYNTHESIS_DI
 LOCAL_OBJS := $(patsubst $(LOCAL_DIR)/%.cpp,$(OUTPUT_DIR)/$(LOCAL_DIR)/%.o, $(wildcard $(LOCAL_DIR)/*.cpp))
 
 OUTPUT=libAudioPluginHelm.so
-CXXFLAGS= -I . -I $(MOPO_DIR) -I $(SYNTHESIS_DIR) -I $(HELM_COMMON_DIR) -I $(QUEUE_DIR) -O3 -fPIC -std=c++11
-LDFLAGS= -shared -rdynamic -fPIC
+CXXFLAGS= -I . -I $(MOPO_DIR) -I $(SYNTHESIS_DIR) -I $(HELM_COMMON_DIR) -I $(QUEUE_DIR) -O3 -fPIC -std=c++11 -msse2 --fast-math -ftree-vectorize -ftree-slp-vectorize
+LDFLAGS= -shared -rdynamic -fPIC -msse2 --fast-math -ftree-vectorize -ftree-slp-vectorize
 DESTINATION=../Assets/Plugins
 ifeq ($(ARCH),32)
 	CXXFLAGS:= $(CXXFLAGS) -m32
@@ -35,6 +35,7 @@ directory:
 	mkdir -p $(OUTPUT_DIR)/$(HELM_COMMON_DIR)
 
 move:
+	mkdir -p $(DESTINATION)
 	mv $(OUTPUT) $(DESTINATION)/$(OUTPUT)
 
 $(OUTPUT): $(MOPO_OBJS) $(SYNTHESIS_OBJS) $(OUTPUT_DIR)/$(HELM_COMMON_DIR)/helm_common.o $(LOCAL_OBJS)
