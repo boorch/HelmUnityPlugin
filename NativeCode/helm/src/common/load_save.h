@@ -34,6 +34,11 @@ public:
     else if (b.getFileName() == "Factory Presets")
       return 1;
 
+    if (a.getFileName() == "Old Factory Presets")
+      return 1;
+    else if (b.getFileName() == "Old Factory Presets")
+      return -1;
+
     return a.getFullPathName().toLowerCase().compare(b.getFullPathName().toLowerCase());
   }
 };
@@ -69,9 +74,14 @@ class LoadSave {
     static bool shouldCheckForUpdates();
     static bool shouldAnimateWidgets();
     static float loadWindowSize();
+    static String loadVersion();
+    static bool shouldAskForPayment();
     static void saveVarToConfig(var config_state);
     static void saveLayoutConfig(mopo::StringLayout* layout);
     static void saveVersionConfig();
+    static void saveLastAskedForMoney();
+    static void saveShouldAskForMoney(bool should_ask);
+    static void savePaid();
     static void saveUpdateCheckConfig(bool check_for_updates);
     static void saveAnimateWidgets(bool check_for_updates);
     static void saveWindowSize(float window_size);
@@ -84,6 +94,7 @@ class LoadSave {
     static File getFactoryBankDirectory();
     static File getBankDirectory();
     static File getUserBankDirectory();
+    static File getDidPayInitiallyFile();
     static void exportBank(String bank_name);
     static void importBank();
     static int compareVersionStrings(String a, String b);

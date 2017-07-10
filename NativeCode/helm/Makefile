@@ -18,6 +18,18 @@ ifdef DPKG
 	PDEBLDFLAGS := $(shell dpkg-buildflags --get LDFLAGS)
 endif
 
+MACHINE := $(shell sh -c 'uname -m 2> /dev/null || echo not')
+ifneq (,$(findstring aarch,$(MACHINE)))
+	SIMDFLAGS := -march=armv8-a -mtune=cortex-a53
+else
+ifneq (,$(findstring arm,$(MACHINE)))
+	SIMDFLAGS := -march=armv8-a -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard
+else
+	SIMDFLAGS := -msse2
+endif
+endif
+
+
 PROGRAM = helm
 BIN     = $(DESTDIR)/usr/bin
 BINFILE = $(BIN)/$(PROGRAM)
@@ -65,13 +77,13 @@ install_icons:
 	cp $(ICON256) $(ICONDEST256)/$(PROGRAM).png
 
 standalone:
-	$(MAKE) -C standalone/builds/linux CONFIG=$(CONFIG) DEBCXXFLAGS="$(SDEBCXXFLAGS)" DEBLDFLAGS="$(SDEBLDFLAGS)"
+	$(MAKE) -C standalone/builds/linux CONFIG=$(CONFIG) DEBCXXFLAGS="$(SDEBCXXFLAGS)" DEBLDFLAGS="$(SDEBLDFLAGS)" SIMDFLAGS="$(SIMDFLAGS)"
 
 lv2:
-	$(MAKE) -C builds/linux/LV2 CONFIG=$(CONFIG) DEBCXXFLAGS="$(PDEBCXXFLAGS)" DEBLDFLAGS="$(PDEBLDFLAGS)"
+	$(MAKE) -C builds/linux/LV2 CONFIG=$(CONFIG) DEBCXXFLAGS="$(PDEBCXXFLAGS)" DEBLDFLAGS="$(PDEBLDFLAGS)" SIMDFLAGS="$(SIMDFLAGS)"
 
 vst:
-	$(MAKE) -C builds/linux/VST CONFIG=$(CONFIG) DEBCXXFLAGS="$(PDEBCXXFLAGS)" DEBLDFLAGS="$(PDEBLDFLAGS)"
+	$(MAKE) -C builds/linux/VST CONFIG=$(CONFIG) DEBCXXFLAGS="$(PDEBCXXFLAGS)" DEBLDFLAGS="$(PDEBLDFLAGS)" SIMDFLAGS="$(SIMDFLAGS)"
 
 clean:
 	$(MAKE) clean -C standalone/builds/linux CONFIG=$(CONFIG)
@@ -79,6 +91,7 @@ clean:
 	$(MAKE) clean -C builds/linux/VST CONFIG=$(CONFIG)
 
 install_patches:
+	rm -rf $(PATCHES)
 	install -d $(PATCHES)
 	cp -rf patches/* $(PATCHES)
 
@@ -103,7 +116,13 @@ install_vst: vst install_patches
 	install builds/linux/VST/build/helm.so $(VST)
 	cp -rf patches/* $(PATCHES)
 
-install: install_standalone install_vst install_lv2
+thank_you:
+ifdef PAID
+	install -d $(PATCHES)
+	cp docs/thank_you.txt $(PATCHES)
+endif
+
+install: install_standalone install_vst install_lv2 thank_you
 
 dist:
 	rm -rf $(PROGRAM)

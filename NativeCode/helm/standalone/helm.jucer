@@ -305,6 +305,10 @@
         <FILE id="XjFuqw" name="arp_section.h" compile="0" resource="0" file="../src/editor_sections/arp_section.h"/>
         <FILE id="mJOykk" name="bpm_section.cpp" compile="1" resource="0" file="../src/editor_sections/bpm_section.cpp"/>
         <FILE id="IM1tHw" name="bpm_section.h" compile="0" resource="0" file="../src/editor_sections/bpm_section.h"/>
+        <FILE id="goLhXi" name="contribute_section.cpp" compile="1" resource="0"
+              file="../src/editor_sections/contribute_section.cpp"/>
+        <FILE id="a5HYpJ" name="contribute_section.h" compile="0" resource="0"
+              file="../src/editor_sections/contribute_section.h"/>
         <FILE id="ljoec8" name="delay_section.cpp" compile="1" resource="0"
               file="../src/editor_sections/delay_section.cpp"/>
         <FILE id="A1R5tt" name="delay_section.h" compile="0" resource="0" file="../src/editor_sections/delay_section.h"/>
@@ -511,8 +515,8 @@
       </MODULEPATHS>
     </XCODE_MAC>
     <LINUX_MAKE targetFolder="builds/linux" bigIcon="JqKIEw" smallIcon="oFf3hH"
-                extraCompilerFlags="$(DEBCXXFLAGS) -ffast-math -msse2 -ftree-vectorize -ftree-slp-vectorize "
-                extraLinkerFlags="$(DEBLDFLAGS) -ffast-math -msse2 -ftree-vectorize -ftree-slp-vectorize "
+                extraCompilerFlags="$(DEBCXXFLAGS) -ffast-math $(SIMDFLAGS) -ftree-vectorize -ftree-slp-vectorize "
+                extraLinkerFlags="$(DEBLDFLAGS) -ffast-math $(SIMDFLAGS) -ftree-vectorize -ftree-slp-vectorize "
                 extraDefs="JUCE_JACK_CLIENT_NAME=\&quot;Helm\&quot;,&#10;JUCE_ALSA_MIDI_INPUT_NAME=\&quot;Helm\&quot;&#10;JUCE_ALSA_MIDI_OUTPUT_NAME=\&quot;Helm\&quot;&#10;JUCE_USE_XRANDR=0">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"

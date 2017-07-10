@@ -313,6 +313,10 @@
         <FILE id="QYzslR" name="arp_section.h" compile="0" resource="0" file="src/editor_sections/arp_section.h"/>
         <FILE id="ubTRHv" name="bpm_section.cpp" compile="1" resource="0" file="src/editor_sections/bpm_section.cpp"/>
         <FILE id="ULoppH" name="bpm_section.h" compile="0" resource="0" file="src/editor_sections/bpm_section.h"/>
+        <FILE id="TRAgBj" name="contribute_section.cpp" compile="1" resource="0"
+              file="src/editor_sections/contribute_section.cpp"/>
+        <FILE id="YRPCpa" name="contribute_section.h" compile="0" resource="0"
+              file="src/editor_sections/contribute_section.h"/>
         <FILE id="CnOWyK" name="delay_section.cpp" compile="1" resource="0"
               file="src/editor_sections/delay_section.cpp"/>
         <FILE id="Y1r52Y" name="delay_section.h" compile="0" resource="0" file="src/editor_sections/delay_section.h"/>
@@ -490,8 +494,8 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="builds/linux/VST" vstFolder="~/srcs/VST3 SDK" vst3Folder="~/srcs/VST3 SDK"
-                extraCompilerFlags="$(DEBCXXFLAGS) -ffast-math -msse2 -ftree-vectorize -ftree-slp-vectorize "
-                extraLinkerFlags="$(DEBLDFLAGS) -ffast-math -msse2 -ftree-vectorize -ftree-slp-vectorize "
+                extraCompilerFlags="$(DEBCXXFLAGS) -ffast-math $(SIMDFLAGS) -ftree-vectorize -ftree-slp-vectorize "
+                extraLinkerFlags="$(DEBLDFLAGS) -ffast-math $(SIMDFLAGS) -ftree-vectorize -ftree-slp-vectorize "
                 extraDefs="JUCE_USE_XRANDR=0">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
