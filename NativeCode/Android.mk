@@ -11,13 +11,13 @@ QUEUE_DIR = helm/concurrentqueue
 LOCAL_ARM_MODE  := arm
 LOCAL_PATH      := $(NDK_PROJECT_PATH)
 LOCAL_MODULE    := libAudioPluginHelm
-LOCAL_CFLAGS    := -Werror -I $(MOPO_DIR) -I $(SYNTHESIS_DIR) -I $(HELM_COMMON_DIR) -I $(QUEUE_DIR) -O3 -fPIC -std=c++11 
+LOCAL_CFLAGS    := -Werror -I $(MOPO_DIR) -I $(SYNTHESIS_DIR) -I $(HELM_COMMON_DIR) -I $(QUEUE_DIR) -O3 -fPIC -std=c++11 -mfpu=neon
 
 MOPO_CPPS := $(wildcard $(MOPO_DIR)/*.cpp)
 SYNTHESIS_CPPS := $(wildcard $(SYNTHESIS_DIR)/*.cpp)
 LOCAL_CPPS := $(wildcard $(LOCAL_DIR)/*.cpp)
 
 LOCAL_SRC_FILES := $(MOPO_CPPS) $(SYNTHESIS_CPPS) $(HELM_COMMON_DIR)/helm_common.cpp $(LOCAL_CPPS)
-LOCAL_LDLIBS    := -llog
+LOCAL_LDLIBS    := -llog -O3 -std=c++11 -mfpu=neon
 
 include $(BUILD_SHARED_LIBRARY)
