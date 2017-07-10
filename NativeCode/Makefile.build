@@ -12,7 +12,7 @@ LOCAL_OBJS := $(patsubst $(LOCAL_DIR)/%.cpp,$(OUTPUT_DIR)/$(LOCAL_DIR)/%.o, $(wi
 OUTPUT=libAudioPluginHelm.so
 CXXFLAGS= -I . -I $(MOPO_DIR) -I $(SYNTHESIS_DIR) -I $(HELM_COMMON_DIR) -I $(QUEUE_DIR) -O3 -fPIC -std=c++11 -msse2 --fast-math -ftree-vectorize -ftree-slp-vectorize
 LDFLAGS= -shared -rdynamic -fPIC -msse2 --fast-math -ftree-vectorize -ftree-slp-vectorize
-DESTINATION=../Assets/Plugins
+DESTINATION=../Assets/Helm/Plugins
 ifeq ($(ARCH),32)
 	CXXFLAGS:= $(CXXFLAGS) -m32
 	LDFLAGS:= $(LDFLAGS) -m32

@@ -98,8 +98,8 @@
       <AdditionalDependencies>kernel32.lib;user32.lib;winmm.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\Assets\Plugins\x86
-copy $(TargetPath) ..\..\Assets\Plugins\x86\$(TargetName).dll
+      <Command>mkdir ..\..\Assets\Helm\Plugins\x86
+copy $(TargetPath) ..\..\Assets\Helm\Plugins\x86\$(TargetName).dll
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -123,8 +123,8 @@ copy $(TargetPath) ..\..\Assets\Plugins\x86\$(TargetName).dll
       <AdditionalDependencies>kernel32.lib;user32.lib;winmm.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\Assets\Plugins\x86_64
-copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
+      <Command>mkdir ..\..\Assets\Helm\Plugins\x86_64
+copy /y $(TargetPath) ..\..\Assets\Helm\Plugins\x86_64\$(TargetName).dll
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -154,8 +154,8 @@ copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
       <AdditionalDependencies>kernel32.lib;user32.lib;winmm.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\Assets\Plugins\x86
-copy $(TargetPath) ..\..\Assets\Plugins\x86\$(TargetName).dll
+      <Command>mkdir ..\..\Assets\Helm\Plugins\x86
+copy $(TargetPath) ..\..\Assets\Helm\Plugins\x86\$(TargetName).dll
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -186,8 +186,8 @@ copy $(TargetPath) ..\..\Assets\Plugins\x86\$(TargetName).dll
       <AdditionalDependencies>kernel32.lib;user32.lib;winmm.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\Assets\Plugins\x86_64
-copy /y $(TargetPath) ..\..\Assets\Plugins\x86_64\$(TargetName).dll
+      <Command>mkdir ..\..\Assets\Helm\Plugins\x86_64
+copy /y $(TargetPath) ..\..\Assets\Helm\Plugins\x86_64\$(TargetName).dll
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
