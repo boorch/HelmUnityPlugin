@@ -117,7 +117,7 @@ namespace Helm {
     }
   }
 
-  extern "C" UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK CreateCallback(UnityAudioEffectState* state) {
+  UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK CreateCallback(UnityAudioEffectState* state) {
     EffectData* effect_data = new EffectData;
     memset(effect_data->sequencer_events, 0, sizeof(HelmSequencer::Note*) * MAX_NOTES);
 
@@ -150,7 +150,7 @@ namespace Helm {
     instance_map.erase(id);
   }
 
-  extern "C" UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ReleaseCallback(UnityAudioEffectState* state) {
+  UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ReleaseCallback(UnityAudioEffectState* state) {
     EffectData* data = state->GetEffectData<EffectData>();
     MutexScopeLock mutex_lock(data->mutex);
     MutexScopeLock mutex_instance_lock(instance_mutex);
@@ -172,7 +172,7 @@ namespace Helm {
     return UNITY_AUDIODSP_OK;
   }
 
-  extern "C" UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK SetFloatParameterCallback(
+  UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK SetFloatParameterCallback(
       UnityAudioEffectState* state, int index, float value) {
     EffectData* data = state->GetEffectData<EffectData>();
 
@@ -238,7 +238,7 @@ namespace Helm {
     return UNITY_AUDIODSP_OK;
   }
 
-  extern "C" UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK GetFloatParameterCallback(
+  UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK GetFloatParameterCallback(
       UnityAudioEffectState* state, int index, float* value, char *valuestr) {
     EffectData* data = state->GetEffectData<EffectData>();
     if (index < 0 || index >= data->num_parameters)
@@ -253,7 +253,7 @@ namespace Helm {
     return UNITY_AUDIODSP_OK;
   }
 
-  extern "C" int UNITY_AUDIODSP_CALLBACK GetFloatBufferCallback(UnityAudioEffectState* state, const char* name,
+  int UNITY_AUDIODSP_CALLBACK GetFloatBufferCallback(UnityAudioEffectState* state, const char* name,
                                                                 float* buffer, int numsamples) {
     return UNITY_AUDIODSP_OK;
   }
@@ -333,7 +333,7 @@ namespace Helm {
       data->value_lookup[event.first]->set(event.second);
   }
 
-  extern "C" UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ProcessCallback(
+  UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ProcessCallback(
       UnityAudioEffectState* state,
       float* in_buffer, float* out_buffer, unsigned int num_samples,
       int in_channels, int out_channels) {
