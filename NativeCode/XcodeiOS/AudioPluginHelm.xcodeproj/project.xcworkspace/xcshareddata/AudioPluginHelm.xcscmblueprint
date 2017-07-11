@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "D0D3DA30C0DDC260830B7804B59CFE3DE3B4446D",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "D0D3DA30C0DDC260830B7804B59CFE3DE3B4446D" : 9223372036854775807,
+    "AFCA96F5AD20CA17ADC74FD33097FDC9EF10939C" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "90FD2A93-9EAF-482A-9258-98F503B3E81A",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "D0D3DA30C0DDC260830B7804B59CFE3DE3B4446D" : "HelmUnityPlugin\/",
+    "AFCA96F5AD20CA17ADC74FD33097FDC9EF10939C" : "helm\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "AudioPluginHelm",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "NativeCode\/XcodeiOS\/AudioPluginHelm.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/mtytel\/helm",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "AFCA96F5AD20CA17ADC74FD33097FDC9EF10939C"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "gitlab.com:mtytel\/HelmUnityPlugin.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D0D3DA30C0DDC260830B7804B59CFE3DE3B4446D"
+    }
+  ]
+}
