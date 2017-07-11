@@ -81,7 +81,10 @@ namespace Helm {
     }
 
     for (int m = 0; m < MAX_MODULATIONS; ++m) {
-      std::string name = std::string("mod") + std::to_string(m);
+      std::ostringstream m_str;
+      m_str << m;
+
+      std::string name = std::string("mod") + m_str.str();
       std::string source_name = name + "source";
       std::string dest_name = name + "dest";
       std::string value_name = name + "value";
