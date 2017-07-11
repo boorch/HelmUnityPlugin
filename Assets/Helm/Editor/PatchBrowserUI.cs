@@ -40,7 +40,7 @@ namespace Helm
 
         public static string GetFullPatchesPath()
         {
-            const string patchesPath = "/Helm/Patches/";
+            const string patchesPath = "/Helm/Presets/";
             return Application.dataPath + patchesPath;
         }
 
