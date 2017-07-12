@@ -88,6 +88,7 @@
     <Compile Include="Assets\Helm\Scripts\HelmPatchFormat.cs" />
     <Compile Include="Assets\Helm\Scripts\HelmSequencer.cs" />
     <Compile Include="Assets\Helm\Scripts\Keyzone.cs" />
+    <Compile Include="Assets\Helm\Scripts\Native.cs" />
     <Compile Include="Assets\Helm\Scripts\Note.cs" />
     <Compile Include="Assets\Helm\Scripts\NoteHandler.cs" />
     <Compile Include="Assets\Helm\Scripts\NoteRow.cs" />
