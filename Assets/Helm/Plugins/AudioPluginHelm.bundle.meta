@@ -30,6 +30,10 @@ PluginImporter:
       enabled: 0
       settings:
         CPU: x86_64
+    LinuxUniversal:
+      enabled: 0
+      settings:
+        CPU: None
     OSXIntel:
       enabled: 1
       settings:
@@ -40,7 +44,8 @@ PluginImporter:
         CPU: AnyCPU
     OSXUniversal:
       enabled: 1
-      settings: {}
+      settings:
+        CPU: AnyCPU
     Win:
       enabled: 0
       settings:
