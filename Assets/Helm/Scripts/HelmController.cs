@@ -4,34 +4,12 @@ using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Helm
 {
     [RequireComponent(typeof(HelmAudioInit))]
     public class HelmController : MonoBehaviour, NoteHandler
     {
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOn(int channel, int note, float velocity);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOff(int channel, int note);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmAllNotesOff(int channel);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmSetPitchWheel(int channel, float value);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmSetModWheel(int channel, float value);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmSetAftertouch(int channel, int note, float value);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern bool HelmChangeParameter(int channel, int paramIndex, float newValue);
-
         public int channel = 0;
 
         Dictionary<int, int> pressedNotes = new Dictionary<int, int>();
@@ -53,17 +31,17 @@ namespace Helm
 
         public void SetParameter(Param parameter, float newValue)
         {
-            HelmChangeParameter(channel, (int)parameter, newValue);
+            Native.HelmChangeParameter(channel, (int)parameter, newValue);
         }
 
         public void SetParameter(CommonParam parameter, float newValue)
         {
-            HelmChangeParameter(channel, (int)parameter, newValue);
+            Native.HelmChangeParameter(channel, (int)parameter, newValue);
         }
 
         public void AllNotesOff()
         {
-            HelmAllNotesOff(channel);
+            Native.HelmAllNotesOff(channel);
             pressedNotes.Clear();
         }
 
@@ -94,7 +72,7 @@ namespace Helm
             int number = 0;
             pressedNotes.TryGetValue(note, out number);
             pressedNotes[note] = number + 1;
-            HelmNoteOn(channel, note, velocity);
+            Native.HelmNoteOn(channel, note, velocity);
         }
 
         public void NoteOff(int note)
@@ -104,7 +82,7 @@ namespace Helm
             if (number <= 1)
             {
                 pressedNotes.Remove(note);
-                HelmNoteOff(channel, note);
+                Native.HelmNoteOff(channel, note);
             }
             else
                 pressedNotes[note] = number - 1;
@@ -112,17 +90,17 @@ namespace Helm
 
         public void SetPitchWheel(float wheelValue)
         {
-            HelmSetPitchWheel(channel, wheelValue);
+            Native.HelmSetPitchWheel(channel, wheelValue);
         }
 
         public void SetModWheel(float wheelValue)
         {
-            HelmSetModWheel(channel, wheelValue);
+            Native.HelmSetModWheel(channel, wheelValue);
         }
 
         public void SetAftertouch(int note, float aftertouchValue)
         {
-            HelmSetAftertouch(channel, note, aftertouchValue);
+            Native.HelmSetAftertouch(channel, note, aftertouchValue);
         }
     }
 }

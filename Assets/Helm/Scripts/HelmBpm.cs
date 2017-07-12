@@ -1,15 +1,11 @@
 // Copyright 2017 Matt Tytel
 
 using UnityEngine;
-using System.Runtime.InteropServices;
 
 namespace Helm
 {
     public class HelmBpm : MonoBehaviour
     {
-        [DllImport("AudioPluginHelm")]
-        private static extern void SetBpm(float bpm);
-
         private static float globalBpm = 120.0f;
 
         [SerializeField]
@@ -36,7 +32,7 @@ namespace Helm
         {
             if (bpm_ > 0.0f)
             {
-                SetBpm(bpm_);
+                Native.SetBpm(bpm_);
                 globalBpm = bpm_;
             }
         }

@@ -4,43 +4,12 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Helm
 {
     [RequireComponent(typeof(HelmAudioInit))]
     public class HelmSequencer : Sequencer
     {
-        [DllImport("AudioPluginHelm")]
-        private static extern IntPtr CreateSequencer();
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void DeleteSequencer(IntPtr sequencer);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void EnableSequencer(IntPtr sequencer, bool enable);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void ChangeSequencerLength(IntPtr sequencer, float length);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern bool ChangeSequencerChannel(IntPtr sequencer, int channel);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void SyncSequencerStart(IntPtr sequencer, double dspTime);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOn(int channel, int note, float velocity);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOff(int channel, int note);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmAllNotesOff(int channel);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern bool HelmChangeParameter(int channel, int paramIndex, float newValue);
-
         public int channel = 0;
         IntPtr reference = IntPtr.Zero;
         int currentChannel = -1;
@@ -49,13 +18,13 @@ namespace Helm
         void CreateNativeSequencer()
         {
             if (reference == IntPtr.Zero)
-                reference = CreateSequencer();
+                reference = Native.CreateSequencer();
         }
 
         void DeleteNativeSequencer()
         {
             if (reference != IntPtr.Zero)
-                DeleteSequencer(reference);
+                Native.DeleteSequencer(reference);
             reference = IntPtr.Zero;
             currentIndex = -1;
         }
@@ -69,8 +38,8 @@ namespace Helm
         {
             InitNoteRows();
             CreateNativeSequencer();
-            ChangeSequencerChannel(reference, channel);
-            ChangeSequencerLength(reference, length);
+            Native.ChangeSequencerChannel(reference, channel);
+            Native.ChangeSequencerLength(reference, length);
 
             for (int i = 0; i < allNotes.Length; ++i)
             {
@@ -92,31 +61,31 @@ namespace Helm
         void OnEnable()
         {
             if (reference != IntPtr.Zero)
-                EnableSequencer(reference, true);
+                Native.EnableSequencer(reference, true);
         }
 
         void OnDisable()
         {
             if (reference != IntPtr.Zero)
             {
-                EnableSequencer(reference, false);
+                Native.EnableSequencer(reference, false);
                 AllNotesOff();
             }
         }
 
         public override void AllNotesOff()
         {
-            HelmAllNotesOff(channel);
+            Native.HelmAllNotesOff(channel);
         }
 
         public override void NoteOn(int note, float velocity = 1.0f)
         {
-            HelmNoteOn(channel, note, velocity);
+            Native.HelmNoteOn(channel, note, velocity);
         }
 
         public override void NoteOff(int note)
         {
-            HelmNoteOff(channel, note);
+            Native.HelmNoteOff(channel, note);
         }
 
         void EnableComponent()
@@ -130,7 +99,7 @@ namespace Helm
             {
                 syncTime = dspTime;
                 const float lookaheadTime = 0.5f;
-                SyncSequencerStart(reference, dspTime);
+                Native.SyncSequencerStart(reference, dspTime);
                 float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
                 Invoke("EnableComponent", waitToEnable);
             }
@@ -152,8 +121,8 @@ namespace Helm
             {
                 if (reference != IntPtr.Zero)
                 {
-                    HelmAllNotesOff(currentChannel);
-                    ChangeSequencerLength(reference, length);
+                    Native.HelmAllNotesOff(currentChannel);
+                    Native.ChangeSequencerLength(reference, length);
                 }
                 currentLength = length;
             }
@@ -161,8 +130,8 @@ namespace Helm
             {
                 if (reference != IntPtr.Zero)
                 {
-                    HelmAllNotesOff(currentChannel);
-                    ChangeSequencerChannel(reference, channel);
+                    Native.HelmAllNotesOff(currentChannel);
+                    Native.ChangeSequencerChannel(reference, channel);
                 }
                 currentChannel = channel;
             }

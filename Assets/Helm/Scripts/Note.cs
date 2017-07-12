@@ -9,24 +9,6 @@ namespace Helm
     [System.Serializable]
     public class Note : ISerializationCallbackReceiver
     {
-        [DllImport("AudioPluginHelm")]
-        private static extern IntPtr CreateNote(IntPtr sequencer, int note, float velocity, float start, float end);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern IntPtr DeleteNote(IntPtr sequencer, IntPtr note);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern IntPtr ChangeNoteStart(IntPtr sequencer, IntPtr note, float start);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern IntPtr ChangeNoteEnd(IntPtr sequencer, IntPtr note, float end);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern IntPtr ChangeNoteKey(IntPtr sequencer, IntPtr note, int key);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern IntPtr ChangeNoteVelocity(IntPtr note, float velocity);
-
         [SerializeField]
         private int note_;
         public int note
@@ -42,7 +24,7 @@ namespace Helm
                 int oldNote = note_;
                 note_ = value;
                 if (FullyNative())
-                    ChangeNoteKey(parent.Reference(), reference, note_);
+                    Native.ChangeNoteKey(parent.Reference(), reference, note_);
                 if (parent)
                     parent.NotifyNoteKeyChanged(this, oldNote);
             }
@@ -62,7 +44,7 @@ namespace Helm
                     return;
                 start_ = value;
                 if (FullyNative())
-                    ChangeNoteStart(parent.Reference(), reference, start_);
+                    Native.ChangeNoteStart(parent.Reference(), reference, start_);
             }
         }
 
@@ -80,7 +62,7 @@ namespace Helm
                     return;
                 end_ = value;
                 if (FullyNative())
-                    ChangeNoteEnd(parent.Reference(), reference, end_);
+                    Native.ChangeNoteEnd(parent.Reference(), reference, end_);
             }
         }
 
@@ -98,7 +80,7 @@ namespace Helm
                     return;
                 velocity_ = value;
                 if (FullyNative())
-                    ChangeNoteVelocity(reference, velocity_);
+                    Native.ChangeNoteVelocity(reference, velocity_);
             }
         }
 
@@ -120,10 +102,10 @@ namespace Helm
             if (!HasNativeNote() || !HasNativeSequencer())
                 return;
 
-            ChangeNoteEnd(parent.Reference(), reference, end);
-            ChangeNoteStart(parent.Reference(), reference, start);
-            ChangeNoteKey(parent.Reference(), reference, note);
-            ChangeNoteVelocity(reference, velocity);
+            Native.ChangeNoteEnd(parent.Reference(), reference, end);
+            Native.ChangeNoteStart(parent.Reference(), reference, start);
+            Native.ChangeNoteKey(parent.Reference(), reference, note);
+            Native.ChangeNoteVelocity(reference, velocity);
         }
 
         bool HasNativeNote()
@@ -148,14 +130,14 @@ namespace Helm
                 if (HasNativeNote())
                     CopySettingsToNative();
                 else
-                    reference = CreateNote(parent.Reference(), note, velocity, start, end);
+                    reference = Native.CreateNote(parent.Reference(), note, velocity, start, end);
             }
         }
 
         public void TryDelete()
         {
             if (FullyNative())
-                DeleteNote(parent.Reference(), reference);
+                Native.DeleteNote(parent.Reference(), reference);
             reference = IntPtr.Zero;
         }
 
