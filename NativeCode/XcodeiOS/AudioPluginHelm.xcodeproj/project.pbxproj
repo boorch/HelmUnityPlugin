@@ -61,7 +61,6 @@
 		D11F495B1F155F0C00CF9A13 /* trigger_random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F494A1F155F0C00CF9A13 /* trigger_random.cpp */; };
 		D11F495C1F155F0C00CF9A13 /* value_switch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F494C1F155F0C00CF9A13 /* value_switch.cpp */; };
 		D11F495F1F155F1D00CF9A13 /* helm_common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F495D1F155F1D00CF9A13 /* helm_common.cpp */; };
-		D11F49621F15627000CF9A13 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D11F49611F15627000CF9A13 /* Accelerate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -197,7 +196,6 @@
 		D11F494D1F155F0C00CF9A13 /* value_switch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = value_switch.h; path = ../helm/src/synthesis/value_switch.h; sourceTree = "<group>"; };
 		D11F495D1F155F1D00CF9A13 /* helm_common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = helm_common.cpp; path = ../helm/src/common/helm_common.cpp; sourceTree = "<group>"; };
 		D11F495E1F155F1D00CF9A13 /* helm_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = helm_common.h; path = ../helm/src/common/helm_common.h; sourceTree = "<group>"; };
-		D11F49611F15627000CF9A13 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -205,7 +203,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D11F49621F15627000CF9A13 /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -422,7 +419,6 @@
 		D11F49601F15627000CF9A13 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D11F49611F15627000CF9A13 /* Accelerate.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -493,7 +489,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mv ../../Assets/Helm/Plugins/iOS/Release-iphonesimulator/libAudioPluginHelm.a ../../Assets/Helm/Plugins/iOS/\nrmdir ../../Assets/Helm/Plugins/iOS/Release-iphonesimulator/";
+			shellScript = "mv ../../Assets/Helm/Plugins/iOS/Release-iphoneos/libAudioPluginHelm.a ../../Assets/Helm/Plugins/iOS/\ncp ../AudioPluginInterface.h ../../Assets/Helm/Plugins/iOS/\nrmdir ../../Assets/Helm/Plugins/iOS/Release-iphoneos/";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -566,6 +562,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -605,7 +602,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -614,6 +611,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -655,10 +653,12 @@
 		D11F48A81F155DB700CF9A13 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_MODULES = NO;
 				DEVELOPMENT_TEAM = EFXDM6K3KJ;
 				DSTROOT = "$(PROJECT_DIR)/../../Assets/Helm/iOS";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = NO;
@@ -668,6 +668,7 @@
 		D11F48A91F155DB700CF9A13 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_MODULES = NO;
 				DEVELOPMENT_TEAM = EFXDM6K3KJ;
 				DSTROOT = "$(PROJECT_DIR)/../../Assets/Helm/iOS";
