@@ -26,13 +26,13 @@ Play the scene to hear the sequence.
 
 # TODO
 
-## Features
+## Future Features
 
-Chiptune patches
 PlayNoteScheduled
 Variable BPM without resyncing
 Sequencer references player instead of on same game object?
-UI widgets for better tweaking in Unity?
+Synth UI widgets for better tweaking in Unity?
+Load patches from previous versions
 Load MIDI Files
 ps4/xbox support?
 
