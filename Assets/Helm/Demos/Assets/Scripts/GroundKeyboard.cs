@@ -31,7 +31,8 @@ namespace Helm
 
         GroundKey CreateKey(int key)
         {
-            GroundKey groundKey = Instantiate(keyModel, transform) as GroundKey;
+            GroundKey groundKey = Instantiate(keyModel, null) as GroundKey;
+            groundKey.transform.parent = transform;
             Vector3 position = key * keyOffset;
             position.y = transform.position.y + verticalOffset;
             groundKey.transform.position = position;
