@@ -38,7 +38,17 @@ namespace Helm {
       double start_time() { return start_time_; }
       void setLength(double length) { num_sixteenths_ = length; }
       void setChannel(int channel) { channel_ = channel; }
-      void setStartTime(double start_time) { start_time_ = start_time; }
+
+      void armStartTime(double wait_time) {
+        start_time_armed_ = true;
+        wait_time_ = wait_time;
+      }
+
+      void trySetStartTime(double time) {
+        if (start_time_armed_)
+          start_time_ = time + wait_time_;
+        start_time_armed_ = false;
+      }
 
     private:
       int channel_;
@@ -46,6 +56,8 @@ namespace Helm {
       event_map off_events_;
       double num_sixteenths_;
       double start_time_;
+      bool start_time_armed_;
+      double wait_time_;
   };
 
 } // Helm

@@ -47,6 +47,8 @@ namespace Helm
                     note.TryCreate();
             }
             AllNotesOff();
+            Native.SyncSequencerStart(reference, 0.0);
+            syncTime = AudioSettings.dspTime;
         }
 
         void OnDestroy()
@@ -99,8 +101,9 @@ namespace Helm
             {
                 syncTime = dspTime;
                 const float lookaheadTime = 0.5f;
-                Native.SyncSequencerStart(reference, dspTime);
-                float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
+                double waitTime = dspTime - AudioSettings.dspTime;
+                Native.SyncSequencerStart(reference, waitTime);
+                float waitToEnable = (float)(waitTime - lookaheadTime);
                 Invoke("EnableComponent", waitToEnable);
             }
         }

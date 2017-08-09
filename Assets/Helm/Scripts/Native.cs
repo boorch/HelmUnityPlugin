@@ -104,7 +104,7 @@ namespace Helm
         #else
           [DllImport("AudioPluginHelm")]
         #endif
-        public static extern void SyncSequencerStart(IntPtr sequencer, double dspTime);
+        public static extern void SyncSequencerStart(IntPtr sequencer, double waitTime);
 
         #if UNITY_IOS
           [DllImport("__Internal")]

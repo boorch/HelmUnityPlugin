@@ -2,6 +2,14 @@
 
 Helm is a synthesizer that you can play live inside of Unity.
 
+## Support
+The Helm Audio Plugin will run on devices running:
+ - Windows 7 or higher
+ - MacOS 10.7 or higher
+ - Linux, e.g. Ubuntu Trusty or higher
+ - iOS 8 or higher
+ - Android 5.0 (Lollypop) or higher
+
 ## Getting started
 
 ### Editor

@@ -19,6 +19,7 @@ namespace Helm
         {
             InitNoteRows();
             AllNotesOff();
+            syncTime = AudioSettings.dspTime;
         }
 
         void OnDestroy()
