@@ -13,6 +13,11 @@ namespace Helm
         void Awake()
         {
             Utils.InitAudioSource(GetComponent<AudioSource>());
+
+            if (!Application.runInBackground) {
+                Debug.LogWarning("Setting application to run in background to keep audio in sync!");
+                Application.runInBackground = true;
+            }
         }
 
         void Update()
