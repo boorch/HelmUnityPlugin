@@ -1,9 +1,6 @@
 // Copyright 2017 Matt Tytel
 
 using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace Helm
 {
@@ -64,7 +61,6 @@ namespace Helm
         public override void StartScheduled(double dspTime)
         {
             syncTime = dspTime;
-            const float lookaheadTime = 0.5f;
             float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
             Invoke("EnableComponent", waitToEnable);
         }

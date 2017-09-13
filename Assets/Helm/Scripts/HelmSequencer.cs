@@ -2,8 +2,6 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace Helm
 {
@@ -29,7 +27,11 @@ namespace Helm
             currentIndex = -1;
         }
 
-        public override IntPtr Reference()
+		/// <summary>
+		/// Reference to the native sequencer instance memory (if any).
+		/// </summary>
+		/// <returns>The reference the native sequencer. IntPtr.Zero if it doesn't exist.</returns>
+		public override IntPtr Reference()
         {
             return reference;
         }
@@ -80,12 +82,22 @@ namespace Helm
             Native.HelmAllNotesOff(channel);
         }
 
-        public override void NoteOn(int note, float velocity = 1.0f)
+		/// <summary>
+		/// Triggers a note on event for the Helm instance(s) this points to.
+		/// You must trigger a note off event later for this note by calling NoteOff.
+		/// </summary>
+		/// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
+		/// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
+		public override void NoteOn(int note, float velocity = 1.0f)
         {
             Native.HelmNoteOn(channel, note, velocity);
         }
 
-        public override void NoteOff(int note)
+		/// <summary>
+		/// Triggers a note off event for the Helm instance(s) this points to.
+		/// </summary>
+		/// <param name="note">The MIDI keyboard note to turn off. [0, 127]</param>
+		public override void NoteOff(int note)
         {
             Native.HelmNoteOff(channel, note);
         }
@@ -95,6 +107,11 @@ namespace Helm
             enabled = true;
         }
 
+        /// <summary>
+        /// Starts the sequencer at a given time in the future.
+        /// This is synced to AudioSettings.dspTime.
+        /// </summary>
+        /// <param name="dspTime">The time to start the sequencer, synced to AudioSettings.dspTime.</param>
         public override void StartScheduled(double dspTime)
         {
             if (reference != IntPtr.Zero)
@@ -108,7 +125,11 @@ namespace Helm
             }
         }
 
-        public override void StartOnNextCycle()
+		/// <summary>
+		/// Starts the sequencer on the start next cycle.
+        /// This is useful if you have multiple synced sequencers and you want to start this one on the next go around.
+		/// </summary>
+		public override void StartOnNextCycle()
         {
             double timeSinceSync = AudioSettings.dspTime - syncTime;
             double sequenceLength = (length * GetSixteenthTime());

@@ -6,9 +6,16 @@ using System.Runtime.InteropServices;
 
 namespace Helm
 {
+    /// <summary>
+    /// Representation of a note in a sequencer.
+    /// Changing the values in this object will change them in the sequencer.
+    /// </summary>
     [System.Serializable]
     public class Note : ISerializationCallbackReceiver
     {
+        /// <summary>
+        /// The MIDI note to play.
+        /// </summary>
         [SerializeField]
         private int note_;
         public int note
@@ -30,6 +37,9 @@ namespace Helm
             }
         }
 
+        /// <summary>
+        /// The note on time measured in sixteenth notes.
+        /// </summary>
         [SerializeField]
         private float start_;
         public float start
@@ -48,7 +58,10 @@ namespace Helm
             }
         }
 
-        [SerializeField]
+		/// <summary>
+		/// The note off time measured in sixteenth notes.
+		/// </summary>
+		[SerializeField]
         private float end_;
         public float end
         {
@@ -66,7 +79,10 @@ namespace Helm
             }
         }
 
-        [SerializeField]
+		/// <summary>
+        /// The velocity of key press (how hard the note is hit).
+		/// </summary>
+		[SerializeField]
         private float velocity_;
         public float velocity
         {
@@ -87,6 +103,7 @@ namespace Helm
         public Sequencer parent;
 
         private IntPtr reference;
+
 
         public void OnAfterDeserialize()
         {
@@ -123,6 +140,9 @@ namespace Helm
             return HasNativeNote() && HasNativeSequencer();
         }
 
+        /// <summary>
+        /// Tries to create a native note representation if one doesn't exist already.
+        /// </summary>
         public void TryCreate()
         {
             if (HasNativeSequencer())
@@ -134,6 +154,9 @@ namespace Helm
             }
         }
 
+        /// <summary>
+        /// Tries to delete the native note representation.
+        /// </summary>
         public void TryDelete()
         {
             if (FullyNative())
@@ -141,17 +164,34 @@ namespace Helm
             reference = IntPtr.Zero;
         }
 
+        /// <summary>
+        /// Checks if this note overlaps a sequencer range.
+        /// </summary>
+        /// <returns><c>true</c>, if note overlaps the range, <c>false</c> otherwise.</returns>
+        /// <param name="rangeStart">Start of the range.</param>
+        /// <param name="rangeEnd">End of the range.</param>
         public bool OverlapsRange(float rangeStart, float rangeEnd)
         {
             return Utils.RangesOverlap(start, end, rangeStart, rangeEnd);
         }
 
-        public bool InsideRange(float rangeStart, float rangeEnd)
+		/// <summary>
+		/// Checks if this note is contained withing a sequencer range
+		/// </summary>
+		/// <returns><c>true</c>, if note overlaps the range, <c>false</c> otherwise.</returns>
+		/// <param name="rangeStart">Start of the range.</param>
+		/// <param name="rangeEnd">End of the range.</param>
+		public bool InsideRange(float rangeStart, float rangeEnd)
         {
             return start >= rangeStart && end <= rangeEnd;
         }
 
-        public void RemoveRange(float rangeStart, float rangeEnd)
+		/// <summary>
+		/// Removes part of the note on/off range that is contained withing the specified range.
+		/// </summary>
+		/// <param name="rangeStart">Start of the range to remove.</param>
+		/// <param name="rangeEnd">End of the range to remove.</param>
+		public void RemoveRange(float rangeStart, float rangeEnd)
         {
             if (!OverlapsRange(rangeStart, rangeEnd))
                 return;

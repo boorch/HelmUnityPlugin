@@ -7,6 +7,11 @@ using System.Collections.Generic;
 
 namespace Helm
 {
+    /// <summary>
+    /// The Sampler is a type of instrument that has a collection of audio samples to play
+    /// and will play them at different rates to change the pitch for different notes.
+    /// A list of keyzones define what samples play when what notes are hit.
+    /// </summary>
     [RequireComponent(typeof(AudioSource))]
     public class Sampler : MonoBehaviour, NoteHandler
     {
@@ -24,13 +29,30 @@ namespace Helm
             }
         }
 
+        /// <summary>
+        /// List of all the keyzones in the sampler.
+        /// </summary>
         public List<Keyzone> keyzones = new List<Keyzone>() { new Keyzone() };
+
+        /// <summary>
+        /// How much velocity of the notes affect the volume of the samples.
+        /// 0.0 for no effect and 1.0 for full effect.
+        /// </summary>
         public float velocityTracking = 1.0f;
+
+        /// <summary>
+        /// Total number of simultaneous voices possible.
+        /// If your voices cut out early you can increase this number to fix the problem.
+        /// </summary>
         public int numVoices = 2;
+
+        /// <summary>
+        /// Does the sampler listen to note off events.
+        /// </summary>
         public bool useNoteOff = false;
 
         int audioIndex = 0;
-        List<ActiveNote> activeNotes = new List<ActiveNote>();
+        readonly List<ActiveNote> activeNotes = new List<ActiveNote>();
 
         // We end sample early to prevent click at end of sample caused by Unity pitch change.
         const double endEarlyTime = 0.01;
@@ -59,6 +81,10 @@ namespace Helm
             AllNotesOff();
         }
 
+        /// <summary>
+        /// Adds an empty keyzone to the Sampler.
+        /// </summary>
+        /// <returns>The keyzone created.</returns>
         public Keyzone AddKeyzone()
         {
             Keyzone keyzone = new Keyzone();
@@ -66,6 +92,11 @@ namespace Helm
             return keyzone;
         }
 
+        /// <summary>
+        /// Removes a keyzone from the Sampler.
+        /// </summary>
+        /// <returns>The removed keyzones index. -1 if it doesnt exist.</returns>
+        /// <param name="keyzone">The keyzone to remove.</param>
         public int RemoveKeyzone(Keyzone keyzone)
         {
             int index = keyzones.IndexOf(keyzone);
@@ -76,27 +107,27 @@ namespace Helm
         AudioSource GetNextAudioSource()
         {
             AudioSource[] audios = GetComponents<AudioSource>();
-            foreach (AudioSource audio in audios)
+            foreach (AudioSource audioSource in audios)
             {
-                if (!audio.isPlaying)
-                    return audio;
+                if (!audioSource.isPlaying)
+                    return audioSource;
             }
             audioIndex = (audioIndex + 1) % audios.Length;
             return audios[audioIndex];
         }
 
-        void PrepNote(AudioSource audio, int note, float velocity)
+        void PrepNote(AudioSource audioSource, int note, float velocity)
         {
-            audio.pitch = Utils.MidiChangeToRatio(note - Utils.kMiddleC);
-            audio.volume = Mathf.Lerp(1.0f - velocityTracking, 1.0f, velocity);
+            audioSource.pitch = Utils.MidiChangeToRatio(note - Utils.kMiddleC);
+            audioSource.volume = Mathf.Lerp(1.0f - velocityTracking, 1.0f, velocity);
         }
 
-        void PrepNote(AudioSource audio, Keyzone keyzone, int note, float velocity)
+        void PrepNote(AudioSource audioSource, Keyzone keyzone, int note, float velocity)
         {
-            audio.pitch = Utils.MidiChangeToRatio(note - keyzone.rootKey);
-            audio.clip = keyzone.audioClip;
-            audio.outputAudioMixerGroup = keyzone.mixer;
-            audio.volume = Mathf.Lerp(1.0f - velocityTracking, 1.0f, velocity);
+            audioSource.pitch = Utils.MidiChangeToRatio(note - keyzone.rootKey);
+            audioSource.clip = keyzone.audioClip;
+            audioSource.outputAudioMixerGroup = keyzone.mixer;
+            audioSource.volume = Mathf.Lerp(1.0f - velocityTracking, 1.0f, velocity);
         }
 
         List<Keyzone> GetValidKeyzones(int note, float velocity = 1.0f)
@@ -116,13 +147,17 @@ namespace Helm
             List<Keyzone> validKeyzones = GetValidKeyzones(note, velocity);
             foreach (Keyzone keyzone in validKeyzones)
             {
-                AudioSource audio = GetNextAudioSource();
-                PrepNote(audio, keyzone, note, velocity);
-                audioSources.Add(audio);
+                AudioSource audioSource = GetNextAudioSource();
+                PrepNote(audioSource, keyzone, note, velocity);
+                audioSources.Add(audioSource);
             }
             return audioSources;
         }
 
+        /// <summary>
+        /// Gets the lowest midi key that the sampler responds to.
+        /// </summary>
+        /// <returns>The lowest valid midi key.</returns>
         public int GetMinKey()
         {
             if (keyzones.Count == 0)
@@ -135,7 +170,11 @@ namespace Helm
             return min;
         }
 
-        public int GetMaxKey()
+		/// <summary>
+		/// Gets the highest midi key that the sampler responds to.
+		/// </summary>
+		/// <returns>The highest valid midi key.</returns>
+		public int GetMaxKey()
         {
             if (keyzones.Count == 0)
                 return Utils.kMidiSize - 1;
@@ -147,46 +186,63 @@ namespace Helm
             return max;
         }
 
-        public void AllNotesOff()
+		/// <summary>
+		/// Triggers note off events for all notes currently on in the sampler.
+		/// </summary>
+		public void AllNotesOff()
         {
             AudioSource[] audios = GetComponents<AudioSource>();
-            foreach (AudioSource audio in audios)
-                audio.Stop();
+            foreach (AudioSource audioSource in audios)
+                audioSource.Stop();
 
             activeNotes.Clear();
         }
 
-        public void NoteOn(int note, float velocity = 1.0f)
+		/// <summary>
+		/// Triggers a note on event for the Sampler.
+		/// If the AudioSource is set to loop, you must trigger a note off event
+        /// later for this note by calling NoteOff.
+		/// </summary>
+		/// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
+		/// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
+		public void NoteOn(int note, float velocity = 1.0f)
         {
             List<AudioSource> audioSources = GetPreppedAudioSources(note, velocity);
             activeNotes.Add(new ActiveNote(note, audioSources, AudioSettings.dspTime));
-            foreach (AudioSource audio in audioSources)
+            foreach (AudioSource audioSource in audioSources)
             {
-                if (audio.isActiveAndEnabled)
+                if (audioSource.isActiveAndEnabled)
                 {
-                    audio.Play();
-                    if (!audio.loop)
+                    audioSource.Play();
+                    if (!audioSource.loop)
                     {
-                        double length = (audio.clip.length - endEarlyTime) / audio.pitch;
-                        audio.SetScheduledEndTime(AudioSettings.dspTime + length);
+                        double length = (audioSource.clip.length - endEarlyTime) / audioSource.pitch;
+                        audioSource.SetScheduledEndTime(AudioSettings.dspTime + length);
                     }
                 }
             }
         }
 
-        public void NoteOnScheduled(int note, float velocity, double timeToStart, double timeToEnd)
+		/// <summary>
+		/// Triggers a note on event for the Sampler at the givent time and turns it off at the given time.
+		/// </summary>
+		/// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
+		/// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
+		/// <param name="timeToStart">Time from now to start the note.</param>
+		/// <param name="timeToEnd">Time from now to end the note.</param>
+		public void NoteOnScheduled(int note, float velocity, double timeToStart, double timeToEnd)
         {
             List<AudioSource> audioSources = GetPreppedAudioSources(note, velocity);
-            foreach (AudioSource audio in audioSources)
+            foreach (AudioSource audioSource in audioSources)
             {
                 double length = timeToEnd - timeToStart;
                 if (!useNoteOff)
                     length = Mathf.Infinity;
-                if (!audio.loop)
-                    length = Math.Min(length, (audio.clip.length - endEarlyTime) / audio.pitch);
+                if (!audioSource.loop)
+                    length = Math.Min(length, (audioSource.clip.length - endEarlyTime) / audioSource.pitch);
 
-                audio.PlayScheduled(AudioSettings.dspTime + timeToStart);
-                audio.SetScheduledEndTime(AudioSettings.dspTime + timeToStart + length);
+                audioSource.PlayScheduled(AudioSettings.dspTime + timeToStart);
+                audioSource.SetScheduledEndTime(AudioSettings.dspTime + timeToStart + length);
             }
         }
 
@@ -200,7 +256,11 @@ namespace Helm
             return null;
         }
 
-        public void NoteOff(int note)
+		/// <summary>
+		/// Triggers a note off event for the Sampler.
+		/// </summary>
+		/// <param name="note">The MIDI keyboard note to turn off. [0, 127]</param>
+		public void NoteOff(int note)
         {
             if (!useNoteOff)
                 return;
@@ -210,8 +270,8 @@ namespace Helm
                 return;
 
             activeNotes.Remove(activeNote);
-            foreach (AudioSource audio in activeNote.audioSources)
-                audio.volume = 0.0f;
+            foreach (AudioSource audioSource in activeNote.audioSources)
+                audioSource.volume = 0.0f;
         }
     }
 }

@@ -2,11 +2,13 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Helm
 {
+    /// <summary>
+    /// A series of notes and velocities on a timeline that can be used to trigger synth or sampler notes.
+    /// </summary>
     public abstract class Sequencer : MonoBehaviour, NoteHandler
     {
         class NoteComparer : IComparer<Note>
@@ -22,6 +24,9 @@ namespace Helm
             }
         }
 
+        /// <summary>
+        /// Possible divisions of the sequencer UI.
+        /// </summary>
         public enum Division
         {
             kEighth,
@@ -30,10 +35,29 @@ namespace Helm
             kThirtySecond,
         }
 
+        /// <summary>
+        /// The length of the sequence measured in sixteenth notes.
+        /// </summary>
         public int length = 16;
+
+        /// <summary>
+        /// The current sixteenth index.
+        /// </summary>
         public int currentIndex = -1;
+
+        /// <summary>
+        /// The time to align loops of the sequencer to.
+        /// </summary>
         public double syncTime = 0.0;
+
+        /// <summary>
+        /// All notes in the seqeuncer.
+        /// </summary>
         public NoteRow[] allNotes = new NoteRow[Utils.kMidiSize];
+
+        /// <summary>
+        /// The division of the graphical sequencer.
+        /// </summary>
         public Division division = Division.kSixteenth;
 
         public const int kMaxLength = 128;
@@ -46,6 +70,10 @@ namespace Helm
         public abstract void StartScheduled(double dspTime);
         public abstract void StartOnNextCycle();
 
+        /// <summary>
+        /// Reference to the native sequencer instance memory (if any).
+        /// </summary>
+        /// <returns>The reference the native sequencer. IntPtr.Zero if it doesn't exist.</returns>
         public virtual IntPtr Reference()
         {
             return IntPtr.Zero;
@@ -60,6 +88,10 @@ namespace Helm
             }
         }
 
+        /// <summary>
+        /// Gets the length of the division measured in sixteenth notes.
+        /// </summary>
+        /// <returns>The division length measured in sixteenth notes.</returns>
         public float GetDivisionLength()
         {
             if (division == Division.kEighth)
@@ -73,24 +105,48 @@ namespace Helm
             return 1.0f;
         }
 
+        /// <summary>
+        /// Notifies the sequencer of a change to one of the notes.
+        /// </summary>
+        /// <param name="note">The MIDI note that was changed.</param>
+        /// <param name="oldKey">The key the note used to be.</param>
         public void NotifyNoteKeyChanged(Note note, int oldKey)
         {
             allNotes[oldKey].notes.Remove(note);
             allNotes[note.note].notes.Add(note);
         }
 
+        /// <summary>
+        /// Removes a note from the sequencer.
+        /// </summary>
+        /// <param name="note">Note.</param>
         public void RemoveNote(Note note)
         {
             allNotes[note.note].notes.Remove(note);
             note.TryDelete();
         }
 
-        public bool NoteExistsInRange(int note, float start, float end)
+		/// <summary>
+		/// Check if a note exists within a given range in the sequencer.
+		/// </summary>
+		/// <returns><c>true</c>, if a note exists in the range, <c>false</c> otherwise.</returns>
+		/// <param name="note">The MIDI note to check the range in.</param>
+		/// <param name="start">The start of the range measured in sixteenths.</param>
+		/// <param name="end">The end of the range measured in sixteenths.</param>
+		public bool NoteExistsInRange(int note, float start, float end)
         {
             return GetNoteInRange(note, start, end) != null;
         }
 
-        public Note GetNoteInRange(int note, float start, float end, Note ignore = null)
+		/// <summary>
+		/// Gets the first note in a given range in the sequencer.
+		/// </summary>
+		/// <returns>The first found note. Returns null if no note was found.</returns>
+		/// <param name="note">The MIDI note to look for.</param>
+		/// <param name="start">The start of the range measured in sixteenths.</param>
+		/// <param name="end">The end of the range measured in sixteenths.</param>
+		/// <param name="ignore">A note to ignore if found.</param>
+		public Note GetNoteInRange(int note, float start, float end, Note ignore = null)
         {
             if (note >= Utils.kMidiSize || note < 0 || allNotes == null || allNotes[note] == null)
                 return null;
@@ -102,7 +158,13 @@ namespace Helm
             return null;
         }
 
-        public void RemoveNotesInRange(int note, float start, float end)
+		/// <summary>
+		/// Removes all notes that overlap a given range.
+		/// </summary>
+		/// <param name="note">The MIDI note to match.</param>
+		/// <param name="start">The start of the range measured in sixteenths.</param>
+		/// <param name="end">The end of the range measured in sixteenths.</param>
+		public void RemoveNotesInRange(int note, float start, float end)
         {
             if (allNotes == null || allNotes[note] == null)
                 return;
@@ -117,7 +179,13 @@ namespace Helm
                 RemoveNote(noteObject);
         }
 
-        public void RemoveNotesContainedInRange(int note, float start, float end, Note ignore = null)
+		/// <summary>
+		/// Removes all notes that are fully contained in a given range.
+		/// </summary>
+		/// <param name="note">The MIDI note to match.</param>
+		/// <param name="start">The start of the range measured in sixteenths.</param>
+		/// <param name="end">The end of the range measured in sixteenths.</param>
+		public void RemoveNotesContainedInRange(int note, float start, float end, Note ignore = null)
         {
             if (allNotes == null || allNotes[note] == null)
                 return;
@@ -132,7 +200,13 @@ namespace Helm
                 RemoveNote(noteObject);
         }
 
-        public void ClampNotesInRange(int note, float start, float end, Note ignore = null)
+		/// <summary>
+		/// Removes all notes that are fully contained and trim notes that partially overlap range by removing the time inside the range.
+		/// </summary>
+		/// <param name="note">The MIDI note to match.</param>
+		/// <param name="start">The start of the range measured in sixteenths.</param>
+		/// <param name="end">The end of the range measured in sixteenths.</param>
+		public void ClampNotesInRange(int note, float start, float end, Note ignore = null)
         {
             RemoveNotesContainedInRange(note, start, end, ignore);
 
@@ -144,14 +218,25 @@ namespace Helm
             }
         }
 
+        /// <summary>
+        /// Add a note to the sequencer.
+        /// </summary>
+        /// <returns>The Note object added to the seqeuncer.</returns>
+        /// <param name="note">The MIDI note.</param>
+        /// <param name="start">The start of the note measured in sixteenths.</param>
+        /// <param name="end">The end of the note measured in sixteenths.</param>
+        /// <param name="velocity">The velocity of the note (how hard the key is hit).</param>
         public Note AddNote(int note, float start, float end, float velocity = 1.0f)
         {
-            Note noteObject = new Note();
-            noteObject.note = note;
-            noteObject.start = start;
-            noteObject.end = end;
-            noteObject.velocity = velocity;
-            noteObject.parent = this;
+            Note noteObject = new Note()
+            {
+                note = note,
+                start = start,
+                end = end,
+                velocity = velocity,
+                parent = this
+            };
+
             noteObject.TryCreate();
 
             if (allNotes[note] == null)
@@ -162,6 +247,9 @@ namespace Helm
             return noteObject;
         }
 
+        /// <summary>
+        /// Clear the sequencer of all notes.
+        /// </summary>
         public void Clear()
         {
             for (int i = 0; i < allNotes.Length; ++i)
@@ -176,6 +264,10 @@ namespace Helm
             }
         }
 
+        /// <summary>
+        /// Gets the time in seconds of a single sixteenth note in the sequencer.
+        /// </summary>
+        /// <returns>The time in seconds of a sixteenth note.</returns>
         public float GetSixteenthTime()
         {
             return 1.0f / (Utils.kBpmToSixteenths * HelmBpm.GetGlobalBpm());

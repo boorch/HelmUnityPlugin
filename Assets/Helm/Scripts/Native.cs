@@ -6,7 +6,12 @@ using System.Runtime.InteropServices;
 
 namespace Helm
 {
-    public class Native
+    /// <summary>
+    /// The native plugin interface to synthesizer and sequencer settings.
+    /// If you want to control a synthesizer, a better was is through the HelmController class.
+    /// If you want to modify or setup a sequencer, take a look at HelmSequencer and SampleSequencer.
+    /// </summary>
+    public static class Native
     {
         #if UNITY_IOS
           [DllImport("__Internal")]

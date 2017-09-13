@@ -1,9 +1,10 @@
 // Copyright 2017 Matt Tytel
 
-using UnityEngine;
-
 namespace Helm
 {
+    /// <summary>
+    /// An interface for classes that can receive note on and off events.
+    /// </summary>
     public interface NoteHandler
     {
         void AllNotesOff();

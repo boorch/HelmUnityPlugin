@@ -6,6 +6,10 @@ using System.Reflection;
 
 namespace Helm
 {
+    /// <summary>
+    /// The most commonly set Helm native synthesizer parameters.
+    /// Placed here for easy access.
+    /// </summary>
     public enum CommonParam
     {
         kNone = 0,
@@ -39,7 +43,10 @@ namespace Helm
         kDelayTempo = Param.kDelayTempo,
     }
 
-    public enum Param
+	/// <summary>
+    /// All Helm native synthesizer parameters.
+    /// </summary>
+	public enum Param
     {
         kNone = 0,
         kAmplitudeAttack = 1,
@@ -142,6 +149,9 @@ namespace Helm
         kVolume
     }
 
+    /// <summary>
+    /// Utility functions that are useful for audio/MIDI/music.
+    /// </summary>
     public class Utils : MonoBehaviour
     {
         public const int kMidiSize = 128;
@@ -150,37 +160,69 @@ namespace Helm
         public const float kBpmToSixteenths = 4.0f / 60.0f;
         public const int kMinOctave = -2;
         public const int kMiddleC = 60;
+       
+        static bool[] blackKeys = { false, true, false, true,
+                                    false, false, true, false,
+                                    true, false, true, false };
 
-        static bool[] blackKeys = new bool[kNotesPerOctave] { false, true, false, true,
-                                                              false, false, true, false,
-                                                              true, false, true, false };
-
+        /// <summary>
+        /// Checks if a given MIDI key is a black key.
+        /// </summary>
+        /// <returns><c>true</c>, if the key is a black key, <c>false</c> otherwise.</returns>
+        /// <param name="key">Key.</param>
         public static bool IsBlackKey(int key)
         {
             return blackKeys[key % kNotesPerOctave];
         }
 
-        public static bool IsC(int key)
+		/// <summary>
+		/// Checks if a given MIDI key is a 'C' note.
+		/// </summary>
+		/// <returns><c>true</c>, if the key is a black key, <c>false</c> otherwise.</returns>
+		/// <param name="key">Key.</param>
+		public static bool IsC(int key)
         {
             return key % kNotesPerOctave == 0;
         }
 
+        /// <summary>
+        /// Gets the keyboard octave of a given key.
+        /// </summary>
+        /// <returns>The octave of the given key.</returns>
+        /// <param name="key">The key to check the octave of.</param>
         public static int GetOctave(int key)
         {
             return key / kNotesPerOctave + kMinOctave;
         }
 
+        /// <summary>
+        /// Takes two notes midi semitones apart and returns the ratio of the frequencies.
+        /// </summary>
+        /// <returns>The ratio of the two notes.</returns>
+        /// <param name="midi">Number of semitones changed.</param>
         public static float MidiChangeToRatio(int midi)
         {
             return Mathf.Pow(2, (1.0f * midi) / kNotesPerOctave);
         }
 
+        /// <summary>
+        /// Check if two float ranges overlap.
+        /// </summary>
+        /// <returns><c>true</c>, if the ranges overlap, <c>false</c> otherwise.</returns>
+        /// <param name="start">Start of range 1.</param>
+        /// <param name="end">End of Range 1.</param>
+        /// <param name="rangeStart">Start of range 2.</param>
+        /// <param name="rangeEnd">End of range 2.</param>
         public static bool RangesOverlap(float start, float end, float rangeStart, float rangeEnd)
         {
             return !(start < rangeStart && end <= rangeStart) &&
                    !(start >= rangeEnd && end > rangeEnd);
         }
 
+        /// <summary>
+        /// Sets up an AudioSource for playing to a Helm Native instance.
+        /// </summary>
+        /// <param name="audio">The AudioSource to initialize.</param>
         public static void InitAudioSource(AudioSource audio)
         {
             AudioClip one = AudioClip.Create("helm", 1, 1, AudioSettings.outputSampleRate, false);
@@ -192,6 +234,13 @@ namespace Helm
                 audio.Play();
         }
 
+        /// <summary>
+        /// Copies all properties and fields of one Component to another GameObject.
+        /// </summary>
+        /// <returns>The instantiated and copied Component.</returns>
+        /// <param name="original">The original Component to be copied.</param>
+        /// <param name="destination">The GameObject to put the copied Component on.</param>
+        /// <typeparam name="T">The type of Component.</typeparam>
         public static T CopyComponent<T>(T original, GameObject destination) where T : Component
         {
             System.Type type = original.GetType();

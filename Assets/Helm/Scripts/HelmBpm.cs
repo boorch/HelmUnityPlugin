@@ -4,12 +4,20 @@ using UnityEngine;
 
 namespace Helm
 {
+    /// <summary>
+    /// Sets the BPM (beats per minute) of all sequencers and native Helm instances.
+    /// </summary>
     public class HelmBpm : MonoBehaviour
     {
-        private static float globalBpm = 120.0f;
+        static float globalBpm = 120.0f;
 
         [SerializeField]
-        private float bpm_ = 120.0f;
+        float bpm_ = 120.0f;
+
+        /// <summary>
+        /// Gets or sets the beats per minute.
+        /// </summary>
+        /// <value>The new or current bpm.</value>
         public float bpm
         {
             get

@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Helm
 {
+    /// <summary>
+    /// Ensures AudioSource and global AudioSettings are setup correctly for Helm native synthesizer usage.
+    /// </summary>
     [ExecuteInEditMode]
     [RequireComponent(typeof(AudioSource))]
     public class HelmAudioInit : MonoBehaviour
@@ -14,6 +17,7 @@ namespace Helm
         {
             Utils.InitAudioSource(GetComponent<AudioSource>());
 
+            // Make sure AudioSettings are setup correctly.
             if (!Application.runInBackground) {
                 Debug.LogWarning("Setting application to run in background to keep audio in sync!");
                 Application.runInBackground = true;
@@ -22,9 +26,10 @@ namespace Helm
 
         void Update()
         {
-            AudioSource audio = GetComponent<AudioSource>();
+            AudioSource audioComponent = GetComponent<AudioSource>();
 
-            if (Application.isPlaying && audio.clip == null)
+            // Make sure AudioSource is setup correctly.
+            if (Application.isPlaying && audioComponent.clip == null)
             {
                 if (!warnedNoAudioGroup)
                 {
@@ -35,7 +40,7 @@ namespace Helm
             else
                 warnedNoAudioGroup = false;
 
-            audio.pitch = 1.0f;
+            audioComponent.pitch = 1.0f;
         }
     }
 }

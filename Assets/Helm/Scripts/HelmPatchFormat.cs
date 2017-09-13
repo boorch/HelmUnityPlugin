@@ -2,11 +2,14 @@
 
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 
 namespace Helm
 {
-    [Serializable]
+	/// <summary>
+	/// Part of Helm native synthesizer patch loading.
+    /// A single modulation connection is loaded into this class.
+	/// </summary>
+	[Serializable]
     public class HelmModulationSetting
     {
         public string source;
@@ -14,13 +17,17 @@ namespace Helm
         public float amount;
     }
 
-    [Serializable]
+	/// <summary>
+	/// Part of Helm native synthesizer patch loading.
+    /// The parameters that control how the synth sounds are loaded into this class.
+	/// </summary>
+	[Serializable]
     public class HelmPatchSettings
     {
         public const int kMaxModulations = 16;
         public const int kMaxCharacters = 15;
 
-        static readonly string[] kModulationSources = new string[]
+        static readonly string[] kModulationSources =
         {
             "aftertouch",
             "amp_envelope",
@@ -49,7 +56,7 @@ namespace Helm
             "velocity",
         };
 
-        static readonly string[] kModulationDestinations = new string[]
+        static readonly string[] kModulationDestinations =
         {
             "amp_attack",
             "amp_decay",
@@ -187,7 +194,7 @@ namespace Helm
             "velocity_track",
         };
 
-        public static readonly string[] kShortenNames = new string[]
+        public static readonly string[] kShortenNames = 
         {
             "stutter_resample", "stutter_resamp"
         };
@@ -352,6 +359,10 @@ namespace Helm
         }
     }
 
+    /// <summary>
+    /// Part of Helm native synthesizer patch loading.
+    /// All top level settings are loaded into this class.
+    /// </summary>
     [Serializable]
     public class HelmPatchFormat
     {
