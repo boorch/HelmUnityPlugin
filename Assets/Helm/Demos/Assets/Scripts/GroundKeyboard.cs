@@ -1,3 +1,5 @@
+// Copyright 2017 Matt Tytel
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,7 +17,7 @@ namespace Helm
         public int numKeys = 60;
         public int startingKey = 24;
 
-        public int[] scale = new int[] { 0, 2, 4, 5, 7, 9, 11 };
+        public int[] scale = { 0, 2, 4, 5, 7, 9, 11 };
         public int octaveSize = 12;
 
         GroundKey[] keys;
@@ -76,7 +78,7 @@ namespace Helm
                 NoteOff(index);
         }
 
-        void Impulse(Collision collision, float magnification)
+        void Impulse(Collision collision)
         {
             foreach (ContactPoint contact in collision.contacts)
             {
@@ -89,13 +91,13 @@ namespace Helm
         IEnumerator OnCollisionStay(Collision collision)
         {
             yield return new WaitForFixedUpdate();
-            Impulse(collision, 1.0f);
+            Impulse(collision);
         }
 
         IEnumerator OnCollisionEnter(Collision collision)
         {
             yield return new WaitForFixedUpdate();
-            Impulse(collision, 1.0f);
+            Impulse(collision);
         }
 
         void FixedUpdate()

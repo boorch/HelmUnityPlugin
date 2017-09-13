@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿// Copyright 2017 Matt Tytel
+
+using UnityEngine;
 
 namespace Helm
 {
@@ -8,7 +9,7 @@ namespace Helm
     {
         public HelmController synth;
 
-        public int[] scale = new int[] { 0, 2, 4, 7, 9 };
+        public int[] scale = { 0, 2, 4, 7, 9 };
         public int minNote = 24;
         public float maxSize = 10.0f;
         public float noteLength = 0.1f;

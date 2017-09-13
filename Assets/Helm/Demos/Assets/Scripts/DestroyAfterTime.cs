@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿// Copyright 2017 Matt Tytel
+
+using UnityEngine;
 
 namespace Helm
 {

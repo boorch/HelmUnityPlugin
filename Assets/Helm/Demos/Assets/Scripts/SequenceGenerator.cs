@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// Copyright 2017 Matt Tytel
+
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace Helm
@@ -7,7 +9,7 @@ namespace Helm
     public class SequenceGenerator : MonoBehaviour
     {
         public HelmSequencer sequencer;
-        public int[] scale = new int[] { 0, 2, 4, 7, 9 };
+        public int[] scale = { 0, 2, 4, 7, 9 };
 
         public int minNote = 24;
         public int octaveSpan = 2;
