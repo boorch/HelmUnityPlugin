@@ -46,9 +46,8 @@ ps4/xbox support?
 
 ## Known Issues
 
-Sometimes StartScheduled on sequencer starts early.
 Sample Sequencer is inefficient with a lot of notes
 Sequencer changes lock audio thread
-Sometimes playhead is out of sync?
+Add BPM to SyncAudioLoopToSequencer.
 BPM Change notes stay around
 
