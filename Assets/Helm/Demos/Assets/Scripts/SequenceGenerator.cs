@@ -16,9 +16,6 @@ namespace Helm
         public float minDensity = 0.5f;
         public float maxDensity = 1.0f;
 
-        List<float> rhythm;
-        List<int> melody;
-
         void GenerateRhythm()
         {
         }
