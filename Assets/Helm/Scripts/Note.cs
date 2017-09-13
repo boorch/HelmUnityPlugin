@@ -100,6 +100,9 @@ namespace Helm
             }
         }
 
+        /// <summary>
+        /// The sequencer this note belongs to.
+        /// </summary>
         public Sequencer parent;
 
         private IntPtr reference;

@@ -5,10 +5,19 @@ using System;
 
 namespace Helm
 {
+    /// <summary>
+    /// A sequencer of notes over time that will send its note on/off events to
+    /// instances of a Helm native synthesizer
+    /// </summary>
     [RequireComponent(typeof(HelmAudioInit))]
     public class HelmSequencer : Sequencer
     {
-        public int channel = 0;
+		/// <summary>
+		/// Specifies which Helm instance(s) to control.
+		/// Every Helm instance in any AudioMixerGroup matching this channel number is controlled by this class.
+		/// </summary>
+		public int channel = 0;
+
         IntPtr reference = IntPtr.Zero;
         int currentChannel = -1;
         int currentLength = -1;
@@ -77,7 +86,10 @@ namespace Helm
             }
         }
 
-        public override void AllNotesOff()
+		/// <summary>
+		/// Triggers note off events for all notes currently on in the referenced Helm instance(s).
+		/// </summary>
+		public override void AllNotesOff()
         {
             Native.HelmAllNotesOff(channel);
         }

@@ -4,7 +4,11 @@ using UnityEngine;
 
 namespace Helm
 {
-    [RequireComponent(typeof(Sampler))]
+	/// <summary>
+	/// A sequencer of notes over time that will send its note on/off events to
+	/// a Sampler instance that is attatched to the same object.
+	/// </summary>
+	[RequireComponent(typeof(Sampler))]
     public class SampleSequencer : Sequencer
     {
         double lastWindowTime = -0.01;
@@ -38,34 +42,57 @@ namespace Helm
             waitTillNextCycle = false;
         }
 
-        public override void AllNotesOff()
+		/// <summary>
+		/// Triggers note off events for all notes currently on in the referenced Sampler.
+		/// </summary>
+		public override void AllNotesOff()
         {
             GetComponent<Sampler>().AllNotesOff();
         }
 
-        public override void NoteOn(int note, float velocity = 1.0f)
+		/// <summary>
+		/// Triggers a note on event for the referenced sampler.
+		/// If the AudioSource is set to loop, you must trigger a note off event
+		/// later for this note by calling NoteOff.
+		/// </summary>
+		/// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
+		/// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
+		public override void NoteOn(int note, float velocity = 1.0f)
         {
             GetComponent<Sampler>().NoteOn(note, velocity);
         }
 
-        public override void NoteOff(int note)
+		/// <summary>
+		/// Triggers a note off event for the referenced Sampler.
+		/// </summary>
+		/// <param name="note">The MIDI keyboard note to turn off. [0, 127]</param>
+		public override void NoteOff(int note)
         {
             GetComponent<Sampler>().NoteOff(note);
         }
 
-        public void EnableComponent()
+        void EnableComponent()
         {
             enabled = true;
         }
 
-        public override void StartScheduled(double dspTime)
+		/// <summary>
+		/// Starts the sequencer at a given time in the future.
+		/// This is synced to AudioSettings.dspTime.
+		/// </summary>
+		/// <param name="dspTime">The time to start the sequencer, synced to AudioSettings.dspTime.</param>
+		public override void StartScheduled(double dspTime)
         {
             syncTime = dspTime;
             float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
             Invoke("EnableComponent", waitToEnable);
         }
 
-        public override void StartOnNextCycle()
+		/// <summary>
+		/// Starts the sequencer on the start next cycle.
+		/// This is useful if you have multiple synced sequencers and you want to start this one on the next go around.
+		/// </summary>
+		public override void StartOnNextCycle()
         {
             enabled = true;
             waitTillNextCycle = true;
