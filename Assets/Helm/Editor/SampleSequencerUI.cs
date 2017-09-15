@@ -1,9 +1,9 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEditor;
 using UnityEngine;
 
-namespace Helm
+namespace AudioHelm
 {
     [CustomEditor(typeof(SampleSequencer))]
     class SampleSequencerUI : Editor

@@ -1,6 +1,6 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
-namespace Helm
+namespace AudioHelm
 {
     /// <summary>
     /// An interface for classes that can receive note on and off events.

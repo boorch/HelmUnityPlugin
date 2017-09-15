@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Helm
+namespace AudioHelm
 {
     [AddComponentMenu("")]
     public class SequenceGenerator : MonoBehaviour

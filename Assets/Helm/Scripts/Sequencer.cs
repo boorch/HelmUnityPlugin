@@ -1,10 +1,10 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-namespace Helm
+namespace AudioHelm
 {
     /// <summary>
     /// A series of notes and velocities on a timeline that can be used to trigger synth or sampler notes.
@@ -126,27 +126,27 @@ namespace Helm
             note.TryDelete();
         }
 
-		/// <summary>
-		/// Check if a note exists within a given range in the sequencer.
-		/// </summary>
-		/// <returns><c>true</c>, if a note exists in the range, <c>false</c> otherwise.</returns>
-		/// <param name="note">The MIDI note to check the range in.</param>
-		/// <param name="start">The start of the range measured in sixteenths.</param>
-		/// <param name="end">The end of the range measured in sixteenths.</param>
-		public bool NoteExistsInRange(int note, float start, float end)
+        /// <summary>
+        /// Check if a note exists within a given range in the sequencer.
+        /// </summary>
+        /// <returns><c>true</c>, if a note exists in the range, <c>false</c> otherwise.</returns>
+        /// <param name="note">The MIDI note to check the range in.</param>
+        /// <param name="start">The start of the range measured in sixteenths.</param>
+        /// <param name="end">The end of the range measured in sixteenths.</param>
+        public bool NoteExistsInRange(int note, float start, float end)
         {
             return GetNoteInRange(note, start, end) != null;
         }
 
-		/// <summary>
-		/// Gets the first note in a given range in the sequencer.
-		/// </summary>
-		/// <returns>The first found note. Returns null if no note was found.</returns>
-		/// <param name="note">The MIDI note to look for.</param>
-		/// <param name="start">The start of the range measured in sixteenths.</param>
-		/// <param name="end">The end of the range measured in sixteenths.</param>
-		/// <param name="ignore">A note to ignore if found.</param>
-		public Note GetNoteInRange(int note, float start, float end, Note ignore = null)
+        /// <summary>
+        /// Gets the first note in a given range in the sequencer.
+        /// </summary>
+        /// <returns>The first found note. Returns null if no note was found.</returns>
+        /// <param name="note">The MIDI note to look for.</param>
+        /// <param name="start">The start of the range measured in sixteenths.</param>
+        /// <param name="end">The end of the range measured in sixteenths.</param>
+        /// <param name="ignore">A note to ignore if found.</param>
+        public Note GetNoteInRange(int note, float start, float end, Note ignore = null)
         {
             if (note >= Utils.kMidiSize || note < 0 || allNotes == null || allNotes[note] == null)
                 return null;
@@ -158,13 +158,13 @@ namespace Helm
             return null;
         }
 
-		/// <summary>
-		/// Removes all notes that overlap a given range.
-		/// </summary>
-		/// <param name="note">The MIDI note to match.</param>
-		/// <param name="start">The start of the range measured in sixteenths.</param>
-		/// <param name="end">The end of the range measured in sixteenths.</param>
-		public void RemoveNotesInRange(int note, float start, float end)
+        /// <summary>
+        /// Removes all notes that overlap a given range.
+        /// </summary>
+        /// <param name="note">The MIDI note to match.</param>
+        /// <param name="start">The start of the range measured in sixteenths.</param>
+        /// <param name="end">The end of the range measured in sixteenths.</param>
+        public void RemoveNotesInRange(int note, float start, float end)
         {
             if (allNotes == null || allNotes[note] == null)
                 return;
@@ -179,13 +179,13 @@ namespace Helm
                 RemoveNote(noteObject);
         }
 
-		/// <summary>
-		/// Removes all notes that are fully contained in a given range.
-		/// </summary>
-		/// <param name="note">The MIDI note to match.</param>
-		/// <param name="start">The start of the range measured in sixteenths.</param>
-		/// <param name="end">The end of the range measured in sixteenths.</param>
-		public void RemoveNotesContainedInRange(int note, float start, float end, Note ignore = null)
+        /// <summary>
+        /// Removes all notes that are fully contained in a given range.
+        /// </summary>
+        /// <param name="note">The MIDI note to match.</param>
+        /// <param name="start">The start of the range measured in sixteenths.</param>
+        /// <param name="end">The end of the range measured in sixteenths.</param>
+        public void RemoveNotesContainedInRange(int note, float start, float end, Note ignore = null)
         {
             if (allNotes == null || allNotes[note] == null)
                 return;
@@ -200,13 +200,13 @@ namespace Helm
                 RemoveNote(noteObject);
         }
 
-		/// <summary>
-		/// Removes all notes that are fully contained and trim notes that partially overlap range by removing the time inside the range.
-		/// </summary>
-		/// <param name="note">The MIDI note to match.</param>
-		/// <param name="start">The start of the range measured in sixteenths.</param>
-		/// <param name="end">The end of the range measured in sixteenths.</param>
-		public void ClampNotesInRange(int note, float start, float end, Note ignore = null)
+        /// <summary>
+        /// Removes all notes that are fully contained and trim notes that partially overlap range by removing the time inside the range.
+        /// </summary>
+        /// <param name="note">The MIDI note to match.</param>
+        /// <param name="start">The start of the range measured in sixteenths.</param>
+        /// <param name="end">The end of the range measured in sixteenths.</param>
+        public void ClampNotesInRange(int note, float start, float end, Note ignore = null)
         {
             RemoveNotesContainedInRange(note, start, end, ignore);
 

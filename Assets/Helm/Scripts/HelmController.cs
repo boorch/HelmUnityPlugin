@@ -1,15 +1,16 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Helm
+namespace AudioHelm
 {
-	/// <summary>
-	/// An interface to a Helm native synthesizer instance(s). All native synth settings can be changed through this class.
-	/// </summary>
-	[RequireComponent(typeof(HelmAudioInit))]
+    /// <summary>
+    /// An interface to a Helm native synthesizer instance(s). All native synth settings can be changed through this class.
+    /// </summary>
+    [RequireComponent(typeof(HelmAudioInit))]
+    [AddComponentMenu("Audio Helm/Helm Controller")]
     public class HelmController : MonoBehaviour, NoteHandler
     {
         /// <summary>

@@ -1,10 +1,10 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
 
-namespace Helm
+namespace AudioHelm
 {
     /// <summary>
     /// Representation of a note in a sequencer.
@@ -58,10 +58,10 @@ namespace Helm
             }
         }
 
-		/// <summary>
-		/// The note off time measured in sixteenth notes.
-		/// </summary>
-		[SerializeField]
+        /// <summary>
+        /// The note off time measured in sixteenth notes.
+        /// </summary>
+        [SerializeField]
         private float end_;
         public float end
         {
@@ -79,10 +79,10 @@ namespace Helm
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// The velocity of key press (how hard the note is hit).
-		/// </summary>
-		[SerializeField]
+        /// </summary>
+        [SerializeField]
         private float velocity_;
         public float velocity
         {
@@ -178,23 +178,23 @@ namespace Helm
             return Utils.RangesOverlap(start, end, rangeStart, rangeEnd);
         }
 
-		/// <summary>
-		/// Checks if this note is contained withing a sequencer range
-		/// </summary>
-		/// <returns><c>true</c>, if note overlaps the range, <c>false</c> otherwise.</returns>
-		/// <param name="rangeStart">Start of the range.</param>
-		/// <param name="rangeEnd">End of the range.</param>
-		public bool InsideRange(float rangeStart, float rangeEnd)
+        /// <summary>
+        /// Checks if this note is contained withing a sequencer range
+        /// </summary>
+        /// <returns><c>true</c>, if note overlaps the range, <c>false</c> otherwise.</returns>
+        /// <param name="rangeStart">Start of the range.</param>
+        /// <param name="rangeEnd">End of the range.</param>
+        public bool InsideRange(float rangeStart, float rangeEnd)
         {
             return start >= rangeStart && end <= rangeEnd;
         }
 
-		/// <summary>
-		/// Removes part of the note on/off range that is contained withing the specified range.
-		/// </summary>
-		/// <param name="rangeStart">Start of the range to remove.</param>
-		/// <param name="rangeEnd">End of the range to remove.</param>
-		public void RemoveRange(float rangeStart, float rangeEnd)
+        /// <summary>
+        /// Removes part of the note on/off range that is contained withing the specified range.
+        /// </summary>
+        /// <param name="rangeStart">Start of the range to remove.</param>
+        /// <param name="rangeEnd">End of the range to remove.</param>
+        public void RemoveRange(float rangeStart, float rangeEnd)
         {
             if (!OverlapsRange(rangeStart, rangeEnd))
                 return;

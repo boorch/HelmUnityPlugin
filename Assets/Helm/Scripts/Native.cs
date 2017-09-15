@@ -1,10 +1,10 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
 
-namespace Helm
+namespace AudioHelm
 {
     /// <summary>
     /// The native plugin interface to synthesizer and sequencer settings.

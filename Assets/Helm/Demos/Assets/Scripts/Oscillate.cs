@@ -1,8 +1,8 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 
-namespace Helm
+namespace AudioHelm
 {
     [AddComponentMenu("")]
     public class Oscillate : MonoBehaviour

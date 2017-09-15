@@ -1,12 +1,13 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 
-namespace Helm
+namespace AudioHelm
 {
     /// <summary>
     /// Sets the BPM (beats per minute) of all sequencers and native Helm instances.
     /// </summary>
+    [AddComponentMenu("Audio Helm/Helm Bpm")]
     public class HelmBpm : MonoBehaviour
     {
         static float globalBpm = 120.0f;

@@ -1,11 +1,11 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEditor;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-namespace Helm
+namespace AudioHelm
 {
     public class SequencerUI
     {

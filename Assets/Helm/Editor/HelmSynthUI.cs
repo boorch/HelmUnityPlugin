@@ -1,4 +1,4 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEditor;
 using UnityEngine;
@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace Helm
+namespace AudioHelm
 {
     public class HelmSynthUI : IAudioEffectPluginGUI, NoteHandler
     {

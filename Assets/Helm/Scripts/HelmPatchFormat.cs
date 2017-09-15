@@ -1,15 +1,15 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System;
 
-namespace Helm
+namespace AudioHelm
 {
-	/// <summary>
-	/// Part of Helm native synthesizer patch loading.
+    /// <summary>
+    /// Part of Helm native synthesizer patch loading.
     /// A single modulation connection is loaded into this class.
-	/// </summary>
-	[Serializable]
+    /// </summary>
+    [Serializable]
     public class HelmModulationSetting
     {
         public string source;
@@ -17,11 +17,11 @@ namespace Helm
         public float amount;
     }
 
-	/// <summary>
-	/// Part of Helm native synthesizer patch loading.
+    /// <summary>
+    /// Part of Helm native synthesizer patch loading.
     /// The parameters that control how the synth sounds are loaded into this class.
-	/// </summary>
-	[Serializable]
+    /// </summary>
+    [Serializable]
     public class HelmPatchSettings
     {
         public const int kMaxModulations = 16;

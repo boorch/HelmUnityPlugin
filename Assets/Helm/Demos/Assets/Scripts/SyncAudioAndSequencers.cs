@@ -1,9 +1,9 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Helm
+namespace AudioHelm
 {
     [AddComponentMenu("")]
     public class SyncAudioAndSequencers : MonoBehaviour

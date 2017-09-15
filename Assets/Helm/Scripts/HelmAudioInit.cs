@@ -1,14 +1,15 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 
-namespace Helm
+namespace AudioHelm
 {
     /// <summary>
     /// Ensures AudioSource and global AudioSettings are setup correctly for Helm native synthesizer usage.
     /// </summary>
     [ExecuteInEditMode]
     [RequireComponent(typeof(AudioSource))]
+    [AddComponentMenu("Audio Helm/Helm Audio Init")]
     public class HelmAudioInit : MonoBehaviour
     {
         bool warnedNoAudioGroup = false;

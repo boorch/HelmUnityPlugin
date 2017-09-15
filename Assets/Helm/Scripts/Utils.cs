@@ -1,10 +1,10 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System;
 using System.Reflection;
 
-namespace Helm
+namespace AudioHelm
 {
     /// <summary>
     /// The most commonly set Helm native synthesizer parameters.
@@ -43,10 +43,10 @@ namespace Helm
         kDelayTempo = Param.kDelayTempo,
     }
 
-	/// <summary>
+    /// <summary>
     /// All Helm native synthesizer parameters.
     /// </summary>
-	public enum Param
+    public enum Param
     {
         kNone = 0,
         kAmplitudeAttack = 1,
@@ -160,7 +160,7 @@ namespace Helm
         public const float kBpmToSixteenths = 4.0f / 60.0f;
         public const int kMinOctave = -2;
         public const int kMiddleC = 60;
-       
+
         static bool[] blackKeys = { false, true, false, true,
                                     false, false, true, false,
                                     true, false, true, false };
@@ -175,12 +175,12 @@ namespace Helm
             return blackKeys[key % kNotesPerOctave];
         }
 
-		/// <summary>
-		/// Checks if a given MIDI key is a 'C' note.
-		/// </summary>
-		/// <returns><c>true</c>, if the key is a black key, <c>false</c> otherwise.</returns>
-		/// <param name="key">Key.</param>
-		public static bool IsC(int key)
+        /// <summary>
+        /// Checks if a given MIDI key is a 'C' note.
+        /// </summary>
+        /// <returns><c>true</c>, if the key is a black key, <c>false</c> otherwise.</returns>
+        /// <param name="key">Key.</param>
+        public static bool IsC(int key)
         {
             return key % kNotesPerOctave == 0;
         }

@@ -1,10 +1,10 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace Helm
+namespace AudioHelm
 {
     public class KeyzoneEditorUI
     {

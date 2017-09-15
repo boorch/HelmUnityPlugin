@@ -1,22 +1,23 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System;
 
-namespace Helm
+namespace AudioHelm
 {
     /// <summary>
     /// A sequencer of notes over time that will send its note on/off events to
     /// instances of a Helm native synthesizer
     /// </summary>
     [RequireComponent(typeof(HelmAudioInit))]
+    [AddComponentMenu("Audio Helm/Helm Sequencer")]
     public class HelmSequencer : Sequencer
     {
-		/// <summary>
-		/// Specifies which Helm instance(s) to control.
-		/// Every Helm instance in any AudioMixerGroup matching this channel number is controlled by this class.
-		/// </summary>
-		public int channel = 0;
+        /// <summary>
+        /// Specifies which Helm instance(s) to control.
+        /// Every Helm instance in any AudioMixerGroup matching this channel number is controlled by this class.
+        /// </summary>
+        public int channel = 0;
 
         IntPtr reference = IntPtr.Zero;
         int currentChannel = -1;
@@ -36,11 +37,11 @@ namespace Helm
             currentIndex = -1;
         }
 
-		/// <summary>
-		/// Reference to the native sequencer instance memory (if any).
-		/// </summary>
-		/// <returns>The reference the native sequencer. IntPtr.Zero if it doesn't exist.</returns>
-		public override IntPtr Reference()
+        /// <summary>
+        /// Reference to the native sequencer instance memory (if any).
+        /// </summary>
+        /// <returns>The reference the native sequencer. IntPtr.Zero if it doesn't exist.</returns>
+        public override IntPtr Reference()
         {
             return reference;
         }
@@ -86,30 +87,30 @@ namespace Helm
             }
         }
 
-		/// <summary>
-		/// Triggers note off events for all notes currently on in the referenced Helm instance(s).
-		/// </summary>
-		public override void AllNotesOff()
+        /// <summary>
+        /// Triggers note off events for all notes currently on in the referenced Helm instance(s).
+        /// </summary>
+        public override void AllNotesOff()
         {
             Native.HelmAllNotesOff(channel);
         }
 
-		/// <summary>
-		/// Triggers a note on event for the Helm instance(s) this points to.
-		/// You must trigger a note off event later for this note by calling NoteOff.
-		/// </summary>
-		/// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
-		/// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
-		public override void NoteOn(int note, float velocity = 1.0f)
+        /// <summary>
+        /// Triggers a note on event for the Helm instance(s) this points to.
+        /// You must trigger a note off event later for this note by calling NoteOff.
+        /// </summary>
+        /// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
+        /// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
+        public override void NoteOn(int note, float velocity = 1.0f)
         {
             Native.HelmNoteOn(channel, note, velocity);
         }
 
-		/// <summary>
-		/// Triggers a note off event for the Helm instance(s) this points to.
-		/// </summary>
-		/// <param name="note">The MIDI keyboard note to turn off. [0, 127]</param>
-		public override void NoteOff(int note)
+        /// <summary>
+        /// Triggers a note off event for the Helm instance(s) this points to.
+        /// </summary>
+        /// <param name="note">The MIDI keyboard note to turn off. [0, 127]</param>
+        public override void NoteOff(int note)
         {
             Native.HelmNoteOff(channel, note);
         }
@@ -137,11 +138,11 @@ namespace Helm
             }
         }
 
-		/// <summary>
-		/// Starts the sequencer on the start next cycle.
+        /// <summary>
+        /// Starts the sequencer on the start next cycle.
         /// This is useful if you have multiple synced sequencers and you want to start this one on the next go around.
-		/// </summary>
-		public override void StartOnNextCycle()
+        /// </summary>
+        public override void StartOnNextCycle()
         {
             double timeSinceSync = AudioSettings.dspTime - syncTime;
             double sequenceLength = (length * GetSixteenthTime());

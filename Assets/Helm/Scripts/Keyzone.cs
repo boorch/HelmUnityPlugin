@@ -1,9 +1,9 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace Helm
+namespace AudioHelm
 {
     /// <summary>
     /// A single keyzone in a Sampler.
@@ -32,13 +32,13 @@ namespace Helm
             return note <= maxKey && note >= minKey && audioClip != null;
         }
 
-		/// <summary>
-		/// Checks if the keyzone will play for the current note and velocity.
-		/// </summary>
-		/// <returns><c>true</c>, if for note and velocity are within the kezone, <c>false</c> otherwise.</returns>
-		/// <param name="note">The note to check.</param>
-		/// <param name="velocity">The velocity to check.</param>
-		public bool ValidForNote(int note, float velocity)
+        /// <summary>
+        /// Checks if the keyzone will play for the current note and velocity.
+        /// </summary>
+        /// <returns><c>true</c>, if for note and velocity are within the kezone, <c>false</c> otherwise.</returns>
+        /// <param name="note">The note to check.</param>
+        /// <param name="velocity">The velocity to check.</param>
+        public bool ValidForNote(int note, float velocity)
         {
             return ValidForNote(note) && velocity >= minVelocity && velocity <= maxVelocity;
         }

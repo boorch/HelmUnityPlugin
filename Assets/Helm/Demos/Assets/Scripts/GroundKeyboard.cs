@@ -1,10 +1,10 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Helm
+namespace AudioHelm
 {
     [AddComponentMenu("")]
     public class GroundKeyboard : MonoBehaviour

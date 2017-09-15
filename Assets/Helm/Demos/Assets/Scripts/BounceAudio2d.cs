@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Helm
+namespace AudioHelm
 {
     [AddComponentMenu("")]
     public class BounceAudio2d : MonoBehaviour

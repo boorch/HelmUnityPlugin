@@ -1,9 +1,9 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Helm
+namespace AudioHelm
 {
     /// <summary>
     /// A single note row in the sequencer.

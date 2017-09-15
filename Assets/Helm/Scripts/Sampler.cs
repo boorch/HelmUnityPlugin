@@ -1,11 +1,11 @@
-// Copyright 2017 Matt Tytel
+﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Helm
+namespace AudioHelm
 {
     /// <summary>
     /// The Sampler is a type of instrument that has a collection of audio samples to play
@@ -13,6 +13,7 @@ namespace Helm
     /// A list of keyzones define what samples play when what notes are hit.
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
+    [AddComponentMenu("Audio Helm/Sampler")]
     public class Sampler : MonoBehaviour, NoteHandler
     {
         class ActiveNote
@@ -170,11 +171,11 @@ namespace Helm
             return min;
         }
 
-		/// <summary>
-		/// Gets the highest midi key that the sampler responds to.
-		/// </summary>
-		/// <returns>The highest valid midi key.</returns>
-		public int GetMaxKey()
+        /// <summary>
+        /// Gets the highest midi key that the sampler responds to.
+        /// </summary>
+        /// <returns>The highest valid midi key.</returns>
+        public int GetMaxKey()
         {
             if (keyzones.Count == 0)
                 return Utils.kMidiSize - 1;
@@ -186,10 +187,10 @@ namespace Helm
             return max;
         }
 
-		/// <summary>
-		/// Triggers note off events for all notes currently on in the sampler.
-		/// </summary>
-		public void AllNotesOff()
+        /// <summary>
+        /// Triggers note off events for all notes currently on in the sampler.
+        /// </summary>
+        public void AllNotesOff()
         {
             AudioSource[] audios = GetComponents<AudioSource>();
             foreach (AudioSource audioSource in audios)
@@ -198,14 +199,14 @@ namespace Helm
             activeNotes.Clear();
         }
 
-		/// <summary>
-		/// Triggers a note on event for the Sampler.
-		/// If the AudioSource is set to loop, you must trigger a note off event
+        /// <summary>
+        /// Triggers a note on event for the Sampler.
+        /// If the AudioSource is set to loop, you must trigger a note off event
         /// later for this note by calling NoteOff.
-		/// </summary>
-		/// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
-		/// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
-		public void NoteOn(int note, float velocity = 1.0f)
+        /// </summary>
+        /// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
+        /// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
+        public void NoteOn(int note, float velocity = 1.0f)
         {
             List<AudioSource> audioSources = GetPreppedAudioSources(note, velocity);
             activeNotes.Add(new ActiveNote(note, audioSources, AudioSettings.dspTime));
@@ -223,14 +224,14 @@ namespace Helm
             }
         }
 
-		/// <summary>
-		/// Triggers a note on event for the Sampler at the givent time and turns it off at the given time.
-		/// </summary>
-		/// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
-		/// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
-		/// <param name="timeToStart">Time from now to start the note.</param>
-		/// <param name="timeToEnd">Time from now to end the note.</param>
-		public void NoteOnScheduled(int note, float velocity, double timeToStart, double timeToEnd)
+        /// <summary>
+        /// Triggers a note on event for the Sampler at the givent time and turns it off at the given time.
+        /// </summary>
+        /// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
+        /// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
+        /// <param name="timeToStart">Time from now to start the note.</param>
+        /// <param name="timeToEnd">Time from now to end the note.</param>
+        public void NoteOnScheduled(int note, float velocity, double timeToStart, double timeToEnd)
         {
             List<AudioSource> audioSources = GetPreppedAudioSources(note, velocity);
             foreach (AudioSource audioSource in audioSources)
@@ -256,11 +257,11 @@ namespace Helm
             return null;
         }
 
-		/// <summary>
-		/// Triggers a note off event for the Sampler.
-		/// </summary>
-		/// <param name="note">The MIDI keyboard note to turn off. [0, 127]</param>
-		public void NoteOff(int note)
+        /// <summary>
+        /// Triggers a note off event for the Sampler.
+        /// </summary>
+        /// <param name="note">The MIDI keyboard note to turn off. [0, 127]</param>
+        public void NoteOff(int note)
         {
             if (!useNoteOff)
                 return;
