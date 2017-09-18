@@ -1,7 +1,7 @@
 {
   "license": "Patch (c) by Ones & Zeros.  This patch is licensed under a Creative Commons Attribution 4.0 International License.  You should have received a copy of the license along with this work.  If not, see <http://creativecommons.org/licenses/by/4.0/>.",
   "synth_version": "0.9.0",
-  "patch_name": "natures best",
+  "patch_name": "OZ Natures Best",
   "folder_name": "Keys",
   "author": "Ones & Zeros",
   "settings": {
@@ -25,7 +25,7 @@
     "delay_on": 0,
     "delay_sync": 1,
     "delay_tempo": 9,
-    "distortion_drive": -0.615001678466796875,
+    "distortion_drive": -6.7790625000000019895,
     "distortion_mix": 1,
     "distortion_on": 1,
     "distortion_type": 0,
@@ -35,7 +35,7 @@
     "fil_release": 1.9411764144897460938,
     "fil_sustain": 0.47999998927116394043,
     "filter_blend": 0,
-    "filter_drive": -12,
+    "filter_drive": -8.3659999999999996589,
     "filter_on": 1,
     "filter_shelf": 0,
     "filter_style": 0,
@@ -143,7 +143,7 @@
     "unison_1_harmonize": 0,
     "unison_2_harmonize": 0,
     "velocity_track": 0.13600003719329833984,
-    "volume": 1.0814345692213684913,
+    "volume": 1.1176213017451297471,
     "modulations": [
       {
         "source": "mono_lfo_1",

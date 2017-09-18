@@ -11,12 +11,15 @@ namespace AudioHelm
     /// </summary>
     [RequireComponent(typeof(HelmAudioInit))]
     [AddComponentMenu("Audio Helm/Helm Sequencer")]
+    [HelpURL("http://tytel.org/audiohelm/scripting/class_helm_1_1_helm_sequencer.html")]
     public class HelmSequencer : Sequencer
     {
         /// <summary>
         /// Specifies which Helm instance(s) to control.
         /// Every Helm instance in any AudioMixerGroup matching this channel number is controlled by this class.
         /// </summary>
+        [Tooltip("The native synth channel to send note events to." +
+                 " This must match the channel set in the Helm Audio plugin.")]
         public int channel = 0;
 
         IntPtr reference = IntPtr.Zero;

@@ -68,7 +68,7 @@ namespace AudioHelm
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
-            if (GUILayout.Button("Clear Sequencer"))
+            if (GUILayout.Button(new GUIContent("Clear Sequencer", "Remove all notes from the sequencer.")))
             {
                 for (int i = 0; i < allNotes.arraySize; ++i)
                 {

@@ -10,6 +10,7 @@ namespace AudioHelm
     /// </summary>
     [RequireComponent(typeof(Sampler))]
     [AddComponentMenu("Audio Helm/Sample Sequencer")]
+    [HelpURL("http://tytel.org/audiohelm/scripting/class_helm_1_1_sample_sequencer.html")]
     public class SampleSequencer : Sequencer
     {
         double lastWindowTime = -0.01;

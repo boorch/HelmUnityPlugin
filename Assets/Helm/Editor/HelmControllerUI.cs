@@ -33,7 +33,7 @@ namespace AudioHelm
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
-            channel.intValue = EditorGUILayout.IntSlider("Channel", channel.intValue, 0, Utils.kMaxChannels - 1);
+            EditorGUILayout.IntSlider(channel, 0, Utils.kMaxChannels - 1);
             serialized.ApplyModifiedProperties();
         }
     }

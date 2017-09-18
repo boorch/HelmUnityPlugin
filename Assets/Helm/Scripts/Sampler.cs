@@ -14,6 +14,7 @@ namespace AudioHelm
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
     [AddComponentMenu("Audio Helm/Sampler")]
+    [HelpURL("http://tytel.org/audiohelm/scripting/class_helm_1_1_sampler.html")]
     public class Sampler : MonoBehaviour, NoteHandler
     {
         class ActiveNote
@@ -36,20 +37,25 @@ namespace AudioHelm
         public List<Keyzone> keyzones = new List<Keyzone>() { new Keyzone() };
 
         /// <summary>
-        /// How much velocity of the notes affect the volume of the samples.
+        /// How much the velocity of a note on event affects the volume of the samples.
         /// 0.0 for no effect and 1.0 for full effect.
         /// </summary>
+        [Tooltip("How much the velocity of a note on event affects the volume of the samples. " +
+                 "0.0 for no effect and 1.0 for full effect")]
         public float velocityTracking = 1.0f;
 
         /// <summary>
         /// Total number of simultaneous voices possible.
         /// If your voices cut out early you can increase this number to fix the problem.
         /// </summary>
+        [Tooltip("Total number of concurrently playing sounds from this Sampler (polyphony). " +
+                 "Increase this if your voices are cutting out from new voices coming in.")]
         public int numVoices = 2;
 
         /// <summary>
         /// Does the sampler listen to note off events.
         /// </summary>
+        [Tooltip("Does a voice silence when it gets a note off event?")]
         public bool useNoteOff = false;
 
         int audioIndex = 0;

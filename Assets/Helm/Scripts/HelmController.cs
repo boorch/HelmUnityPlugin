@@ -11,12 +11,15 @@ namespace AudioHelm
     /// </summary>
     [RequireComponent(typeof(HelmAudioInit))]
     [AddComponentMenu("Audio Helm/Helm Controller")]
+    [HelpURL("http://tytel.org/audiohelm/scripting/class_helm_1_1_helm_controller.html")]
     public class HelmController : MonoBehaviour, NoteHandler
     {
         /// <summary>
         /// Specifies which Helm instance(s) to control.
         /// Every Helm instance in any AudioMixerGroup matching this channel number is controlled by this class.
         /// </summary>
+        [Tooltip("The native synth channel to send note events to." +
+                 " This must match the channel set in the Helm Audio plugin.")]
         public int channel = 0;
 
         Dictionary<int, int> pressedNotes = new Dictionary<int, int>();

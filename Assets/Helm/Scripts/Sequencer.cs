@@ -38,6 +38,7 @@ namespace AudioHelm
         /// <summary>
         /// The length of the sequence measured in sixteenth notes.
         /// </summary>
+        [Tooltip("The number of sixteenth notes in the sequencer.")]
         public int length = 16;
 
         /// <summary>
@@ -58,6 +59,7 @@ namespace AudioHelm
         /// <summary>
         /// The division of the graphical sequencer.
         /// </summary>
+        [Tooltip("How often a bar or a division is placed in the sequencer.")]
         public Division division = Division.kSixteenth;
 
         public const int kMaxLength = 128;
