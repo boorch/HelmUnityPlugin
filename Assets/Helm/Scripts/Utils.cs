@@ -152,7 +152,7 @@ namespace AudioHelm
     /// <summary>
     /// Utility functions that are useful for audio/MIDI/music.
     /// </summary>
-    public class Utils : MonoBehaviour
+    public static class Utils
     {
         public const int kMidiSize = 128;
         public const int kNotesPerOctave = 12;

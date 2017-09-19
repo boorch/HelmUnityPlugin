@@ -5,12 +5,13 @@ using UnityEngine;
 namespace AudioHelm
 {
     /// <summary>
+    /// ## [Switch to Manual](../manual/class_audio_helm_1_1_helm_audio_init.html)<br>
     /// Ensures AudioSource and global AudioSettings are setup correctly for Helm native synthesizer usage.
     /// </summary>
     [ExecuteInEditMode]
     [RequireComponent(typeof(AudioSource))]
     [AddComponentMenu("Audio Helm/Helm Audio Init")]
-    [HelpURL("http://tytel.org/audiohelm/scripting/class_helm_1_1_helm_audio_init.html")]
+    [HelpURL("http://tytel.org/audiohelm/scripting/class_audio_helm_1_1_helm_audio_init.html")]
     public class HelmAudioInit : MonoBehaviour
     {
         bool warnedNoAudioGroup = false;

@@ -7,11 +7,13 @@ using System.Collections.Generic;
 namespace AudioHelm
 {
     /// <summary>
-    /// An interface to a Helm native synthesizer instance(s). All native synth settings can be changed through this class.
+    /// ## [Switch to Manual](../manual/class_audio_helm_1_1_helm_controller.html)<br>
+    /// An interface to a Helm native synthesizer instance(s).
+    /// All native synth settings can be changed through this class.
     /// </summary>
     [RequireComponent(typeof(HelmAudioInit))]
     [AddComponentMenu("Audio Helm/Helm Controller")]
-    [HelpURL("http://tytel.org/audiohelm/scripting/class_helm_1_1_helm_controller.html")]
+    [HelpURL("http://tytel.org/audiohelm/scripting/class_audio_helm_1_1_helm_controller.html")]
     public class HelmController : MonoBehaviour, NoteHandler
     {
         /// <summary>

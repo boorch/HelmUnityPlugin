@@ -8,13 +8,14 @@ using System.Collections.Generic;
 namespace AudioHelm
 {
     /// <summary>
+    /// ## [Switch to Manual](../manual/class_audio_helm_1_1_sampler.html)<br>
     /// The Sampler is a type of instrument that has a collection of audio samples to play
     /// and will play them at different rates to change the pitch for different notes.
     /// A list of keyzones define what samples play when what notes are hit.
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
     [AddComponentMenu("Audio Helm/Sampler")]
-    [HelpURL("http://tytel.org/audiohelm/scripting/class_helm_1_1_sampler.html")]
+    [HelpURL("http://tytel.org/audiohelm/scripting/class_audio_helm_1_1_sampler.html")]
     public class Sampler : MonoBehaviour, NoteHandler
     {
         class ActiveNote

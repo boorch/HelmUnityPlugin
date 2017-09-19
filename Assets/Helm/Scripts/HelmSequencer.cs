@@ -6,12 +6,13 @@ using System;
 namespace AudioHelm
 {
     /// <summary>
+    /// ## [Switch to Manual](../manual/class_audio_helm_1_1_helm_sequencer.html)<br>
     /// A sequencer of notes over time that will send its note on/off events to
     /// instances of a Helm native synthesizer
     /// </summary>
     [RequireComponent(typeof(HelmAudioInit))]
     [AddComponentMenu("Audio Helm/Helm Sequencer")]
-    [HelpURL("http://tytel.org/audiohelm/scripting/class_helm_1_1_helm_sequencer.html")]
+    [HelpURL("http://tytel.org/audiohelm/scripting/class_audio_helm_1_1_helm_sequencer.html")]
     public class HelmSequencer : Sequencer
     {
         /// <summary>

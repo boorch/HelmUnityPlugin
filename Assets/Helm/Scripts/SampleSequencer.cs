@@ -5,12 +5,13 @@ using UnityEngine;
 namespace AudioHelm
 {
     /// <summary>
+    /// ## [Switch to Manual](../manual/class_audio_helm_1_1_sample_sequencer.html)<br>
     /// A sequencer of notes over time that will send its note on/off events to
     /// a Sampler instance that is attatched to the same object.
     /// </summary>
     [RequireComponent(typeof(Sampler))]
     [AddComponentMenu("Audio Helm/Sample Sequencer")]
-    [HelpURL("http://tytel.org/audiohelm/scripting/class_helm_1_1_sample_sequencer.html")]
+    [HelpURL("http://tytel.org/audiohelm/scripting/class_audio_helm_1_1_sample_sequencer.html")]
     public class SampleSequencer : Sequencer
     {
         double lastWindowTime = -0.01;
