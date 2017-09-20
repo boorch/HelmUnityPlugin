@@ -13,7 +13,7 @@ namespace AudioHelm
     /// </summary>
     [RequireComponent(typeof(HelmAudioInit))]
     [AddComponentMenu("Audio Helm/Helm Controller")]
-    [HelpURL("http://tytel.org/audiohelm/scripting/class_audio_helm_1_1_helm_controller.html")]
+    [HelpURL("http://tytel.org/audiohelm/manual/class_audio_helm_1_1_helm_controller.html")]
     public class HelmController : MonoBehaviour, NoteHandler
     {
         /// <summary>

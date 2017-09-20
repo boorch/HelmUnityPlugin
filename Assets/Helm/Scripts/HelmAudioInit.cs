@@ -11,7 +11,7 @@ namespace AudioHelm
     [ExecuteInEditMode]
     [RequireComponent(typeof(AudioSource))]
     [AddComponentMenu("Audio Helm/Helm Audio Init")]
-    [HelpURL("http://tytel.org/audiohelm/scripting/class_audio_helm_1_1_helm_audio_init.html")]
+    [HelpURL("http://tytel.org/audiohelm/manual/class_audio_helm_1_1_helm_audio_init.html")]
     public class HelmAudioInit : MonoBehaviour
     {
         bool warnedNoAudioGroup = false;

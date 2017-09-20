@@ -9,7 +9,7 @@ namespace AudioHelm
     /// Sets the BPM (beats per minute) of all sequencers and native Helm instances.
     /// </summary>
     [AddComponentMenu("Audio Helm/Helm Bpm")]
-    [HelpURL("http://tytel.org/audiohelm/scripting/class_audio_helm_1_1_helm_bpm.html")]
+    [HelpURL("http://tytel.org/audiohelm/manual/class_audio_helm_1_1_helm_bpm.html")]
     public class HelmBpm : MonoBehaviour
     {
         static float globalBpm = 120.0f;

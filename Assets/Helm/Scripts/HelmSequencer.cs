@@ -12,7 +12,7 @@ namespace AudioHelm
     /// </summary>
     [RequireComponent(typeof(HelmAudioInit))]
     [AddComponentMenu("Audio Helm/Helm Sequencer")]
-    [HelpURL("http://tytel.org/audiohelm/scripting/class_audio_helm_1_1_helm_sequencer.html")]
+    [HelpURL("http://tytel.org/audiohelm/manual/class_audio_helm_1_1_helm_sequencer.html")]
     public class HelmSequencer : Sequencer
     {
         /// <summary>

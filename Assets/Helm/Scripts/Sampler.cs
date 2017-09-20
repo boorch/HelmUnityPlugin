@@ -15,7 +15,7 @@ namespace AudioHelm
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
     [AddComponentMenu("Audio Helm/Sampler")]
-    [HelpURL("http://tytel.org/audiohelm/scripting/class_audio_helm_1_1_sampler.html")]
+    [HelpURL("http://tytel.org/audiohelm/manual/class_audio_helm_1_1_sampler.html")]
     public class Sampler : MonoBehaviour, NoteHandler
     {
         class ActiveNote
@@ -46,15 +46,15 @@ namespace AudioHelm
         public float velocityTracking = 1.0f;
 
         /// <summary>
-        /// Total number of simultaneous voices possible.
-        /// If your voices cut out early you can increase this number to fix the problem.
+        /// Total number of concurrently playing sounds from this Sampler (polyphony).
+        /// Increase this if your voices are cutting out from new voices coming in.
         /// </summary>
         [Tooltip("Total number of concurrently playing sounds from this Sampler (polyphony). " +
                  "Increase this if your voices are cutting out from new voices coming in.")]
         public int numVoices = 2;
 
         /// <summary>
-        /// Does the sampler listen to note off events.
+        /// Does a voice silence when it gets a note off event?
         /// </summary>
         [Tooltip("Does a voice silence when it gets a note off event?")]
         public bool useNoteOff = false;
