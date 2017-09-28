@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Matt Tytel
+// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 
@@ -21,10 +21,12 @@ namespace AudioHelm
             Utils.InitAudioSource(GetComponent<AudioSource>());
 
             // Make sure AudioSettings are setup correctly.
+        #if (!UNITY_ANDROID && !UNITY_IOS)
             if (!Application.runInBackground) {
                 Debug.LogWarning("Setting application to run in background to keep audio in sync!");
                 Application.runInBackground = true;
             }
+        #endif
         }
 
         void Update()
