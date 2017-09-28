@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Matt Tytel
+// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System;
@@ -68,13 +68,20 @@ namespace AudioHelm
         kDelayOn,
         kDelaySync,
         kDelayTempo,
+        kDistortionOn,
+        kDistortionType,
+        kDistortionDrive,
+        kDistortionMix,
         kFilterAttack,
         kFilterDecay,
         kFilterEnvelopeDepth,
         kFilterRelease,
         kFilterSustain,
-        kSaturation,
-        kFilterType,
+        kFilterDrive = 31,
+        kFilterBlend,
+        kFilterStyle = 34,
+        kFilterShelf,
+        kFilterOn,
         kFormantOn,
         kFormantX,
         kFormantY,
@@ -113,7 +120,7 @@ namespace AudioHelm
         kOscFeedbackAmount,
         kOscFeedbackTranspose,
         kOscFeedbackTune,
-        kPitchBendRange = 67,
+        kPitchBendRange = 76,
         kPolyLfoAmplitude,
         kPolyLfoFrequency,
         kPolyLfoSync,
@@ -141,7 +148,8 @@ namespace AudioHelm
         kStutterSync,
         kStutterTempo,
         kSubShuffle,
-        kSubVolume = 129,
+        kSubOctave,
+        kSubVolume,
         kSubWaveform,
         kOsc1UnisonHarmonize,
         kOsc2UnisonHarmonize,
