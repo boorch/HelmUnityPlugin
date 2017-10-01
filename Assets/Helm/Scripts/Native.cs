@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Matt Tytel
+// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System;
@@ -60,12 +60,19 @@ namespace AudioHelm
         #else
           [DllImport("AudioPluginHelm")]
         #endif
-        public static extern bool HelmChangeParameter(int channel, int paramIndex, float newValue);
+        public static extern bool HelmSetParameterValue(int channel, int paramIndex, float newValue);
 
         #if UNITY_IOS
           [DllImport("__Internal")]
         #else
-          [DllImport("AudioPluginHelm")]
+        [DllImport("AudioPluginHelm")]
+        #endif
+        public static extern bool HelmSetParameterPercent(int channel, int paramIndex, float newPercent);
+
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+        [DllImport("AudioPluginHelm")]
         #endif
         public static extern void SetBpm(float bpm);
 

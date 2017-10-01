@@ -418,7 +418,7 @@ namespace Helm {
     }
   }
 
-  extern "C" UNITY_AUDIODSP_EXPORT_API bool HelmChangeParameter(int channel, int index, float value) {
+  extern "C" UNITY_AUDIODSP_EXPORT_API bool HelmSetParameterValue(int channel, int index, float value) {
     if (index < kNumParams)
       return false;
 
@@ -438,6 +438,23 @@ namespace Helm {
       }
     }
     return success;
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API bool HelmSetParameterPercent(int channel, int index, float percent) {
+    if (index < kNumParams)
+      return false;
+
+    for (auto synth : instance_map) {
+      EffectData* data = synth.second;
+      if (index >= data->num_parameters)
+        return false;
+      else {
+        float range = data->range_lookup[index].second - data->range_lookup[index].first;
+        float value = range * mopo::utils::clamp(percent, 0.0f, 1.0f) + data->range_lookup[index].first;
+        return HelmSetParameterValue(channel, index, value);
+      }
+    }
+    return false;
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API HelmSequencer* CreateSequencer() {

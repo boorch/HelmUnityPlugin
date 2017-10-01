@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Matt Tytel
+// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System.Collections;
@@ -42,23 +42,47 @@ namespace AudioHelm
         }
 
         /// <summary>
-        /// Changes a Helm synthesizer parameter.
+        /// Changes a Helm synthesizer parameter value.
+        /// e.g. Lower the pitch of the oscillator by setting the transpose to -12 semitones.
         /// </summary>
         /// <param name="parameter">The parameter to be changed.</param>
         /// <param name="newValue">The value to change the parameter to.</param>
-        public void SetParameter(Param parameter, float newValue)
+        public void SetParameterValue(Param parameter, float newValue)
         {
-            Native.HelmChangeParameter(channel, (int)parameter, newValue);
+            Native.HelmSetParameterValue(channel, (int)parameter, newValue);
         }
 
-		/// <summary>
-		/// Changes a Helm synthesizer parameter.
-		/// </summary>
-		/// <param name="parameter">The parameter to be changed.</param>
-		/// <param name="newValue">The value to change the parameter to.</param>
-		public void SetParameter(CommonParam parameter, float newValue)
+        /// <summary>
+        /// Changes a Helm synthesizer parameter value.
+        /// e.g. Lower the pitch of the oscillator by setting the transpose to -12 semitones.
+        /// </summary>
+        /// <param name="parameter">The parameter to be changed.</param>
+        /// <param name="newValue">The value to change the parameter to.</param>
+        public void SetParameterValue(CommonParam parameter, float newValue)
         {
-            Native.HelmChangeParameter(channel, (int)parameter, newValue);
+            Native.HelmSetParameterValue(channel, (int)parameter, newValue);
+        }
+
+        /// <summary>
+        /// Changes a Helm synthesizer parameter by percent of the valid range.
+        /// e.g. Set the volume to the highest setting by setting the Volume to 1.0.
+        /// </summary>
+        /// <param name="parameter">The parameter to be changed.</param>
+        /// <param name="newPercent">The percent of range of values to use. 0.0 for lowest, 1.0 for highest.</param>
+        public void SetParameterPercent(Param parameter, float newPercent)
+        {
+            Native.HelmSetParameterPercent(channel, (int)parameter, newPercent);
+        }
+
+        /// <summary>
+        /// Changes a Helm synthesizer parameter by percent of the valid range.
+        /// e.g. Set the volume to the highest setting by setting the Volume to 1.0.
+        /// </summary>
+        /// <param name="parameter">The parameter to be changed.</param>
+        /// <param name="newPercent">The percent of range of values to use. 0.0 for lowest, 1.0 for highest.</param>
+        public void SetParameterPercent(CommonParam parameter, float newPercent)
+        {
+            Native.HelmSetParameterPercent(channel, (int)parameter, newPercent);
         }
 
         /// <summary>

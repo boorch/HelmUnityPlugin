@@ -16,16 +16,16 @@ namespace AudioHelm
 
         void Start()
         {
-            controller.SetParameter(param, offValue);
+            controller.SetParameterValue(param, offValue);
         }
 
         public void Toggle()
         {
             isOn = !isOn;
             if (isOn)
-                controller.SetParameter(param, onValue);
+                controller.SetParameterValue(param, onValue);
             else
-                controller.SetParameter(param, offValue);
+                controller.SetParameterValue(param, offValue);
         }
     }
 }

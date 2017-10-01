@@ -15,7 +15,7 @@ namespace AudioHelm
         kNone = 0,
 
         // Filter
-        kCutoff = Param.kCutoff,
+        kFilterCutoff = Param.kFilterCutoff,
         kResonance = Param.kResonance,
         kFilterAttack = Param.kFilterAttack,
         kFilterRelease = Param.kFilterRelease,
@@ -61,7 +61,7 @@ namespace AudioHelm
         kArpSync,
         kArpTempo,
         kCrossMod = 13,
-        kCutoff,
+        kFilterCutoff,
         kDelayDryWet,
         kDelayFeedback,
         kDelayFrequency,
