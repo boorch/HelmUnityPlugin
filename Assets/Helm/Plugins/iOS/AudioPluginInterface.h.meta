@@ -49,7 +49,7 @@ PluginImporter:
       enabled: 1
       settings:
         CompileFlags: 
-        FrameworkDependencies: 
+        FrameworkDependencies: Accelerate;
   userData: 
   assetBundleName: 
   assetBundleVariant: 
