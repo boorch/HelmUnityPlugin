@@ -25,6 +25,7 @@ xcuserdata
 *~
 *.swp
 *.Trashes
+.vs
 
 ehthumbs.db
 Thumbs.db
