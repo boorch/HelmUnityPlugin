@@ -102,8 +102,5 @@
     <Compile Include="Assets\Helm\Scripts\Sequencer.cs" />
     <Compile Include="Assets\Helm\Scripts\Utils.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Helm\README.txt" />
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
