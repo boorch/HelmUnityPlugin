@@ -1,0 +1,19 @@
+# TODO
+
+## Future Features
+
+PlayNoteScheduled
+Variable BPM without resyncing
+Sequencer references player instead of on same game object?
+Synth UI widgets for better tweaking in Unity?
+Load patches from previous versions
+Load MIDI Files
+ps4/xbox support?
+
+## Known Issues
+
+Sample Sequencer is inefficient with a lot of notes
+Sequencer changes lock audio thread
+Add BPM to SyncAudioLoopToSequencer.
+BPM Change notes stay around
+
