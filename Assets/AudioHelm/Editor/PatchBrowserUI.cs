@@ -40,7 +40,7 @@ namespace AudioHelm
 
         public static string GetFullPatchesPath()
         {
-            const string patchesPath = "/Helm/Presets/";
+            const string patchesPath = "/AudioHelm/Presets/";
             return Application.dataPath + patchesPath;
         }
 

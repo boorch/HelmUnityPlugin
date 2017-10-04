@@ -10,15 +10,6 @@ namespace AudioHelm
 {
     public class HelmSynthUI : IAudioEffectPluginGUI, NoteHandler
     {
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOn(int channel, int note, float velocity);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmNoteOff(int channel, int note);
-
-        [DllImport("AudioPluginHelm")]
-        private static extern void HelmAllNotesOff(int channel);
-
         const string extension = ".helm";
         KeyboardUI keyboard = new KeyboardUI();
         PatchBrowserUI folderBrowser = new PatchBrowserUI(true, "");
@@ -43,17 +34,17 @@ namespace AudioHelm
 
         public void NoteOn(int note, float velocity = 1.0f)
         {
-            HelmNoteOn(channel, note, velocity);
+            Native.HelmNoteOn(channel, note, velocity);
         }
 
         public void NoteOff(int note)
         {
-            HelmNoteOff(channel, note);
+            Native.HelmNoteOff(channel, note);
         }
 
         public void AllNotesOff()
         {
-            HelmAllNotesOff(channel);
+            Native.HelmAllNotesOff(channel);
         }
 
         void LoadPatch(IAudioEffectPlugin plugin, string path)
