@@ -8,7 +8,7 @@ namespace AudioHelm
     [AddComponentMenu("")]
     public class SyncAudioAndSequencers : MonoBehaviour
     {
-        public HelmSequencer sequencer;
+        public Sequencer sequencer;
         public AudioSource loop;
         public float waitTime = 3.0f;
         public Text text;

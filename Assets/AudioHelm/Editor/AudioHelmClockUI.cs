@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace AudioHelm
 {
-    [CustomEditor(typeof(HelmBpm))]
-    class HelmBpmUI : Editor
+    [CustomEditor(typeof(AudioHelmClock))]
+    class AudioHelmClockUI : Editor
     {
         private SerializedObject serialized;
         private SerializedProperty bpm;
@@ -28,8 +28,8 @@ namespace AudioHelm
             serialized.ApplyModifiedProperties();
             if (EditorGUI.EndChangeCheck())
             {
-                HelmBpm helmBpm = target as HelmBpm;
-                helmBpm.SetGlobalBpm();
+                AudioHelmClock audioHelmClock = target as AudioHelmClock;
+                audioHelmClock.SetGlobalBpm();
             }
         }
     }

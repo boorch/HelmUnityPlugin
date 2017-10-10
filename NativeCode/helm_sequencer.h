@@ -50,6 +50,10 @@ namespace Helm {
         start_time_armed_ = false;
       }
 
+      void shiftStartTime(double time) {
+        start_time_ += time;
+      }
+
     private:
       int channel_;
       event_map on_events_;

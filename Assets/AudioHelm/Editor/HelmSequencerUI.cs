@@ -1,7 +1,8 @@
-﻿// Copyright 2017 Matt Tytel
+// Copyright 2017 Matt Tytel
 
 using UnityEditor;
 using UnityEngine;
+using System.IO;
 
 namespace AudioHelm
 {
@@ -60,6 +61,16 @@ namespace AudioHelm
             {
                 Undo.RecordObject(helmSequencer, "Clear Sequencer");
                 helmSequencer.Clear();
+            }
+
+            if (GUILayout.Button(new GUIContent("Load MIDI File", "Load a MIDI sequence into this sequencer.")))
+            {
+                string path = EditorUtility.OpenFilePanel("Load MIDI Sequence", "", "mid");
+                if (path.Length != 0)
+                {
+                    Undo.RecordObject(helmSequencer, "Load MIDI File");
+                    helmSequencer.ReadMidiFile(new FileStream(path, FileMode.Open, FileAccess.Read));
+                }
             }
 
             EditorGUILayout.IntSlider(channel, 0, Utils.kMaxChannels - 1);

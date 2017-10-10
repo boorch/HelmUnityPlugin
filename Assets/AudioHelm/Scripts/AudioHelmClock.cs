@@ -8,9 +8,9 @@ namespace AudioHelm
     /// ## [Switch to Manual](../manual/class_audio_helm_1_1_helm_bpm.html)<br>
     /// Sets the BPM (beats per minute) of all sequencers and native Helm instances.
     /// </summary>
-    [AddComponentMenu("Audio Helm/Helm Bpm")]
-    [HelpURL("http://tytel.org/audiohelm/manual/class_audio_helm_1_1_helm_bpm.html")]
-    public class HelmBpm : MonoBehaviour
+    [AddComponentMenu("Audio Helm/Audio Helm Clock")]
+    [HelpURL("http://tytel.org/audiohelm/manual/class_audio_helm_1_1_audio_helm_clock.html")]
+    public class AudioHelmClock : MonoBehaviour
     {
         static float globalBpm = 120.0f;
 
@@ -19,6 +19,7 @@ namespace AudioHelm
 
         /// <summary>
         /// Gets or sets the beats per minute.
+        /// Dynamic BPMs do not currently work gradually. Sequencer notes will skip around.
         /// </summary>
         /// <value>The new or current bpm.</value>
         public float bpm

@@ -1,8 +1,10 @@
-﻿// Copyright 2017 Matt Tytel
+// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System;
+using System.IO;
 using System.Collections.Generic;
+using Sanford.Multimedia.Midi;
 
 namespace AudioHelm
 {
@@ -79,6 +81,15 @@ namespace AudioHelm
         public virtual IntPtr Reference()
         {
             return IntPtr.Zero;
+        }
+
+        /// <summary>
+        /// Resets the sequencer at the beginning.
+        /// </summary>
+        public virtual void Reset()
+        {
+            AllNotesOff();
+            StartScheduled(AudioSettings.dspTime);
         }
 
         protected void InitNoteRows()
@@ -249,6 +260,67 @@ namespace AudioHelm
             return noteObject;
         }
 
+        void ReadMidiTrack(Track midiTrack, int division)
+        {
+            Dictionary<int, float> noteTimes = new Dictionary<int, float>();
+            Dictionary<int, float> noteVelocities = new Dictionary<int, float>();
+            for (int i = 0; i < midiTrack.Count; ++i)
+            {
+                MidiEvent midiEvent = midiTrack.GetMidiEvent(i);
+                if (midiEvent.MidiMessage.GetBytes().Length < 3)
+                    continue;
+
+                byte midiType = (byte)(midiEvent.MidiMessage.GetBytes()[0] & 0xFF);
+                byte note = (byte)(midiEvent.MidiMessage.GetBytes()[1] & 0xFF);
+                byte velocity = (byte)(midiEvent.MidiMessage.GetBytes()[2] & 0xFF);
+                float time = (4.0f * midiEvent.AbsoluteTicks) / division;
+
+                if (midiType == (byte)ChannelCommand.NoteOff ||
+                    (midiType == (byte)ChannelCommand.NoteOn) && velocity == 0)
+                {
+                    if (noteTimes.ContainsKey(note))
+                    {
+                        AddNote(note, noteTimes[note], time, noteVelocities[note]);
+                        noteTimes.Remove(note);
+                        noteVelocities.Remove(note);
+                    }
+                }
+                else if (midiType == (byte)ChannelCommand.NoteOn)
+                {
+                    noteTimes[note] = time;
+                    noteVelocities[note] = Mathf.Min(1.0f, velocity / 127.0f);
+                }
+            }
+        }
+
+        // TODO: Get MIDI reading out of Beta.
+        /// <summary>
+        /// Read a MIDI file's tracks into this sequencer.
+        /// Currently in Beta. This may not work for all MIDI files or as expected
+        /// </summary>
+        /// <param name="midiFile">The MIDI file stream.</param>
+        public void ReadMidiFile(Stream midiStream)
+        {
+            Clear();
+            Sequence midiSequence = new Sequence(midiStream);
+            length = 4 * midiSequence.GetLength() / midiSequence.Division;
+
+            foreach (Track midiTrack in midiSequence)
+                ReadMidiTrack(midiTrack, midiSequence.Division);
+        }
+
+        /// <summary>
+        /// Read a MIDI file's tracks into this sequencer.
+        /// Currently in Beta. This may not work for all MIDI files or as expected
+        /// </summary>
+        /// <param name="midiFile">The MIDI file object.</param>
+        public void ReadMidiFile(UnityEngine.Object midiFile)
+        {
+            TextAsset midiAsText = Resources.Load<TextAsset>("mid_" + midiFile.name);
+            if (midiAsText != null)
+                ReadMidiFile(new MemoryStream(midiAsText.bytes));
+        }
+
         /// <summary>
         /// Clear the sequencer of all notes.
         /// </summary>
@@ -272,12 +344,12 @@ namespace AudioHelm
         /// <returns>The time in seconds of a sixteenth note.</returns>
         public float GetSixteenthTime()
         {
-            return 1.0f / (Utils.kBpmToSixteenths * HelmBpm.GetGlobalBpm());
+            return 1.0f / (Utils.kBpmToSixteenths * AudioHelmClock.GetGlobalBpm());
         }
 
         protected double GetSequencerTime()
         {
-            return (Utils.kBpmToSixteenths * HelmBpm.GetGlobalBpm()) * (AudioSettings.dspTime - syncTime);
+            return (Utils.kBpmToSixteenths * AudioHelmClock.GetGlobalBpm()) * (AudioSettings.dspTime - syncTime);
         }
 
         protected double GetSequencerPosition()

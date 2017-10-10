@@ -67,6 +67,9 @@
     <Reference Include="UnityEditor.iOS.Extensions.Common">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Sanford.Multimedia.Midi">
+      <HintPath>Assets\AudioHelm\Plugins\Sanford.Multimedia.Midi.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\BounceAudio2d.cs" />
@@ -87,8 +90,8 @@
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\SetSleepThreshold.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\SyncAudioAndSequencers.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\ToggleParameter.cs" />
+    <Compile Include="Assets\AudioHelm\Scripts\AudioHelmClock.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\HelmAudioInit.cs" />
-    <Compile Include="Assets\AudioHelm\Scripts\HelmBpm.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\HelmController.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\HelmPatchFormat.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\HelmSequencer.cs" />

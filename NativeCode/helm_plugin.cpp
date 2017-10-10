@@ -528,8 +528,13 @@ namespace Helm {
     sequencer->armStartTime(wait_time);
   }
 
-  extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeSequencerLength(
-      HelmSequencer* sequencer, float length) {
+  extern "C" UNITY_AUDIODSP_EXPORT_API void ShiftSequencerStart(HelmSequencer* sequencer, double time) {
+    MutexScopeLock mutex_lock(sequencer_mutex);
+    sequencer->shiftStartTime(time);
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeSequencerLength(HelmSequencer* sequencer, float length) {
+    MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer->setLength(length);
   }
 
