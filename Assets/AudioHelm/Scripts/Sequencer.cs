@@ -260,7 +260,7 @@ namespace AudioHelm
             return noteObject;
         }
 
-        void ReadMidiTrack(Track midiTrack, int division)
+        void ReadMidiTrack(Track midiTrack, int sequencerDivision)
         {
             Dictionary<int, float> noteTimes = new Dictionary<int, float>();
             Dictionary<int, float> noteVelocities = new Dictionary<int, float>();
@@ -273,7 +273,7 @@ namespace AudioHelm
                 byte midiType = (byte)(midiEvent.MidiMessage.GetBytes()[0] & 0xFF);
                 byte note = (byte)(midiEvent.MidiMessage.GetBytes()[1] & 0xFF);
                 byte velocity = (byte)(midiEvent.MidiMessage.GetBytes()[2] & 0xFF);
-                float time = (4.0f * midiEvent.AbsoluteTicks) / division;
+                float time = (4.0f * midiEvent.AbsoluteTicks) / sequencerDivision;
 
                 if (midiType == (byte)ChannelCommand.NoteOff ||
                     (midiType == (byte)ChannelCommand.NoteOn) && velocity == 0)
@@ -298,7 +298,7 @@ namespace AudioHelm
         /// Read a MIDI file's tracks into this sequencer.
         /// Currently in Beta. This may not work for all MIDI files or as expected
         /// </summary>
-        /// <param name="midiFile">The MIDI file stream.</param>
+        /// <param name="midiStream">The MIDI file stream.</param>
         public void ReadMidiFile(Stream midiStream)
         {
             Clear();
