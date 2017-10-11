@@ -136,7 +136,7 @@ namespace AudioHelm
         kReverbFeedback,
         kReverbOn,
         kStepFrequency,
-        kStepSequencerRetrigger = 114,
+        kStepSequencerRetrigger = 123,
         kStepSequencerSync,
         kStepSequencerTempo,
         kStepSmoothing,
