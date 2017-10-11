@@ -83,7 +83,7 @@
     "poly_lfo_sync": 1,
     "poly_lfo_tempo": 4,
     "poly_lfo_waveform": 4,
-    "polyphony": 4,
+    "polyphony": 7,
     "portamento": -7,
     "portamento_type": 0,
     "resonance": 0.10750105574324320123,
@@ -146,14 +146,14 @@
     "volume": 0.70976880834009736798,
     "modulations": [
       {
-        "source": "note",
-        "destination": "osc_2_transpose",
-        "amount": -7
-      },
-      {
         "source": "mod_wheel",
         "destination": "osc_1_tune",
         "amount": -2
+      },
+      {
+        "source": "note",
+        "destination": "osc_2_transpose",
+        "amount": -7
       },
       {
         "source": "velocity",
