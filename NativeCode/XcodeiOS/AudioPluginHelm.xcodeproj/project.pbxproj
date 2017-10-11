@@ -67,7 +67,7 @@
 		D11F489C1F155DB700CF9A13 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
-			dstPath = /Users/mtytel/HelmUnityPlugin/Assets/Helm/Plugins/iOS;
+			dstPath = /Users/mtytel/HelmUnityPlugin/Assets/AudioHelm/Plugins/iOS;
 			dstSubfolderSpec = 0;
 			files = (
 			);
@@ -489,7 +489,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mv ../../Assets/Helm/Plugins/iOS/Release-iphoneos/libAudioPluginHelm.a ../../Assets/Helm/Plugins/iOS/\ncp ../AudioPluginInterface.h ../../Assets/Helm/Plugins/iOS/\nrmdir ../../Assets/Helm/Plugins/iOS/Release-iphoneos/";
+			shellScript = "mv ../../Assets/AudioHelm/Plugins/iOS/Release-iphoneos/libAudioPluginHelm.a ../../Assets/AudioHelm/Plugins/iOS/\ncp ../AudioPluginInterface.h ../../Assets/AudioHelm/Plugins/iOS/\nrmdir ../../Assets/AudioHelm/Plugins/iOS/Release-iphoneos/";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -600,7 +600,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
@@ -643,7 +643,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -656,7 +656,7 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_MODULES = NO;
 				DEVELOPMENT_TEAM = EFXDM6K3KJ;
-				DSTROOT = "$(PROJECT_DIR)/../../Assets/Helm/iOS";
+				DSTROOT = "$(PROJECT_DIR)/../../Assets/AudioHelm/iOS";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
@@ -671,7 +671,7 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_MODULES = NO;
 				DEVELOPMENT_TEAM = EFXDM6K3KJ;
-				DSTROOT = "$(PROJECT_DIR)/../../Assets/Helm/iOS";
+				DSTROOT = "$(PROJECT_DIR)/../../Assets/AudioHelm/iOS";
 				GCC_FAST_MATH = YES;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_UNROLL_LOOPS = YES;
