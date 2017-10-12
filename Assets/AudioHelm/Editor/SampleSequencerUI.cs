@@ -2,6 +2,7 @@
 
 using UnityEditor;
 using UnityEngine;
+using System.IO;
 
 namespace AudioHelm
 {
@@ -75,6 +76,16 @@ namespace AudioHelm
                     SerializedProperty noteRow = allNotes.GetArrayElementAtIndex(i);
                     SerializedProperty notes = noteRow.FindPropertyRelative("notes");
                     notes.ClearArray();
+                }
+            }
+
+            if (GUILayout.Button(new GUIContent("Load MIDI File [BETA]", "Load a MIDI sequence into this sequencer.")))
+            {
+                string path = EditorUtility.OpenFilePanel("Load MIDI Sequence", "", "mid");
+                if (path.Length != 0)
+                {
+                    Undo.RecordObject(sampleSequencer, "Load MIDI File");
+                    sampleSequencer.ReadMidiFile(new FileStream(path, FileMode.Open, FileAccess.Read));
                 }
             }
 

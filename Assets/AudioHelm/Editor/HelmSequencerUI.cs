@@ -63,7 +63,7 @@ namespace AudioHelm
                 helmSequencer.Clear();
             }
 
-            if (GUILayout.Button(new GUIContent("Load MIDI File", "Load a MIDI sequence into this sequencer.")))
+            if (GUILayout.Button(new GUIContent("Load MIDI File [BETA]", "Load a MIDI sequence into this sequencer.")))
             {
                 string path = EditorUtility.OpenFilePanel("Load MIDI Sequence", "", "mid");
                 if (path.Length != 0)
