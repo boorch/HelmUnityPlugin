@@ -86,7 +86,9 @@ namespace AudioHelm
             if (reference != IntPtr.Zero)
                 Native.EnableSequencer(reference, true);
 
+            #if UNITY_EDITOR
             EditorApplication.playmodeStateChanged += HandleOnPlayModeChanged;
+            #endif
         }
 
         void OnDisable()
