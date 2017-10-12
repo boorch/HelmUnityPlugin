@@ -6,7 +6,12 @@ namespace AudioHelm
 {
     public class NonNativeFileImporter : AssetPostprocessor
     {
-        public static string GetResourceNameForAsset(string asset)
+        static bool ShouldImportFile(string asset)
+        {
+            return asset.ToLower().EndsWith(".mid");
+        }
+
+        static string GetResourceNameForAsset(string asset)
         {
             string extension = Path.GetExtension(asset).Substring(1).ToLower();
             return extension + "_" + Path.GetFileNameWithoutExtension(asset);
@@ -39,18 +44,18 @@ namespace AudioHelm
         static void TryDelete(string asset)
         {
             CreateFolderPath();
-            if (asset.ToLower().EndsWith(".mid") || asset.ToLower().EndsWith(".helm"))
+            if (ShouldImportFile(asset))
                 File.Delete(GetByteFilePath(asset));
         }
 
         static void TryCreate(string asset)
         {
             CreateFolderPath();
-            if (asset.ToLower().EndsWith(".mid") || asset.ToLower().EndsWith(".helm"))
+            if (ShouldImportFile(asset))
                 ImportNonNativeFile(asset);
         }
 
-        public static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
+        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
             foreach (string asset in deletedAssets)
                 TryDelete(asset);

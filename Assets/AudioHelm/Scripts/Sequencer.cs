@@ -296,7 +296,7 @@ namespace AudioHelm
         // TODO: Get MIDI reading out of Beta.
         /// <summary>
         /// Read a MIDI file's tracks into this sequencer.
-        /// Currently in Beta. This may not work for all MIDI files or as expected
+        /// Currently in Beta. This may not work for all MIDI files or as expected.
         /// </summary>
         /// <param name="midiStream">The MIDI file stream.</param>
         public void ReadMidiFile(Stream midiStream)
@@ -311,7 +311,7 @@ namespace AudioHelm
 
         /// <summary>
         /// Read a MIDI file's tracks into this sequencer.
-        /// Currently in Beta. This may not work for all MIDI files or as expected
+        /// Currently in Beta. This may not work for all MIDI files or as expected.
         /// </summary>
         /// <param name="midiFile">The MIDI file object.</param>
         public void ReadMidiFile(UnityEngine.Object midiFile)
