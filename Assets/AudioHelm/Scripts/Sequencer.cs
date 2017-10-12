@@ -241,6 +241,7 @@ namespace AudioHelm
         /// <param name="velocity">The velocity of the note (how hard the key is hit).</param>
         public Note AddNote(int note, float start, float end, float velocity = 1.0f)
         {
+            note = Mathf.Clamp(note, 0, Utils.kMidiSize - 1);
             Note noteObject = new Note()
             {
                 note = note,
