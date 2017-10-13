@@ -13,6 +13,10 @@ namespace AudioHelm
     /// </summary>
     public abstract class Sequencer : MonoBehaviour, NoteHandler, ISerializationCallbackReceiver
     {
+        public delegate void NoteAction(Note note);
+        public event NoteAction OnNoteOn;
+        public event NoteAction OnNoteOff;
+
         class NoteComparer : IComparer<Note>
         {
             public int Compare(Note left, Note right)
@@ -104,6 +108,8 @@ namespace AudioHelm
             new SortedList<NotePosition, Note>(notePositionComparer);
         protected SortedList<NotePosition, Note> sortedNoteOffs =
             new SortedList<NotePosition, Note>(notePositionComparer);
+
+        private float lastSequencerPosition = -1.0f;
 
         public abstract void AllNotesOff();
         public abstract void NoteOn(int note, float velocity = 1.0f);
@@ -504,7 +510,24 @@ namespace AudioHelm
 
         protected void UpdatePosition()
         {
+            float nextPosition = (float)GetSequencerPosition();
             currentIndex = (int)(GetSequencerPosition() / GetDivisionLength());
+
+            List<Note> noteOns = GetAllNoteOnsInRange(lastSequencerPosition, nextPosition);
+            List<Note> noteOffs = GetAllNoteOffsInRange(lastSequencerPosition, nextPosition);
+
+            foreach (Note note in noteOns)
+            {
+                if (OnNoteOn != null)
+                    OnNoteOn(note);
+            }
+            foreach (Note note in noteOffs)
+            {
+                if (OnNoteOff != null)
+                    OnNoteOff(note);
+            }
+
+            lastSequencerPosition = nextPosition;
         }
     }
 }
