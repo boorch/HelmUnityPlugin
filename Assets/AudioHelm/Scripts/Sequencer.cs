@@ -14,7 +14,15 @@ namespace AudioHelm
     public abstract class Sequencer : MonoBehaviour, NoteHandler, ISerializationCallbackReceiver
     {
         public delegate void NoteAction(Note note);
+
+        /// <summary>
+        /// Event for a note on. Will trigger within a frame of the audio note on.
+        /// </summary>
         public event NoteAction OnNoteOn;
+
+        /// <summary>
+        /// Event for a note off. Will trigger within a frame of the audio note off.
+        /// </summary>
         public event NoteAction OnNoteOff;
 
         class NoteComparer : IComparer<Note>
