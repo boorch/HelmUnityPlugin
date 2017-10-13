@@ -206,6 +206,12 @@ namespace AudioHelm
             activeNotes.Clear();
         }
 
+        IEnumerator TurnVoiceOffInSeconds(AudioSource audioSource, float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            audioSource.volume = 0.0f;
+        }
+
         /// <summary>
         /// Triggers a note on event for the Sampler.
         /// If the AudioSource is set to loop, you must trigger a note off event
@@ -250,7 +256,8 @@ namespace AudioHelm
                     length = Math.Min(length, (audioSource.clip.length - endEarlyTime) / audioSource.pitch);
 
                 audioSource.PlayScheduled(AudioSettings.dspTime + timeToStart);
-                audioSource.SetScheduledEndTime(AudioSettings.dspTime + timeToStart + length);
+                TurnVoiceOffInSeconds(audioSource, (float)(timeToStart + length));
+                // audioSource.SetScheduledEndTime(AudioSettings.dspTime + timeToStart + length);
             }
         }
 
