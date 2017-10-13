@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Matt Tytel
+// Copyright 2017 Matt Tytel
 
 using UnityEditor;
 using UnityEngine;
@@ -89,6 +89,9 @@ namespace AudioHelm
 
         public override bool OnGUI(IAudioEffectPlugin plugin)
         {
+            if (plugin == null || keyboard == null || folderBrowser == null || patchBrowser == null)
+                return false;
+
             Color prev_color = GUI.backgroundColor;
 
             GUILayout.Space(5.0f);
