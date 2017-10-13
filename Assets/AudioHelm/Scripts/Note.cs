@@ -52,9 +52,12 @@ namespace AudioHelm
             {
                 if (start_ == value)
                     return;
+                float oldStart = start_;
                 start_ = value;
                 if (FullyNative())
                     Native.ChangeNoteStart(parent.Reference(), reference, start_);
+                if (parent)
+                    parent.NotifyNoteStartChanged(this, oldStart);
             }
         }
 
@@ -73,9 +76,12 @@ namespace AudioHelm
             {
                 if (end_ == value)
                     return;
+                float oldEnd = end_;
                 end_ = value;
                 if (FullyNative())
                     Native.ChangeNoteEnd(parent.Reference(), reference, end_);
+                if (parent)
+                    parent.NotifyNoteEndChanged(this, oldEnd);
             }
         }
 

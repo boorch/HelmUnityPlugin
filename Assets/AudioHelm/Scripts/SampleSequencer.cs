@@ -1,6 +1,7 @@
 ﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace AudioHelm
 {
@@ -129,24 +130,39 @@ namespace AudioHelm
                 return;
             }
 
-            // TODO: search performance.
-            foreach (NoteRow row in allNotes)
+            if (windowMax >= sequencerTime)
+                windowMax -= sequencerTime;
+
+            NotePosition startSearch = new NotePosition((float)(lastWindowTime / sixteenthTime), -2);
+            double endSearchTime = windowMax / sixteenthTime;
+            NotePosition endSearch = new NotePosition((float)endSearchTime, -1);
+
+            sortedNoteOns.Add(startSearch, null);
+            sortedNoteOns.Add(endSearch, null);
+            int indexStart = sortedNoteOns.IndexOfKey(startSearch);
+            int indexEnd = sortedNoteOns.IndexOfKey(endSearch);
+
+            IList<Note> notes = sortedNoteOns.Values;
+            int numNotes = sortedNoteOns.Count;
+
+            for (int i = (indexStart + 1) % numNotes; i != indexEnd; i = (i + 1) % numNotes)
             {
-                foreach (Note note in row.notes)
-                {
-                    double startTime = sixteenthTime * note.start;
-                    double endTime = sixteenthTime * note.end;
-                    if (startTime < lastWindowTime)
-                        startTime += sequencerTime;
-                    if (startTime < windowMax && startTime >= lastWindowTime)
-                    {
-                        endTime = startTime + sixteenthTime * (note.end - note.start);
-                        double timeToStart = startTime - currentTime;
-                        double timeToEnd = endTime - currentTime;
-                        GetComponent<Sampler>().NoteOnScheduled(note.note, note.velocity, timeToStart, timeToEnd);
-                    }
-                }
+                Note note = notes[i];                    
+                double startTime = sixteenthTime * note.start;
+
+                // Check if we wrapped around.
+                if (i < indexStart)
+                    startTime += sequencerTime;
+
+                double endTime = startTime + sixteenthTime * (note.end - note.start);
+
+                double timeToStart = startTime - currentTime;
+                double timeToEnd = endTime - currentTime;
+                GetComponent<Sampler>().NoteOnScheduled(note.note, note.velocity, timeToStart, timeToEnd);
             }
+
+            sortedNoteOns.Remove(startSearch);
+            sortedNoteOns.Remove(endSearch);
             lastWindowTime = windowMax;
         }
     }

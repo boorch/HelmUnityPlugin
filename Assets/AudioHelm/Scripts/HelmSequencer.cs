@@ -107,7 +107,7 @@ namespace AudioHelm
         void Pause()
         {
             pauseTime = Time.realtimeSinceStartup;
-            Debug.LogWarning("Unity Native Audio does not stay in sync after pausing game!");
+            Debug.LogWarning("Unity Native Audio does not stay in sync after pausing in Editor!");
         }
 
         void Unpause()

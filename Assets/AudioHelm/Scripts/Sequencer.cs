@@ -20,9 +20,40 @@ namespace AudioHelm
                 if (left.start < right.start)
                     return -1;
 
-                else if (left.start > right.start)
+                if (left.start > right.start)
                     return 1;
                 return 0;
+            }
+        }
+
+        class NotePositionComparer : IComparer<NotePosition>
+        {
+            public int Compare(NotePosition left, NotePosition right)
+            {
+                if (left.position < right.position)
+                    return -1;
+
+                if (left.position > right.position)
+                    return 1;
+
+                if (left.note < right.note)
+                    return -1;
+
+                if (left.note > right.note)
+                    return 1;
+                return 0;
+            }
+        }
+
+        protected struct NotePosition
+        {
+            public float position;
+            public int note;
+
+            public NotePosition(float position_, int note_)
+            {
+                position = position_;
+                note = note_;
             }
         }
 
@@ -66,13 +97,41 @@ namespace AudioHelm
 
         public const int kMaxLength = 128;
 
-        NoteComparer noteComparer = new NoteComparer();
+        static NoteComparer noteComparer = new NoteComparer();
+        static NotePositionComparer notePositionComparer = new NotePositionComparer();
+
+        protected SortedList<NotePosition, Note> sortedNoteOns =
+            new SortedList<NotePosition, Note>(notePositionComparer);
+        protected SortedList<NotePosition, Note> sortedNoteOffs =
+            new SortedList<NotePosition, Note>(notePositionComparer);
 
         public abstract void AllNotesOff();
         public abstract void NoteOn(int note, float velocity = 1.0f);
         public abstract void NoteOff(int note);
         public abstract void StartScheduled(double dspTime);
         public abstract void StartOnNextCycle();
+
+        protected NotePosition NoteOnPosition(Note note)
+        {
+            return new NotePosition(note.start, note.note);
+        }
+
+        protected NotePosition NoteOffPosition(Note note)
+        {
+            return new NotePosition(note.end, note.note);
+        }
+
+        protected void RemoveSortedNoteEvents(Note note)
+        {
+            sortedNoteOns.Remove(NoteOnPosition(note));
+            sortedNoteOffs.Remove(NoteOffPosition(note));
+        }
+
+        protected void AddSortedNoteEvents(Note note)
+        {
+            sortedNoteOns.Add(NoteOnPosition(note), note);
+            sortedNoteOffs.Add(NoteOffPosition(note), note);
+        }
 
         /// <summary>
         /// Reference to the native sequencer instance memory (if any).
@@ -94,10 +153,16 @@ namespace AudioHelm
 
         protected void InitNoteRows()
         {
+            sortedNoteOns.Clear();
+            sortedNoteOffs.Clear();
+
             for (int i = 0; i < allNotes.Length; ++i)
             {
                 if (allNotes[i] == null)
                     allNotes[i] = new NoteRow();
+
+                foreach (Note note in allNotes[i].notes)
+                    AddSortedNoteEvents(note);
             }
         }
 
@@ -119,7 +184,7 @@ namespace AudioHelm
         }
 
         /// <summary>
-        /// Notifies the sequencer of a change to one of the notes.
+        /// Notifies the sequencer of a change to the key of one of the notes.
         /// </summary>
         /// <param name="note">The MIDI note that was changed.</param>
         /// <param name="oldKey">The key the note used to be.</param>
@@ -127,6 +192,32 @@ namespace AudioHelm
         {
             allNotes[oldKey].notes.Remove(note);
             allNotes[note.note].notes.Add(note);
+
+            sortedNoteOns.Remove(new NotePosition(note.start, oldKey));
+            sortedNoteOffs.Remove(new NotePosition(note.end, oldKey));
+            AddSortedNoteEvents(note);
+        }
+
+        /// <summary>
+        /// Notifies the sequencer of a change to one of the note start positions.
+        /// </summary>
+        /// <param name="note">The MIDI note that was changed.</param>
+        /// <param name="oldStart">The previous start position of the note.</param>
+        public void NotifyNoteStartChanged(Note note, float oldStart)
+        {
+            sortedNoteOns.Remove(new NotePosition(oldStart, note.note));
+            sortedNoteOns.Add(new NotePosition(note.start, note.note), note);
+        }
+
+        /// <summary>
+        /// Notifies the sequencer of a change to one of the note end positions.
+        /// </summary>
+        /// <param name="note">The MIDI note that was changed.</param>
+        /// <param name="oldEnd">The previous end position of the note.</param>
+        public void NotifyNoteEndChanged(Note note, float oldEnd)
+        {
+            sortedNoteOffs.Remove(new NotePosition(oldEnd, note.note));
+            sortedNoteOffs.Add(new NotePosition(note.end, note.note), note);
         }
 
         /// <summary>
@@ -136,6 +227,7 @@ namespace AudioHelm
         public void RemoveNote(Note note)
         {
             allNotes[note.note].notes.Remove(note);
+            RemoveSortedNoteEvents(note);
             note.TryDelete();
         }
 
@@ -258,6 +350,7 @@ namespace AudioHelm
             allNotes[note].notes.Add(noteObject);
             allNotes[note].notes.Sort(noteComparer);
 
+            AddSortedNoteEvents(noteObject);
             return noteObject;
         }
 
@@ -337,6 +430,9 @@ namespace AudioHelm
                     allNotes[i].notes.Clear();
                 }
             }
+
+            sortedNoteOns.Clear();
+            sortedNoteOffs.Clear();
         }
 
         /// <summary>

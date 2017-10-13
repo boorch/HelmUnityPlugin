@@ -19,7 +19,7 @@ namespace AudioHelm
 
         /// <summary>
         /// Gets or sets the beats per minute.
-        /// Dynamic BPMs do not currently work gradually. Sequencer notes will skip around.
+        /// Audio Helm does not currently support changing BPM while playing.
         /// </summary>
         /// <value>The new or current bpm.</value>
         public float bpm
@@ -31,16 +31,15 @@ namespace AudioHelm
             set
             {
                 bpm_ = value;
-                SetGlobalBpm();
             }
         }
 
-        void OnEnable()
+        void Awake()
         {
             SetGlobalBpm();
         }
 
-        public void SetGlobalBpm()
+        void SetGlobalBpm()
         {
             if (bpm_ > 0.0f)
             {
@@ -49,6 +48,10 @@ namespace AudioHelm
             }
         }
 
+        /// <summary>
+        /// Gets or sets the beats per minute.
+        /// </summary>
+        /// <value>The new or current bpm.</value>
         public static float GetGlobalBpm()
         {
             return globalBpm;
