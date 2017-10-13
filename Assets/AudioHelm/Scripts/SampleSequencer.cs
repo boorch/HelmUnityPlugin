@@ -133,25 +133,17 @@ namespace AudioHelm
             if (windowMax >= sequencerTime)
                 windowMax -= sequencerTime;
 
-            NotePosition startSearch = new NotePosition((float)(lastWindowTime / sixteenthTime), -2);
-            double endSearchTime = windowMax / sixteenthTime;
-            NotePosition endSearch = new NotePosition((float)endSearchTime, -1);
 
-            sortedNoteOns.Add(startSearch, null);
-            sortedNoteOns.Add(endSearch, null);
-            int indexStart = sortedNoteOns.IndexOfKey(startSearch);
-            int indexEnd = sortedNoteOns.IndexOfKey(endSearch);
+            float startSearch = (float)(lastWindowTime / sixteenthTime);
+            float endSearch = (float)(windowMax / sixteenthTime);
+            List<Note> notes = GetAllNoteOnsInRange(startSearch, endSearch);
 
-            IList<Note> notes = sortedNoteOns.Values;
-            int numNotes = sortedNoteOns.Count;
-
-            for (int i = (indexStart + 1) % numNotes; i != indexEnd; i = (i + 1) % numNotes)
+            foreach (Note note in notes)
             {
-                Note note = notes[i];                    
                 double startTime = sixteenthTime * note.start;
 
                 // Check if we wrapped around.
-                if (i < indexStart)
+                if (note.start < startSearch)
                     startTime += sequencerTime;
 
                 double endTime = startTime + sixteenthTime * (note.end - note.start);
@@ -161,8 +153,6 @@ namespace AudioHelm
                 GetComponent<Sampler>().NoteOnScheduled(note.note, note.velocity, timeToStart, timeToEnd);
             }
 
-            sortedNoteOns.Remove(startSearch);
-            sortedNoteOns.Remove(endSearch);
             lastWindowTime = windowMax;
         }
     }

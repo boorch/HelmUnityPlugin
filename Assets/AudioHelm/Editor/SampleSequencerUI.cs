@@ -71,12 +71,15 @@ namespace AudioHelm
 
             if (GUILayout.Button(new GUIContent("Clear Sequencer", "Remove all notes from the sequencer.")))
             {
+                Undo.RecordObject(sampleSequencer, "Clear Sequencer");
+
                 for (int i = 0; i < allNotes.arraySize; ++i)
                 {
                     SerializedProperty noteRow = allNotes.GetArrayElementAtIndex(i);
                     SerializedProperty notes = noteRow.FindPropertyRelative("notes");
                     notes.ClearArray();
                 }
+                sampleSequencer.Clear();
             }
 
             if (GUILayout.Button(new GUIContent("Load MIDI File [BETA]", "Load a MIDI sequence into this sequencer.")))

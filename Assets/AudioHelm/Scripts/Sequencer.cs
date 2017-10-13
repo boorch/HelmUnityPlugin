@@ -11,7 +11,7 @@ namespace AudioHelm
     /// <summary>
     /// A series of notes and velocities on a timeline that can be used to trigger synth or sampler notes.
     /// </summary>
-    public abstract class Sequencer : MonoBehaviour, NoteHandler
+    public abstract class Sequencer : MonoBehaviour, NoteHandler, ISerializationCallbackReceiver
     {
         class NoteComparer : IComparer<Note>
         {
@@ -110,6 +110,13 @@ namespace AudioHelm
         public abstract void NoteOff(int note);
         public abstract void StartScheduled(double dspTime);
         public abstract void StartOnNextCycle();
+
+        public void OnBeforeSerialize() { }
+
+        public void OnAfterDeserialize()
+        {
+            InitNoteRows();
+        }
 
         protected NotePosition NoteOnPosition(Note note)
         {
@@ -449,11 +456,50 @@ namespace AudioHelm
             return (Utils.kBpmToSixteenths * AudioHelmClock.GetGlobalBpm()) * (AudioSettings.dspTime - syncTime);
         }
 
-        protected double GetSequencerPosition()
+        /// <summary>
+        /// Gets the current position of the sequencer measured in sixteenth notes.
+        /// </summary>
+        /// <returns>The current position of the sequencer measured in sixteenth notes.</returns>
+        public double GetSequencerPosition()
         {
             double sequencerTime = GetSequencerTime();
             int cycles = (int)(sequencerTime / length);
             return sequencerTime - cycles * length;
+        }
+
+        protected List<Note> GetAllNoteEventsInRange(float start, float end,
+                                                     SortedList<NotePosition, Note> events)
+        {
+            List<Note> notesInRange = new List<Note>();
+            NotePosition startSearch = new NotePosition(start, -2);
+            NotePosition endSearch = new NotePosition(end, -1);
+
+            events.Add(startSearch, null);
+            events.Add(endSearch, null);
+            int indexStart = events.IndexOfKey(startSearch);
+            int indexEnd = events.IndexOfKey(endSearch);
+
+            IList<Note> notes = events.Values;
+            int numNotes = events.Count;
+
+            for (int i = (indexStart + 1) % numNotes; i != indexEnd; i = (i + 1) % numNotes)
+                notesInRange.Add(notes[i]);
+
+            events.Remove(startSearch);
+            events.Remove(endSearch);
+
+            return notesInRange;
+        }
+
+
+        protected List<Note> GetAllNoteOnsInRange(float start, float end)
+        {
+            return GetAllNoteEventsInRange(start, end, sortedNoteOns);
+        }
+
+        protected List<Note> GetAllNoteOffsInRange(float start, float end)
+        {
+            return GetAllNoteEventsInRange(start, end, sortedNoteOffs);
         }
 
         protected void UpdatePosition()

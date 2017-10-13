@@ -44,6 +44,7 @@ namespace AudioHelm
 
         int pressNote = 0;
         float pressTime = 0.0f;
+        float activeTime = 0.0f;
         float dragTime = 0.0f;
         int pressedKey = -1;
 
@@ -96,6 +97,9 @@ namespace AudioHelm
             mouseActive = true;
             activeNote = sequencer.GetNoteInRange(note, time, time);
             dragTime = time;
+            activeTime = time;
+            pressTime = time;
+            pressNote = note;
 
             if (pressedKey >= 0)
             {
@@ -113,29 +117,16 @@ namespace AudioHelm
             {
                 float startPixels = colWidth * (time - activeNote.start) / divisionLength;
                 float endPixels = colWidth * (activeNote.end - time) / divisionLength;
+
                 if (endPixels <= grabResizeWidth)
-                {
-                    Undo.RecordObject(sequencer, "Move Note End");
                     mode = Mode.kDraggingEnd;
-                    activeNote.end = Mathf.Max(activeNote.start + minNoteTime, dragTime);
-                    CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
-                }
                 else if (startPixels <= grabResizeWidth)
-                {
-                    Undo.RecordObject(sequencer, "Move Note Start");
                     mode = Mode.kDraggingStart;
-                    activeNote.start = Mathf.Min(activeNote.end - minNoteTime, dragTime);
-                    CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
-                }
                 else
                     mode = Mode.kDeleting;
             }
             else
                 mode = Mode.kAdding;
-
-            pressNote = note;
-            pressTime = time;
-            dragTime = time;
         }
 
         bool MouseDrag(int note, float time, Sequencer sequencer, SerializedProperty allNotes)
@@ -144,6 +135,10 @@ namespace AudioHelm
             float clampedTime = Mathf.Clamp(time, 0.0f, sequencer.length);
             float lastDragTime = dragTime;
             dragTime = clampedTime;
+
+            float newActiveTime = dragTime;
+            if (roundingToIndex)
+                newActiveTime = divisionLength * Mathf.Round(dragTime / divisionLength);
 
             if (Mathf.Abs(dragTime - pressTime) >= dragDeltaStartRounding)
                 roundingToIndex = true;
@@ -163,39 +158,20 @@ namespace AudioHelm
                 if (activeNote == null)
                     return false;
 
-                float startTime = dragTime;
-                if (roundingToIndex)
-                    startTime = divisionLength * Mathf.Round(dragTime / divisionLength);
-
-                startTime = Mathf.Min(activeNote.end - minNoteTime, startTime);
-                if (startTime == activeNote.start)
-                    return false;
-
-                activeNote.start = startTime;
-                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote],
-                                                allNotes.GetArrayElementAtIndex(pressNote));
-                sequencer.NoteOff(activeNote.note);
-
-                return true;
+                newActiveTime = Mathf.Min(activeNote.end - minNoteTime, newActiveTime);
+                bool redraw = activeTime == newActiveTime;
+                activeTime = newActiveTime;
+                return redraw;
             }
             else if (mode == Mode.kDraggingEnd)
             {
-                if (activeNote != null)
-                {
-                    float endTime = dragTime;
-                    if (roundingToIndex)
-                        endTime = divisionLength * Mathf.Round(dragTime / divisionLength);
+                if (activeNote == null)
+                    return false;
 
-                    endTime = Mathf.Max(activeNote.start + minNoteTime, endTime);
-                    if (endTime == activeNote.end)
-                        return false;
-                    activeNote.end = endTime;
-                    CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote],
-                                                    allNotes.GetArrayElementAtIndex(pressNote));
-                    sequencer.NoteOff(activeNote.note);
-
-                    return true;
-                }
+                newActiveTime = Mathf.Max(activeNote.start + minNoteTime, newActiveTime);
+                bool redraw = activeTime == newActiveTime;
+                activeTime = newActiveTime;
+                return redraw;
             }
             else if (mode == Mode.kAdding)
             {
@@ -249,9 +225,15 @@ namespace AudioHelm
                 Undo.RecordObject(sequencer, "Move Note Start");
 
                 if (activeNote != null)
-                    sequencer.ClampNotesInRange(pressNote, activeNote.start, activeNote.end, activeNote);
+                {
+                    float newStart = Mathf.Min(activeNote.end - minNoteTime, activeTime);
+                    sequencer.ClampNotesInRange(pressNote, newStart, activeNote.end, activeNote);
 
-                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
+                    activeNote.start = newStart;
+                }
+
+                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote],
+                                                allNotes.GetArrayElementAtIndex(pressNote));
                 sequencer.NoteOff(pressNote);
             }
             else if (mode == Mode.kDraggingEnd)
@@ -259,9 +241,15 @@ namespace AudioHelm
                 Undo.RecordObject(sequencer, "Move Note End");
 
                 if (activeNote != null)
-                    sequencer.ClampNotesInRange(pressNote, activeNote.start, activeNote.end, activeNote);
+                {
+                    float newEnd = Mathf.Max(activeNote.start + minNoteTime, activeTime);
+                    sequencer.ClampNotesInRange(pressNote, activeNote.start, newEnd, activeNote);
 
-                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
+                    activeNote.end = newEnd;
+                }
+                
+                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote],
+                                                allNotes.GetArrayElementAtIndex(pressNote));
                 sequencer.NoteOff(pressNote);
             }
             else if (mode == Mode.kAdding)
@@ -438,7 +426,9 @@ namespace AudioHelm
                     if (Utils.RangesOverlap(note.start, note.end, pressStart, pressEnd))
                         color = deletingCell;
                 }
-                DrawNote(note.note, note.start / divisionLength, note.end / divisionLength, color);
+
+                if ((mode != Mode.kDraggingEnd && mode != Mode.kDraggingStart) || activeNote != note)
+                    DrawNote(note.note, note.start / divisionLength, note.end / divisionLength, color);
             }
         }
 
@@ -472,9 +462,15 @@ namespace AudioHelm
 
         void DrawPressedNotes(float divisionLength)
         {
-            if (mode == Mode.kDraggingStart || mode == Mode.kDraggingEnd)
+            if (mode == Mode.kDraggingStart)
             {
-                DrawNote(activeNote.note, activeNote.start / divisionLength, activeNote.end / divisionLength, pressedCell);
+                DrawNote(activeNote.note, activeTime / divisionLength,
+                         activeNote.end / divisionLength, pressedCell);
+            }
+            else if (mode == Mode.kDraggingEnd)
+            {
+                DrawNote(activeNote.note, activeNote.start / divisionLength,
+                         activeTime / divisionLength, pressedCell);
             }
             else if (mode == Mode.kAdding)
             {
