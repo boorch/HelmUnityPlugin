@@ -19,7 +19,7 @@ namespace AudioHelm
         public void Pulse(float amount)
         {
             progress = Mathf.Max(progress, Mathf.Clamp(amount, 0.0f, 1.0f));
-            render = GetComponent<Renderer>();
+            render = GetComponentInChildren<Renderer>();
             rawImage = GetComponent<RawImage>();
         }
 
