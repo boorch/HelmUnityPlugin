@@ -16,12 +16,12 @@ namespace AudioHelm
         public delegate void NoteAction(Note note);
 
         /// <summary>
-        /// Event for a note on. Will trigger within a frame of the audio note on.
+        /// Event hook for a note on event.
         /// </summary>
         public event NoteAction OnNoteOn;
 
         /// <summary>
-        /// Event for a note off. Will trigger within a frame of the audio note off.
+        /// Event hook for a note off event.
         /// </summary>
         public event NoteAction OnNoteOff;
 
@@ -522,17 +522,19 @@ namespace AudioHelm
             currentIndex = (int)(GetSequencerPosition() / GetDivisionLength());
 
             List<Note> noteOns = GetAllNoteOnsInRange(lastSequencerPosition, nextPosition);
-            List<Note> noteOffs = GetAllNoteOffsInRange(lastSequencerPosition, nextPosition);
-
             foreach (Note note in noteOns)
             {
                 if (OnNoteOn != null)
                     OnNoteOn(note);
+                note.TriggerNoteOnEvent();
             }
+
+            List<Note> noteOffs = GetAllNoteOffsInRange(lastSequencerPosition, nextPosition);
             foreach (Note note in noteOffs)
             {
                 if (OnNoteOff != null)
                     OnNoteOff(note);
+                note.TriggerNoteOffEvent();
             }
 
             lastSequencerPosition = nextPosition;

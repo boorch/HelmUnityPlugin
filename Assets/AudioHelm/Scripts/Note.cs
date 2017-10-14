@@ -13,6 +13,18 @@ namespace AudioHelm
     [System.Serializable]
     public class Note : ISerializationCallbackReceiver
     {
+        public delegate void NoteAction(Note note);
+
+        /// <summary>
+        /// Event hook for a note on event.
+        /// </summary>
+        public event NoteAction OnNoteOn;
+
+        /// <summary>
+        /// Event hook for a note off event.
+        /// </summary>
+        public event NoteAction OnNoteOff;
+
         /// <summary>
         /// The MIDI note to play.
         /// </summary>
@@ -147,6 +159,24 @@ namespace AudioHelm
         bool FullyNative()
         {
             return HasNativeNote() && HasNativeSequencer();
+        }
+
+        /// <summary>
+        /// Sends out a note on event to all listeners.
+        /// </summary>
+        public void TriggerNoteOnEvent()
+        {
+            if (OnNoteOn != null)
+                OnNoteOn(this);
+        }
+
+        /// <summary>
+        /// Sends out a note off event to all listeners.
+        /// </summary>
+        public void TriggerNoteOffEvent()
+        {
+            if (OnNoteOff != null)
+                OnNoteOff(this);
         }
 
         /// <summary>
