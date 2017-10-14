@@ -58,6 +58,7 @@
      <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\NoteBlaster.cs" />
      <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\Oscillate.cs" />
      <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\PlatformCreator.cs" />
+     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\PulseImageOnNote.cs" />
      <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\RepetitiveSpawner.cs" />
      <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\SequenceGenerator.cs" />
      <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\SetHelmParameter.cs" />
