@@ -132,8 +132,7 @@ namespace AudioHelm
 
             if (windowMax >= sequencerTime)
                 windowMax -= sequencerTime;
-
-
+            
             float startSearch = (float)(lastWindowTime / sixteenthTime);
             float endSearch = (float)(windowMax / sixteenthTime);
             List<Note> notes = GetAllNoteOnsInRange(startSearch, endSearch);
