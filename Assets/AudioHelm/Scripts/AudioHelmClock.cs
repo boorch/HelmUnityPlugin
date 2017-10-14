@@ -31,6 +31,7 @@ namespace AudioHelm
             set
             {
                 bpm_ = value;
+                SetGlobalBpm();
             }
         }
 

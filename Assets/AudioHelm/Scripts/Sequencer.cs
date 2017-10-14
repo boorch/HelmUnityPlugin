@@ -151,7 +151,9 @@ namespace AudioHelm
         protected void AddSortedNoteEvents(Note note)
         {
             sortedNoteOns.Add(NoteOnPosition(note), note);
-            sortedNoteOffs.Add(NoteOffPosition(note), note);
+            NotePosition offPosition = NoteOffPosition(note);
+            if (!sortedNoteOffs.ContainsKey(offPosition))
+                sortedNoteOffs.Add(offPosition, note);
         }
 
         /// <summary>
