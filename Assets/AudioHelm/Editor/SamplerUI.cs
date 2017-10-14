@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Matt Tytel
+// Copyright 2017 Matt Tytel
 
 using UnityEditor;
 using UnityEngine;
@@ -25,7 +25,7 @@ namespace AudioHelm
         {
             numVoices = serializedObject.FindProperty("numVoices");
             velocityTracking = serializedObject.FindProperty("velocityTracking");
-            useNoteOff = serializedObject.FindProperty("useNoteOff");
+            useNoteOff = serializedObject.FindProperty("useNoteOff_");
             keyzones = serializedObject.FindProperty("keyzones");
         }
 
@@ -56,9 +56,12 @@ namespace AudioHelm
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
-            EditorGUILayout.IntSlider(numVoices, 1, 16);
+            EditorGUILayout.IntSlider(numVoices, 2, 20);
             EditorGUILayout.Slider(velocityTracking, 0.0f, 1.0f);
-            EditorGUILayout.PropertyField(useNoteOff);
+            EditorGUI.BeginChangeCheck();
+            useNoteOff.boolValue = EditorGUILayout.Toggle("Use Note Off", useNoteOff.boolValue);
+            if (EditorGUI.EndChangeCheck() && useNoteOff.boolValue)
+                sampler.AllNotesOff();
             serializedObject.ApplyModifiedProperties();
         }
     }

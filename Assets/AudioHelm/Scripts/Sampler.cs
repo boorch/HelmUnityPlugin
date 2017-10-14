@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Matt Tytel
+// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System;
@@ -50,14 +50,28 @@ namespace AudioHelm
         /// Increase this if your voices are cutting out from new voices coming in.
         /// </summary>
         [Tooltip("Total number of concurrently playing sounds from this Sampler (polyphony). " +
-                 "Increase this if your voices are cutting out from new voices coming in.")]
-        public int numVoices = 2;
+                 "Increase this if your voices are cutting out unexpectedly.")]
+        public int numVoices = 8;
 
         /// <summary>
         /// Does a voice silence when it gets a note off event?
         /// </summary>
         [Tooltip("Does a voice silence when it gets a note off event?")]
-        public bool useNoteOff = false;
+        [SerializeField]
+        private bool useNoteOff_;
+        public bool useNoteOff
+        {
+            get
+            {
+                return useNoteOff_;
+            }
+            set
+            {
+                useNoteOff_ = value;
+                if (useNoteOff_)
+                    AllNotesOff();
+            }
+        }
 
         int audioIndex = 0;
         readonly List<ActiveNote> activeNotes = new List<ActiveNote>();
@@ -206,10 +220,11 @@ namespace AudioHelm
             activeNotes.Clear();
         }
 
-        IEnumerator TurnVoiceOffInSeconds(AudioSource audioSource, float seconds)
+        IEnumerator TurnVoiceOffInSeconds(int note, float seconds)
         {
             yield return new WaitForSeconds(seconds);
-            audioSource.volume = 0.0f;
+
+            DoNoteOff(note);
         }
 
         /// <summary>
@@ -247,18 +262,24 @@ namespace AudioHelm
         public void NoteOnScheduled(int note, float velocity, double timeToStart, double timeToEnd)
         {
             List<AudioSource> audioSources = GetPreppedAudioSources(note, velocity);
+            activeNotes.Add(new ActiveNote(note, audioSources, AudioSettings.dspTime + timeToStart));
+
+            double length = timeToEnd - timeToStart;
+            if (!useNoteOff)
+                length = Mathf.Infinity;
+
             foreach (AudioSource audioSource in audioSources)
             {
-                double length = timeToEnd - timeToStart;
-                if (!useNoteOff)
-                    length = Mathf.Infinity;
                 if (!audioSource.loop)
                     length = Math.Min(length, (audioSource.clip.length - endEarlyTime) / audioSource.pitch);
 
                 audioSource.PlayScheduled(AudioSettings.dspTime + timeToStart);
-                TurnVoiceOffInSeconds(audioSource, (float)(timeToStart + length));
-                // audioSource.SetScheduledEndTime(AudioSettings.dspTime + timeToStart + length);
+                if (!useNoteOff)
+                    audioSource.SetScheduledEndTime(AudioSettings.dspTime + timeToStart + length);
             }
+
+            if (useNoteOff)
+                StartCoroutine(TurnVoiceOffInSeconds(note, (float)(timeToStart + length)));
         }
 
         ActiveNote FindActiveNote(int note)
@@ -280,7 +301,13 @@ namespace AudioHelm
             if (!useNoteOff)
                 return;
 
+            DoNoteOff(note);
+        }
+
+        void DoNoteOff(int note)
+        {
             ActiveNote activeNote = FindActiveNote(note);
+
             if (activeNote == null || AudioSettings.dspTime < activeNote.startTime)
                 return;
 

@@ -18,7 +18,7 @@ namespace AudioHelm
         double lastWindowTime = -0.01;
         bool waitTillNextCycle = false;
 
-        const float lookaheadTime = 0.2f;
+        const float lookaheadTime = 0.1f;
 
         void Awake()
         {

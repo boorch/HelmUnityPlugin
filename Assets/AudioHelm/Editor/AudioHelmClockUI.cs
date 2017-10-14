@@ -23,7 +23,6 @@ namespace AudioHelm
         public override void OnInspectorGUI()
         {
             serialized.Update();
-            EditorGUI.BeginChangeCheck();
             bpm.floatValue = EditorGUILayout.Slider("BPM", bpm.floatValue, kMinBpm, kMaxBpm);
             serialized.ApplyModifiedProperties();
         }
