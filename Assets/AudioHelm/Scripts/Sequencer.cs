@@ -13,6 +13,9 @@ namespace AudioHelm
     /// </summary>
     public abstract class Sequencer : MonoBehaviour, NoteHandler, ISerializationCallbackReceiver
     {
+        /// <summary>
+        /// A note event type.
+        /// </summary>
         public delegate void NoteAction(Note note);
 
         /// <summary>
@@ -42,30 +45,30 @@ namespace AudioHelm
         {
             public int Compare(NotePosition left, NotePosition right)
             {
-                if (left.position < right.position)
+                if (left.position_ < right.position_)
                     return -1;
 
-                if (left.position > right.position)
+                if (left.position_ > right.position_)
                     return 1;
 
-                if (left.note < right.note)
+                if (left.note_ < right.note_)
                     return -1;
 
-                if (left.note > right.note)
+                if (left.note_ > right.note_)
                     return 1;
                 return 0;
             }
         }
 
-        protected struct NotePosition
+        struct NotePosition
         {
-            public float position;
-            public int note;
+            public float position_;
+            public int note_;
 
-            public NotePosition(float position_, int note_)
+            public NotePosition(float position, int note)
             {
-                position = position_;
-                note = note_;
+                position_ = position;
+                note_ = note;
             }
         }
 
@@ -112,9 +115,9 @@ namespace AudioHelm
         static NoteComparer noteComparer = new NoteComparer();
         static NotePositionComparer notePositionComparer = new NotePositionComparer();
 
-        protected SortedList<NotePosition, Note> sortedNoteOns =
+        SortedList<NotePosition, Note> sortedNoteOns =
             new SortedList<NotePosition, Note>(notePositionComparer);
-        protected SortedList<NotePosition, Note> sortedNoteOffs =
+        SortedList<NotePosition, Note> sortedNoteOffs =
             new SortedList<NotePosition, Note>(notePositionComparer);
 
         private float lastSequencerPosition = -1.0f;
@@ -132,12 +135,12 @@ namespace AudioHelm
             InitNoteRows();
         }
 
-        protected NotePosition NoteOnPosition(Note note)
+        NotePosition NoteOnPosition(Note note)
         {
             return new NotePosition(note.start, note.note);
         }
 
-        protected NotePosition NoteOffPosition(Note note)
+        NotePosition NoteOffPosition(Note note)
         {
             return new NotePosition(note.end, note.note);
         }
@@ -251,6 +254,7 @@ namespace AudioHelm
         {
             allNotes[note.note].notes.Remove(note);
             RemoveSortedNoteEvents(note);
+            note.parent = null;
             note.TryDelete();
         }
 
@@ -284,6 +288,28 @@ namespace AudioHelm
                     return noteObject;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Get all Note objects that have a note on in the given range in this sequencer.
+        /// </summary>
+        /// <returns>A list of all Note objects with note ons in the given range.</returns>
+        /// <param name="start">The search start position measured in sixteenths.</param>
+        /// <param name="end">The search end position measured in sixteenths.</param>
+        public List<Note> GetAllNoteOnsInRange(float start, float end)
+        {
+            return GetAllNoteEventsInRange(start, end, sortedNoteOns);
+        }
+
+        /// <summary>
+        /// Get all Note objects that have a note off in the given range in this sequencer.
+        /// </summary>
+        /// <returns>A list of all Note objects with note offs in the given range.</returns>
+        /// <param name="start">The search start position measured in sixteenths.</param>
+        /// <param name="end">The search end position measured in sixteenths.</param>
+        public List<Note> GetAllNoteOffsInRange(float start, float end)
+        {
+            return GetAllNoteEventsInRange(start, end, sortedNoteOffs);
         }
 
         /// <summary>
@@ -448,7 +474,10 @@ namespace AudioHelm
                 if (allNotes[i] != null)
                 {
                     foreach (Note note in allNotes[i].notes)
+                    {
                         note.TryDelete();
+                        note.parent = null;
+                    }
 
                     allNotes[i].notes.Clear();
                 }
@@ -483,8 +512,8 @@ namespace AudioHelm
             return sequencerTime - cycles * length;
         }
 
-        protected List<Note> GetAllNoteEventsInRange(float start, float end,
-                                                     SortedList<NotePosition, Note> events)
+        List<Note> GetAllNoteEventsInRange(float start, float end,
+                                           SortedList<NotePosition, Note> events)
         {
             List<Note> notesInRange = new List<Note>();
             NotePosition startSearch = new NotePosition(start, -2);
@@ -505,17 +534,6 @@ namespace AudioHelm
             events.Remove(endSearch);
 
             return notesInRange;
-        }
-
-
-        protected List<Note> GetAllNoteOnsInRange(float start, float end)
-        {
-            return GetAllNoteEventsInRange(start, end, sortedNoteOns);
-        }
-
-        protected List<Note> GetAllNoteOffsInRange(float start, float end)
-        {
-            return GetAllNoteEventsInRange(start, end, sortedNoteOffs);
         }
 
         protected void UpdatePosition()

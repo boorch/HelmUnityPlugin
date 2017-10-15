@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AudioHelm
 {
     /// <summary>
-    /// ## [Switch to Manual](../manual/class_audio_helm_1_1_helm_bpm.html)<br>
+    /// ## [Switch to Manual](../manual/class_audio_helm_1_1_audio_helm_clock.html)<br>
     /// Sets the BPM (beats per minute) of all sequencers and native Helm instances.
     /// </summary>
     [AddComponentMenu("Audio Helm/Audio Helm Clock")]
