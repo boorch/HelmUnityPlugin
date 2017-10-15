@@ -162,11 +162,6 @@ namespace AudioHelm
             enabled = true;
         }
 
-        /// <summary>
-        /// Starts the sequencer at a given time in the future.
-        /// This is synced to AudioSettings.dspTime.
-        /// </summary>
-        /// <param name="dspTime">The time to start the sequencer, synced to AudioSettings.dspTime.</param>
         public override void StartScheduled(double dspTime)
         {
             if (reference != IntPtr.Zero)
@@ -180,10 +175,6 @@ namespace AudioHelm
             }
         }
 
-        /// <summary>
-        /// Starts the sequencer on the start next cycle.
-        /// This is useful if you have multiple synced sequencers and you want to start this one on the next go around.
-        /// </summary>
         public override void StartOnNextCycle()
         {
             double timeSinceSync = AudioSettings.dspTime - syncTime;

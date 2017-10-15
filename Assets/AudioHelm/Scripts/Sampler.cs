@@ -53,12 +53,12 @@ namespace AudioHelm
                  "Increase this if your voices are cutting out unexpectedly.")]
         public int numVoices = 8;
 
-        /// <summary>
-        /// Does a voice silence when it gets a note off event?
-        /// </summary>
         [Tooltip("Does a voice silence when it gets a note off event?")]
         [SerializeField]
         private bool useNoteOff_;
+        /// <summary>
+        /// Does a voice silence when it gets a note off event?
+        /// </summary>
         public bool useNoteOff
         {
             get

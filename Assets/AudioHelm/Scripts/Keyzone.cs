@@ -14,12 +14,41 @@ namespace AudioHelm
     [System.Serializable]
     public class Keyzone
     {
+        /// <summary>
+        /// The audio clip to play for this keyzone.
+        /// </summary>
         public AudioClip audioClip;
+
+        /// <summary>
+        /// The mixer to send the audio clip to when played.
+        /// </summary>
         public AudioMixerGroup mixer;
+
+        /// <summary>
+        /// The MIDI key to pitch shift this note from.
+        /// If a higher note is played, the sample is pitched up.
+        /// If a lower note is played, the sample is pitched down.
+        /// </summary>
         public int rootKey = Utils.kMiddleC;
+
+        /// <summary>
+        /// The minimum MIDI key this Keyzone is valid for.
+        /// </summary>
         public int minKey = 0;
+
+        /// <summary>
+        /// The maximum MIDI key this Keyzone is valid for.
+        /// </summary>
         public int maxKey = Utils.kMidiSize - 1;
+
+        /// <summary>
+        /// The minimum velocity this Keyzone is valid for. [0.0, 1.0f]
+        /// </summary>
         public float minVelocity = 0.0f;
+
+        /// <summary>
+        /// The maximum velocity this Keyzone is valid for. [0.0, 1.0f]
+        /// </summary>
         public float maxVelocity = 1.0f;
 
         /// <summary>

@@ -14,9 +14,16 @@ namespace AudioHelm
     public abstract class Sequencer : MonoBehaviour, NoteHandler, ISerializationCallbackReceiver
     {
         /// <summary>
-        /// A note event type.
+        /// A note event.
         /// </summary>
+        /// <param name="note">The Note object that triggered the event.</param>
         public delegate void NoteAction(Note note);
+
+        /// <summary>
+        /// A beat event.
+        /// </summary>
+        /// <param name="index">The current beat index.</param>
+        public delegate void BeatAction(int index);
 
         /// <summary>
         /// Event hook for a note on event.
@@ -27,6 +34,11 @@ namespace AudioHelm
         /// Event hook for a note off event.
         /// </summary>
         public event NoteAction OnNoteOff;
+
+        /// <summary>
+        /// Event hook for a beat event.
+        /// </summary>
+        public event BeatAction OnBeat;
 
         class NoteComparer : IComparer<Note>
         {
@@ -122,10 +134,35 @@ namespace AudioHelm
 
         private float lastSequencerPosition = -1.0f;
 
+        /// <summary>
+        /// Triggers note off events for all notes currently on in the instrument.
+        /// </summary>
         public abstract void AllNotesOff();
+
+        /// <summary>
+        /// Triggers a note on event for the instrument.
+        /// </summary>
+        /// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
+        /// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
         public abstract void NoteOn(int note, float velocity = 1.0f);
+
+        /// <summary>
+        /// Triggers a note off event for the instrument.
+        /// </summary>
+        /// <param name="note">The MIDI keyboard note to turn off. [0, 127]</param>
         public abstract void NoteOff(int note);
+
+        /// <summary>
+        /// Starts the sequencer at a given time in the future.
+        /// This is synced to AudioSettings.dspTime.
+        /// </summary>
+        /// <param name="dspTime">The time to start the sequencer, synced to AudioSettings.dspTime.</param>
         public abstract void StartScheduled(double dspTime);
+
+        /// <summary>
+        /// Starts the sequencer on the start next cycle.
+        /// This is useful if you have multiple synced sequencers and you want to start this one on the next go around.
+        /// </summary>
         public abstract void StartOnNextCycle();
 
         public void OnBeforeSerialize() { }
@@ -536,10 +573,20 @@ namespace AudioHelm
             return notesInRange;
         }
 
+        void UpdateIndex()
+        {
+            int nextIndex = (int)(GetSequencerPosition() / GetDivisionLength());
+            if (currentIndex != nextIndex && OnBeat != null)
+                OnBeat(nextIndex);
+            currentIndex = nextIndex;
+        }
+
+        /// <summary>
+        /// Update the position of the sequencer and fire any events that have occurred.
+        /// </summary>
         protected void UpdatePosition()
         {
             float nextPosition = (float)GetSequencerPosition();
-            currentIndex = (int)(GetSequencerPosition() / GetDivisionLength());
 
             List<Note> noteOns = GetAllNoteOnsInRange(lastSequencerPosition, nextPosition);
             foreach (Note note in noteOns)

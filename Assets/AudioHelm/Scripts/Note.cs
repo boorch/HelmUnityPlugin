@@ -13,6 +13,10 @@ namespace AudioHelm
     [System.Serializable]
     public class Note : ISerializationCallbackReceiver
     {
+        /// <summary>
+        /// A note event.
+        /// </summary>
+        /// <param name="note">The Note object that triggered the event.</param>
         public delegate void NoteAction(Note note);
 
         /// <summary>
@@ -25,11 +29,11 @@ namespace AudioHelm
         /// </summary>
         public event NoteAction OnNoteOff;
 
+        [SerializeField]
+        private int note_;
         /// <summary>
         /// The MIDI note to play.
         /// </summary>
-        [SerializeField]
-        private int note_;
         public int note
         {
             get
@@ -49,11 +53,11 @@ namespace AudioHelm
             }
         }
 
+        [SerializeField]
+        private float start_;
         /// <summary>
         /// The note on time measured in sixteenth notes.
         /// </summary>
-        [SerializeField]
-        private float start_;
         public float start
         {
             get
@@ -73,11 +77,11 @@ namespace AudioHelm
             }
         }
 
+        [SerializeField]
+        private float end_;
         /// <summary>
         /// The note off time measured in sixteenth notes.
         /// </summary>
-        [SerializeField]
-        private float end_;
         public float end
         {
             get
@@ -97,11 +101,11 @@ namespace AudioHelm
             }
         }
 
-        /// <summary>
-        /// The velocity of key press (how hard the note is hit).
-        /// </summary>
         [SerializeField]
         private float velocity_;
+        /// <summary>
+        /// The velocity of key press (how hard the note is hit). [0.0, 1.0]
+        /// </summary>
         public float velocity
         {
             get
