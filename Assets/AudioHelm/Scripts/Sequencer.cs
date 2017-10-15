@@ -4,7 +4,9 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Collections.Generic;
+#if !UNITY_IOS || UNITY_EDITOR
 using Sanford.Multimedia.Midi;
+#endif
 
 namespace AudioHelm
 {
@@ -440,6 +442,7 @@ namespace AudioHelm
             return noteObject;
         }
 
+        #if !UNITY_IOS || UNITY_EDITOR
         void ReadMidiTrack(Track midiTrack, int sequencerDivision)
         {
             Dictionary<int, float> noteTimes = new Dictionary<int, float>();
@@ -472,6 +475,7 @@ namespace AudioHelm
                 }
             }
         }
+        #endif
 
         // TODO: Get MIDI reading out of Beta.
         /// <summary>
@@ -481,12 +485,14 @@ namespace AudioHelm
         /// <param name="midiStream">The MIDI file stream.</param>
         public void ReadMidiFile(Stream midiStream)
         {
+            #if !UNITY_IOS || UNITY_EDITOR
             Clear();
             Sequence midiSequence = new Sequence(midiStream);
             length = 4 * midiSequence.GetLength() / midiSequence.Division;
 
             foreach (Track midiTrack in midiSequence)
                 ReadMidiTrack(midiTrack, midiSequence.Division);
+            #endif
         }
 
         /// <summary>
