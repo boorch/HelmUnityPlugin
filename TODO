@@ -2,6 +2,7 @@
 
 ## Future Features
 
+Turn on denormal flushing.
 PlayNoteScheduled
 Variable BPM
 Sequencer references player instead of on same game object?
@@ -11,6 +12,7 @@ ps4/xbox support?
 
 ## Known Issues
 
+Copying sequencer seems to break connection?
 Sequencer changes lock audio thread
 Loading MIDI Files doesn't work in build
 
