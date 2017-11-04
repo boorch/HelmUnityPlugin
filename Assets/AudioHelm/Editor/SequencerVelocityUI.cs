@@ -24,6 +24,8 @@ namespace AudioHelm
 
         float sixteenthWidth = 1.0f;
         float height = 1.0f;
+        float startTime = 0.0f;
+        float endTime = 1.0f;
 
         public SequencerVelocityUI(float left, float right)
         {
@@ -48,29 +50,28 @@ namespace AudioHelm
             float closest = 2.0f  * velocityHandleGrabWidth;
             float mouseX = mousePosition.x - rect.x - leftPadding;
             float mouseY = mousePosition.y - rect.y;
-            for (int i = sequencer.allNotes.Length - 1; i >= 0; --i)
-            {
-                foreach (Note note in sequencer.allNotes[i].notes)
+
+            List<Note> noteOns = sequencer.GetAllNoteOnsInRange(startTime, endTime);
+            foreach (Note note in noteOns)
+            {               
+                float x = sixteenthWidth * (note.start - startTime);
+                float yInv = note.velocity * (rect.height - velocityHandleWidth) + velocityHandleWidth / 2.0f;
+                float y = rect.height - yInv;
+                float xDiff = Mathf.Abs(x - mouseX);
+                float yDiff = Mathf.Abs(y - mouseY);
+                float diffTotal = xDiff + yDiff;
+
+                if (xDiff <= velocityHandleGrabWidth && yDiff <= velocityHandleGrabWidth && diffTotal < closest)
                 {
-                    float x = sixteenthWidth * note.start;
-                    float yInv = note.velocity * (rect.height - velocityHandleWidth) + velocityHandleWidth / 2.0f;
-                    float y = rect.height - yInv;
-                    float xDiff = Mathf.Abs(x - mouseX);
-                    float yDiff = Mathf.Abs(y - mouseY);
-                    float diffTotal = xDiff + yDiff;
+                    closest = diffTotal;
+                    currentNote = note;
 
-                    if (xDiff <= velocityHandleGrabWidth && yDiff <= velocityHandleGrabWidth && diffTotal < closest)
-                    {
-                        closest = diffTotal;
-                        currentNote = note;
-
-                        SerializedProperty serializedNoteRow = allNotes.GetArrayElementAtIndex(currentNote.note);
-                        SerializedProperty serializedNoteList = serializedNoteRow.FindPropertyRelative("notes");
-                        List<Note> noteList = sequencer.allNotes[currentNote.note].notes;
-                        int index = noteList.IndexOf(currentNote);
-                        if (index >= 0)
-                            currentNoteSerialized = serializedNoteList.GetArrayElementAtIndex(index);
-                    }
+                    SerializedProperty serializedNoteRow = allNotes.GetArrayElementAtIndex(currentNote.note);
+                    SerializedProperty serializedNoteList = serializedNoteRow.FindPropertyRelative("notes");
+                    List<Note> noteList = sequencer.allNotes[currentNote.note].notes;
+                    int index = noteList.IndexOf(currentNote);
+                    if (index >= 0)
+                        currentNoteSerialized = serializedNoteList.GetArrayElementAtIndex(index);
                 }
             }
 
@@ -91,8 +92,6 @@ namespace AudioHelm
         {
             Event evt = Event.current;
 
-            sixteenthWidth = (rect.width - rightPadding - leftPadding) / sequencer.length;
-
             float velocityMovementHeight = rect.height - velocityHandleWidth;
             float minVelocityY = rect.y + velocityHandleWidth;
             float velocity = 1.0f - (evt.mousePosition.y - minVelocityY) / velocityMovementHeight;
@@ -104,7 +103,7 @@ namespace AudioHelm
                 return true;
             }
 
-            if (evt.type == EventType.MouseDown && rect.Contains(evt.mousePosition))
+            if (evt.type == EventType.MouseDown)
             {
                 MouseDown(rect, sequencer, evt.mousePosition, allNotes);
                 MouseDrag(velocity, allNotes);
@@ -165,7 +164,9 @@ namespace AudioHelm
             activeArea.x += leftPadding;
             activeArea.width -= leftPadding + rightPadding;
 
-            sixteenthWidth = activeArea.width / sequencer.length;
+            startTime = start;
+            endTime = end;
+            sixteenthWidth = activeArea.width / (end - start);
             height = activeArea.height;
 
             EditorGUI.DrawRect(rect, background);
@@ -178,7 +179,10 @@ namespace AudioHelm
             GUI.BeginGroup(activeArea);
             DrawNoteVelocities(sequencer, start, end, activeArea.width);
             if (currentNote != null)
-                DrawNote(currentNote.start, currentNote.velocity, velocityActiveColor);
+            {
+                float percent = (currentNote.start - start) / (end - start);
+                DrawNote(percent * activeArea.width, currentNote.velocity, velocityActiveColor);
+            }
 
             GUI.EndGroup();
         }

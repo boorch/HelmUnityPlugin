@@ -26,6 +26,7 @@ namespace AudioHelm
             float loopPosition = sequencer.currentIndex;
             float relativePostition = sequencer.GetDivisionLength() * loopPosition / sequencer.length;
             float positionWidth = sequencer.GetDivisionLength() * activeArea.width / sequencer.length;
+            positionWidth = Mathf.Max(2.0f, positionWidth);
 
             EditorGUI.DrawRect(activeArea, Color.gray);
             Rect position = new Rect(relativePostition * activeArea.width + activeArea.x, activeArea.y, positionWidth, activeArea.height);

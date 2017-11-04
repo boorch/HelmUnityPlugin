@@ -119,6 +119,12 @@ namespace AudioHelm
         public NoteRow[] allNotes = new NoteRow[Utils.kMidiSize];
 
         /// <summary>
+        /// The x/y scroll position of the inspector sequencer piano roll.
+        /// </summary>
+        [NonSerialized]
+        public Vector2 scrollPosition = Vector2.zero;
+
+        /// <summary>
         /// The division of the graphical sequencer.
         /// </summary>
         [Tooltip("How often a bar or a division is placed in the sequencer.")]
@@ -293,8 +299,8 @@ namespace AudioHelm
         {
             allNotes[note.note].notes.Remove(note);
             RemoveSortedNoteEvents(note);
-            note.parent = null;
             note.TryDelete();
+            note.parent = null;
         }
 
         /// <summary>
