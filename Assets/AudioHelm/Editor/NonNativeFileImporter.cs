@@ -6,20 +6,16 @@ namespace AudioHelm
 {
     public class NonNativeFileImporter : AssetPostprocessor
     {
+        const string streamingFolder = "StreamingAssets/AudioHelm/";
+
         static bool ShouldImportFile(string asset)
         {
-            return asset.ToLower().EndsWith(".mid");
-        }
-
-        static string GetResourceNameForAsset(string asset)
-        {
-            string extension = Path.GetExtension(asset).Substring(1).ToLower();
-            return extension + "_" + Path.GetFileNameWithoutExtension(asset);
+            return asset.ToLower().EndsWith(".mid") | asset.ToLower().EndsWith(".helm");
         }
 
         static string GetFolderPath()
         {
-            return Application.dataPath + "/AudioHelm/Resources/";
+            return Application.dataPath + "/" + streamingFolder;
         }
 
         static void CreateFolderPath()
@@ -28,14 +24,18 @@ namespace AudioHelm
                 Directory.CreateDirectory(GetFolderPath());
         }
 
-        static string GetByteFilePath(string asset)
+        static string GetFilePath(string asset)
         {
-            return GetFolderPath() + GetResourceNameForAsset(asset) + ".bytes";
+            string extension = Path.GetExtension(asset).ToLower().Substring(1);
+            return GetFolderPath() + extension + "_" + Path.GetFileNameWithoutExtension(asset);
         }
 
         static void ImportNonNativeFile(string asset)
         {
-            string newFilePath = GetByteFilePath(asset);
+            if (asset.Contains(streamingFolder))
+                return;
+            
+            string newFilePath = GetFilePath(asset);
 
             File.Copy(asset, newFilePath, true);
             AssetDatabase.Refresh(ImportAssetOptions.Default);
@@ -45,7 +45,7 @@ namespace AudioHelm
         {
             CreateFolderPath();
             if (ShouldImportFile(asset))
-                File.Delete(GetByteFilePath(asset));
+                File.Delete(GetFilePath(asset));
         }
 
         static void TryCreate(string asset)

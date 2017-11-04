@@ -15,27 +15,34 @@ namespace AudioHelm
             kAdding,
             kDeleting,
             kKeyboarding,
+            kChangingVelocity,
             kDraggingStart,
             kDraggingEnd,
             kNumModes
         }
 
+        SequencerVelocityUI velocities = null;
+        const int velocitySectionHeight = 40;
+
         public SequencerUI(float keyboard, float scroll)
         {
             keyboardWidth = keyboard;
             rightPadding = scroll;
+            bottomPadding = scroll;
+            velocities = new SequencerVelocityUI(keyboardWidth, rightPadding);
         }
 
         public int minKey = 0;
         public int maxKey = Utils.kMidiSize - 1;
 
-        const float grabResizeWidth = 5.0f;
+        const float grabResizeWidth = 4.0f;
         const float minNoteTime = 0.15f;
         const float defaultVelocity = 0.8f;
         const float dragDeltaStartRounding = 0.8f;
 
         float keyboardWidth = 20.0f;
         float rightPadding = 15.0f;
+        float bottomPadding = 15.0f;
 
         Mode mode = Mode.kWaiting;
         Note activeNote = null;
@@ -70,6 +77,7 @@ namespace AudioHelm
         int numCols = 16;
         int notesPerBeat = 4;
         float lastHeight = 0;
+        const float minColWidth = 14.0f;
         float colWidth = 30.0f;
 
         Vector2 scrollPosition;
@@ -81,7 +89,8 @@ namespace AudioHelm
 
             Vector2 localPosition = mousePosition - rect.position + scrollPosition;
             float note = minKey + numRows - Mathf.Floor((localPosition.y / rowHeight)) - 1;
-            float time = sequencerLength * (localPosition.x - keyboardWidth) / (rect.width - keyboardWidth - rightPadding);
+            float time = sequencerLength * (localPosition.x - keyboardWidth) /
+                         (numCols * colWidth);
             return new Vector2(time, note);
         }
 
@@ -106,6 +115,7 @@ namespace AudioHelm
                 sequencer.NoteOff(pressedKey);
                 pressedKey = -1;
             }
+
             if (time < 0.0f)
             {
                 mode = Mode.kKeyboarding;
@@ -258,11 +268,13 @@ namespace AudioHelm
                 int startDragIndex = Mathf.FloorToInt(startTime / divisionLength);
                 int endDragIndex = Mathf.CeilToInt(endTime / divisionLength);
 
-                sequencer.ClampNotesInRange(pressNote, startDragIndex * divisionLength, endDragIndex * divisionLength);
+                sequencer.ClampNotesInRange(pressNote, startDragIndex * divisionLength,
+                                            endDragIndex * divisionLength);
                 for (int i = startDragIndex; i < endDragIndex; ++i)
                     sequencer.AddNote(pressNote, i * divisionLength, (i + 1) * divisionLength, defaultVelocity);
 
-                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote], allNotes.GetArrayElementAtIndex(pressNote));
+                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote],
+                                                allNotes.GetArrayElementAtIndex(pressNote));
                 sequencer.NoteOff(pressNote);
             }
             else if (mode == Mode.kDeleting)
@@ -285,7 +297,10 @@ namespace AudioHelm
 
             if (evt.type == EventType.MouseUp && mouseActive)
             {
-                MouseUp(time, sequencer, allNotes);
+                if (mode == Mode.kChangingVelocity)
+                    velocities.DoVelocityEvents(GetVelocityRect(rect), sequencer, allNotes);
+                else
+                    MouseUp(time, sequencer, allNotes);
                 return true;
             }
 
@@ -295,22 +310,39 @@ namespace AudioHelm
 
             Rect ignoreScrollRect = new Rect(rect);
             ignoreScrollRect.width -= rightPadding;
+            ignoreScrollRect.height -= bottomPadding;
             if (evt.type == EventType.MouseDown && ignoreScrollRect.Contains(evt.mousePosition))
-                MouseDown(note, time, sequencer, allNotes);
+            {
+                ignoreScrollRect.height -= velocitySectionHeight;
+                if (ignoreScrollRect.Contains(evt.mousePosition))
+                    MouseDown(note, time, sequencer, allNotes);
+                else
+                {
+                    mode = Mode.kChangingVelocity;
+                    velocities.DoVelocityEvents(GetVelocityRect(rect), sequencer, allNotes);
+                }
+            }
             else if (evt.type == EventType.MouseDrag && mouseActive)
+            {
+                if (mode == Mode.kChangingVelocity)
+                    return velocities.DoVelocityEvents(GetVelocityRect(rect), sequencer, allNotes);
                 return MouseDrag(note, time, sequencer, allNotes);
+            }
             return true;
         }
 
-        void DrawNoteRows(Rect rect)
+        void DrawNoteRows(Rect drawableArea)
         {
             GUIStyle cStyle = new GUIStyle();
             cStyle.fontSize = 8;
             cStyle.alignment = TextAnchor.MiddleRight;
             cStyle.padding = new RectOffset(0, 1, 0, 0);
 
-            float y = 0.0f;
-            for (int i = maxKey; i >= minKey; --i)
+            int lastKey = Mathf.Min(maxKey, maxKey - Mathf.FloorToInt(scrollPosition.y / rowHeight));
+            int firstKey = minKey - Mathf.CeilToInt((scrollPosition.y + drawableArea.height) / rowHeight);
+            firstKey = Mathf.Max(minKey, firstKey);
+            float y = (maxKey - lastKey) * rowHeight;
+            for (int i = lastKey; i >= firstKey; --i)
             {
                 Color keyColor = whiteKey;
                 Color rowColor = emptyCellWhite;
@@ -326,8 +358,9 @@ namespace AudioHelm
                 else if (pressedKey == i)
                     keyColor = whiteKeyPressed;
 
-                Rect key = new Rect(0.0f, y, keyboardWidth, rowHeight - 1);
-                Rect row = new Rect(keyboardWidth, y, rect.width - keyboardWidth, rowHeight);
+                Rect key = new Rect(scrollPosition.x, y, keyboardWidth, rowHeight - 1);
+                Rect row = new Rect(scrollPosition.x + keyboardWidth, y,
+                                    drawableArea.width - keyboardWidth, rowHeight);
                 EditorGUI.DrawRect(key, keyColor);
                 EditorGUI.DrawRect(new Rect(key.x, key.yMax, key.width, 1), Color.black);
                 if (i % Utils.kNotesPerOctave == 0)
@@ -339,28 +372,34 @@ namespace AudioHelm
             }
         }
 
-        void DrawBarHighlights(Rect rect)
+        void DrawBarHighlights(Rect drawableArea)
         {
-            float x = keyboardWidth;
-            int numBars = 1 + (numCols - 1) / notesPerBeat;
             float barWidth = colWidth * notesPerBeat;
-            for (int i = 0; i < numBars; ++i)
+
+            int startBar = Mathf.FloorToInt(scrollPosition.x / barWidth);
+            int endBar = Mathf.FloorToInt((scrollPosition.x + drawableArea.width) / barWidth);
+            float x = keyboardWidth + startBar * barWidth;
+            for (int i = startBar; i <= endBar; ++i)
             {
                 if (i % 2 != 0)
                 {
-                    Rect bar = new Rect(x, 0, barWidth, rect.height);
+                    float startX = Mathf.Max(scrollPosition.x + keyboardWidth, x);
+                    float width = x + barWidth - startX;
+                    Rect bar = new Rect(startX, scrollPosition.y, width, drawableArea.height);
                     EditorGUI.DrawRect(bar, lightenColor);
                 }
                 x += barWidth;
             }
         }
 
-        void DrawNoteDivisionLines(Rect rect)
+        void DrawNoteDivisionLines(Rect drawableArea)
         {
-            float x = keyboardWidth;
-            for (int i = 0; i <= numCols; ++i)
+            int startCol = Mathf.CeilToInt(scrollPosition.x / colWidth);
+            int endCol = Mathf.FloorToInt((scrollPosition.x + drawableArea.width) / colWidth);
+            float x = keyboardWidth + startCol * colWidth;
+            for (int i = startCol; i <= endCol; ++i)
             {
-                Rect line = new Rect(x, 0, 1.0f, rect.height);
+                Rect line = new Rect(x, scrollPosition.y, 1.0f, drawableArea.height);
                 if (i % notesPerBeat == 0)
                     EditorGUI.DrawRect(line, beatDivision);
                 else
@@ -384,39 +423,24 @@ namespace AudioHelm
             EditorGUIUtility.AddCursorRect(rightResizeRect, MouseCursor.SplitResizeLeftRight);
         }
 
-        void DrawRowNotes(SerializedProperty notes, float divisionLength)
+        void DrawRowNotes(List<Note> notes, float divisionLength, Rect drawableArea)
         {
             if (notes == null)
                 return;
-
-            for (int i = 0; i < notes.arraySize; ++i)
-            {
-                SerializedProperty serializedNote = notes.GetArrayElementAtIndex(i);
-                int note = serializedNote.FindPropertyRelative("note_").intValue;
-                float velocity = serializedNote.FindPropertyRelative("velocity_").floatValue;
-                float start = serializedNote.FindPropertyRelative("start_").floatValue;
-                float end = serializedNote.FindPropertyRelative("end_").floatValue;
-
-                Color color = Color.Lerp(fullCellZeroVelocity, fullCellFullVelocity, velocity);
-                if (mode == Mode.kDeleting && pressNote == note)
-                {
-                    float pressStart = Mathf.Min(pressTime, dragTime);
-                    float pressEnd = Mathf.Max(pressTime, dragTime);
-
-                    if (Utils.RangesOverlap(start, end, pressStart, pressEnd))
-                        color = deletingCell;
-                }
-                DrawNote(note, start / divisionLength, end / divisionLength, color);
-            }
-        }
-
-        void DrawRowNotes(List<Note> notes, float divisionLength)
-        {
-            if (notes == null)
-                return;
+            
+            float min = scrollPosition.x / colWidth;
+            float max = (scrollPosition.x + drawableArea.width) / colWidth;
+            int lastKey = Mathf.Min(maxKey, maxKey - Mathf.FloorToInt(scrollPosition.y / rowHeight));
+            int firstKey = minKey - Mathf.CeilToInt((scrollPosition.y + drawableArea.height) / rowHeight);
+            firstKey = Mathf.Max(minKey, firstKey);
 
             foreach (Note note in notes)
             {
+                if (note.note > lastKey || note.note < firstKey)
+                    continue;
+                float start = Mathf.Max(note.start, min);
+                float end = Mathf.Min(note.end, max);
+
                 Color color = Color.Lerp(fullCellZeroVelocity, fullCellFullVelocity, note.velocity);
                 if (mode == Mode.kDeleting && pressNote == note.note)
                 {
@@ -428,36 +452,22 @@ namespace AudioHelm
                 }
 
                 if ((mode != Mode.kDraggingEnd && mode != Mode.kDraggingStart) || activeNote != note)
-                    DrawNote(note.note, note.start / divisionLength, note.end / divisionLength, color);
+                    DrawNote(note.note, start / divisionLength, end / divisionLength, color);
             }
         }
 
-        void DrawActiveNotes(Sequencer sequencer, SerializedProperty allNotes, float divisionLength)
+        void DrawActiveNotes(Sequencer sequencer, float divisionLength, Rect drawableArea)
         {
             if (sequencer.allNotes == null)
                 return;
 
-            for (int i = minKey; i <= maxKey; ++i)
-            {
-                SerializedProperty row = allNotes.GetArrayElementAtIndex(i);
-                SerializedProperty notes = row.FindPropertyRelative("notes");
+            float min = scrollPosition.x / colWidth;
+            float max = (scrollPosition.x + drawableArea.width) / colWidth;
+            List<Note> notes = sequencer.GetAllNoteOnsInRange(min, max);
+            notes.AddRange(sequencer.GetAllNoteOffsInRange(min, max));
+            notes = new List<Note>(new HashSet<Note>(notes));
 
-                if (notes != null)
-                    DrawRowNotes(notes, divisionLength);
-            }
-        }
-
-        void DrawActiveNotes(Sequencer sequencer, float divisionLength)
-        {
-            if (sequencer.allNotes == null)
-                return;
-
-            for (int i = minKey; i <= maxKey; ++i)
-            {
-                NoteRow row = sequencer.allNotes[i];
-                if (row != null)
-                    DrawRowNotes(row.notes, divisionLength);
-            }
+            DrawRowNotes(notes, divisionLength, drawableArea);
         }
 
         void DrawPressedNotes(float divisionLength)
@@ -482,14 +492,14 @@ namespace AudioHelm
             }
         }
 
-        void DrawPositionOverlay(Sequencer sequencer)
+        void DrawPositionOverlay(Sequencer sequencer, Rect drawableArea)
         {
             if (!sequencer.isActiveAndEnabled || !Application.isPlaying)
                 return;
 
             float x = keyboardWidth + colWidth * sequencer.currentIndex;
-            float height = numRows * rowHeight;
-            EditorGUI.DrawRect(new Rect(x, 0, colWidth, height), lightenColor);
+
+            EditorGUI.DrawRect(new Rect(x, scrollPosition.y, colWidth, drawableArea.height), lightenColor);
         }
 
         public float GetScrollPosition(Sequencer sequencer, float height)
@@ -515,15 +525,20 @@ namespace AudioHelm
             return maxRowHeight * (maxKey - minKey + 1);
         }
 
+        Rect GetVelocityRect(Rect rect) {
+            int velocityY = Mathf.RoundToInt(scrollPosition.y + rect.height - velocitySectionHeight - bottomPadding + 1);
+            return new Rect(scrollPosition.x, velocityY, rect.width, velocitySectionHeight);
+        }
+
         public void DrawSequencer(Rect rect, Sequencer sequencer, SerializedProperty allNotes)
         {
             float divisionLength = sequencer.GetDivisionLength();
             numRows = maxKey - minKey + 1;
             numCols = Mathf.RoundToInt(sequencer.length / divisionLength);
-            colWidth = (rect.width - keyboardWidth - rightPadding) / numCols;
-            rowHeight = Mathf.Clamp(rect.height / numRows, minRowHeight, maxRowHeight);
+            colWidth = Mathf.Max(minColWidth, (rect.width - keyboardWidth - rightPadding) / numCols);
+            rowHeight = Mathf.Clamp((rect.height - bottomPadding) / numRows, minRowHeight, maxRowHeight);
             float scrollableWidth = numCols * colWidth + keyboardWidth + 1;
-            float scrollableHeight = numRows * rowHeight;
+            float scrollableHeight = numRows * rowHeight + velocitySectionHeight;
 
             if (lastHeight != rect.height)
             {
@@ -532,14 +547,18 @@ namespace AudioHelm
             }
 
             Rect scrollableArea = new Rect(0, 0, scrollableWidth, scrollableHeight);
-            scrollPosition = GUI.BeginScrollView(rect, scrollPosition, scrollableArea, false, true);
+            scrollPosition = GUI.BeginScrollView(rect, scrollPosition, scrollableArea, true, true);
 
-            DrawNoteRows(scrollableArea);
-            DrawBarHighlights(scrollableArea);
-            DrawNoteDivisionLines(scrollableArea);
-            DrawActiveNotes(sequencer, divisionLength);
+            DrawNoteRows(rect);
+            DrawBarHighlights(rect);
+            DrawNoteDivisionLines(rect);
+            DrawActiveNotes(sequencer, divisionLength, rect);
             DrawPressedNotes(divisionLength);
-            DrawPositionOverlay(sequencer);
+            DrawPositionOverlay(sequencer, rect);
+
+            float min = scrollPosition.x / colWidth;
+            float max = (scrollPosition.x + rect.width - keyboardWidth - rightPadding) / colWidth;
+            velocities.DrawSequencerVelocities(GetVelocityRect(rect), sequencer, min, max);
 
             GUI.EndScrollView();
         }

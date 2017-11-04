@@ -343,8 +343,9 @@ namespace Helm {
     double last_time = current_time;
     current_time = (1.0 * state->currdsptick) / state->samplerate;
 
+    bool silent = mopo::utils::isSilentf(in_buffer, num_samples * out_channels);
     EffectData* data = state->GetEffectData<EffectData>();
-    if (state->flags & UnityAudioEffectStateFlags_IsPaused || last_time > current_time) {
+    if (state->flags & UnityAudioEffectStateFlags_IsPaused || last_time > current_time || silent) {
       memset(out_buffer, 0, num_samples * out_channels * sizeof(float));
       return UNITY_AUDIODSP_OK;
     }

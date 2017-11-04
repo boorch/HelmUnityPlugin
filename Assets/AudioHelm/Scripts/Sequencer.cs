@@ -502,9 +502,9 @@ namespace AudioHelm
         /// <param name="midiFile">The MIDI file object.</param>
         public void ReadMidiFile(UnityEngine.Object midiFile)
         {
-            TextAsset midiAsText = Resources.Load<TextAsset>("mid_" + midiFile.name);
-            if (midiAsText != null)
-                ReadMidiFile(new MemoryStream(midiAsText.bytes));
+            string path = Application.streamingAssetsPath + @"/AudioHelm/mid_" + midiFile.name;
+            FileStream midiStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            ReadMidiFile(midiStream);
         }
 
         /// <summary>
@@ -592,6 +592,7 @@ namespace AudioHelm
         /// </summary>
         protected void UpdatePosition()
         {
+            UpdateIndex();
             float nextPosition = (float)GetSequencerPosition();
 
             List<Note> noteOns = GetAllNoteOnsInRange(lastSequencerPosition, nextPosition);

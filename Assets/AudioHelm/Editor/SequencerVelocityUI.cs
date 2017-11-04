@@ -114,9 +114,8 @@ namespace AudioHelm
             return true;
         }
 
-        void DrawNote(float start, float velocity, Color color)
+        void DrawNote(float x, float velocity, Color color)
         {
-            float x = sixteenthWidth * start;
             float h = velocity * (height - velocityHandleWidth) + velocityHandleWidth / 2.0f;
             float y = height - h;
 
@@ -125,57 +124,17 @@ namespace AudioHelm
                                         velocityHandleWidth, velocityHandleWidth), color);
         }
 
-        void DrawNote(SerializedProperty note, Color color)
-        {
-            if (note == null)
-                return;
-
-            float start = note.FindPropertyRelative("start_").floatValue;
-            float velocity = note.FindPropertyRelative("velocity_").floatValue;
-            DrawNote(start, velocity, color);
-        }
-
-        void DrawRowNotes(SerializedProperty noteList)
-        {
-            if (noteList == null)
-                return;
-
-            for (int i = 0; i < noteList.arraySize; ++i)
-            {
-                SerializedProperty note = noteList.GetArrayElementAtIndex(i);
-                DrawNote(note, velocityColor);
-            }
-        }
-
-        void DrawRowNotes(NoteRow row)
-        {
-            if (row == null || row.notes == null)
-                return;
-
-            foreach (Note note in row.notes)
-                DrawNote(note.start, note.velocity, velocityColor);
-        }
-
-        void DrawNoteVelocities(SerializedProperty allNotes)
-        {
-            if (allNotes == null)
-                return;
-
-            for (int i = 0; i < allNotes.arraySize; ++i)
-            {
-                SerializedProperty noteRow = allNotes.GetArrayElementAtIndex(i);
-                SerializedProperty noteList = noteRow.FindPropertyRelative("notes");
-                DrawRowNotes(noteList);
-            }
-        }
-
-        void DrawNoteVelocities(Sequencer sequencer)
+        void DrawNoteVelocities(Sequencer sequencer, float start, float end, float width)
         {
             if (sequencer.allNotes == null)
                 return;
 
-            for (int i = 0; i < sequencer.allNotes.Length; ++i)
-                DrawRowNotes(sequencer.allNotes[i]);
+            List<Note> notes = sequencer.GetAllNoteOnsInRange(start, end);
+            foreach (Note note in notes)
+            {
+                float percent = (note.start - start) / (end - start);
+                DrawNote(percent * width, note.velocity, velocityColor);
+            }
         }
 
         public void DrawTextMeasurements(Rect rect)
@@ -200,7 +159,7 @@ namespace AudioHelm
             EditorGUI.DrawRect(middle, Color.black);
         }
 
-        public void DrawSequencerVelocities(Rect rect, Sequencer sequencer, SerializedProperty allNotes)
+        public void DrawSequencerVelocities(Rect rect, Sequencer sequencer, float start, float end)
         {
             Rect activeArea = new Rect(rect);
             activeArea.x += leftPadding;
@@ -217,7 +176,7 @@ namespace AudioHelm
             DrawTextMeasurements(leftBufferArea);
 
             GUI.BeginGroup(activeArea);
-            DrawNoteVelocities(sequencer);
+            DrawNoteVelocities(sequencer, start, end, activeArea.width);
             if (currentNote != null)
                 DrawNote(currentNote.start, currentNote.velocity, velocityActiveColor);
 

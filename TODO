@@ -1,8 +1,14 @@
 # TODO
 
+Add inspector/animation hooks for parameters
+Horizontal scrolling for sequencer
+Keep sampler/synth sequencers in sync
+Dynamic patch loading
+Dynamic MIDI file loading
+
+
 ## Future Features
 
-Turn on denormal flushing.
 PlayNoteScheduled
 Variable BPM
 Sequencer references player instead of on same game object?
