@@ -10,41 +10,6 @@
 		D11F48B01F155E5000CF9A13 /* AudioPluginUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48AD1F155E5000CF9A13 /* AudioPluginUtil.cpp */; };
 		D11F48B41F155E6400CF9A13 /* helm_plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48B11F155E6400CF9A13 /* helm_plugin.cpp */; };
 		D11F48B51F155E6400CF9A13 /* helm_sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48B21F155E6400CF9A13 /* helm_sequencer.cpp */; };
-		D11F490B1F155EE300CF9A13 /* alias.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48BD1F155EE200CF9A13 /* alias.cpp */; };
-		D11F490C1F155EE300CF9A13 /* arpeggiator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48BF1F155EE200CF9A13 /* arpeggiator.cpp */; };
-		D11F490D1F155EE300CF9A13 /* biquad_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48C11F155EE200CF9A13 /* biquad_filter.cpp */; };
-		D11F490E1F155EE300CF9A13 /* bit_crush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48C31F155EE200CF9A13 /* bit_crush.cpp */; };
-		D11F490F1F155EE300CF9A13 /* bypass_router.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48C51F155EE200CF9A13 /* bypass_router.cpp */; };
-		D11F49101F155EE300CF9A13 /* delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48C91F155EE200CF9A13 /* delay.cpp */; };
-		D11F49111F155EE300CF9A13 /* distortion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48CB1F155EE200CF9A13 /* distortion.cpp */; };
-		D11F49121F155EE300CF9A13 /* envelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48CD1F155EE200CF9A13 /* envelope.cpp */; };
-		D11F49131F155EE300CF9A13 /* feedback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48CF1F155EE200CF9A13 /* feedback.cpp */; };
-		D11F49141F155EE300CF9A13 /* formant_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48D11F155EE200CF9A13 /* formant_manager.cpp */; };
-		D11F49151F155EE300CF9A13 /* ladder_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48D31F155EE200CF9A13 /* ladder_filter.cpp */; };
-		D11F49161F155EE300CF9A13 /* linear_slope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48D51F155EE200CF9A13 /* linear_slope.cpp */; };
-		D11F49171F155EE300CF9A13 /* magnitude_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48D71F155EE200CF9A13 /* magnitude_lookup.cpp */; };
-		D11F49181F155EE300CF9A13 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48D91F155EE200CF9A13 /* memory.cpp */; };
-		D11F49191F155EE300CF9A13 /* midi_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48DB1F155EE300CF9A13 /* midi_lookup.cpp */; };
-		D11F491A1F155EE300CF9A13 /* mono_panner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48DD1F155EE300CF9A13 /* mono_panner.cpp */; };
-		D11F491B1F155EE300CF9A13 /* operators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48E11F155EE300CF9A13 /* operators.cpp */; };
-		D11F491C1F155EE300CF9A13 /* oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48E31F155EE300CF9A13 /* oscillator.cpp */; };
-		D11F491D1F155EE300CF9A13 /* portamento_slope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48E51F155EE300CF9A13 /* portamento_slope.cpp */; };
-		D11F491E1F155EE300CF9A13 /* processor_router.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48E71F155EE300CF9A13 /* processor_router.cpp */; };
-		D11F491F1F155EE300CF9A13 /* processor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48E91F155EE300CF9A13 /* processor.cpp */; };
-		D11F49201F155EE300CF9A13 /* resonance_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48EB1F155EE300CF9A13 /* resonance_lookup.cpp */; };
-		D11F49211F155EE300CF9A13 /* reverb_all_pass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48ED1F155EE300CF9A13 /* reverb_all_pass.cpp */; };
-		D11F49221F155EE300CF9A13 /* reverb_comb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48EF1F155EE300CF9A13 /* reverb_comb.cpp */; };
-		D11F49231F155EE300CF9A13 /* reverb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48F21F155EE300CF9A13 /* reverb.cpp */; };
-		D11F49241F155EE300CF9A13 /* sample_decay_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48F41F155EE300CF9A13 /* sample_decay_lookup.cpp */; };
-		D11F49251F155EE300CF9A13 /* simple_delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48F61F155EE300CF9A13 /* simple_delay.cpp */; };
-		D11F49261F155EE300CF9A13 /* smooth_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48F81F155EE300CF9A13 /* smooth_filter.cpp */; };
-		D11F49271F155EE300CF9A13 /* smooth_value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48FA1F155EE300CF9A13 /* smooth_value.cpp */; };
-		D11F49281F155EE300CF9A13 /* state_variable_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48FC1F155EE300CF9A13 /* state_variable_filter.cpp */; };
-		D11F49291F155EE300CF9A13 /* step_generator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F48FE1F155EE300CF9A13 /* step_generator.cpp */; };
-		D11F492A1F155EE300CF9A13 /* stutter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F49001F155EE300CF9A13 /* stutter.cpp */; };
-		D11F492B1F155EE300CF9A13 /* trigger_operators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F49031F155EE300CF9A13 /* trigger_operators.cpp */; };
-		D11F492C1F155EE300CF9A13 /* value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F49061F155EE300CF9A13 /* value.cpp */; };
-		D11F492D1F155EE300CF9A13 /* voice_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F49081F155EE300CF9A13 /* voice_handler.cpp */; };
 		D11F494E1F155F0C00CF9A13 /* dc_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F49301F155F0C00CF9A13 /* dc_filter.cpp */; };
 		D11F494F1F155F0C00CF9A13 /* detune_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F49321F155F0C00CF9A13 /* detune_lookup.cpp */; };
 		D11F49501F155F0C00CF9A13 /* fixed_point_oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F49341F155F0C00CF9A13 /* fixed_point_oscillator.cpp */; };
@@ -61,6 +26,41 @@
 		D11F495B1F155F0C00CF9A13 /* trigger_random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F494A1F155F0C00CF9A13 /* trigger_random.cpp */; };
 		D11F495C1F155F0C00CF9A13 /* value_switch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F494C1F155F0C00CF9A13 /* value_switch.cpp */; };
 		D11F495F1F155F1D00CF9A13 /* helm_common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D11F495D1F155F1D00CF9A13 /* helm_common.cpp */; };
+		D153685A1FAE98E200B1AB05 /* alias.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153680B1FAE98E200B1AB05 /* alias.cpp */; };
+		D153685B1FAE98E200B1AB05 /* arpeggiator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153680D1FAE98E200B1AB05 /* arpeggiator.cpp */; };
+		D153685C1FAE98E200B1AB05 /* biquad_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153680F1FAE98E200B1AB05 /* biquad_filter.cpp */; };
+		D153685D1FAE98E200B1AB05 /* bit_crush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368111FAE98E200B1AB05 /* bit_crush.cpp */; };
+		D153685E1FAE98E200B1AB05 /* bypass_router.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368131FAE98E200B1AB05 /* bypass_router.cpp */; };
+		D153685F1FAE98E200B1AB05 /* delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368171FAE98E200B1AB05 /* delay.cpp */; };
+		D15368601FAE98E200B1AB05 /* distortion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368191FAE98E200B1AB05 /* distortion.cpp */; };
+		D15368611FAE98E200B1AB05 /* envelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153681B1FAE98E200B1AB05 /* envelope.cpp */; };
+		D15368621FAE98E200B1AB05 /* feedback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153681D1FAE98E200B1AB05 /* feedback.cpp */; };
+		D15368631FAE98E200B1AB05 /* formant_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153681F1FAE98E200B1AB05 /* formant_manager.cpp */; };
+		D15368641FAE98E200B1AB05 /* ladder_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368211FAE98E200B1AB05 /* ladder_filter.cpp */; };
+		D15368651FAE98E200B1AB05 /* linear_slope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368231FAE98E200B1AB05 /* linear_slope.cpp */; };
+		D15368661FAE98E200B1AB05 /* magnitude_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368251FAE98E200B1AB05 /* magnitude_lookup.cpp */; };
+		D15368671FAE98E200B1AB05 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368281FAE98E200B1AB05 /* memory.cpp */; };
+		D15368681FAE98E200B1AB05 /* midi_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153682A1FAE98E200B1AB05 /* midi_lookup.cpp */; };
+		D15368691FAE98E200B1AB05 /* mono_panner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153682C1FAE98E200B1AB05 /* mono_panner.cpp */; };
+		D153686A1FAE98E200B1AB05 /* operators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368301FAE98E200B1AB05 /* operators.cpp */; };
+		D153686B1FAE98E200B1AB05 /* oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368321FAE98E200B1AB05 /* oscillator.cpp */; };
+		D153686C1FAE98E200B1AB05 /* portamento_slope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368341FAE98E200B1AB05 /* portamento_slope.cpp */; };
+		D153686D1FAE98E200B1AB05 /* processor_router.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368361FAE98E200B1AB05 /* processor_router.cpp */; };
+		D153686E1FAE98E200B1AB05 /* processor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368381FAE98E200B1AB05 /* processor.cpp */; };
+		D153686F1FAE98E200B1AB05 /* resonance_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153683A1FAE98E200B1AB05 /* resonance_lookup.cpp */; };
+		D15368701FAE98E200B1AB05 /* reverb_all_pass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153683C1FAE98E200B1AB05 /* reverb_all_pass.cpp */; };
+		D15368711FAE98E200B1AB05 /* reverb_comb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153683E1FAE98E200B1AB05 /* reverb_comb.cpp */; };
+		D15368721FAE98E200B1AB05 /* reverb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368411FAE98E200B1AB05 /* reverb.cpp */; };
+		D15368731FAE98E200B1AB05 /* sample_decay_lookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368431FAE98E200B1AB05 /* sample_decay_lookup.cpp */; };
+		D15368741FAE98E200B1AB05 /* simple_delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368451FAE98E200B1AB05 /* simple_delay.cpp */; };
+		D15368751FAE98E200B1AB05 /* smooth_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368471FAE98E200B1AB05 /* smooth_filter.cpp */; };
+		D15368761FAE98E200B1AB05 /* smooth_value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368491FAE98E200B1AB05 /* smooth_value.cpp */; };
+		D15368771FAE98E200B1AB05 /* state_variable_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153684B1FAE98E200B1AB05 /* state_variable_filter.cpp */; };
+		D15368781FAE98E200B1AB05 /* step_generator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153684D1FAE98E200B1AB05 /* step_generator.cpp */; };
+		D15368791FAE98E200B1AB05 /* stutter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D153684F1FAE98E200B1AB05 /* stutter.cpp */; };
+		D153687A1FAE98E200B1AB05 /* trigger_operators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368521FAE98E200B1AB05 /* trigger_operators.cpp */; };
+		D153687B1FAE98E200B1AB05 /* value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368551FAE98E200B1AB05 /* value.cpp */; };
+		D153687C1FAE98E200B1AB05 /* voice_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368571FAE98E200B1AB05 /* voice_handler.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -86,84 +86,6 @@
 		D11F48B31F155E6400CF9A13 /* helm_sequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = helm_sequencer.h; path = ../helm_sequencer.h; sourceTree = "<group>"; };
 		D11F48B81F155E9B00CF9A13 /* blockingconcurrentqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = blockingconcurrentqueue.h; path = ../helm/concurrentqueue/blockingconcurrentqueue.h; sourceTree = "<group>"; };
 		D11F48B91F155E9B00CF9A13 /* concurrentqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = concurrentqueue.h; path = ../helm/concurrentqueue/concurrentqueue.h; sourceTree = "<group>"; };
-		D11F48BD1F155EE200CF9A13 /* alias.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = alias.cpp; path = ../../../helm/mopo/src/alias.cpp; sourceTree = "<group>"; };
-		D11F48BE1F155EE200CF9A13 /* alias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = alias.h; path = ../../../helm/mopo/src/alias.h; sourceTree = "<group>"; };
-		D11F48BF1F155EE200CF9A13 /* arpeggiator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = arpeggiator.cpp; path = ../../../helm/mopo/src/arpeggiator.cpp; sourceTree = "<group>"; };
-		D11F48C01F155EE200CF9A13 /* arpeggiator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arpeggiator.h; path = ../../../helm/mopo/src/arpeggiator.h; sourceTree = "<group>"; };
-		D11F48C11F155EE200CF9A13 /* biquad_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = biquad_filter.cpp; path = ../../../helm/mopo/src/biquad_filter.cpp; sourceTree = "<group>"; };
-		D11F48C21F155EE200CF9A13 /* biquad_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = biquad_filter.h; path = ../../../helm/mopo/src/biquad_filter.h; sourceTree = "<group>"; };
-		D11F48C31F155EE200CF9A13 /* bit_crush.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bit_crush.cpp; path = ../../../helm/mopo/src/bit_crush.cpp; sourceTree = "<group>"; };
-		D11F48C41F155EE200CF9A13 /* bit_crush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bit_crush.h; path = ../../../helm/mopo/src/bit_crush.h; sourceTree = "<group>"; };
-		D11F48C51F155EE200CF9A13 /* bypass_router.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bypass_router.cpp; path = ../../../helm/mopo/src/bypass_router.cpp; sourceTree = "<group>"; };
-		D11F48C61F155EE200CF9A13 /* bypass_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bypass_router.h; path = ../../../helm/mopo/src/bypass_router.h; sourceTree = "<group>"; };
-		D11F48C71F155EE200CF9A13 /* circular_queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = circular_queue.h; path = ../../../helm/mopo/src/circular_queue.h; sourceTree = "<group>"; };
-		D11F48C81F155EE200CF9A13 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../../../helm/mopo/src/common.h; sourceTree = "<group>"; };
-		D11F48C91F155EE200CF9A13 /* delay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = delay.cpp; path = ../../../helm/mopo/src/delay.cpp; sourceTree = "<group>"; };
-		D11F48CA1F155EE200CF9A13 /* delay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = delay.h; path = ../../../helm/mopo/src/delay.h; sourceTree = "<group>"; };
-		D11F48CB1F155EE200CF9A13 /* distortion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = distortion.cpp; path = ../../../helm/mopo/src/distortion.cpp; sourceTree = "<group>"; };
-		D11F48CC1F155EE200CF9A13 /* distortion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = distortion.h; path = ../../../helm/mopo/src/distortion.h; sourceTree = "<group>"; };
-		D11F48CD1F155EE200CF9A13 /* envelope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = envelope.cpp; path = ../../../helm/mopo/src/envelope.cpp; sourceTree = "<group>"; };
-		D11F48CE1F155EE200CF9A13 /* envelope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = envelope.h; path = ../../../helm/mopo/src/envelope.h; sourceTree = "<group>"; };
-		D11F48CF1F155EE200CF9A13 /* feedback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = feedback.cpp; path = ../../../helm/mopo/src/feedback.cpp; sourceTree = "<group>"; };
-		D11F48D01F155EE200CF9A13 /* feedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = feedback.h; path = ../../../helm/mopo/src/feedback.h; sourceTree = "<group>"; };
-		D11F48D11F155EE200CF9A13 /* formant_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = formant_manager.cpp; path = ../../../helm/mopo/src/formant_manager.cpp; sourceTree = "<group>"; };
-		D11F48D21F155EE200CF9A13 /* formant_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = formant_manager.h; path = ../../../helm/mopo/src/formant_manager.h; sourceTree = "<group>"; };
-		D11F48D31F155EE200CF9A13 /* ladder_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ladder_filter.cpp; path = ../../../helm/mopo/src/ladder_filter.cpp; sourceTree = "<group>"; };
-		D11F48D41F155EE200CF9A13 /* ladder_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ladder_filter.h; path = ../../../helm/mopo/src/ladder_filter.h; sourceTree = "<group>"; };
-		D11F48D51F155EE200CF9A13 /* linear_slope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = linear_slope.cpp; path = ../../../helm/mopo/src/linear_slope.cpp; sourceTree = "<group>"; };
-		D11F48D61F155EE200CF9A13 /* linear_slope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = linear_slope.h; path = ../../../helm/mopo/src/linear_slope.h; sourceTree = "<group>"; };
-		D11F48D71F155EE200CF9A13 /* magnitude_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = magnitude_lookup.cpp; path = ../../../helm/mopo/src/magnitude_lookup.cpp; sourceTree = "<group>"; };
-		D11F48D81F155EE200CF9A13 /* magnitude_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = magnitude_lookup.h; path = ../../../helm/mopo/src/magnitude_lookup.h; sourceTree = "<group>"; };
-		D11F48D91F155EE200CF9A13 /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = memory.cpp; path = ../../../helm/mopo/src/memory.cpp; sourceTree = "<group>"; };
-		D11F48DA1F155EE200CF9A13 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = memory.h; path = ../../../helm/mopo/src/memory.h; sourceTree = "<group>"; };
-		D11F48DB1F155EE300CF9A13 /* midi_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = midi_lookup.cpp; path = ../../../helm/mopo/src/midi_lookup.cpp; sourceTree = "<group>"; };
-		D11F48DC1F155EE300CF9A13 /* midi_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = midi_lookup.h; path = ../../../helm/mopo/src/midi_lookup.h; sourceTree = "<group>"; };
-		D11F48DD1F155EE300CF9A13 /* mono_panner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mono_panner.cpp; path = ../../../helm/mopo/src/mono_panner.cpp; sourceTree = "<group>"; };
-		D11F48DE1F155EE300CF9A13 /* mono_panner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mono_panner.h; path = ../../../helm/mopo/src/mono_panner.h; sourceTree = "<group>"; };
-		D11F48DF1F155EE300CF9A13 /* mopo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mopo.h; path = ../../../helm/mopo/src/mopo.h; sourceTree = "<group>"; };
-		D11F48E01F155EE300CF9A13 /* note_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = note_handler.h; path = ../../../helm/mopo/src/note_handler.h; sourceTree = "<group>"; };
-		D11F48E11F155EE300CF9A13 /* operators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = operators.cpp; path = ../../../helm/mopo/src/operators.cpp; sourceTree = "<group>"; };
-		D11F48E21F155EE300CF9A13 /* operators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = operators.h; path = ../../../helm/mopo/src/operators.h; sourceTree = "<group>"; };
-		D11F48E31F155EE300CF9A13 /* oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = oscillator.cpp; path = ../../../helm/mopo/src/oscillator.cpp; sourceTree = "<group>"; };
-		D11F48E41F155EE300CF9A13 /* oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = oscillator.h; path = ../../../helm/mopo/src/oscillator.h; sourceTree = "<group>"; };
-		D11F48E51F155EE300CF9A13 /* portamento_slope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = portamento_slope.cpp; path = ../../../helm/mopo/src/portamento_slope.cpp; sourceTree = "<group>"; };
-		D11F48E61F155EE300CF9A13 /* portamento_slope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = portamento_slope.h; path = ../../../helm/mopo/src/portamento_slope.h; sourceTree = "<group>"; };
-		D11F48E71F155EE300CF9A13 /* processor_router.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = processor_router.cpp; path = ../../../helm/mopo/src/processor_router.cpp; sourceTree = "<group>"; };
-		D11F48E81F155EE300CF9A13 /* processor_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = processor_router.h; path = ../../../helm/mopo/src/processor_router.h; sourceTree = "<group>"; };
-		D11F48E91F155EE300CF9A13 /* processor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = processor.cpp; path = ../../../helm/mopo/src/processor.cpp; sourceTree = "<group>"; };
-		D11F48EA1F155EE300CF9A13 /* processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = processor.h; path = ../../../helm/mopo/src/processor.h; sourceTree = "<group>"; };
-		D11F48EB1F155EE300CF9A13 /* resonance_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resonance_lookup.cpp; path = ../../../helm/mopo/src/resonance_lookup.cpp; sourceTree = "<group>"; };
-		D11F48EC1F155EE300CF9A13 /* resonance_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = resonance_lookup.h; path = ../../../helm/mopo/src/resonance_lookup.h; sourceTree = "<group>"; };
-		D11F48ED1F155EE300CF9A13 /* reverb_all_pass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = reverb_all_pass.cpp; path = ../../../helm/mopo/src/reverb_all_pass.cpp; sourceTree = "<group>"; };
-		D11F48EE1F155EE300CF9A13 /* reverb_all_pass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reverb_all_pass.h; path = ../../../helm/mopo/src/reverb_all_pass.h; sourceTree = "<group>"; };
-		D11F48EF1F155EE300CF9A13 /* reverb_comb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = reverb_comb.cpp; path = ../../../helm/mopo/src/reverb_comb.cpp; sourceTree = "<group>"; };
-		D11F48F01F155EE300CF9A13 /* reverb_comb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reverb_comb.h; path = ../../../helm/mopo/src/reverb_comb.h; sourceTree = "<group>"; };
-		D11F48F11F155EE300CF9A13 /* reverb_tuning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reverb_tuning.h; path = ../../../helm/mopo/src/reverb_tuning.h; sourceTree = "<group>"; };
-		D11F48F21F155EE300CF9A13 /* reverb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = reverb.cpp; path = ../../../helm/mopo/src/reverb.cpp; sourceTree = "<group>"; };
-		D11F48F31F155EE300CF9A13 /* reverb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reverb.h; path = ../../../helm/mopo/src/reverb.h; sourceTree = "<group>"; };
-		D11F48F41F155EE300CF9A13 /* sample_decay_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sample_decay_lookup.cpp; path = ../../../helm/mopo/src/sample_decay_lookup.cpp; sourceTree = "<group>"; };
-		D11F48F51F155EE300CF9A13 /* sample_decay_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sample_decay_lookup.h; path = ../../../helm/mopo/src/sample_decay_lookup.h; sourceTree = "<group>"; };
-		D11F48F61F155EE300CF9A13 /* simple_delay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = simple_delay.cpp; path = ../../../helm/mopo/src/simple_delay.cpp; sourceTree = "<group>"; };
-		D11F48F71F155EE300CF9A13 /* simple_delay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = simple_delay.h; path = ../../../helm/mopo/src/simple_delay.h; sourceTree = "<group>"; };
-		D11F48F81F155EE300CF9A13 /* smooth_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = smooth_filter.cpp; path = ../../../helm/mopo/src/smooth_filter.cpp; sourceTree = "<group>"; };
-		D11F48F91F155EE300CF9A13 /* smooth_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smooth_filter.h; path = ../../../helm/mopo/src/smooth_filter.h; sourceTree = "<group>"; };
-		D11F48FA1F155EE300CF9A13 /* smooth_value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = smooth_value.cpp; path = ../../../helm/mopo/src/smooth_value.cpp; sourceTree = "<group>"; };
-		D11F48FB1F155EE300CF9A13 /* smooth_value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smooth_value.h; path = ../../../helm/mopo/src/smooth_value.h; sourceTree = "<group>"; };
-		D11F48FC1F155EE300CF9A13 /* state_variable_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = state_variable_filter.cpp; path = ../../../helm/mopo/src/state_variable_filter.cpp; sourceTree = "<group>"; };
-		D11F48FD1F155EE300CF9A13 /* state_variable_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = state_variable_filter.h; path = ../../../helm/mopo/src/state_variable_filter.h; sourceTree = "<group>"; };
-		D11F48FE1F155EE300CF9A13 /* step_generator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = step_generator.cpp; path = ../../../helm/mopo/src/step_generator.cpp; sourceTree = "<group>"; };
-		D11F48FF1F155EE300CF9A13 /* step_generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = step_generator.h; path = ../../../helm/mopo/src/step_generator.h; sourceTree = "<group>"; };
-		D11F49001F155EE300CF9A13 /* stutter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stutter.cpp; path = ../../../helm/mopo/src/stutter.cpp; sourceTree = "<group>"; };
-		D11F49011F155EE300CF9A13 /* stutter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stutter.h; path = ../../../helm/mopo/src/stutter.h; sourceTree = "<group>"; };
-		D11F49021F155EE300CF9A13 /* tick_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tick_router.h; path = ../../../helm/mopo/src/tick_router.h; sourceTree = "<group>"; };
-		D11F49031F155EE300CF9A13 /* trigger_operators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = trigger_operators.cpp; path = ../../../helm/mopo/src/trigger_operators.cpp; sourceTree = "<group>"; };
-		D11F49041F155EE300CF9A13 /* trigger_operators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trigger_operators.h; path = ../../../helm/mopo/src/trigger_operators.h; sourceTree = "<group>"; };
-		D11F49051F155EE300CF9A13 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = ../../../helm/mopo/src/utils.h; sourceTree = "<group>"; };
-		D11F49061F155EE300CF9A13 /* value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = value.cpp; path = ../../../helm/mopo/src/value.cpp; sourceTree = "<group>"; };
-		D11F49071F155EE300CF9A13 /* value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = value.h; path = ../../../helm/mopo/src/value.h; sourceTree = "<group>"; };
-		D11F49081F155EE300CF9A13 /* voice_handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = voice_handler.cpp; path = ../../../helm/mopo/src/voice_handler.cpp; sourceTree = "<group>"; };
-		D11F49091F155EE300CF9A13 /* voice_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = voice_handler.h; path = ../../../helm/mopo/src/voice_handler.h; sourceTree = "<group>"; };
-		D11F490A1F155EE300CF9A13 /* wave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wave.h; path = ../../../helm/mopo/src/wave.h; sourceTree = "<group>"; };
 		D11F49301F155F0C00CF9A13 /* dc_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dc_filter.cpp; path = ../helm/src/synthesis/dc_filter.cpp; sourceTree = "<group>"; };
 		D11F49311F155F0C00CF9A13 /* dc_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dc_filter.h; path = ../helm/src/synthesis/dc_filter.h; sourceTree = "<group>"; };
 		D11F49321F155F0C00CF9A13 /* detune_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = detune_lookup.cpp; path = ../helm/src/synthesis/detune_lookup.cpp; sourceTree = "<group>"; };
@@ -196,6 +118,85 @@
 		D11F494D1F155F0C00CF9A13 /* value_switch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = value_switch.h; path = ../helm/src/synthesis/value_switch.h; sourceTree = "<group>"; };
 		D11F495D1F155F1D00CF9A13 /* helm_common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = helm_common.cpp; path = ../helm/src/common/helm_common.cpp; sourceTree = "<group>"; };
 		D11F495E1F155F1D00CF9A13 /* helm_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = helm_common.h; path = ../helm/src/common/helm_common.h; sourceTree = "<group>"; };
+		D153680B1FAE98E200B1AB05 /* alias.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = alias.cpp; path = ../helm/mopo/src/alias.cpp; sourceTree = "<group>"; };
+		D153680C1FAE98E200B1AB05 /* alias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = alias.h; path = ../helm/mopo/src/alias.h; sourceTree = "<group>"; };
+		D153680D1FAE98E200B1AB05 /* arpeggiator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = arpeggiator.cpp; path = ../helm/mopo/src/arpeggiator.cpp; sourceTree = "<group>"; };
+		D153680E1FAE98E200B1AB05 /* arpeggiator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arpeggiator.h; path = ../helm/mopo/src/arpeggiator.h; sourceTree = "<group>"; };
+		D153680F1FAE98E200B1AB05 /* biquad_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = biquad_filter.cpp; path = ../helm/mopo/src/biquad_filter.cpp; sourceTree = "<group>"; };
+		D15368101FAE98E200B1AB05 /* biquad_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = biquad_filter.h; path = ../helm/mopo/src/biquad_filter.h; sourceTree = "<group>"; };
+		D15368111FAE98E200B1AB05 /* bit_crush.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bit_crush.cpp; path = ../helm/mopo/src/bit_crush.cpp; sourceTree = "<group>"; };
+		D15368121FAE98E200B1AB05 /* bit_crush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bit_crush.h; path = ../helm/mopo/src/bit_crush.h; sourceTree = "<group>"; };
+		D15368131FAE98E200B1AB05 /* bypass_router.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bypass_router.cpp; path = ../helm/mopo/src/bypass_router.cpp; sourceTree = "<group>"; };
+		D15368141FAE98E200B1AB05 /* bypass_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bypass_router.h; path = ../helm/mopo/src/bypass_router.h; sourceTree = "<group>"; };
+		D15368151FAE98E200B1AB05 /* circular_queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = circular_queue.h; path = ../helm/mopo/src/circular_queue.h; sourceTree = "<group>"; };
+		D15368161FAE98E200B1AB05 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../helm/mopo/src/common.h; sourceTree = "<group>"; };
+		D15368171FAE98E200B1AB05 /* delay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = delay.cpp; path = ../helm/mopo/src/delay.cpp; sourceTree = "<group>"; };
+		D15368181FAE98E200B1AB05 /* delay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = delay.h; path = ../helm/mopo/src/delay.h; sourceTree = "<group>"; };
+		D15368191FAE98E200B1AB05 /* distortion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = distortion.cpp; path = ../helm/mopo/src/distortion.cpp; sourceTree = "<group>"; };
+		D153681A1FAE98E200B1AB05 /* distortion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = distortion.h; path = ../helm/mopo/src/distortion.h; sourceTree = "<group>"; };
+		D153681B1FAE98E200B1AB05 /* envelope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = envelope.cpp; path = ../helm/mopo/src/envelope.cpp; sourceTree = "<group>"; };
+		D153681C1FAE98E200B1AB05 /* envelope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = envelope.h; path = ../helm/mopo/src/envelope.h; sourceTree = "<group>"; };
+		D153681D1FAE98E200B1AB05 /* feedback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = feedback.cpp; path = ../helm/mopo/src/feedback.cpp; sourceTree = "<group>"; };
+		D153681E1FAE98E200B1AB05 /* feedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = feedback.h; path = ../helm/mopo/src/feedback.h; sourceTree = "<group>"; };
+		D153681F1FAE98E200B1AB05 /* formant_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = formant_manager.cpp; path = ../helm/mopo/src/formant_manager.cpp; sourceTree = "<group>"; };
+		D15368201FAE98E200B1AB05 /* formant_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = formant_manager.h; path = ../helm/mopo/src/formant_manager.h; sourceTree = "<group>"; };
+		D15368211FAE98E200B1AB05 /* ladder_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ladder_filter.cpp; path = ../helm/mopo/src/ladder_filter.cpp; sourceTree = "<group>"; };
+		D15368221FAE98E200B1AB05 /* ladder_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ladder_filter.h; path = ../helm/mopo/src/ladder_filter.h; sourceTree = "<group>"; };
+		D15368231FAE98E200B1AB05 /* linear_slope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = linear_slope.cpp; path = ../helm/mopo/src/linear_slope.cpp; sourceTree = "<group>"; };
+		D15368241FAE98E200B1AB05 /* linear_slope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = linear_slope.h; path = ../helm/mopo/src/linear_slope.h; sourceTree = "<group>"; };
+		D15368251FAE98E200B1AB05 /* magnitude_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = magnitude_lookup.cpp; path = ../helm/mopo/src/magnitude_lookup.cpp; sourceTree = "<group>"; };
+		D15368261FAE98E200B1AB05 /* magnitude_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = magnitude_lookup.h; path = ../helm/mopo/src/magnitude_lookup.h; sourceTree = "<group>"; };
+		D15368271FAE98E200B1AB05 /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Makefile.am; path = ../helm/mopo/src/Makefile.am; sourceTree = "<group>"; };
+		D15368281FAE98E200B1AB05 /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = memory.cpp; path = ../helm/mopo/src/memory.cpp; sourceTree = "<group>"; };
+		D15368291FAE98E200B1AB05 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = memory.h; path = ../helm/mopo/src/memory.h; sourceTree = "<group>"; };
+		D153682A1FAE98E200B1AB05 /* midi_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = midi_lookup.cpp; path = ../helm/mopo/src/midi_lookup.cpp; sourceTree = "<group>"; };
+		D153682B1FAE98E200B1AB05 /* midi_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = midi_lookup.h; path = ../helm/mopo/src/midi_lookup.h; sourceTree = "<group>"; };
+		D153682C1FAE98E200B1AB05 /* mono_panner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mono_panner.cpp; path = ../helm/mopo/src/mono_panner.cpp; sourceTree = "<group>"; };
+		D153682D1FAE98E200B1AB05 /* mono_panner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mono_panner.h; path = ../helm/mopo/src/mono_panner.h; sourceTree = "<group>"; };
+		D153682E1FAE98E200B1AB05 /* mopo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mopo.h; path = ../helm/mopo/src/mopo.h; sourceTree = "<group>"; };
+		D153682F1FAE98E200B1AB05 /* note_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = note_handler.h; path = ../helm/mopo/src/note_handler.h; sourceTree = "<group>"; };
+		D15368301FAE98E200B1AB05 /* operators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = operators.cpp; path = ../helm/mopo/src/operators.cpp; sourceTree = "<group>"; };
+		D15368311FAE98E200B1AB05 /* operators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = operators.h; path = ../helm/mopo/src/operators.h; sourceTree = "<group>"; };
+		D15368321FAE98E200B1AB05 /* oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = oscillator.cpp; path = ../helm/mopo/src/oscillator.cpp; sourceTree = "<group>"; };
+		D15368331FAE98E200B1AB05 /* oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = oscillator.h; path = ../helm/mopo/src/oscillator.h; sourceTree = "<group>"; };
+		D15368341FAE98E200B1AB05 /* portamento_slope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = portamento_slope.cpp; path = ../helm/mopo/src/portamento_slope.cpp; sourceTree = "<group>"; };
+		D15368351FAE98E200B1AB05 /* portamento_slope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = portamento_slope.h; path = ../helm/mopo/src/portamento_slope.h; sourceTree = "<group>"; };
+		D15368361FAE98E200B1AB05 /* processor_router.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = processor_router.cpp; path = ../helm/mopo/src/processor_router.cpp; sourceTree = "<group>"; };
+		D15368371FAE98E200B1AB05 /* processor_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = processor_router.h; path = ../helm/mopo/src/processor_router.h; sourceTree = "<group>"; };
+		D15368381FAE98E200B1AB05 /* processor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = processor.cpp; path = ../helm/mopo/src/processor.cpp; sourceTree = "<group>"; };
+		D15368391FAE98E200B1AB05 /* processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = processor.h; path = ../helm/mopo/src/processor.h; sourceTree = "<group>"; };
+		D153683A1FAE98E200B1AB05 /* resonance_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resonance_lookup.cpp; path = ../helm/mopo/src/resonance_lookup.cpp; sourceTree = "<group>"; };
+		D153683B1FAE98E200B1AB05 /* resonance_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = resonance_lookup.h; path = ../helm/mopo/src/resonance_lookup.h; sourceTree = "<group>"; };
+		D153683C1FAE98E200B1AB05 /* reverb_all_pass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = reverb_all_pass.cpp; path = ../helm/mopo/src/reverb_all_pass.cpp; sourceTree = "<group>"; };
+		D153683D1FAE98E200B1AB05 /* reverb_all_pass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reverb_all_pass.h; path = ../helm/mopo/src/reverb_all_pass.h; sourceTree = "<group>"; };
+		D153683E1FAE98E200B1AB05 /* reverb_comb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = reverb_comb.cpp; path = ../helm/mopo/src/reverb_comb.cpp; sourceTree = "<group>"; };
+		D153683F1FAE98E200B1AB05 /* reverb_comb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reverb_comb.h; path = ../helm/mopo/src/reverb_comb.h; sourceTree = "<group>"; };
+		D15368401FAE98E200B1AB05 /* reverb_tuning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reverb_tuning.h; path = ../helm/mopo/src/reverb_tuning.h; sourceTree = "<group>"; };
+		D15368411FAE98E200B1AB05 /* reverb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = reverb.cpp; path = ../helm/mopo/src/reverb.cpp; sourceTree = "<group>"; };
+		D15368421FAE98E200B1AB05 /* reverb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reverb.h; path = ../helm/mopo/src/reverb.h; sourceTree = "<group>"; };
+		D15368431FAE98E200B1AB05 /* sample_decay_lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sample_decay_lookup.cpp; path = ../helm/mopo/src/sample_decay_lookup.cpp; sourceTree = "<group>"; };
+		D15368441FAE98E200B1AB05 /* sample_decay_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sample_decay_lookup.h; path = ../helm/mopo/src/sample_decay_lookup.h; sourceTree = "<group>"; };
+		D15368451FAE98E200B1AB05 /* simple_delay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = simple_delay.cpp; path = ../helm/mopo/src/simple_delay.cpp; sourceTree = "<group>"; };
+		D15368461FAE98E200B1AB05 /* simple_delay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = simple_delay.h; path = ../helm/mopo/src/simple_delay.h; sourceTree = "<group>"; };
+		D15368471FAE98E200B1AB05 /* smooth_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = smooth_filter.cpp; path = ../helm/mopo/src/smooth_filter.cpp; sourceTree = "<group>"; };
+		D15368481FAE98E200B1AB05 /* smooth_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smooth_filter.h; path = ../helm/mopo/src/smooth_filter.h; sourceTree = "<group>"; };
+		D15368491FAE98E200B1AB05 /* smooth_value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = smooth_value.cpp; path = ../helm/mopo/src/smooth_value.cpp; sourceTree = "<group>"; };
+		D153684A1FAE98E200B1AB05 /* smooth_value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smooth_value.h; path = ../helm/mopo/src/smooth_value.h; sourceTree = "<group>"; };
+		D153684B1FAE98E200B1AB05 /* state_variable_filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = state_variable_filter.cpp; path = ../helm/mopo/src/state_variable_filter.cpp; sourceTree = "<group>"; };
+		D153684C1FAE98E200B1AB05 /* state_variable_filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = state_variable_filter.h; path = ../helm/mopo/src/state_variable_filter.h; sourceTree = "<group>"; };
+		D153684D1FAE98E200B1AB05 /* step_generator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = step_generator.cpp; path = ../helm/mopo/src/step_generator.cpp; sourceTree = "<group>"; };
+		D153684E1FAE98E200B1AB05 /* step_generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = step_generator.h; path = ../helm/mopo/src/step_generator.h; sourceTree = "<group>"; };
+		D153684F1FAE98E200B1AB05 /* stutter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stutter.cpp; path = ../helm/mopo/src/stutter.cpp; sourceTree = "<group>"; };
+		D15368501FAE98E200B1AB05 /* stutter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stutter.h; path = ../helm/mopo/src/stutter.h; sourceTree = "<group>"; };
+		D15368511FAE98E200B1AB05 /* tick_router.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tick_router.h; path = ../helm/mopo/src/tick_router.h; sourceTree = "<group>"; };
+		D15368521FAE98E200B1AB05 /* trigger_operators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = trigger_operators.cpp; path = ../helm/mopo/src/trigger_operators.cpp; sourceTree = "<group>"; };
+		D15368531FAE98E200B1AB05 /* trigger_operators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trigger_operators.h; path = ../helm/mopo/src/trigger_operators.h; sourceTree = "<group>"; };
+		D15368541FAE98E200B1AB05 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = ../helm/mopo/src/utils.h; sourceTree = "<group>"; };
+		D15368551FAE98E200B1AB05 /* value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = value.cpp; path = ../helm/mopo/src/value.cpp; sourceTree = "<group>"; };
+		D15368561FAE98E200B1AB05 /* value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = value.h; path = ../helm/mopo/src/value.h; sourceTree = "<group>"; };
+		D15368571FAE98E200B1AB05 /* voice_handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = voice_handler.cpp; path = ../helm/mopo/src/voice_handler.cpp; sourceTree = "<group>"; };
+		D15368581FAE98E200B1AB05 /* voice_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = voice_handler.h; path = ../helm/mopo/src/voice_handler.h; sourceTree = "<group>"; };
+		D15368591FAE98E200B1AB05 /* wave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wave.h; path = ../helm/mopo/src/wave.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -229,12 +230,12 @@
 		D11F48AA1F155E2300CF9A13 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				D11F48B61F155E7200CF9A13 /* helm */,
+				D15368091FAE98C500B1AB05 /* mopo */,
 				D11F48AB1F155E3600CF9A13 /* plugin_interface */,
 				D11F48B11F155E6400CF9A13 /* helm_plugin.cpp */,
 				D11F48B21F155E6400CF9A13 /* helm_sequencer.cpp */,
 				D11F48B31F155E6400CF9A13 /* helm_sequencer.h */,
-				D11F48B61F155E7200CF9A13 /* helm */,
-				D11F48BB1F155EB000CF9A13 /* mopo */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -273,99 +274,6 @@
 			children = (
 				D11F492E1F155EEC00CF9A13 /* common */,
 				D11F492F1F155EF200CF9A13 /* synthesis */,
-			);
-			name = src;
-			sourceTree = "<group>";
-		};
-		D11F48BB1F155EB000CF9A13 /* mopo */ = {
-			isa = PBXGroup;
-			children = (
-				D11F48BC1F155ECD00CF9A13 /* src */,
-			);
-			name = mopo;
-			sourceTree = "<group>";
-		};
-		D11F48BC1F155ECD00CF9A13 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				D11F48BD1F155EE200CF9A13 /* alias.cpp */,
-				D11F48BE1F155EE200CF9A13 /* alias.h */,
-				D11F48BF1F155EE200CF9A13 /* arpeggiator.cpp */,
-				D11F48C01F155EE200CF9A13 /* arpeggiator.h */,
-				D11F48C11F155EE200CF9A13 /* biquad_filter.cpp */,
-				D11F48C21F155EE200CF9A13 /* biquad_filter.h */,
-				D11F48C31F155EE200CF9A13 /* bit_crush.cpp */,
-				D11F48C41F155EE200CF9A13 /* bit_crush.h */,
-				D11F48C51F155EE200CF9A13 /* bypass_router.cpp */,
-				D11F48C61F155EE200CF9A13 /* bypass_router.h */,
-				D11F48C71F155EE200CF9A13 /* circular_queue.h */,
-				D11F48C81F155EE200CF9A13 /* common.h */,
-				D11F48C91F155EE200CF9A13 /* delay.cpp */,
-				D11F48CA1F155EE200CF9A13 /* delay.h */,
-				D11F48CB1F155EE200CF9A13 /* distortion.cpp */,
-				D11F48CC1F155EE200CF9A13 /* distortion.h */,
-				D11F48CD1F155EE200CF9A13 /* envelope.cpp */,
-				D11F48CE1F155EE200CF9A13 /* envelope.h */,
-				D11F48CF1F155EE200CF9A13 /* feedback.cpp */,
-				D11F48D01F155EE200CF9A13 /* feedback.h */,
-				D11F48D11F155EE200CF9A13 /* formant_manager.cpp */,
-				D11F48D21F155EE200CF9A13 /* formant_manager.h */,
-				D11F48D31F155EE200CF9A13 /* ladder_filter.cpp */,
-				D11F48D41F155EE200CF9A13 /* ladder_filter.h */,
-				D11F48D51F155EE200CF9A13 /* linear_slope.cpp */,
-				D11F48D61F155EE200CF9A13 /* linear_slope.h */,
-				D11F48D71F155EE200CF9A13 /* magnitude_lookup.cpp */,
-				D11F48D81F155EE200CF9A13 /* magnitude_lookup.h */,
-				D11F48D91F155EE200CF9A13 /* memory.cpp */,
-				D11F48DA1F155EE200CF9A13 /* memory.h */,
-				D11F48DB1F155EE300CF9A13 /* midi_lookup.cpp */,
-				D11F48DC1F155EE300CF9A13 /* midi_lookup.h */,
-				D11F48DD1F155EE300CF9A13 /* mono_panner.cpp */,
-				D11F48DE1F155EE300CF9A13 /* mono_panner.h */,
-				D11F48DF1F155EE300CF9A13 /* mopo.h */,
-				D11F48E01F155EE300CF9A13 /* note_handler.h */,
-				D11F48E11F155EE300CF9A13 /* operators.cpp */,
-				D11F48E21F155EE300CF9A13 /* operators.h */,
-				D11F48E31F155EE300CF9A13 /* oscillator.cpp */,
-				D11F48E41F155EE300CF9A13 /* oscillator.h */,
-				D11F48E51F155EE300CF9A13 /* portamento_slope.cpp */,
-				D11F48E61F155EE300CF9A13 /* portamento_slope.h */,
-				D11F48E71F155EE300CF9A13 /* processor_router.cpp */,
-				D11F48E81F155EE300CF9A13 /* processor_router.h */,
-				D11F48E91F155EE300CF9A13 /* processor.cpp */,
-				D11F48EA1F155EE300CF9A13 /* processor.h */,
-				D11F48EB1F155EE300CF9A13 /* resonance_lookup.cpp */,
-				D11F48EC1F155EE300CF9A13 /* resonance_lookup.h */,
-				D11F48ED1F155EE300CF9A13 /* reverb_all_pass.cpp */,
-				D11F48EE1F155EE300CF9A13 /* reverb_all_pass.h */,
-				D11F48EF1F155EE300CF9A13 /* reverb_comb.cpp */,
-				D11F48F01F155EE300CF9A13 /* reverb_comb.h */,
-				D11F48F11F155EE300CF9A13 /* reverb_tuning.h */,
-				D11F48F21F155EE300CF9A13 /* reverb.cpp */,
-				D11F48F31F155EE300CF9A13 /* reverb.h */,
-				D11F48F41F155EE300CF9A13 /* sample_decay_lookup.cpp */,
-				D11F48F51F155EE300CF9A13 /* sample_decay_lookup.h */,
-				D11F48F61F155EE300CF9A13 /* simple_delay.cpp */,
-				D11F48F71F155EE300CF9A13 /* simple_delay.h */,
-				D11F48F81F155EE300CF9A13 /* smooth_filter.cpp */,
-				D11F48F91F155EE300CF9A13 /* smooth_filter.h */,
-				D11F48FA1F155EE300CF9A13 /* smooth_value.cpp */,
-				D11F48FB1F155EE300CF9A13 /* smooth_value.h */,
-				D11F48FC1F155EE300CF9A13 /* state_variable_filter.cpp */,
-				D11F48FD1F155EE300CF9A13 /* state_variable_filter.h */,
-				D11F48FE1F155EE300CF9A13 /* step_generator.cpp */,
-				D11F48FF1F155EE300CF9A13 /* step_generator.h */,
-				D11F49001F155EE300CF9A13 /* stutter.cpp */,
-				D11F49011F155EE300CF9A13 /* stutter.h */,
-				D11F49021F155EE300CF9A13 /* tick_router.h */,
-				D11F49031F155EE300CF9A13 /* trigger_operators.cpp */,
-				D11F49041F155EE300CF9A13 /* trigger_operators.h */,
-				D11F49051F155EE300CF9A13 /* utils.h */,
-				D11F49061F155EE300CF9A13 /* value.cpp */,
-				D11F49071F155EE300CF9A13 /* value.h */,
-				D11F49081F155EE300CF9A13 /* voice_handler.cpp */,
-				D11F49091F155EE300CF9A13 /* voice_handler.h */,
-				D11F490A1F155EE300CF9A13 /* wave.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -421,6 +329,100 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D15368091FAE98C500B1AB05 /* mopo */ = {
+			isa = PBXGroup;
+			children = (
+				D153680A1FAE98CF00B1AB05 /* src */,
+			);
+			name = mopo;
+			sourceTree = "<group>";
+		};
+		D153680A1FAE98CF00B1AB05 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				D153680B1FAE98E200B1AB05 /* alias.cpp */,
+				D153680C1FAE98E200B1AB05 /* alias.h */,
+				D153680D1FAE98E200B1AB05 /* arpeggiator.cpp */,
+				D153680E1FAE98E200B1AB05 /* arpeggiator.h */,
+				D153680F1FAE98E200B1AB05 /* biquad_filter.cpp */,
+				D15368101FAE98E200B1AB05 /* biquad_filter.h */,
+				D15368111FAE98E200B1AB05 /* bit_crush.cpp */,
+				D15368121FAE98E200B1AB05 /* bit_crush.h */,
+				D15368131FAE98E200B1AB05 /* bypass_router.cpp */,
+				D15368141FAE98E200B1AB05 /* bypass_router.h */,
+				D15368151FAE98E200B1AB05 /* circular_queue.h */,
+				D15368161FAE98E200B1AB05 /* common.h */,
+				D15368171FAE98E200B1AB05 /* delay.cpp */,
+				D15368181FAE98E200B1AB05 /* delay.h */,
+				D15368191FAE98E200B1AB05 /* distortion.cpp */,
+				D153681A1FAE98E200B1AB05 /* distortion.h */,
+				D153681B1FAE98E200B1AB05 /* envelope.cpp */,
+				D153681C1FAE98E200B1AB05 /* envelope.h */,
+				D153681D1FAE98E200B1AB05 /* feedback.cpp */,
+				D153681E1FAE98E200B1AB05 /* feedback.h */,
+				D153681F1FAE98E200B1AB05 /* formant_manager.cpp */,
+				D15368201FAE98E200B1AB05 /* formant_manager.h */,
+				D15368211FAE98E200B1AB05 /* ladder_filter.cpp */,
+				D15368221FAE98E200B1AB05 /* ladder_filter.h */,
+				D15368231FAE98E200B1AB05 /* linear_slope.cpp */,
+				D15368241FAE98E200B1AB05 /* linear_slope.h */,
+				D15368251FAE98E200B1AB05 /* magnitude_lookup.cpp */,
+				D15368261FAE98E200B1AB05 /* magnitude_lookup.h */,
+				D15368271FAE98E200B1AB05 /* Makefile.am */,
+				D15368281FAE98E200B1AB05 /* memory.cpp */,
+				D15368291FAE98E200B1AB05 /* memory.h */,
+				D153682A1FAE98E200B1AB05 /* midi_lookup.cpp */,
+				D153682B1FAE98E200B1AB05 /* midi_lookup.h */,
+				D153682C1FAE98E200B1AB05 /* mono_panner.cpp */,
+				D153682D1FAE98E200B1AB05 /* mono_panner.h */,
+				D153682E1FAE98E200B1AB05 /* mopo.h */,
+				D153682F1FAE98E200B1AB05 /* note_handler.h */,
+				D15368301FAE98E200B1AB05 /* operators.cpp */,
+				D15368311FAE98E200B1AB05 /* operators.h */,
+				D15368321FAE98E200B1AB05 /* oscillator.cpp */,
+				D15368331FAE98E200B1AB05 /* oscillator.h */,
+				D15368341FAE98E200B1AB05 /* portamento_slope.cpp */,
+				D15368351FAE98E200B1AB05 /* portamento_slope.h */,
+				D15368361FAE98E200B1AB05 /* processor_router.cpp */,
+				D15368371FAE98E200B1AB05 /* processor_router.h */,
+				D15368381FAE98E200B1AB05 /* processor.cpp */,
+				D15368391FAE98E200B1AB05 /* processor.h */,
+				D153683A1FAE98E200B1AB05 /* resonance_lookup.cpp */,
+				D153683B1FAE98E200B1AB05 /* resonance_lookup.h */,
+				D153683C1FAE98E200B1AB05 /* reverb_all_pass.cpp */,
+				D153683D1FAE98E200B1AB05 /* reverb_all_pass.h */,
+				D153683E1FAE98E200B1AB05 /* reverb_comb.cpp */,
+				D153683F1FAE98E200B1AB05 /* reverb_comb.h */,
+				D15368401FAE98E200B1AB05 /* reverb_tuning.h */,
+				D15368411FAE98E200B1AB05 /* reverb.cpp */,
+				D15368421FAE98E200B1AB05 /* reverb.h */,
+				D15368431FAE98E200B1AB05 /* sample_decay_lookup.cpp */,
+				D15368441FAE98E200B1AB05 /* sample_decay_lookup.h */,
+				D15368451FAE98E200B1AB05 /* simple_delay.cpp */,
+				D15368461FAE98E200B1AB05 /* simple_delay.h */,
+				D15368471FAE98E200B1AB05 /* smooth_filter.cpp */,
+				D15368481FAE98E200B1AB05 /* smooth_filter.h */,
+				D15368491FAE98E200B1AB05 /* smooth_value.cpp */,
+				D153684A1FAE98E200B1AB05 /* smooth_value.h */,
+				D153684B1FAE98E200B1AB05 /* state_variable_filter.cpp */,
+				D153684C1FAE98E200B1AB05 /* state_variable_filter.h */,
+				D153684D1FAE98E200B1AB05 /* step_generator.cpp */,
+				D153684E1FAE98E200B1AB05 /* step_generator.h */,
+				D153684F1FAE98E200B1AB05 /* stutter.cpp */,
+				D15368501FAE98E200B1AB05 /* stutter.h */,
+				D15368511FAE98E200B1AB05 /* tick_router.h */,
+				D15368521FAE98E200B1AB05 /* trigger_operators.cpp */,
+				D15368531FAE98E200B1AB05 /* trigger_operators.h */,
+				D15368541FAE98E200B1AB05 /* utils.h */,
+				D15368551FAE98E200B1AB05 /* value.cpp */,
+				D15368561FAE98E200B1AB05 /* value.h */,
+				D15368571FAE98E200B1AB05 /* voice_handler.cpp */,
+				D15368581FAE98E200B1AB05 /* voice_handler.h */,
+				D15368591FAE98E200B1AB05 /* wave.h */,
+			);
+			name = src;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -500,57 +502,57 @@
 			files = (
 				D11F494F1F155F0C00CF9A13 /* detune_lookup.cpp in Sources */,
 				D11F495C1F155F0C00CF9A13 /* value_switch.cpp in Sources */,
-				D11F491D1F155EE300CF9A13 /* portamento_slope.cpp in Sources */,
-				D11F490C1F155EE300CF9A13 /* arpeggiator.cpp in Sources */,
-				D11F490B1F155EE300CF9A13 /* alias.cpp in Sources */,
+				D153686E1FAE98E200B1AB05 /* processor.cpp in Sources */,
+				D15368701FAE98E200B1AB05 /* reverb_all_pass.cpp in Sources */,
+				D153687B1FAE98E200B1AB05 /* value.cpp in Sources */,
+				D15368781FAE98E200B1AB05 /* step_generator.cpp in Sources */,
+				D15368611FAE98E200B1AB05 /* envelope.cpp in Sources */,
+				D153685B1FAE98E200B1AB05 /* arpeggiator.cpp in Sources */,
+				D15368751FAE98E200B1AB05 /* smooth_filter.cpp in Sources */,
 				D11F49511F155F0C00CF9A13 /* fixed_point_wave.cpp in Sources */,
-				D11F49221F155EE300CF9A13 /* reverb_comb.cpp in Sources */,
-				D11F491A1F155EE300CF9A13 /* mono_panner.cpp in Sources */,
 				D11F49501F155F0C00CF9A13 /* fixed_point_oscillator.cpp in Sources */,
+				D15368641FAE98E200B1AB05 /* ladder_filter.cpp in Sources */,
+				D153686A1FAE98E200B1AB05 /* operators.cpp in Sources */,
 				D11F49591F155F0C00CF9A13 /* peak_meter.cpp in Sources */,
-				D11F49251F155EE300CF9A13 /* simple_delay.cpp in Sources */,
+				D153687A1FAE98E200B1AB05 /* trigger_operators.cpp in Sources */,
+				D153686F1FAE98E200B1AB05 /* resonance_lookup.cpp in Sources */,
 				D11F49551F155F0C00CF9A13 /* helm_module.cpp in Sources */,
+				D153685F1FAE98E200B1AB05 /* delay.cpp in Sources */,
 				D11F49541F155F0C00CF9A13 /* helm_lfo.cpp in Sources */,
-				D11F49231F155EE300CF9A13 /* reverb.cpp in Sources */,
+				D153687C1FAE98E200B1AB05 /* voice_handler.cpp in Sources */,
 				D11F494E1F155F0C00CF9A13 /* dc_filter.cpp in Sources */,
-				D11F49291F155EE300CF9A13 /* step_generator.cpp in Sources */,
-				D11F49161F155EE300CF9A13 /* linear_slope.cpp in Sources */,
+				D15368721FAE98E200B1AB05 /* reverb.cpp in Sources */,
+				D15368741FAE98E200B1AB05 /* simple_delay.cpp in Sources */,
 				D11F49571F155F0C00CF9A13 /* helm_voice_handler.cpp in Sources */,
+				D15368661FAE98E200B1AB05 /* magnitude_lookup.cpp in Sources */,
 				D11F49581F155F0C00CF9A13 /* noise_oscillator.cpp in Sources */,
-				D11F49111F155EE300CF9A13 /* distortion.cpp in Sources */,
-				D11F491B1F155EE300CF9A13 /* operators.cpp in Sources */,
-				D11F491E1F155EE300CF9A13 /* processor_router.cpp in Sources */,
-				D11F492B1F155EE300CF9A13 /* trigger_operators.cpp in Sources */,
-				D11F49201F155EE300CF9A13 /* resonance_lookup.cpp in Sources */,
-				D11F49241F155EE300CF9A13 /* sample_decay_lookup.cpp in Sources */,
-				D11F492D1F155EE300CF9A13 /* voice_handler.cpp in Sources */,
+				D153686D1FAE98E200B1AB05 /* processor_router.cpp in Sources */,
+				D15368761FAE98E200B1AB05 /* smooth_value.cpp in Sources */,
+				D153685D1FAE98E200B1AB05 /* bit_crush.cpp in Sources */,
 				D11F48B51F155E6400CF9A13 /* helm_sequencer.cpp in Sources */,
-				D11F49261F155EE300CF9A13 /* smooth_filter.cpp in Sources */,
+				D15368731FAE98E200B1AB05 /* sample_decay_lookup.cpp in Sources */,
+				D15368691FAE98E200B1AB05 /* mono_panner.cpp in Sources */,
+				D15368771FAE98E200B1AB05 /* state_variable_filter.cpp in Sources */,
+				D15368681FAE98E200B1AB05 /* midi_lookup.cpp in Sources */,
 				D11F495F1F155F1D00CF9A13 /* helm_common.cpp in Sources */,
+				D15368711FAE98E200B1AB05 /* reverb_comb.cpp in Sources */,
 				D11F495B1F155F0C00CF9A13 /* trigger_random.cpp in Sources */,
-				D11F492C1F155EE300CF9A13 /* value.cpp in Sources */,
-				D11F49211F155EE300CF9A13 /* reverb_all_pass.cpp in Sources */,
-				D11F490E1F155EE300CF9A13 /* bit_crush.cpp in Sources */,
-				D11F49151F155EE300CF9A13 /* ladder_filter.cpp in Sources */,
-				D11F490F1F155EE300CF9A13 /* bypass_router.cpp in Sources */,
+				D153685E1FAE98E200B1AB05 /* bypass_router.cpp in Sources */,
+				D15368621FAE98E200B1AB05 /* feedback.cpp in Sources */,
 				D11F49531F155F0C00CF9A13 /* helm_engine.cpp in Sources */,
-				D11F492A1F155EE300CF9A13 /* stutter.cpp in Sources */,
+				D153686C1FAE98E200B1AB05 /* portamento_slope.cpp in Sources */,
 				D11F495A1F155F0C00CF9A13 /* resonance_cancel.cpp in Sources */,
-				D11F490D1F155EE300CF9A13 /* biquad_filter.cpp in Sources */,
+				D15368791FAE98E200B1AB05 /* stutter.cpp in Sources */,
 				D11F49521F155F0C00CF9A13 /* gate.cpp in Sources */,
-				D11F49181F155EE300CF9A13 /* memory.cpp in Sources */,
-				D11F49281F155EE300CF9A13 /* state_variable_filter.cpp in Sources */,
-				D11F49191F155EE300CF9A13 /* midi_lookup.cpp in Sources */,
-				D11F491C1F155EE300CF9A13 /* oscillator.cpp in Sources */,
-				D11F49271F155EE300CF9A13 /* smooth_value.cpp in Sources */,
-				D11F49121F155EE300CF9A13 /* envelope.cpp in Sources */,
+				D15368601FAE98E200B1AB05 /* distortion.cpp in Sources */,
+				D153685A1FAE98E200B1AB05 /* alias.cpp in Sources */,
+				D15368631FAE98E200B1AB05 /* formant_manager.cpp in Sources */,
+				D153685C1FAE98E200B1AB05 /* biquad_filter.cpp in Sources */,
 				D11F48B41F155E6400CF9A13 /* helm_plugin.cpp in Sources */,
-				D11F49101F155EE300CF9A13 /* delay.cpp in Sources */,
+				D15368671FAE98E200B1AB05 /* memory.cpp in Sources */,
 				D11F49561F155F0C00CF9A13 /* helm_oscillators.cpp in Sources */,
-				D11F49171F155EE300CF9A13 /* magnitude_lookup.cpp in Sources */,
-				D11F49131F155EE300CF9A13 /* feedback.cpp in Sources */,
-				D11F49141F155EE300CF9A13 /* formant_manager.cpp in Sources */,
-				D11F491F1F155EE300CF9A13 /* processor.cpp in Sources */,
+				D153686B1FAE98E200B1AB05 /* oscillator.cpp in Sources */,
+				D15368651FAE98E200B1AB05 /* linear_slope.cpp in Sources */,
 				D11F48B01F155E5000CF9A13 /* AudioPluginUtil.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

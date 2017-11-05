@@ -441,6 +441,20 @@ namespace Helm {
     return success;
   }
 
+  extern "C" UNITY_AUDIODSP_EXPORT_API float HelmGetParameterValue(int channel, int index) {
+    if (index < kNumParams)
+      return 0.0f;
+
+    for (auto synth : instance_map) {
+      EffectData* data = synth.second;
+      if (index >= data->num_parameters)
+        return 0.0f;
+      else
+        return data->parameters[index];
+    }
+    return 0.0f;
+  }
+
   extern "C" UNITY_AUDIODSP_EXPORT_API bool HelmSetParameterPercent(int channel, int index, float percent) {
     if (index < kNumParams)
       return false;
@@ -456,6 +470,23 @@ namespace Helm {
       }
     }
     return false;
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API float HelmGetParameterPercent(int channel, int index) {
+    if (index < kNumParams)
+      return 0.0f;
+
+    for (auto synth : instance_map) {
+      EffectData* data = synth.second;
+      if (index >= data->num_parameters)
+        return 0.0f;
+      else {
+        float range = data->range_lookup[index].second - data->range_lookup[index].first;
+        float value = data->parameters[index];
+        return mopo::utils::clamp(value - data->range_lookup[index].first, 0.0f, 1.0f) / range;
+      }
+    }
+    return 0.0f;
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API HelmSequencer* CreateSequencer() {

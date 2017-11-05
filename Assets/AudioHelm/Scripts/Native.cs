@@ -60,19 +60,33 @@ namespace AudioHelm
         #else
           [DllImport("AudioPluginHelm")]
         #endif
+        public static extern float HelmGetParameterValue(int channel, int paramIndex);
+
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+          [DllImport("AudioPluginHelm")]
+        #endif
         public static extern bool HelmSetParameterValue(int channel, int paramIndex, float newValue);
 
         #if UNITY_IOS
           [DllImport("__Internal")]
         #else
-        [DllImport("AudioPluginHelm")]
+          [DllImport("AudioPluginHelm")]
+        #endif
+        public static extern float HelmGetParameterPercent(int channel, int paramIndex);
+
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+          [DllImport("AudioPluginHelm")]
         #endif
         public static extern bool HelmSetParameterPercent(int channel, int paramIndex, float newPercent);
 
         #if UNITY_IOS
           [DllImport("__Internal")]
         #else
-        [DllImport("AudioPluginHelm")]
+          [DllImport("AudioPluginHelm")]
         #endif
         public static extern void SetBpm(float bpm);
 

@@ -235,12 +235,12 @@
 		08FB77AFFE84173DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				D10098721E662D68003830AE /* helm */,
+				D10098FC1E662DF6003830AE /* mopo */,
 				D177B5181E705CE3009CC51F /* plugin_interface */,
 				D100988A1E662DA4003830AE /* helm_plugin.cpp */,
 				D1CAEEE01E6F74F10053B7E0 /* helm_sequencer.cpp */,
 				D1CAEEE11E6F74F10053B7E0 /* helm_sequencer.h */,
-				D10098721E662D68003830AE /* helm */,
-				D10098FC1E662DF6003830AE /* mopo */,
 			);
 			name = Source;
 			sourceTree = "<group>";

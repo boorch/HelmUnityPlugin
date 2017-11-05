@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\AudioHelm\Editor\AudioHelmClockUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\HelmControllerUI.cs" />
+     <Compile Include="Assets\AudioHelm\Editor\HelmParamterListUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\HelmSequencerUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\HelmSynthUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\KeyboardUI.cs" />

@@ -24,7 +24,7 @@ namespace AudioHelm
                  " This must match the channel set in the Helm Audio plugin.")]
         public int channel = 0;
 
-        public float parameter;
+        public List<HelmParameter> synthParameters = new List<HelmParameter>();
 
         Dictionary<int, int> pressedNotes = new Dictionary<int, int>();
 
@@ -44,6 +44,50 @@ namespace AudioHelm
         }
 
         /// <summary>
+        /// Adds an empty parameter placement.
+        /// </summary>
+        /// <returns>The create synth parameter object.</returns>
+        public HelmParameter AddEmptyParameter()
+        {
+            HelmParameter synthParameter = new HelmParameter(this);
+            synthParameters.Add(synthParameter);
+            return synthParameter;
+        }
+
+        /// <summary>
+        /// Adds a new parameter to this controller.
+        /// </summary>
+        /// <returns>The create synth parameter object.</returns>
+        public HelmParameter AddParameter(Param parameter)
+        {
+            HelmParameter synthParameter = new HelmParameter(this, parameter);
+            synthParameters.Add(synthParameter);
+            return synthParameter;
+        }
+
+        /// <summary>
+        /// Removes the given parameter from the parameter control list.
+        /// </summary>
+        /// <returns>The index where the parameter was.</returns>
+        public int RemoveParameter(HelmParameter parameter)
+        {
+            int indexOf = synthParameters.IndexOf(parameter);
+            synthParameters.Remove(parameter);
+            return indexOf;
+        }
+
+        /// <summary>
+        /// Gets a Helm synthesizer parameter's percent value of the valid range.
+        /// e.g. When getting a transpose value, getting the value returns the number of semitones.
+        /// </summary>
+        /// <param name="parameter">The parameter to get the value of.</param>
+        /// <returns>The current value of the parameter passed in.</returns>
+        public float GetParameterValue(Param parameter)
+        {
+            return Native.HelmGetParameterPercent(channel, (int)parameter);
+        }
+
+        /// <summary>
         /// Changes a Helm synthesizer parameter value.
         /// e.g. Lower the pitch of the oscillator by setting the transpose to -12 semitones.
         /// </summary>
@@ -52,6 +96,17 @@ namespace AudioHelm
         public void SetParameterValue(Param parameter, float newValue)
         {
             Native.HelmSetParameterValue(channel, (int)parameter, newValue);
+        }
+
+        /// <summary>
+        /// Gets a Helm synthesizer parameter's percent value of the valid range.
+        /// e.g. When getting a transpose value, getting the value returns the number of semitones.
+        /// </summary>
+        /// <param name="parameter">The parameter to get the value of.</param>
+        /// <returns>The current value of the parameter passed in.</returns>
+        public float GetParameterValue(CommonParam parameter)
+        {
+            return Native.HelmGetParameterPercent(channel, (int)parameter);
         }
 
         /// <summary>
@@ -66,6 +121,17 @@ namespace AudioHelm
         }
 
         /// <summary>
+        /// Gets a Helm synthesizer parameter's percent value of the valid range.
+        /// e.g. If the percent of a parameter is set to 1.0, it's at its max setting.
+        /// </summary>
+        /// <param name="parameter">The parameter to get the value percent of.</param>
+        /// <returns>The current percent value of the parameter passed in.</returns>
+        public float GetParameterPercent(Param parameter)
+        {
+            return Native.HelmGetParameterPercent(channel, (int)parameter);
+        }
+
+        /// <summary>
         /// Changes a Helm synthesizer parameter by percent of the valid range.
         /// e.g. Set the volume to the highest setting by setting the Volume to 1.0.
         /// </summary>
@@ -77,8 +143,19 @@ namespace AudioHelm
         }
 
         /// <summary>
+        /// Gets a Helm synthesizer parameter's percent value of the valid range.
+        /// e.g. If the percent of a parameter is set to 1.0, it's at its max setting.
+        /// </summary>
+        /// <param name="parameter">The parameter to get the value percent of.</param>
+        /// <returns>The current percent value of the parameter passed in.</returns>
+        public float GetParameterPercent(CommonParam parameter)
+        {
+            return Native.HelmGetParameterPercent(channel, (int)parameter);
+        }
+
+        /// <summary>
         /// Changes a Helm synthesizer parameter by percent of the valid range.
-        /// e.g. Set the volume to the highest setting by setting the Volume to 1.0.
+        /// e.g. Set any parameter to the highest setting by setting the percent to 1.0.
         /// </summary>
         /// <param name="parameter">The parameter to be changed.</param>
         /// <param name="newPercent">The percent of range of values to use. 0.0 for lowest, 1.0 for highest.</param>
