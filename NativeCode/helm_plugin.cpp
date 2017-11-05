@@ -37,6 +37,7 @@ namespace Helm {
     int instance_id;
     mopo::HelmEngine synth_engine;
     Mutex mutex;
+    bool active;
   };
 
   Mutex instance_mutex;
@@ -138,6 +139,7 @@ namespace Helm {
       effect_data->modulations[i] = new mopo::ModulationConnection();
 
     effect_data->synth_engine.setSampleRate(state->samplerate);
+    effect_data->active = false;
 
     state->effectdata = effect_data;
     MutexScopeLock mutex_instance_lock(instance_mutex);
@@ -346,9 +348,12 @@ namespace Helm {
     bool silent = mopo::utils::isSilentf(in_buffer, num_samples * out_channels);
     EffectData* data = state->GetEffectData<EffectData>();
     if (state->flags & UnityAudioEffectStateFlags_IsPaused || last_time > current_time || silent) {
+      data->active = false;
       memset(out_buffer, 0, num_samples * out_channels * sizeof(float));
       return UNITY_AUDIODSP_OK;
     }
+
+    data->active = true;
 
     int synth_samples = num_samples > mopo::MAX_BUFFER_SIZE ? mopo::MAX_BUFFER_SIZE : num_samples;
     MutexScopeLock mutex_lock(data->mutex);
@@ -368,7 +373,8 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOn(int channel, int note, float velocity) {
     for (auto synth : instance_map) {
-      if (((int)synth.second->parameters[kChannel]) == channel) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
         synth.second->note_events.enqueue(std::pair<int, float>(note, velocity));
       }
     }
@@ -376,7 +382,8 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOff(int channel, int note) {
     for (auto synth : instance_map) {
-      if (((int)synth.second->parameters[kChannel]) == channel) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
         synth.second->note_events.enqueue(std::pair<int, float>(note, 0.0f));
       }
     }
@@ -384,7 +391,8 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void HelmAllNotesOff(int channel) {
     for (auto synth : instance_map) {
-      if (((int)synth.second->parameters[kChannel]) == channel) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
         MutexScopeLock mutex_lock(synth.second->mutex);
         std::pair<int, float> event;
 
@@ -397,7 +405,8 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void HelmSetPitchWheel(int channel, float value) {
     for (auto synth : instance_map) {
-      if (((int)synth.second->parameters[kChannel]) == channel) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
         synth.second->synth_engine.setPitchWheel(value);
       }
     }
@@ -405,7 +414,8 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void HelmSetModWheel(int channel, float value) {
     for (auto synth : instance_map) {
-      if (((int)synth.second->parameters[kChannel]) == channel) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
         synth.second->synth_engine.setModWheel(value);
       }
     }
@@ -413,7 +423,8 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void HelmSetAftertouch(int channel, int note, float value) {
     for (auto synth : instance_map) {
-      if (((int)synth.second->parameters[kChannel]) == channel) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
         synth.second->synth_engine.setAftertouch(note, value);
       }
     }
@@ -426,7 +437,7 @@ namespace Helm {
     bool success = true;
     for (auto synth : instance_map) {
       EffectData* data = synth.second;
-      if (((int)data->parameters[kChannel]) == channel) {
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
         if (index >= data->num_parameters)
           success = false;
         else {
@@ -447,10 +458,10 @@ namespace Helm {
 
     for (auto synth : instance_map) {
       EffectData* data = synth.second;
-      if (index >= data->num_parameters)
-        return 0.0f;
-      else
-        return data->parameters[index];
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
+        if (index < data->num_parameters)
+          return data->parameters[index];
+      }
     }
     return 0.0f;
   }
@@ -482,7 +493,7 @@ namespace Helm {
         return 0.0f;
       else {
         float range = data->range_lookup[index].second - data->range_lookup[index].first;
-        float value = data->parameters[index];
+        float value = HelmGetParameterValue(channel, index);
         return mopo::utils::clamp(value - data->range_lookup[index].first, 0.0f, 1.0f) / range;
       }
     }

@@ -90,7 +90,8 @@ namespace AudioHelm
                 }
             }
 
-            EditorGUILayout.IntSlider(length, 1, Sequencer.kMaxLength);
+            EditorGUILayout.PropertyField(length);
+            sampleSequencer.length = Mathf.Max(sampleSequencer.length, 1);
             EditorGUILayout.PropertyField(division);
             EditorGUILayout.Slider(zoom, 0.0f, 1.0f);
             serializedObject.ApplyModifiedProperties();

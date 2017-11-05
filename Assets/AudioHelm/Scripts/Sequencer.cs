@@ -135,8 +135,6 @@ namespace AudioHelm
         [Tooltip("How zoomed into the inspector sequencer we are. [0.0, 1.0]")]
         public float zoom = 0.3f;
 
-        public const int kMaxLength = 128;
-
         static NoteComparer noteComparer = new NoteComparer();
         static NotePositionComparer notePositionComparer = new NotePositionComparer();
 

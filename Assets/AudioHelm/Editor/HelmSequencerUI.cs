@@ -73,7 +73,8 @@ namespace AudioHelm
             }
 
             EditorGUILayout.IntSlider(channel, 0, Utils.kMaxChannels - 1);
-            EditorGUILayout.IntSlider(length, 1, Sequencer.kMaxLength);
+            EditorGUILayout.PropertyField(length);
+            helmSequencer.length = Mathf.Max(helmSequencer.length, 1);
             EditorGUILayout.PropertyField(division);
             EditorGUILayout.Slider(zoom, 0.0f, 1.0f);
             serializedObject.ApplyModifiedProperties();
