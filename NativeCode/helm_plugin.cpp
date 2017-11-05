@@ -383,7 +383,7 @@ namespace Helm {
   extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOff(int channel, int note) {
     for (auto synth : instance_map) {
       EffectData* data = synth.second;
-      if (((int)data->parameters[kChannel]) == channel && data->active) {
+      if (((int)data->parameters[kChannel]) == channel) {
         synth.second->note_events.enqueue(std::pair<int, float>(note, 0.0f));
       }
     }
@@ -392,7 +392,7 @@ namespace Helm {
   extern "C" UNITY_AUDIODSP_EXPORT_API void HelmAllNotesOff(int channel) {
     for (auto synth : instance_map) {
       EffectData* data = synth.second;
-      if (((int)data->parameters[kChannel]) == channel && data->active) {
+      if (((int)data->parameters[kChannel]) == channel) {
         MutexScopeLock mutex_lock(synth.second->mutex);
         std::pair<int, float> event;
 
