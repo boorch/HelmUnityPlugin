@@ -1,7 +1,6 @@
 # TODO
 
 Add inspector/animation hooks for parameters
-Horizontal scrolling for sequencer
 Keep sampler/synth sequencers in sync
 Dynamic patch loading
 Dynamic MIDI file loading

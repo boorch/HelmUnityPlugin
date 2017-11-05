@@ -77,7 +77,8 @@ namespace AudioHelm
         int numCols = 16;
         int numSixteenths = 16;
         int notesPerBeat = 4;
-        const float minColWidth = 14.0f;
+        const float minColWidth = 8.0f;
+        const float maxColZoomWidth = 60.0f;
         float colWidth = 30.0f;
         float sixteenthWidth = 30.0f;
 
@@ -550,12 +551,12 @@ namespace AudioHelm
             return Mathf.Max(minKey, firstKey);
         }
 
-        float GetMaxVisibleTime(float windowWidth)
+        public float GetMaxVisibleTime(float windowWidth)
         {
             return (scrollPosition.x + windowWidth - keyboardWidth - rightPadding) / sixteenthWidth;
         }
 
-        float GetMinVisibleTime()
+        public float GetMinVisibleTime()
         {
             return scrollPosition.x / sixteenthWidth;
         }
@@ -570,14 +571,19 @@ namespace AudioHelm
             return scrollPosition.x / colWidth;
         }
 
-        public void DrawSequencer(Rect rect, Sequencer sequencer, SerializedProperty allNotes)
+        public void DrawSequencer(Rect rect, Sequencer sequencer, float zoomPercent, SerializedProperty allNotes)
         {
             float divisionLength = sequencer.GetDivisionLength();
             numRows = maxKey - minKey + 1;
             numCols = Mathf.RoundToInt(sequencer.length / divisionLength);
             numSixteenths = Mathf.RoundToInt(sequencer.length);
-            colWidth = Mathf.Max(minColWidth * divisionLength, (rect.width - keyboardWidth - rightPadding) / numCols);
-            sixteenthWidth = Mathf.Max(minColWidth, (rect.width - keyboardWidth - rightPadding) / numSixteenths);
+
+            float zoomLog = Mathf.Log(maxColZoomWidth / minColWidth);
+            float zoomSize = minColWidth * Mathf.Exp(zoomLog * zoomPercent);
+            float minWidth = Mathf.Max(zoomSize, minColWidth);
+
+            colWidth = Mathf.Max(minWidth * divisionLength, (rect.width - keyboardWidth - rightPadding) / numCols);
+            sixteenthWidth = Mathf.Max(minWidth, (rect.width - keyboardWidth - rightPadding) / numSixteenths);
 
             float noteAreaHeight = rect.height - bottomPadding - velocitySectionHeight;
             rowHeight = Mathf.Clamp(noteAreaHeight / numRows, minRowHeight, maxRowHeight);

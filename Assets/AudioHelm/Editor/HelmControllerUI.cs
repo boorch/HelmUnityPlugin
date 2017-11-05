@@ -11,11 +11,13 @@ namespace AudioHelm
         private SerializedObject serialized;
         KeyboardUI keyboard = new KeyboardUI();
         SerializedProperty channel;
+        SerializedProperty parameter;
 
         void OnEnable()
         {
             serialized = new SerializedObject(target);
             channel = serialized.FindProperty("channel");
+            parameter = serialized.FindProperty("parameter");
         }
 
         public override void OnInspectorGUI()
@@ -34,6 +36,7 @@ namespace AudioHelm
             GUI.backgroundColor = prev_color;
 
             EditorGUILayout.IntSlider(channel, 0, Utils.kMaxChannels - 1);
+            EditorGUILayout.Slider(parameter, 0.0f, 1.0f);
             serialized.ApplyModifiedProperties();
         }
     }

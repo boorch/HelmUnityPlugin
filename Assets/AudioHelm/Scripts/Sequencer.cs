@@ -121,14 +121,19 @@ namespace AudioHelm
         /// <summary>
         /// The x/y scroll position of the inspector sequencer piano roll.
         /// </summary>
-        [NonSerialized]
         public Vector2 scrollPosition = Vector2.zero;
 
         /// <summary>
-        /// The division of the graphical sequencer.
+        /// How often a bar or a division is placed in the sequencer inspector view.
         /// </summary>
-        [Tooltip("How often a bar or a division is placed in the sequencer.")]
+        [Tooltip("How often a bar or a division is placed in the sequencer inspector view.")]
         public Division division = Division.kSixteenth;
+
+        /// <summary>
+        /// The smallest width to draw a sequencer beat in the inspector
+        /// </summary>
+        [Tooltip("How zoomed into the inspector sequencer we are. [0.0, 1.0]")]
+        public float zoom = 0.3f;
 
         public const int kMaxLength = 128;
 

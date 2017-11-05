@@ -15,6 +15,7 @@ namespace AudioHelm
         SerializedProperty length;
         SerializedProperty division;
         SerializedProperty allNotes;
+        SerializedProperty zoom;
 
         SequencerUI sequencer = new SequencerUI(keyboardWidth, scrollWidth + 1);
         SequencerPositionUI sequencerPosition = new SequencerPositionUI(keyboardWidth, scrollWidth);
@@ -28,6 +29,7 @@ namespace AudioHelm
             length = serializedObject.FindProperty("length");
             division = serializedObject.FindProperty("division");
             allNotes = serializedObject.FindProperty("allNotes");
+            zoom = serializedObject.FindProperty("zoom");
         }
 
         public override void OnInspectorGUI()
@@ -55,11 +57,13 @@ namespace AudioHelm
 
             if (sequencer.DoSequencerEvents(rect, sampleSequencer, allNotes))
                 Repaint();
-
-            sequencerPosition.DrawSequencerPosition(sequencerPositionRect, sampleSequencer);
+            
+            float startWindow = sequencer.GetMinVisibleTime() / length.intValue;
+            float endWindow = sequencer.GetMaxVisibleTime(rect.width) / length.intValue;
+            sequencerPosition.DrawSequencerPosition(sequencerPositionRect, sampleSequencer, startWindow, endWindow);
 
             if (rect.height == seqHeight)
-                sequencer.DrawSequencer(rect, sampleSequencer, allNotes);
+                sequencer.DrawSequencer(rect, sampleSequencer, zoom.floatValue, allNotes);
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
@@ -88,6 +92,7 @@ namespace AudioHelm
 
             EditorGUILayout.IntSlider(length, 1, Sequencer.kMaxLength);
             EditorGUILayout.PropertyField(division);
+            EditorGUILayout.Slider(zoom, 0.0f, 1.0f);
             serializedObject.ApplyModifiedProperties();
         }
     }

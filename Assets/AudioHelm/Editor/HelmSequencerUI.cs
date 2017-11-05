@@ -16,6 +16,7 @@ namespace AudioHelm
         SequencerPositionUI sequencerPosition = new SequencerPositionUI(keyboardWidth, scrollWidth);
         SerializedProperty channel;
         SerializedProperty length;
+        SerializedProperty zoom;
         SerializedProperty division;
         SerializedProperty allNotes;
 
@@ -29,6 +30,7 @@ namespace AudioHelm
             length = serializedObject.FindProperty("length");
             division = serializedObject.FindProperty("division");
             allNotes = serializedObject.FindProperty("allNotes");
+            zoom = serializedObject.FindProperty("zoom");
         }
 
         public override void OnInspectorGUI()
@@ -41,13 +43,16 @@ namespace AudioHelm
             Rect sequencerPositionRect = GUILayoutUtility.GetRect(minWidth, positionHeight, GUILayout.ExpandWidth(true));
             Rect rect = GUILayoutUtility.GetRect(minWidth, sequencerHeight, GUILayout.ExpandWidth(true));
 
-            if (sequencer.DoSequencerEvents(rect, helmSequencer, allNotes))
-                Repaint();
-
-            sequencerPosition.DrawSequencerPosition(sequencerPositionRect, helmSequencer);
+            float startWindow = sequencer.GetMinVisibleTime() / length.intValue;
+            float endWindow = sequencer.GetMaxVisibleTime(rect.width) / length.intValue;
+            sequencerPosition.DrawSequencerPosition(sequencerPositionRect, helmSequencer, startWindow, endWindow);
 
             if (rect.height == sequencerHeight)
-                sequencer.DrawSequencer(rect, helmSequencer, allNotes);
+                sequencer.DrawSequencer(rect, helmSequencer, zoom.floatValue, allNotes);
+            
+            if (sequencer.DoSequencerEvents(rect, helmSequencer, allNotes))
+                Repaint();
+            
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
@@ -70,6 +75,7 @@ namespace AudioHelm
             EditorGUILayout.IntSlider(channel, 0, Utils.kMaxChannels - 1);
             EditorGUILayout.IntSlider(length, 1, Sequencer.kMaxLength);
             EditorGUILayout.PropertyField(division);
+            EditorGUILayout.Slider(zoom, 0.0f, 1.0f);
             serializedObject.ApplyModifiedProperties();
         }
     }

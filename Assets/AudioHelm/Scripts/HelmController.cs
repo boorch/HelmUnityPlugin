@@ -24,6 +24,8 @@ namespace AudioHelm
                  " This must match the channel set in the Helm Audio plugin.")]
         public int channel = 0;
 
+        public float parameter;
+
         Dictionary<int, int> pressedNotes = new Dictionary<int, int>();
 
         void OnDestroy()
