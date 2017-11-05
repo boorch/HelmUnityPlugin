@@ -1,5 +1,6 @@
 # TODO
 
+Add animation parameter example
 Keep sampler/synth sequencers in sync
 Dynamic patch loading
 Dynamic MIDI file loading
@@ -16,7 +17,5 @@ ps4/xbox support?
 
 ## Known Issues
 
-Copying sequencer seems to break connection?
 Sequencer changes lock audio thread
-Loading MIDI Files doesn't work in build
 
