@@ -24,6 +24,14 @@ namespace AudioHelm
                  " This must match the channel set in the Helm Audio plugin.")]
         public int channel = 0;
 
+        public const int MAX_PARAMETERS = 16;
+
+        [SerializeField]
+        protected float synthParamValue0 = 0.0f, synthParamValue1 = 0.0f, synthParamValue2 = 0.0f, synthParamValue3 = 0.0f,
+                        synthParamValue4 = 0.0f, synthParamValue5 = 0.0f, synthParamValue6 = 0.0f, synthParamValue7 = 0.0f,
+                        synthParamValue8 = 0.0f, synthParamValue9 = 0.0f, synthParamValue10 = 0.0f, synthParamValue11 = 0.0f,
+                        synthParamValue12 = 0.0f, synthParamValue13 = 0.0f, synthParamValue14 = 0.0f, synthParamValue15 = 0.0f;
+
         public List<HelmParameter> synthParameters = new List<HelmParameter>();
 
         Dictionary<int, int> pressedNotes = new Dictionary<int, int>();
@@ -44,11 +52,47 @@ namespace AudioHelm
         }
 
         /// <summary>
+        /// Passes along all parameter values to native code.
+        /// </summary>
+        public void UpdateAllParameters()
+        {
+            float[] paramValues =
+            {
+                synthParamValue0, synthParamValue1, synthParamValue2, synthParamValue3,
+                synthParamValue4, synthParamValue5, synthParamValue6, synthParamValue7,
+                synthParamValue8, synthParamValue9, synthParamValue10, synthParamValue11,
+                synthParamValue12, synthParamValue13, synthParamValue14, synthParamValue15
+            };
+            for (int i = 0; i < synthParameters.Count; ++i)
+                synthParameters[i].paramValue = paramValues[i];
+        }
+
+        /// <summary>
+        /// Passes along parameter value to native code.
+        /// </summary>
+        /// <param name="index">The index of the parameter to update.</param>
+        public void UpdateParameter(int index)
+        {
+            if (index >= synthParameters.Count || index < 0)
+                return;
+            float[] paramValues =
+            {
+                synthParamValue0, synthParamValue1, synthParamValue2, synthParamValue3,
+                synthParamValue4, synthParamValue5, synthParamValue6, synthParamValue7,
+                synthParamValue8, synthParamValue9, synthParamValue10, synthParamValue11,
+                synthParamValue12, synthParamValue13, synthParamValue14, synthParamValue15
+            };
+            synthParameters[index].paramValue = paramValues[index];
+        }
+
+        /// <summary>
         /// Adds an empty parameter placement.
         /// </summary>
         /// <returns>The create synth parameter object.</returns>
         public HelmParameter AddEmptyParameter()
         {
+            if (synthParameters.Count >= MAX_PARAMETERS)
+                return null;
             HelmParameter synthParameter = new HelmParameter(this);
             synthParameters.Add(synthParameter);
             return synthParameter;
@@ -269,6 +313,11 @@ namespace AudioHelm
 		public void SetAftertouch(int note, float aftertouchValue)
         {
             Native.HelmSetAftertouch(channel, note, aftertouchValue);
+        }
+
+        void Update()
+        {
+            UpdateAllParameters();
         }
     }
 }

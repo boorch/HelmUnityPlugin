@@ -12,14 +12,12 @@ namespace AudioHelm
         KeyboardUI keyboard = new KeyboardUI();
         HelmParameterListUI parameterList = new HelmParameterListUI();
         SerializedProperty channel;
-        SerializedProperty synthParameters;
         const float minWidth = 200.0f;
 
         void OnEnable()
         {
             serialized = new SerializedObject(target);
             channel = serialized.FindProperty("channel");
-            synthParameters = serialized.FindProperty("synthParameters");
         }
 
         public override void OnInspectorGUI()
@@ -42,7 +40,7 @@ namespace AudioHelm
 
             float height = parameterList.GetHeight(controller);
             Rect keyzonesRect = GUILayoutUtility.GetRect(minWidth, height, GUILayout.ExpandWidth(true));
-            parameterList.DrawParameters(keyzonesRect, controller, synthParameters);
+            parameterList.DrawParameters(keyzonesRect, controller, serialized);
             GUILayout.Space(10.0f);
             serialized.ApplyModifiedProperties();
         }

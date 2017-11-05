@@ -11,6 +11,11 @@ namespace AudioHelm
     [System.Serializable]
     public class HelmParameter
     {
+        public HelmParameter()
+        {
+            parent = null;
+        }
+
         public HelmParameter(HelmController par)
         {
             parent = par;
@@ -33,6 +38,8 @@ namespace AudioHelm
         /// </summary>
         public HelmController parent = null;
 
+        float lastValue = -1.0f;
+
         [SerializeField]
         float paramValue_ = 0.0f;
         /// <summary>
@@ -48,11 +55,17 @@ namespace AudioHelm
             {
                 if (paramValue_ == value)
                     return;
-                paramValue_ = value;
 
-                if (parent && parameter != Param.kNone)
-                    parent.SetParameterPercent(parameter, paramValue_);
+                paramValue_ = value;
+                UpdateNative();
             }
+        }
+
+        public void UpdateNative()
+        {
+            if (parent && parameter != Param.kNone && lastValue != paramValue_)
+                parent.SetParameterPercent(parameter, paramValue_);
+            lastValue = paramValue_;
         }
     }
 }

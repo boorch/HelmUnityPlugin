@@ -8,30 +8,36 @@ namespace AudioHelm
 {
     public class HelmParameterListUI
     {
-        const int rowHeight = 32;
+        const int rowHeight = 24;
+        const int buttonHeight = 15;
         const int buttonBuffer = 17;
         const int addButtonHeight = 20;
         const int sliderWidth = 150;
+        const int sliderBuffer = 10;
 
-        void DrawParameterList(HelmController controller, SerializedProperty synthParameters)
+        void DrawParameterList(HelmController controller, SerializedObject serialized, float width)
         {
-            int height = rowHeight / 2;
             GUIStyle style = new GUIStyle(GUI.skin.button);
             style.padding = new RectOffset(0, 0, 0, 0);
-            style.fontSize = height - 4;
-            int y = addButtonHeight;
+            style.fontSize = buttonHeight - 4;
+            int y = addButtonHeight + sliderBuffer;
+            int extra_y = (rowHeight - buttonHeight) / 3;
 
             HelmParameter remove = null;
 
+            int paramIndex = 0;
             foreach (HelmParameter synthParameter in controller.synthParameters)
             {
-                Rect buttonRect = new Rect(0, y, height, height);
-                Rect paramRect = new Rect(buttonRect.xMax, y, sliderWidth - buttonRect.width, height);
+                Rect buttonRect = new Rect(0, y + extra_y, buttonHeight, buttonHeight);
+                Rect paramRect = new Rect(buttonRect.xMax, y + extra_y, sliderWidth - buttonRect.width, buttonHeight);
+                Rect sliderRect = new Rect(paramRect.xMax + sliderBuffer, y + extra_y, width - sliderWidth, buttonHeight);
 
                 if (GUI.Button(buttonRect, "X", style))
                     remove = synthParameter;
 
                 System.Enum param = EditorGUI.EnumPopup(paramRect, synthParameter.parameter);
+                SerializedProperty paramProperty = serialized.FindProperty("synthParamValue" + paramIndex);
+                EditorGUI.Slider(sliderRect, paramProperty, 0.0f, 1.0f, "");
 
                 if (param != (System.Enum)synthParameter.parameter)
                 {
@@ -39,42 +45,33 @@ namespace AudioHelm
                     synthParameter.parameter = (Param)param;
                 }
                 y += rowHeight;
+
+                paramIndex++;
             }
 
             if (remove != null)
             {
                 Undo.RecordObject(controller, "Remove Parameter Control");
-                int index = controller.RemoveParameter(remove);
-                if (index >= 0)
-                    synthParameters.DeleteArrayElementAtIndex(index);
+                controller.RemoveParameter(remove);
             }
-        }
 
+            controller.UpdateAllParameters();
+        }
 
         public int GetHeight(HelmController controller)
         {
-            return addButtonHeight + rowHeight * controller.synthParameters.Count;
+            return addButtonHeight + rowHeight * controller.synthParameters.Count + sliderBuffer;
         }
 
-        void AddParameter(HelmController controller, SerializedProperty synthParameters)
-        {
-            HelmParameter synthParameter = controller.AddEmptyParameter();
-
-            synthParameters.arraySize++;
-            SerializedProperty newParameter = synthParameters.GetArrayElementAtIndex(synthParameters.arraySize - 1);
-            newParameter.FindPropertyRelative("parent").objectReferenceValue = synthParameter.parent;
-            newParameter.FindPropertyRelative("parameter").intValue = (int)synthParameter.parameter;
-        }
-
-        public void DrawParameters(Rect rect, HelmController controller, SerializedProperty synthParameters)
+        public void DrawParameters(Rect rect, HelmController controller, SerializedObject serialized)
         {
             GUI.BeginGroup(rect);
-            DrawParameterList(controller, synthParameters);
+            DrawParameterList(controller, serialized, rect.width);
             Rect buttonRect = new Rect(rect.width / 4, 0, rect.width / 2, addButtonHeight);
             if (GUI.Button(buttonRect, "Add Parameter Control"))
             {
                 Undo.RecordObject(controller, "Add Parameter Control");
-                AddParameter(controller, synthParameters);
+                controller.AddEmptyParameter();
             }
 
             GUI.EndGroup();
