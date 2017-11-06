@@ -92,6 +92,9 @@ namespace AudioHelm
 
             EditorGUILayout.PropertyField(length);
             sampleSequencer.length = Mathf.Max(sampleSequencer.length, 1);
+
+            GUILayout.Space(5f);
+            EditorGUILayout.LabelField("View Options", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(division);
             EditorGUILayout.Slider(zoom, 0.0f, 1.0f);
             serializedObject.ApplyModifiedProperties();

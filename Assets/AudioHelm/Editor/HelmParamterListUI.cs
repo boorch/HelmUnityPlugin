@@ -12,7 +12,8 @@ namespace AudioHelm
         const int buttonHeight = 15;
         const int buttonBuffer = 17;
         const int addButtonHeight = 20;
-        const int sliderWidth = 150;
+        const int parameterWidth = 120;
+        const int scaleWidth = 60;
         const int sliderBuffer = 10;
 
         void DrawParameterList(HelmController controller, SerializedObject serialized, float width)
@@ -29,21 +30,48 @@ namespace AudioHelm
             foreach (HelmParameter synthParameter in controller.synthParameters)
             {
                 Rect buttonRect = new Rect(0, y + extra_y, buttonHeight, buttonHeight);
-                Rect paramRect = new Rect(buttonRect.xMax, y + extra_y, sliderWidth - buttonRect.width, buttonHeight);
-                Rect sliderRect = new Rect(paramRect.xMax + sliderBuffer, y + extra_y, width - sliderWidth, buttonHeight);
+                Rect paramRect = new Rect(buttonRect.xMax, y + extra_y, parameterWidth, buttonHeight);
+                Rect scaleRect = new Rect(paramRect.xMax, y + extra_y, scaleWidth, buttonHeight);
+                Rect sliderRect = new Rect(scaleRect.xMax + sliderBuffer, y + extra_y,
+                                           width - scaleRect.xMax - sliderBuffer, buttonHeight);
 
                 if (GUI.Button(buttonRect, "X", style))
                     remove = synthParameter;
 
                 System.Enum param = EditorGUI.EnumPopup(paramRect, synthParameter.parameter);
-                SerializedProperty paramProperty = serialized.FindProperty("synthParamValue" + paramIndex);
-                EditorGUI.Slider(sliderRect, paramProperty, 0.0f, 1.0f, "");
-
                 if (param != (System.Enum)synthParameter.parameter)
                 {
                     Undo.RecordObject(controller, "Change Parameter Control");
                     synthParameter.parameter = (Param)param;
                 }
+
+                HelmParameter.ScaleType scale = (HelmParameter.ScaleType)EditorGUI.EnumPopup(scaleRect, synthParameter.scaleType);
+                if (scale != synthParameter.scaleType)
+                {
+                    Undo.RecordObject(controller, "Change Parameter Scale Type");
+                    synthParameter.scaleType = scale;
+                    float min = synthParameter.GetMinimumRange();
+                    float max = synthParameter.GetMaximumRange();
+                    float val = controller.GetParameterAtIndex(paramIndex);
+
+                    if (synthParameter.scaleType == HelmParameter.ScaleType.kByPercent)
+                        val = Mathf.Clamp((val - min) / (max - min), 0.0f, 1.0f);
+                    else
+                        val = Mathf.Lerp(min, max, val);
+
+                    controller.SetParameterAtIndex(paramIndex, val);
+                }
+
+                SerializedProperty paramProperty = serialized.FindProperty("synthParamValue" + paramIndex);
+
+                if (synthParameter.scaleType == HelmParameter.ScaleType.kByPercent)
+                    EditorGUI.Slider(sliderRect, paramProperty, 0.0f, 1.0f, "");
+                else
+                {
+                    EditorGUI.Slider(sliderRect, paramProperty,
+                                     synthParameter.GetMinimumRange(), synthParameter.GetMaximumRange(), "");
+                }
+
                 y += rowHeight;
 
                 paramIndex++;

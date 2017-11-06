@@ -21,8 +21,8 @@ namespace AudioHelm
         int hoveredKey = -1;
 
         int widthsPerOctave = 7;
-        float[] xOffsets = new float[Utils.kNotesPerOctave] { 0.0f, 0.65f, 1.0f, 1.8f, 2.0f,
-                                                              3.0f, 3.6f, 4.0f, 4.7f, 5.0f, 5.8f, 6.0f };
+        float[] xOffsets = { 0.0f, 0.65f, 1.0f, 1.8f, 2.0f,
+                             3.0f, 3.6f, 4.0f, 4.7f, 5.0f, 5.8f, 6.0f };
 
         const float leftGrowth = 15.0f;
         const float rightGrowth = 10.0f;

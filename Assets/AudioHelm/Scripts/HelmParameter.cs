@@ -11,27 +11,36 @@ namespace AudioHelm
     [System.Serializable]
     public class HelmParameter
     {
-        public HelmParameter()
-        {
-            parent = null;
+        public enum ScaleType {
+            kByValue,
+            kByPercent,
         }
 
-        public HelmParameter(HelmController par)
-        {
-            parent = par;
-        }
-
-        public HelmParameter(HelmController par, Param param)
-        {
-            parent = par;
-            parameter = param;
-            paramValue_ = parent.GetParameterPercent(parameter);
-        }
-
+        [SerializeField]
+        Param parameter_ = Param.kNone;
         /// <summary>
         /// The parameter index.
         /// </summary>
-        public Param parameter = Param.kNone;
+        public Param parameter
+        {
+            get
+            {
+                return parameter_;
+            }
+            set
+            {
+                if (parameter_ == value)
+                    return;
+
+                parameter_ = value;
+                UpdateMinMax();
+            }
+        }
+
+        /// <summary>
+        /// What bounds to use for the value.
+        /// </summary>
+        public ScaleType scaleType = ScaleType.kByPercent;
 
         /// <summary>
         /// The controller this parameter belongs to.
@@ -39,6 +48,12 @@ namespace AudioHelm
         public HelmController parent = null;
 
         float lastValue = -1.0f;
+
+        [SerializeField]
+        float minimumRange = 0.0f;
+
+        [SerializeField]
+        float maximumRange = 1.0f;
 
         [SerializeField]
         float paramValue_ = 0.0f;
@@ -61,10 +76,57 @@ namespace AudioHelm
             }
         }
 
-        public void UpdateNative()
+        public HelmParameter()
         {
-            if (parent && parameter != Param.kNone && lastValue != paramValue_)
-                parent.SetParameterPercent(parameter, paramValue_);
+            parent = null;
+        }
+
+        public HelmParameter(HelmController par)
+        {
+            parent = par;
+        }
+
+        public HelmParameter(HelmController par, Param param)
+        {
+            parent = par;
+            parameter = param;
+            paramValue_ = parent.GetParameterPercent(parameter);
+        }
+
+        public float GetMinimumRange()
+        {
+            return minimumRange;
+        }
+
+        public float GetMaximumRange()
+        {
+            return maximumRange;
+        }
+
+        void UpdateMinMax()
+        {
+            if (parent && parameter_ != Param.kNone)
+            {
+                minimumRange = Native.HelmGetParameterMinimum((int)parameter_);
+                maximumRange = Native.HelmGetParameterMaximum((int)parameter_);
+            }
+        }
+
+        void UpdateNative()
+        {
+            if (parent && parameter_ != Param.kNone && lastValue != paramValue_)
+            {
+                if (scaleType == ScaleType.kByPercent)
+                {
+                    float val = Mathf.Clamp(paramValue_, 0.0f, 1.0f);
+                    parent.SetParameterPercent(parameter, val);
+                }
+                else
+                {
+                    float val = Mathf.Clamp(paramValue_, minimumRange, maximumRange);
+                    parent.SetParameterValue(parameter, val);
+                }
+            }
             lastValue = paramValue_;
         }
     }

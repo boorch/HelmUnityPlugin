@@ -273,6 +273,10 @@ namespace mopo {
         return details->second;
       }
 
+      const ValueDetails& getDetails(int index) const {
+        return parameter_list[index];
+      }
+
       std::map<std::string, ValueDetails> getAllDetails() const {
         return details_lookup_;
       }

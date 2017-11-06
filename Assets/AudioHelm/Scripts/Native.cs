@@ -60,6 +60,34 @@ namespace AudioHelm
         #else
           [DllImport("AudioPluginHelm")]
         #endif
+        public static extern void HelmClearModulations(int channel);
+
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+          [DllImport("AudioPluginHelm")]
+        #endif
+        public static extern void HelmAddModulation(int channel, int index, string source, string dest, float amount);
+
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+          [DllImport("AudioPluginHelm")]
+        #endif
+        public static extern float HelmGetParameterMinimum(int index);
+       
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+          [DllImport("AudioPluginHelm")]
+        #endif
+        public static extern float HelmGetParameterMaximum(int index);
+
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+          [DllImport("AudioPluginHelm")]
+        #endif
         public static extern float HelmGetParameterValue(int channel, int paramIndex);
 
         #if UNITY_IOS

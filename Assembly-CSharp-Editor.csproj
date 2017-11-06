@@ -49,17 +49,20 @@
      <Compile Include="Assets\AudioHelm\Editor\AudioHelmClockUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\HelmControllerUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\HelmParamterListUI.cs" />
+     <Compile Include="Assets\AudioHelm\Editor\HelmPatchUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\HelmSequencerUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\HelmSynthUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\KeyboardUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\KeyzoneEditorUI.cs" />
-     <Compile Include="Assets\AudioHelm\Editor\NonNativeFileImporter.cs" />
      <Compile Include="Assets\AudioHelm\Editor\PatchBrowserUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\SampleSequencerUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\SamplerUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\SequencerPositionUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\SequencerUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\SequencerVelocityUI.cs" />
+ <Reference Include="UnityEngine.Advertisements">
+ <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Advertisements/Editor/UnityEditor.Advertisements.dll</HintPath>
  </Reference>
@@ -101,6 +104,9 @@
  </Reference>
  <Reference Include="UnityEngine.HoloLens">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Purchasing">
+ <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityPurchasing/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.VR">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityVR/Editor/UnityEditor.VR.dll</HintPath>

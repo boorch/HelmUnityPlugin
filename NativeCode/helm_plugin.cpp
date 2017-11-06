@@ -452,6 +452,50 @@ namespace Helm {
     return success;
   }
 
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmClearModulations(int channel) {
+    for (auto synth : instance_map) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
+        MutexScopeLock mutex_lock(data->mutex);
+
+        for (int i = 0; i < MAX_MODULATIONS; ++i) {
+          mopo::ModulationConnection* connection = data->modulations[i];
+          if (data->synth_engine.isModulationActive(connection))
+            data->synth_engine.disconnectModulation(connection);
+        }
+      }
+    }
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmAddModulation(int channel, int index,
+                                                              const char* source,
+                                                              const char* dest,
+                                                              float amount) {
+    if (index < 0 || index >= MAX_MODULATIONS)
+      return;
+
+    for (auto synth : instance_map) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
+        MutexScopeLock mutex_lock(data->mutex);
+
+        mopo::ModulationConnection* connection = data->modulations[index];
+        connection->source = source;
+        connection->destination = dest;
+        connection->amount.set(amount);
+        data->synth_engine.connectModulation(connection);
+      }
+    }
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API float HelmGetParameterMinimum(int index) {
+    return mopo::Parameters::lookup_.getDetails(index - 1).min;
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API float HelmGetParameterMaximum(int index) {
+    return mopo::Parameters::lookup_.getDetails(index - 1).max;
+  }
+
   extern "C" UNITY_AUDIODSP_EXPORT_API float HelmGetParameterValue(int channel, int index) {
     if (index < kNumParams)
       return 0.0f;

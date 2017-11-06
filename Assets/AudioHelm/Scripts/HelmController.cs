@@ -3,6 +3,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace AudioHelm
 {
@@ -16,6 +17,9 @@ namespace AudioHelm
     [HelpURL("http://tytel.org/audiohelm/manual/class_audio_helm_1_1_helm_controller.html")]
     public class HelmController : MonoBehaviour, NoteHandler
     {
+        public const float UPDATE_WAIT = 0.04f;
+        public const int MAX_PARAMETERS = 16;
+
         /// <summary>
         /// Specifies which Helm instance(s) to control.
         /// Every Helm instance in any AudioMixerGroup matching this channel number is controlled by this class.
@@ -24,14 +28,16 @@ namespace AudioHelm
                  " This must match the channel set in the Helm Audio plugin.")]
         public int channel = 0;
 
-        public const int MAX_PARAMETERS = 16;
-
+        // Note: These parameters listed out to support Unity animations.
         [SerializeField]
         protected float synthParamValue0 = 0.0f, synthParamValue1 = 0.0f, synthParamValue2 = 0.0f, synthParamValue3 = 0.0f,
                         synthParamValue4 = 0.0f, synthParamValue5 = 0.0f, synthParamValue6 = 0.0f, synthParamValue7 = 0.0f,
                         synthParamValue8 = 0.0f, synthParamValue9 = 0.0f, synthParamValue10 = 0.0f, synthParamValue11 = 0.0f,
                         synthParamValue12 = 0.0f, synthParamValue13 = 0.0f, synthParamValue14 = 0.0f, synthParamValue15 = 0.0f;
 
+        /// <summary>
+        /// List of current parameters you can view, change and animate in the Inspector view.
+        /// </summary>
         public List<HelmParameter> synthParameters = new List<HelmParameter>();
 
         Dictionary<int, int> pressedNotes = new Dictionary<int, int>();
@@ -49,6 +55,113 @@ namespace AudioHelm
         void Start()
         {
             Utils.InitAudioSource(GetComponent<AudioSource>());
+        }
+
+        /// <summary>
+        /// Loads a synthesizer patch at runtime.
+        /// </summary>
+        /// <param name="patch">Reference to the patch object.</param>
+        public void LoadPatch(HelmPatch patch)
+        {
+            FieldInfo[] fields = typeof(HelmPatchSettings).GetFields();
+            Native.HelmClearModulations(channel);
+
+            List<float> values = new List<float>();
+            values.Add(0.0f);
+            int index = 1;
+            foreach (FieldInfo field in fields)
+            {
+                if (!field.FieldType.IsArray && !field.IsLiteral)
+                {
+                    float val = (float)field.GetValue(patch.patchData.settings);
+                    Native.HelmSetParameterValue(channel, index, val);
+                    values.Add(val);
+                    index++;
+                }
+            }
+
+            for (int i = 0; i < synthParameters.Count; ++i)
+                SetParameterAtIndex(i, values[(int)synthParameters[i].parameter]);
+
+            int modulationIndex = 0;
+            foreach (HelmModulationSetting modulation in patch.patchData.settings.modulations)
+            {
+                if (modulationIndex >= HelmPatchSettings.kMaxModulations)
+                {
+                    Debug.LogWarning("Only " + HelmPatchSettings.kMaxModulations +
+                                     " modulations are currently supported in the Helm Unity plugin.");
+                    break;
+                }
+
+                Native.HelmAddModulation(channel, modulationIndex,
+                                         modulation.source, modulation.destination, modulation.amount);
+                modulationIndex++;
+            }
+        }
+
+        /// <summary>
+        /// Gets the parameter value at index in the parameter list.
+        /// </summary>
+        /// <param name="index">The index of the parameter to get.</param>
+        /// <returns>The value of the parameter.</returns>
+        public float GetParameterAtIndex(int index)
+        {
+            if (index >= synthParameters.Count)
+                return 0.0f;
+
+            // Note: These are listed out to support Unity animations.
+            switch (index)
+            {
+                case 0: return synthParamValue0;
+                case 1: return synthParamValue1;
+                case 2: return synthParamValue2;
+                case 3: return synthParamValue3;
+                case 4: return synthParamValue4;
+                case 5: return synthParamValue5;
+                case 6: return synthParamValue6;
+                case 7: return synthParamValue7;
+                case 8: return synthParamValue8;
+                case 9: return synthParamValue9;
+                case 10: return synthParamValue10;
+                case 11: return synthParamValue11;
+                case 12: return synthParamValue12;
+                case 13: return synthParamValue13;
+                case 14: return synthParamValue14;
+                case 15: return synthParamValue15;
+                default: return 0.0f;
+            }
+        }
+
+        /// <summary>
+        /// Sets the parameter at index in the parameter list to the given value.
+        /// </summary>
+        /// <param name="index">The index of the parameter to change.</param>
+        /// <param name="newValue">The value to change the parameter to.</param>
+        public void SetParameterAtIndex(int index, float newValue)
+        {
+            if (index >= synthParameters.Count)
+                return;
+            
+            // Note: These are listed out to support Unity animations.
+            switch (index)
+            {
+                case 0: synthParamValue0 = newValue; break;
+                case 1: synthParamValue1 = newValue; break;
+                case 2: synthParamValue2 = newValue; break;
+                case 3: synthParamValue3 = newValue; break;
+                case 4: synthParamValue4 = newValue; break;
+                case 5: synthParamValue5 = newValue; break;
+                case 6: synthParamValue6 = newValue; break;
+                case 7: synthParamValue7 = newValue; break;
+                case 8: synthParamValue8 = newValue; break;
+                case 9: synthParamValue9 = newValue; break;
+                case 10: synthParamValue10 = newValue; break;
+                case 11: synthParamValue11 = newValue; break;
+                case 12: synthParamValue12 = newValue; break;
+                case 13: synthParamValue13 = newValue; break;
+                case 14: synthParamValue14 = newValue; break;
+                case 15: synthParamValue15 = newValue; break;
+            }
         }
 
         /// <summary>
@@ -105,6 +218,7 @@ namespace AudioHelm
         public HelmParameter AddParameter(Param parameter)
         {
             HelmParameter synthParameter = new HelmParameter(this, parameter);
+            SetParameterAtIndex(synthParameters.Count, synthParameter.paramValue);
             synthParameters.Add(synthParameter);
             return synthParameter;
         }
@@ -206,6 +320,16 @@ namespace AudioHelm
         public void SetParameterPercent(CommonParam parameter, float newPercent)
         {
             Native.HelmSetParameterPercent(channel, (int)parameter, newPercent);
+        }
+
+        /// <summary>
+        /// Sets the polyphony (number of voices) of the synthesizer.
+        /// Lower the polyphony to keep the DSP usage down.
+        /// </summary>
+        /// <param name="numVoices">The </param>
+        public void SetPolyphony(int numVoices)
+        {
+            SetParameterValue(Param.kPolyphony, numVoices);
         }
 
         /// <summary>
@@ -317,7 +441,9 @@ namespace AudioHelm
 
         void Update()
         {
-            UpdateAllParameters();
+            // We wait until synth is active to update parameters.
+            if (Time.timeSinceLevelLoad > UPDATE_WAIT)
+                UpdateAllParameters();
         }
     }
 }

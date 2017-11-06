@@ -9,12 +9,12 @@ namespace AudioHelm
     [RequireComponent(typeof(Slider))]
     public class SetHelmParameter : MonoBehaviour
     {
-        public Param parameter;
+        public int parameterIndex;
         public HelmController controller;
 
         public void SetPercent()
         {
-            controller.SetParameterPercent(parameter, GetComponent<Slider>().value);
+            controller.SetParameterAtIndex(parameterIndex, GetComponent<Slider>().value);
         }
 
         void Start()
