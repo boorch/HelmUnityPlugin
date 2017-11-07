@@ -18,6 +18,7 @@ namespace AudioHelm
         SerializedProperty length;
         SerializedProperty zoom;
         SerializedProperty division;
+        SerializedProperty autoScroll;
         SerializedProperty allNotes;
 
         float positionHeight = 10.0f;
@@ -29,6 +30,7 @@ namespace AudioHelm
             channel = serializedObject.FindProperty("channel");
             length = serializedObject.FindProperty("length");
             division = serializedObject.FindProperty("division");
+            autoScroll = serializedObject.FindProperty("autoScroll");
             allNotes = serializedObject.FindProperty("allNotes");
             zoom = serializedObject.FindProperty("zoom");
         }
@@ -80,6 +82,7 @@ namespace AudioHelm
             EditorGUILayout.LabelField("View Options", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(division);
             EditorGUILayout.Slider(zoom, 0.0f, 1.0f);
+            EditorGUILayout.PropertyField(autoScroll);
             serializedObject.ApplyModifiedProperties();
         }
     }

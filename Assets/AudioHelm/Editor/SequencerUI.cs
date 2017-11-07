@@ -591,6 +591,15 @@ namespace AudioHelm
             float scrollableHeight = numRows * rowHeight + velocitySectionHeight;
 
             Rect scrollableArea = new Rect(0, 0, scrollableWidth, scrollableHeight);
+            if (sequencer.autoScroll && sequencer.isActiveAndEnabled &&
+                EditorApplication.isPlaying && !EditorApplication.isPaused)
+            {
+                float playPosition = keyboardWidth + colWidth * sequencer.currentIndex;
+                scrollPosition = sequencer.scrollPosition;
+                if (playPosition < scrollPosition.x - keyboardWidth || playPosition >= scrollPosition.x + rect.width)
+                    scrollPosition.x = playPosition - keyboardWidth;
+                sequencer.scrollPosition = scrollPosition;
+            }
             sequencer.scrollPosition = GUI.BeginScrollView(rect, sequencer.scrollPosition, scrollableArea, true, true);
             scrollPosition = sequencer.scrollPosition;
 

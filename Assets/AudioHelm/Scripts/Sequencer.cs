@@ -121,6 +121,11 @@ namespace AudioHelm
         public Vector2 scrollPosition = Vector2.zero;
 
         /// <summary>
+        /// Should the inspector window scroll with playback.
+        /// </summary>
+        public bool autoScroll = false;
+
+        /// <summary>
         /// How often a bar or a division is placed in the sequencer inspector view.
         /// </summary>
         [Tooltip("How often a bar or a division is placed in the sequencer inspector view.")]
