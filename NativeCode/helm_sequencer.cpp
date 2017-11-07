@@ -8,9 +8,7 @@ namespace Helm {
 
   HelmSequencer::HelmSequencer() {
     channel_ = 0;
-    start_time_ = 0.0f;
-    start_time_armed_ = false;
-    wait_time_ = 0.0;
+    start_beat_ = 0.0f;
     num_sixteenths_ = kDefaultNumSixteenths;
   }
 

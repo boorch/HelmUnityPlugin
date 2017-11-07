@@ -9,7 +9,6 @@ namespace AudioHelm
     class AudioHelmClockUI : Editor
     {
         SerializedObject serialized;
-        SerializedProperty bpm;
 
         const float kMinBpm = 20.0f;
         const float kMaxBpm = 400.0f;
@@ -17,13 +16,13 @@ namespace AudioHelm
         void OnEnable()
         {
             serialized = new SerializedObject(target);
-            bpm = serialized.FindProperty("bpm_");
         }
 
         public override void OnInspectorGUI()
         {
+            AudioHelmClock clock = target as AudioHelmClock;
             serialized.Update();
-            bpm.floatValue = EditorGUILayout.Slider("BPM", bpm.floatValue, kMinBpm, kMaxBpm);
+            clock.bpm = EditorGUILayout.Slider("BPM", clock.bpm, kMinBpm, kMaxBpm);
             serialized.ApplyModifiedProperties();
         }
     }

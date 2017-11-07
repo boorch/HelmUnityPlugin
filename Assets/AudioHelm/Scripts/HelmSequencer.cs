@@ -68,8 +68,11 @@ namespace AudioHelm
                     note.TryCreate();
             }
             AllNotesOff();
-            Native.SyncSequencerStart(reference, 0.0);
-            syncTime = AudioSettings.dspTime;
+        }
+
+        void Start()
+        {
+            // Native.SyncSequencerStart(reference, syncTime);
         }
 
         void OnDestroy()
@@ -112,6 +115,7 @@ namespace AudioHelm
 
         void Unpause()
         {
+            /*
             if (pauseTime == 0.0)
                 return;
 
@@ -119,6 +123,7 @@ namespace AudioHelm
             double shiftTime = Time.realtimeSinceStartup - pauseTime;
             Native.ShiftSequencerStart(reference, shiftTime);
             pauseTime = 0.0;
+            */
         }
 
         void OnApplicationPause(bool pauseStatus)
@@ -164,26 +169,29 @@ namespace AudioHelm
 
         public override void StartScheduled(double dspTime)
         {
+            /*
             if (reference != IntPtr.Zero)
             {
                 syncTime = dspTime;
                 const float lookaheadTime = 0.5f;
-                double waitTime = dspTime - AudioSettings.dspTime;
-                Native.SyncSequencerStart(reference, waitTime);
-                float waitToEnable = (float)(waitTime - lookaheadTime);
+                Native.SyncSequencerStart(reference, syncTime);
+                float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
                 Invoke("EnableComponent", waitToEnable);
             }
+            */
         }
 
         public override void StartOnNextCycle()
         {
+            /*
             double timeSinceSync = AudioSettings.dspTime - syncTime;
             double sequenceLength = (length * GetSixteenthTime());
             int cyclesSinceSync = (int)(timeSinceSync / sequenceLength);
             StartScheduled(syncTime + (cyclesSinceSync + 1) * sequenceLength);
+            */
         }
 
-        void Update()
+        void FixedUpdate()
         {
             UpdatePosition();
 

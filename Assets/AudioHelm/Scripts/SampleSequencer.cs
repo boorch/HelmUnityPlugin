@@ -24,7 +24,10 @@ namespace AudioHelm
         {
             InitNoteRows();
             AllNotesOff();
-            syncTime = AudioSettings.dspTime;
+        }
+
+        void Start()
+        {
         }
 
         void OnDestroy()
@@ -82,9 +85,11 @@ namespace AudioHelm
 
         public override void StartScheduled(double dspTime)
         {
+            /*
             syncTime = dspTime;
             float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
             Invoke("EnableComponent", waitToEnable);
+            */
         }
 
         public override void StartOnNextCycle()
@@ -93,13 +98,10 @@ namespace AudioHelm
             waitTillNextCycle = true;
         }
 
-        void Update()
-        {
-            UpdatePosition();
-        }
-
         void FixedUpdate()
         {
+            double updateStartTime = AudioSettings.dspTime;
+            UpdatePosition();
             double position = GetSequencerPosition();
             float sixteenthTime = GetSixteenthTime();
             double currentTime = position * sixteenthTime;
@@ -138,8 +140,9 @@ namespace AudioHelm
 
                 double endTime = startTime + sixteenthTime * (note.end - note.start);
 
-                double timeToStart = startTime - currentTime;
-                double timeToEnd = endTime - currentTime;
+                double delayedTime = AudioSettings.dspTime - updateStartTime;
+                double timeToStart = startTime - currentTime - delayedTime;
+                double timeToEnd = endTime - currentTime - delayedTime;
                 GetComponent<Sampler>().NoteOnScheduled(note.note, note.velocity, timeToStart, timeToEnd);
             }
 

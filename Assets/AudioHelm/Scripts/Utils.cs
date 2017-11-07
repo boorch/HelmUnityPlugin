@@ -167,6 +167,8 @@ namespace AudioHelm
         public const int kNotesPerOctave = 12;
         public const int kMaxChannels = 16;
         public const float kBpmToSixteenths = 4.0f / 60.0f;
+        public const double kSecondsPerMinute = 60.0;
+        public const double kSixteenthsPerBeat = 4.0;
         public const int kMinOctave = -2;
         public const int kMiddleC = 60;
 

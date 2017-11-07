@@ -439,7 +439,7 @@ namespace AudioHelm
             Native.HelmSetAftertouch(channel, note, aftertouchValue);
         }
 
-        void Update()
+        void FixedUpdate()
         {
             // We wait until synth is active to update parameters.
             if (Time.timeSinceLevelLoad > UPDATE_WAIT)

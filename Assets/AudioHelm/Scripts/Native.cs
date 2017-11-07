@@ -151,13 +151,6 @@ namespace AudioHelm
         #else
           [DllImport("AudioPluginHelm")]
         #endif
-        public static extern void ShiftSequencerStart(IntPtr sequencer, double time);
-
-        #if UNITY_IOS
-          [DllImport("__Internal")]
-        #else
-          [DllImport("AudioPluginHelm")]
-        #endif
         public static extern bool ChangeSequencerChannel(IntPtr sequencer, int channel);
 
         #if UNITY_IOS
@@ -165,7 +158,7 @@ namespace AudioHelm
         #else
           [DllImport("AudioPluginHelm")]
         #endif
-        public static extern void SyncSequencerStart(IntPtr sequencer, double waitTime);
+        public static extern void SetSequencerStart(IntPtr sequencer, double startBeat);
 
         #if UNITY_IOS
           [DllImport("__Internal")]
@@ -208,5 +201,12 @@ namespace AudioHelm
           [DllImport("AudioPluginHelm")]
         #endif
         public static extern IntPtr ChangeNoteVelocity(IntPtr note, float velocity);
+
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+          [DllImport("AudioPluginHelm")]
+        #endif
+        public static extern void SetBeatTime(double time);
     }
 }

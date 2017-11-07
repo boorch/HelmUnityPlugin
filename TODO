@@ -1,12 +1,11 @@
 # TODO
 
-Keep sampler/synth sequencers in sync
-
+Starting sample and synth sequencer at time.
+Samples retrigger when increasing BPM.
 
 ## Future Features
 
 PlayNoteScheduled
-Variable BPM
 Sequencer references player instead of on same game object?
 Synth UI widgets for better tweaking in Unity?
 Load patches from previous versions

@@ -13,7 +13,8 @@ namespace Helm {
   const int MAX_MODULATIONS = 16;
   const int VALUES_PER_MODULATION = 3;
   const float MODULATION_RANGE = 1000000.0f;
-  const double BPM_TO_SIXTEENTH = 4.0 / 60.0;
+  const double SIXTEENTHS_PER_BEAT = 4.0;
+  const double SECONDS_PER_MINUTE = 60.0;
 
   const std::map<std::string, std::string> REPLACE_STRINGS = {
     {"stutter_resample", "stutter_resamp"}
@@ -37,13 +38,15 @@ namespace Helm {
     int instance_id;
     mopo::HelmEngine synth_engine;
     Mutex mutex;
+    double current_beat;
+    double last_global_beat_sync;
     bool active;
   };
 
   Mutex instance_mutex;
   int instance_counter = 0;
   double bpm = 120.0;
-  double current_time = 0.0;
+  double global_beat = 0.0;
   std::map<int, EffectData*> instance_map;
 
   Mutex sequencer_mutex;
@@ -140,6 +143,8 @@ namespace Helm {
 
     effect_data->synth_engine.setSampleRate(state->samplerate);
     effect_data->active = false;
+    effect_data->current_beat = 0.0;
+    effect_data->last_global_beat_sync = 0.0;
 
     state->effectdata = effect_data;
     MutexScopeLock mutex_instance_lock(instance_mutex);
@@ -261,9 +266,16 @@ namespace Helm {
     return UNITY_AUDIODSP_OK;
   }
 
-  double timeToSixteenth(UInt64 sample, double start_time, int sample_rate) {
-    double seconds = (1.0 * sample) / sample_rate - start_time;
-    return (bpm * BPM_TO_SIXTEENTH) * seconds;
+  inline double beatToSixteenth(double beat) {
+    return SIXTEENTHS_PER_BEAT * beat;
+  }
+
+  inline double timeToBeat(double time, int sample_rate) {
+    return (bpm / SECONDS_PER_MINUTE) * time;
+  }
+
+  inline double timeToSixteenth(double time, int sample_rate) {
+    return beatToSixteenth(timeToBeat(time, sample_rate));
   }
 
   double wrap(double value, double length) {
@@ -271,12 +283,17 @@ namespace Helm {
     return value - wrap * length;
   }
 
-  void processNotes(EffectData* data, HelmSequencer* sequencer, UInt64 current_sample, UInt64 end_sample) {
+  void processNotes(EffectData* data, HelmSequencer* sequencer, double current_beat, double end_beat) {
     MutexScopeLock mutex_lock(sequencer_mutex);
+    double sequencer_start_beat = sequencer->start_beat();
 
-    double start = timeToSixteenth(current_sample, sequencer->start_time(), data->synth_engine.getSampleRate());
+    if (sequencer_start_beat >= end_beat)
+      return;
+
+    double start_beat = std::max(sequencer_start_beat, current_beat);
+    double start = beatToSixteenth(start_beat);
     start = wrap(start, sequencer->length());
-    double end = timeToSixteenth(end_sample, sequencer->start_time(), data->synth_engine.getSampleRate());
+    double end = beatToSixteenth(end_beat);
     end = wrap(end, sequencer->length());
 
     sequencer->getNoteOffs(data->sequencer_events, start, end);
@@ -290,12 +307,10 @@ namespace Helm {
       data->synth_engine.noteOn(data->sequencer_events[i]->midi_note, data->sequencer_events[i]->velocity);
   }
 
-  void processSequencerNotes(EffectData* data, UInt64 current_sample, UInt64 end_sample) {
+  void processSequencerNotes(EffectData* data, double current_beat, double end_beat) {
     for (auto sequencer : sequencer_lookup) {
-      sequencer.first->trySetStartTime(current_time);
-
       if (sequencer.second && sequencer.first->channel() == data->parameters[kChannel])
-        processNotes(data, sequencer.first, current_sample, end_sample);
+        processNotes(data, sequencer.first, current_beat, end_beat);
     }
   }
 
@@ -342,12 +357,22 @@ namespace Helm {
       UnityAudioEffectState* state,
       float* in_buffer, float* out_buffer, unsigned int num_samples,
       int in_channels, int out_channels) {
-    double last_time = current_time;
-    current_time = (1.0 * state->currdsptick) / state->samplerate;
+    EffectData* data = state->GetEffectData<EffectData>();
+
+    double last_beat = data->current_beat;
+    double delta_time = (1.0 * num_samples) / state->samplerate;
+    double delta_beat = timeToBeat(delta_time, state->samplerate);
+    double next_beat = last_beat + delta_beat;
+    if (data->last_global_beat_sync != global_beat)
+    {
+      next_beat = global_beat + delta_beat;
+      data->last_global_beat_sync = global_beat;
+    }
+
+    data->current_beat = next_beat;
 
     bool silent = mopo::utils::isSilentf(in_buffer, num_samples * out_channels);
-    EffectData* data = state->GetEffectData<EffectData>();
-    if (state->flags & UnityAudioEffectStateFlags_IsPaused || last_time > current_time || silent) {
+    if (state->flags & UnityAudioEffectStateFlags_IsPaused || silent) {
       data->active = false;
       memset(out_buffer, 0, num_samples * out_channels * sizeof(float));
       return UNITY_AUDIODSP_OK;
@@ -362,8 +387,12 @@ namespace Helm {
     for (int b = 0; b < num_samples; b += synth_samples) {
       int current_samples = std::min<int>(synth_samples, num_samples - b);
 
-      int start_tick = state->currdsptick + b;
-      processSequencerNotes(data, start_tick, start_tick + current_samples + 1);
+      double start_beat = last_beat + (delta_beat * b) / num_samples;
+      double end_beat = last_beat + (delta_beat * (b + current_samples)) / num_samples;
+      if (b + synth_samples >= num_samples)
+        end_beat = next_beat;
+
+      processSequencerNotes(data, start_beat, end_beat);
       processQueuedNotes(data);
       processAudio(data->synth_engine, in_buffer, out_buffer, in_channels, out_channels, current_samples, b);
     }
@@ -551,6 +580,10 @@ namespace Helm {
     return sequencer;
   }
 
+  extern "C" UNITY_AUDIODSP_EXPORT_API void SetBeatTime(double beat) {
+    global_beat = beat;
+  }
+
   extern "C" UNITY_AUDIODSP_EXPORT_API void DeleteSequencer(HelmSequencer* sequencer) {
     sequencer_mutex.Lock();
     sequencer_lookup.erase(sequencer);
@@ -610,14 +643,9 @@ namespace Helm {
     return true;
   }
 
-  extern "C" UNITY_AUDIODSP_EXPORT_API void SyncSequencerStart(HelmSequencer* sequencer, double wait_time) {
+  extern "C" UNITY_AUDIODSP_EXPORT_API void SetSequencerStart(HelmSequencer* sequencer, double start_beat) {
     MutexScopeLock mutex_lock(sequencer_mutex);
-    sequencer->armStartTime(wait_time);
-  }
-
-  extern "C" UNITY_AUDIODSP_EXPORT_API void ShiftSequencerStart(HelmSequencer* sequencer, double time) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
-    sequencer->shiftStartTime(time);
+    sequencer->setStartBeat(start_beat);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeSequencerLength(HelmSequencer* sequencer, float length) {

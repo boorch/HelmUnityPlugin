@@ -106,9 +106,9 @@ namespace AudioHelm
         public int currentIndex = -1;
 
         /// <summary>
-        /// The time to align loops of the sequencer to.
+        /// Current time measured in beats.
         /// </summary>
-        public double syncTime = 0.0;
+        public double beatTime = 0.0;
 
         /// <summary>
         /// All notes in the seqeuncer.
@@ -521,7 +521,7 @@ namespace AudioHelm
 
         protected double GetSequencerTime()
         {
-            return (Utils.kBpmToSixteenths * AudioHelmClock.GetGlobalBpm()) * (AudioSettings.dspTime - syncTime);
+            return Utils.kSixteenthsPerBeat * beatTime;
         }
 
         /// <summary>
@@ -567,11 +567,22 @@ namespace AudioHelm
             currentIndex = nextIndex;
         }
 
+        void UpdateBeatTime()
+        {
+            double globalBeatTime = AudioHelmClock.GetGlobalBeatTime();
+            double bpm = AudioHelmClock.GetGlobalBpm();
+            double time = AudioSettings.dspTime;
+            double lastUpdate = AudioHelmClock.GetLastSampledTime();
+
+            beatTime = globalBeatTime + bpm * (time - lastUpdate) / Utils.kSecondsPerMinute;
+        }
+
         /// <summary>
         /// Update the position of the sequencer and fire any events that have occurred.
         /// </summary>
         protected void UpdatePosition()
         {
+            UpdateBeatTime();
             UpdateIndex();
             float nextPosition = (float)GetSequencerPosition();
 

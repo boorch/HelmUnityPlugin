@@ -51,10 +51,9 @@ namespace AudioHelm
 
             if (rect.height == sequencerHeight)
                 sequencer.DrawSequencer(rect, helmSequencer, zoom.floatValue, allNotes);
-            
-            if (sequencer.DoSequencerEvents(rect, helmSequencer, allNotes))
-                Repaint();
-            
+
+            sequencer.DoSequencerEvents(rect, helmSequencer, allNotes);
+
             GUILayout.Space(5f);
             GUI.backgroundColor = prev_color;
 
