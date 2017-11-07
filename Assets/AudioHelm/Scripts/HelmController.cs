@@ -242,7 +242,7 @@ namespace AudioHelm
         /// <returns>The current value of the parameter passed in.</returns>
         public float GetParameterValue(Param parameter)
         {
-            return Native.HelmGetParameterPercent(channel, (int)parameter);
+            return Native.HelmGetParameterValue(channel, (int)parameter);
         }
 
         /// <summary>

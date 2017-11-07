@@ -74,6 +74,7 @@
      <Compile Include="Assets\AudioHelm\Scripts\HelmPatchFormat.cs" />
      <Compile Include="Assets\AudioHelm\Scripts\HelmSequencer.cs" />
      <Compile Include="Assets\AudioHelm\Scripts\Keyzone.cs" />
+     <Compile Include="Assets\AudioHelm\Scripts\MidiFile.cs" />
      <Compile Include="Assets\AudioHelm\Scripts\Native.cs" />
      <Compile Include="Assets\AudioHelm\Scripts\Note.cs" />
      <Compile Include="Assets\AudioHelm\Scripts\NoteHandler.cs" />
@@ -82,9 +83,6 @@
      <Compile Include="Assets\AudioHelm\Scripts\Sampler.cs" />
      <Compile Include="Assets\AudioHelm\Scripts\Sequencer.cs" />
      <Compile Include="Assets\AudioHelm\Scripts\Utils.cs" />
- <Reference Include="UnityEngine.Advertisements">
- <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
- </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
@@ -99,9 +97,6 @@
  </Reference>
  <Reference Include="UnityEngine.HoloLens">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
- </Reference>
- <Reference Include="UnityEngine.Purchasing">
- <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityPurchasing/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.VR">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>

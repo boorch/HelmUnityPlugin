@@ -90,7 +90,10 @@ namespace AudioHelm
         {
             parent = par;
             parameter = param;
-            paramValue_ = parent.GetParameterPercent(parameter);
+            if (scaleType == ScaleType.kByPercent)
+                paramValue_ = parent.GetParameterPercent(parameter);
+            else
+                paramValue_ = parent.GetParameterValue(parameter);
         }
 
         public float GetMinimumRange()

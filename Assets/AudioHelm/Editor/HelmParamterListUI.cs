@@ -38,14 +38,20 @@ namespace AudioHelm
                 if (GUI.Button(buttonRect, "X", style))
                     remove = synthParameter;
 
-                System.Enum param = EditorGUI.EnumPopup(paramRect, synthParameter.parameter);
-                if (param != (System.Enum)synthParameter.parameter)
+                Param param = (Param)EditorGUI.EnumPopup(paramRect, synthParameter.parameter);
+                HelmParameter.ScaleType scale = (HelmParameter.ScaleType)EditorGUI.EnumPopup(scaleRect, synthParameter.scaleType);
+
+                if (param != synthParameter.parameter)
                 {
                     Undo.RecordObject(controller, "Change Parameter Control");
-                    synthParameter.parameter = (Param)param;
+                    synthParameter.parameter = param;
+
+                    if (scale == HelmParameter.ScaleType.kByPercent)
+                        controller.SetParameterAtIndex(paramIndex, controller.GetParameterPercent(param));
+                    else
+                        controller.SetParameterAtIndex(paramIndex, controller.GetParameterValue(param));
                 }
 
-                HelmParameter.ScaleType scale = (HelmParameter.ScaleType)EditorGUI.EnumPopup(scaleRect, synthParameter.scaleType);
                 if (scale != synthParameter.scaleType)
                 {
                     Undo.RecordObject(controller, "Change Parameter Scale Type");

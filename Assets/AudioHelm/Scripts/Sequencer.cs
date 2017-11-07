@@ -4,9 +4,6 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Collections.Generic;
-#if !UNITY_IOS || UNITY_EDITOR
-using Sanford.Multimedia.Midi;
-#endif
 
 namespace AudioHelm
 {
@@ -451,40 +448,17 @@ namespace AudioHelm
             return noteObject;
         }
 
-        #if !UNITY_IOS || UNITY_EDITOR
-        void ReadMidiTrack(Track midiTrack, int sequencerDivision)
+        void ReadMidiData(MidiFile.MidiData midiData)
         {
-            Dictionary<int, float> noteTimes = new Dictionary<int, float>();
-            Dictionary<int, float> noteVelocities = new Dictionary<int, float>();
-            for (int i = 0; i < midiTrack.Count; ++i)
-            {
-                MidiEvent midiEvent = midiTrack.GetMidiEvent(i);
-                if (midiEvent.MidiMessage.GetBytes().Length < 3)
-                    continue;
+            if (midiData == null || midiData.notes == null)
+                return;
 
-                byte midiType = (byte)(midiEvent.MidiMessage.GetBytes()[0] & 0xFF);
-                byte note = (byte)(midiEvent.MidiMessage.GetBytes()[1] & 0xFF);
-                byte velocity = (byte)(midiEvent.MidiMessage.GetBytes()[2] & 0xFF);
-                float time = (4.0f * midiEvent.AbsoluteTicks) / sequencerDivision;
+            Clear();
+            length = midiData.length;
 
-                if (midiType == (byte)ChannelCommand.NoteOff ||
-                    (midiType == (byte)ChannelCommand.NoteOn) && velocity == 0)
-                {
-                    if (noteTimes.ContainsKey(note))
-                    {
-                        AddNote(note, noteTimes[note], time, noteVelocities[note]);
-                        noteTimes.Remove(note);
-                        noteVelocities.Remove(note);
-                    }
-                }
-                else if (midiType == (byte)ChannelCommand.NoteOn)
-                {
-                    noteTimes[note] = time;
-                    noteVelocities[note] = Mathf.Min(1.0f, velocity / 127.0f);
-                }
-            }
+            foreach (Note note in midiData.notes)
+                AddNote(note.note, note.start, note.end, note.velocity);
         }
-        #endif
 
         // TODO: Get MIDI reading out of Beta.
         /// <summary>
@@ -494,26 +468,18 @@ namespace AudioHelm
         /// <param name="midiStream">The MIDI file stream.</param>
         public void ReadMidiFile(Stream midiStream)
         {
-            #if !UNITY_IOS || UNITY_EDITOR
-            Clear();
-            Sequence midiSequence = new Sequence(midiStream);
-            length = 4 * midiSequence.GetLength() / midiSequence.Division;
-
-            foreach (Track midiTrack in midiSequence)
-                ReadMidiTrack(midiTrack, midiSequence.Division);
-            #endif
+            ReadMidiData(MidiFile.LoadMidiData(midiStream));
         }
 
         /// <summary>
-        /// Read a MIDI file's tracks into this sequencer.
+        /// Read a MIDI file object into this sequencer.
         /// Currently in Beta. This may not work for all MIDI files or as expected.
         /// </summary>
         /// <param name="midiFile">The MIDI file object.</param>
-        public void ReadMidiFile(UnityEngine.Object midiFile)
+        public void ReadMidiFile(MidiFile midiFile)
         {
-            string path = Application.streamingAssetsPath + @"/AudioHelm/mid_" + midiFile.name;
-            FileStream midiStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            ReadMidiFile(midiStream);
+            if (midiFile != null)
+                ReadMidiData(midiFile.midiData);
         }
 
         /// <summary>

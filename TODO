@@ -1,10 +1,8 @@
 # TODO
 
-Add By Value parameter control
 Add auto scroll to sequencer.
 Get current value when choosing parameter
 Keep sampler/synth sequencers in sync
-Dynamic MIDI file loading
 
 
 ## Future Features
