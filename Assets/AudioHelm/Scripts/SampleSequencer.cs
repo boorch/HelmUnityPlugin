@@ -35,16 +35,20 @@ namespace AudioHelm
             AllNotesOff();
         }
 
-        void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
+
             double position = GetSequencerPosition();
             float sixteenthTime = GetSixteenthTime();
             double currentTime = position * sixteenthTime;
             lastWindowTime = currentTime + lookaheadTime;
         }
 
-        void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
+
             AllNotesOff();
             waitTillNextCycle = false;
         }

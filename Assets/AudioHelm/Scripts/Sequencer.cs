@@ -204,14 +204,17 @@ namespace AudioHelm
             InitNoteRows();
         }
 
-        void OnEnable()
+        protected virtual void OnEnable()
         {
             AudioHelmClock clock = AudioHelmClock.GetInstance();
             if (clock)
                 clock.OnReset += AllNotesOff;
+
+            UpdateBeatTime();
+            UpdateIndex();
         }
 
-        void OnDisable()
+        protected virtual void OnDisable()
         {
             AudioHelmClock clock = AudioHelmClock.GetInstance();
             if (clock)

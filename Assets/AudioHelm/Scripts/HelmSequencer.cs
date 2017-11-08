@@ -74,14 +74,18 @@ namespace AudioHelm
             }
         }
 
-        void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
+
             if (reference != IntPtr.Zero)
                 Native.EnableSequencer(reference, true);
         }
 
-        void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
+
             if (reference != IntPtr.Zero)
             {
                 Native.EnableSequencer(reference, false);
