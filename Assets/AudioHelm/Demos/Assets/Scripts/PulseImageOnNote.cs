@@ -9,12 +9,14 @@ namespace AudioHelm
     public class PulseImageOnNote : MonoBehaviour
     {
         public MaterialPulse[] images;
+        public int startingNote = 20;
         public int[] scale = { 0, 2, 4, 5, 7, 9, 11 };
 
         int GetNoteIndex(int note)
         {
-            int octave = note / Utils.kNotesPerOctave;
-            int noteInOctave = note - Utils.kNotesPerOctave * octave;
+            int noteAdjusted = (note - startingNote + Utils.kMidiSize) % Utils.kMidiSize;
+            int octave = noteAdjusted / Utils.kNotesPerOctave;
+            int noteInOctave = noteAdjusted - Utils.kNotesPerOctave * octave;
 
             for (int scaleNote = 0; scaleNote < scale.Length; ++scaleNote)
             {
