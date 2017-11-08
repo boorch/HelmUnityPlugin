@@ -16,6 +16,7 @@ namespace AudioHelm
     public class SampleSequencer : Sequencer
     {
         double lastWindowTime = -0.01;
+        int numCycles = 0;
         bool waitTillNextCycle = false;
 
         const float lookaheadTime = 0.1f;
@@ -97,19 +98,21 @@ namespace AudioHelm
         {
             double updateStartTime = AudioSettings.dspTime;
             UpdatePosition();
-            double position = GetSequencerPosition();
+            double position = GetSequencerTime();
             float sixteenthTime = GetSixteenthTime();
-            double currentTime = position * sixteenthTime;
+            double currentTime = GetSequencerPosition() * sixteenthTime;
             double sequencerTime = length * sixteenthTime;
 
-            double windowMax = currentTime + lookaheadTime;
+            double windowMax = position + lookaheadTime / sixteenthTime;
             if (windowMax == lastWindowTime)
                 return;
+
+            int cycles = (int)(windowMax / length);
             
-            if (windowMax >= sequencerTime)
+            if (cycles > numCycles)
             {
-                windowMax -= sequencerTime;
                 waitTillNextCycle = false;
+                numCycles = cycles;
             }
 
             if (waitTillNextCycle)
@@ -117,9 +120,11 @@ namespace AudioHelm
                 lastWindowTime = windowMax;
                 return;
             }
-            
-            float startSearch = (float)(lastWindowTime / sixteenthTime);
-            float endSearch = (float)(windowMax / sixteenthTime);
+
+            windowMax -= cycles * length;
+
+            float startSearch = (float)lastWindowTime;
+            float endSearch = (float)windowMax;
             List<Note> notes = GetAllNoteOnsInRange(startSearch, endSearch);
 
             foreach (Note note in notes)
