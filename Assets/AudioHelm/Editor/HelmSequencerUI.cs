@@ -20,6 +20,9 @@ namespace AudioHelm
         SerializedProperty division;
         SerializedProperty autoScroll;
         SerializedProperty allNotes;
+        SerializedProperty noteOnEvent;
+        SerializedProperty noteOffEvent;
+        SerializedProperty beatEvent;
 
         float positionHeight = 10.0f;
         float sequencerHeight = 440.0f;
@@ -33,6 +36,10 @@ namespace AudioHelm
             autoScroll = serializedObject.FindProperty("autoScroll");
             allNotes = serializedObject.FindProperty("allNotes");
             zoom = serializedObject.FindProperty("zoom");
+            autoScroll = serializedObject.FindProperty("autoScroll");
+            noteOnEvent = serializedObject.FindProperty("noteOnEvent");
+            noteOffEvent = serializedObject.FindProperty("noteOffEvent");
+            beatEvent = serializedObject.FindProperty("beatEvent");
         }
 
         public override void OnInspectorGUI()
@@ -82,6 +89,14 @@ namespace AudioHelm
             EditorGUILayout.PropertyField(division);
             EditorGUILayout.Slider(zoom, 0.0f, 1.0f);
             EditorGUILayout.PropertyField(autoScroll);
+
+
+            GUILayout.Space(5f);
+            EditorGUILayout.LabelField("Events", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(noteOnEvent);
+            EditorGUILayout.PropertyField(noteOffEvent);
+            EditorGUILayout.PropertyField(beatEvent);
+
             serializedObject.ApplyModifiedProperties();
         }
     }

@@ -15,9 +15,20 @@ namespace AudioHelm
         static float globalBpm = 120.0f;
         static double globalBeatTime = 0.0;
         static double lastSampledTime = 0.0;
+        static AudioHelmClock singleton;
 
         const double waitToSync = 0.5;
         const double SECONDS_PER_MIN = 60.0;
+
+        /// <summary>
+        /// A reset event that is triggered when time restarts.
+        /// </summary>
+        public delegate void ResetAction();
+
+        /// <summary>
+        /// Event hook for a reset event
+        /// </summary>
+        public event ResetAction OnReset;
 
         [SerializeField]
         float bpm_ = 120.0f;
@@ -39,12 +50,16 @@ namespace AudioHelm
             }
         }
 
+        public static AudioHelmClock GetInstance()
+        {
+            return singleton;
+        }
+
         void Awake()
         {
+            singleton = this;
             SetGlobalBpm();
-            globalBeatTime = -waitToSync;
-            Native.SetBeatTime(globalBeatTime);
-            lastSampledTime = AudioSettings.dspTime;
+            Reset();
         }
 
         void SetGlobalBpm()
@@ -54,6 +69,19 @@ namespace AudioHelm
                 Native.SetBpm(bpm_);
                 globalBpm = bpm_;
             }
+        }
+
+        /// <summary>
+        /// Resets time and all sequencers from the beginning.
+        /// </summary>
+        public void Reset()
+        {
+            globalBeatTime = -waitToSync;
+            Native.SetBeatTime(globalBeatTime);
+            lastSampledTime = AudioSettings.dspTime;
+
+            if (OnReset != null)
+                OnReset();
         }
 
         /// <summary>

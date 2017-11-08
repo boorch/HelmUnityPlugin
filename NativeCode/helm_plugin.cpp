@@ -366,6 +366,7 @@ namespace Helm {
     if (data->last_global_beat_sync != global_beat)
     {
       next_beat = global_beat + delta_beat;
+      delta_beat = next_beat - last_beat;
       data->last_global_beat_sync = global_beat;
     }
 
@@ -392,7 +393,8 @@ namespace Helm {
       if (b + synth_samples >= num_samples)
         end_beat = next_beat;
 
-      processSequencerNotes(data, start_beat, end_beat);
+      if (end_beat > start_beat)
+        processSequencerNotes(data, start_beat, end_beat);
       processQueuedNotes(data);
       processAudio(data->synth_engine, in_buffer, out_buffer, in_channels, out_channels, current_samples, b);
     }

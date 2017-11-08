@@ -2,9 +2,6 @@
 
 using UnityEngine;
 using System;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace AudioHelm
 {
@@ -29,8 +26,6 @@ namespace AudioHelm
         IntPtr reference = IntPtr.Zero;
         int currentChannel = -1;
         int currentLength = -1;
-
-        double pauseTime = 0.0;
 
         void CreateNativeSequencer()
         {
@@ -72,7 +67,6 @@ namespace AudioHelm
 
         void Start()
         {
-            // Native.SyncSequencerStart(reference, syncTime);
         }
 
         void OnDestroy()
@@ -88,10 +82,6 @@ namespace AudioHelm
         {
             if (reference != IntPtr.Zero)
                 Native.EnableSequencer(reference, true);
-
-            #if UNITY_EDITOR
-            EditorApplication.playmodeStateChanged += HandleOnPlayModeChanged;
-            #endif
         }
 
         void OnDisable()
@@ -101,37 +91,6 @@ namespace AudioHelm
                 Native.EnableSequencer(reference, false);
                 AllNotesOff();
             }
-
-            #if UNITY_EDITOR
-            EditorApplication.playmodeStateChanged -= HandleOnPlayModeChanged;
-            #endif
-        }
-
-        void Pause()
-        {
-            pauseTime = Time.realtimeSinceStartup;
-            Debug.LogWarning("Unity Native Audio does not stay in sync after pausing in Editor!");
-        }
-
-        void Unpause()
-        {
-            /*
-            if (pauseTime == 0.0)
-                return;
-
-            AllNotesOff();
-            double shiftTime = Time.realtimeSinceStartup - pauseTime;
-            Native.ShiftSequencerStart(reference, shiftTime);
-            pauseTime = 0.0;
-            */
-        }
-
-        void OnApplicationPause(bool pauseStatus)
-        {
-            if (pauseStatus)
-                Pause();
-            else
-                Unpause();
         }
 
         /// <summary>
@@ -214,15 +173,5 @@ namespace AudioHelm
                 currentChannel = channel;
             }
         }
-
-        #if UNITY_EDITOR
-        void HandleOnPlayModeChanged()
-        {
-            if (pauseTime == 0.0 && EditorApplication.isPaused)
-                Pause();
-            else if (pauseTime > 0.0 && !EditorApplication.isPaused)
-                Unpause();
-        }
-        #endif
     }
 }

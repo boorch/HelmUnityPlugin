@@ -1,6 +1,7 @@
 // Copyright 2017 Matt Tytel
 
 using UnityEngine;
+using UnityEngine.Events;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -38,6 +39,30 @@ namespace AudioHelm
         /// Event hook for a beat event.
         /// </summary>
         public event BeatAction OnBeat;
+
+        [Serializable]
+        public class NoteEvent : UnityEvent<Note> { }
+
+        [Serializable]
+        public class BeatEvent : UnityEvent<int> { }
+
+        /// <summary>
+        /// UnityEvent hook for a note on.
+        /// </summary>
+        [Tooltip("Triggered when note on happens. Passes the AudioHelm.Note object.")]
+        public NoteEvent noteOnEvent;
+
+        /// <summary>
+        /// UnityEvent hook for a note off.
+        /// </summary>
+        [Tooltip("Triggered when note off happens. Passes the AudioHelm.Note object.")]
+        public NoteEvent noteOffEvent;
+
+        /// <summary>
+        /// UnityEvent hook for a beat. Depends on the division setting of the seqeuncer.
+        /// </summary>
+        [Tooltip("Triggered when a beat happens. Passes the index of the division starting at 0.")]
+        public BeatEvent beatEvent;
 
         class NoteComparer : IComparer<Note>
         {
@@ -101,14 +126,11 @@ namespace AudioHelm
         public int length = 16;
 
         /// <summary>
-        /// The current sixteenth index.
+        /// The current index position measured in the division of the sequencer.
         /// </summary>
         public int currentIndex = -1;
 
-        /// <summary>
-        /// Current time measured in beats.
-        /// </summary>
-        public double beatTime = 0.0;
+        protected double beatTime = 0.0;
 
         /// <summary>
         /// All notes in the seqeuncer.
@@ -123,6 +145,7 @@ namespace AudioHelm
         /// <summary>
         /// Should the inspector window scroll with playback.
         /// </summary>
+        [Tooltip("If enabled, will scroll with playhead while sequencer is playing.")]
         public bool autoScroll = false;
 
         /// <summary>
@@ -145,7 +168,7 @@ namespace AudioHelm
         SortedList<NotePosition, Note> sortedNoteOffs =
             new SortedList<NotePosition, Note>(notePositionComparer);
 
-        private float lastSequencerPosition = -1.0f;
+        float lastSequencerPosition = -1.0f;
 
         /// <summary>
         /// Triggers note off events for all notes currently on in the instrument.
@@ -185,6 +208,20 @@ namespace AudioHelm
             InitNoteRows();
         }
 
+        void OnEnable()
+        {
+            AudioHelmClock clock = AudioHelmClock.GetInstance();
+            if (clock)
+                clock.OnReset += AllNotesOff;
+        }
+
+        void OnDisable()
+        {
+            AudioHelmClock clock = AudioHelmClock.GetInstance();
+            if (clock)
+                clock.OnReset -= AllNotesOff;
+        }
+
         NotePosition NoteOnPosition(Note note)
         {
             return new NotePosition(note.start, note.note);
@@ -216,15 +253,6 @@ namespace AudioHelm
         public virtual IntPtr Reference()
         {
             return IntPtr.Zero;
-        }
-
-        /// <summary>
-        /// Resets the sequencer at the beginning.
-        /// </summary>
-        public virtual void Reset()
-        {
-            AllNotesOff();
-            StartScheduled(AudioSettings.dspTime);
         }
 
         protected void InitNoteRows()
@@ -562,8 +590,13 @@ namespace AudioHelm
         void UpdateIndex()
         {
             int nextIndex = (int)(GetSequencerPosition() / GetDivisionLength());
-            if (currentIndex != nextIndex && OnBeat != null)
-                OnBeat(nextIndex);
+            if (currentIndex != nextIndex)
+            {
+                if (OnBeat != null)
+                    OnBeat(nextIndex);
+                if (beatEvent != null)
+                    beatEvent.Invoke(nextIndex);
+            }
             currentIndex = nextIndex;
         }
 
@@ -591,6 +624,8 @@ namespace AudioHelm
             {
                 if (OnNoteOn != null)
                     OnNoteOn(note);
+                if (noteOnEvent != null)
+                    noteOnEvent.Invoke(note);
                 note.TriggerNoteOnEvent();
             }
 
@@ -599,6 +634,8 @@ namespace AudioHelm
             {
                 if (OnNoteOff != null)
                     OnNoteOff(note);
+                if (noteOffEvent != null)
+                    noteOffEvent.Invoke(note);
                 note.TriggerNoteOffEvent();
             }
 

@@ -8,14 +8,8 @@ namespace AudioHelm
     [AddComponentMenu("")]
     public class PulseImageOnNote : MonoBehaviour
     {
-        public Sequencer sequencer;
         public MaterialPulse[] images;
         public int[] scale = { 0, 2, 4, 5, 7, 9, 11 };
-
-        void OnEnable()
-        {
-            sequencer.OnNoteOn += NoteOn;
-        }
 
         int GetNoteIndex(int note)
         {
@@ -30,7 +24,7 @@ namespace AudioHelm
             return octave * scale.Length;
         }
 
-        void NoteOn(Note note)
+        public void NoteOn(Note note)
         {
             int index = GetNoteIndex(note.note) % images.Length;
             images[index].Pulse(1.0f);
