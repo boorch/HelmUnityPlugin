@@ -17,7 +17,7 @@ namespace AudioHelm
         static double lastSampledTime = 0.0;
         static AudioHelmClock singleton;
 
-        const double waitToSync = 0.5;
+        const double waitToSync = 1.0;
         const double SECONDS_PER_MIN = 60.0;
 
         /// <summary>

@@ -23,12 +23,16 @@ namespace AudioHelm
 
         void Awake()
         {
+            numCycles = -1;
             InitNoteRows();
             AllNotesOff();
         }
 
         void Start()
         {
+            UpdateBeatTime();
+            double position = GetSequencerTime();
+            lastWindowTime = position + lookaheadTime / GetSixteenthTime();
         }
 
         void OnDestroy()
@@ -40,10 +44,8 @@ namespace AudioHelm
         {
             base.OnEnable();
 
-            double position = GetSequencerPosition();
-            float sixteenthTime = GetSixteenthTime();
-            double currentTime = position * sixteenthTime;
-            lastWindowTime = currentTime + lookaheadTime;
+            double position = GetSequencerTime();
+            lastWindowTime = position + lookaheadTime / GetSixteenthTime();
         }
 
         protected override void OnDisable()
@@ -92,6 +94,7 @@ namespace AudioHelm
         {
             enabled = true;
             waitTillNextCycle = true;
+            numCycles = (int)(GetSequencerTime() / length);
         }
 
         void FixedUpdate()
@@ -104,15 +107,15 @@ namespace AudioHelm
             double sequencerTime = length * sixteenthTime;
 
             double windowMax = position + lookaheadTime / sixteenthTime;
-            if (windowMax == lastWindowTime)
+            if (windowMax <= lastWindowTime)
                 return;
 
             int cycles = (int)(windowMax / length);
-            
+
             if (cycles > numCycles)
             {
-                waitTillNextCycle = false;
                 numCycles = cycles;
+                waitTillNextCycle = false;
             }
 
             if (waitTillNextCycle)
@@ -121,10 +124,11 @@ namespace AudioHelm
                 return;
             }
 
-            windowMax -= cycles * length;
+            double internalLastWindowMax = Mathf.Repeat((float)lastWindowTime, length);
+            double internalWindowMax = Mathf.Repeat((float)windowMax, length);
 
-            float startSearch = (float)lastWindowTime;
-            float endSearch = (float)windowMax;
+            float startSearch = (float)internalLastWindowMax;
+            float endSearch = (float)internalWindowMax;
             List<Note> notes = GetAllNoteOnsInRange(startSearch, endSearch);
 
             foreach (Note note in notes)

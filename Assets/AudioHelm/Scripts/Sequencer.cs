@@ -618,6 +618,12 @@ namespace AudioHelm
             UpdateIndex();
             float nextPosition = (float)GetSequencerPosition();
 
+            if (nextPosition < 0.0f)
+            {
+                lastSequencerPosition = nextPosition;
+                return;
+            }
+
             List<Note> noteOns = GetAllNoteOnsInRange(lastSequencerPosition, nextPosition);
             foreach (Note note in noteOns)
             {
