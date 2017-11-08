@@ -52,6 +52,9 @@
     <Reference Include="UnityEngine">
       <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.Advertisements">
+      <HintPath>Library\UnityAssemblies\UnityEngine.Advertisements.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -66,6 +69,9 @@
     </Reference>
     <Reference Include="UnityEngine.HoloLens">
       <HintPath>Library\UnityAssemblies\UnityEngine.HoloLens.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing">
+      <HintPath>Library\UnityAssemblies\UnityEngine.Purchasing.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.VR">
       <HintPath>Library\UnityAssemblies\UnityEngine.VR.dll</HintPath>
@@ -90,8 +96,10 @@
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\NoteBlaster.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\Oscillate.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\PlatformCreator.cs" />
+    <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\PulseImageOnNote.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\RepetitiveSpawner.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\SequenceGenerator.cs" />
+    <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\SetAnimationParameter.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\SetHelmParameter.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\SetSleepThreshold.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\SyncAudioAndSequencers.cs" />
@@ -99,9 +107,12 @@
     <Compile Include="Assets\AudioHelm\Scripts\AudioHelmClock.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\HelmAudioInit.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\HelmController.cs" />
+    <Compile Include="Assets\AudioHelm\Scripts\HelmParameter.cs" />
+    <Compile Include="Assets\AudioHelm\Scripts\HelmPatch.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\HelmPatchFormat.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\HelmSequencer.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\Keyzone.cs" />
+    <Compile Include="Assets\AudioHelm\Scripts\MidiFile.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\Native.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\Note.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\NoteHandler.cs" />

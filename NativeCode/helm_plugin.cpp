@@ -1,5 +1,7 @@
 /* Copyright 2017 Matt Tytel */
 
+#define NOMINMAX
+
 #include "helm_engine.h"
 #include "helm_sequencer.h"
 #include "AudioPluginUtil.h"
@@ -290,7 +292,7 @@ namespace Helm {
     if (sequencer_start_beat >= end_beat)
       return;
 
-    double start_beat = std::max(sequencer_start_beat, current_beat);
+    double start_beat = mopo::utils::max(sequencer_start_beat, current_beat);
     double start = beatToSixteenth(start_beat);
     start = wrap(start, sequencer->length());
     double end = beatToSixteenth(end_beat);
