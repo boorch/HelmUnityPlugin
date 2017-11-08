@@ -8,7 +8,7 @@ namespace AudioHelm
     [AddComponentMenu("")]
     public class SyncAudioAndSequencers : MonoBehaviour
     {
-        public Sequencer sequencer;
+        public AudioHelmClock clock;
         public AudioSource loop;
         public float waitTime = 3.0f;
         public Text text;
@@ -18,7 +18,7 @@ namespace AudioHelm
         void Start()
         {
             double time = AudioSettings.dspTime + waitTime;
-            sequencer.StartScheduled(time);
+            clock.StartScheduled(time);
             loop.PlayScheduled(time);
         }
 

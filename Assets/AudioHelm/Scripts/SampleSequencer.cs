@@ -83,15 +83,6 @@ namespace AudioHelm
             enabled = true;
         }
 
-        public override void StartScheduled(double dspTime)
-        {
-            /*
-            syncTime = dspTime;
-            float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
-            Invoke("EnableComponent", waitToEnable);
-            */
-        }
-
         public override void StartOnNextCycle()
         {
             enabled = true;
@@ -110,11 +101,11 @@ namespace AudioHelm
             double windowMax = currentTime + lookaheadTime;
             if (windowMax == lastWindowTime)
                 return;
-
-            if (windowMax < lastWindowTime)
+            
+            if (windowMax >= sequencerTime)
             {
+                windowMax -= sequencerTime;
                 waitTillNextCycle = false;
-                lastWindowTime -= sequencerTime;
             }
 
             if (waitTillNextCycle)
@@ -122,9 +113,6 @@ namespace AudioHelm
                 lastWindowTime = windowMax;
                 return;
             }
-
-            if (windowMax >= sequencerTime)
-                windowMax -= sequencerTime;
             
             float startSearch = (float)(lastWindowTime / sixteenthTime);
             float endSearch = (float)(windowMax / sixteenthTime);

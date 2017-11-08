@@ -1,6 +1,5 @@
 # TODO
 
-Starting sample and synth sequencer at time.
 Bunch of samples trigger when enabling a sequencer.
 Samples retrigger when increasing BPM.
 

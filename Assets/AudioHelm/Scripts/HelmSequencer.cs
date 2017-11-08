@@ -65,10 +65,6 @@ namespace AudioHelm
             AllNotesOff();
         }
 
-        void Start()
-        {
-        }
-
         void OnDestroy()
         {
             if (reference != IntPtr.Zero)
@@ -126,28 +122,13 @@ namespace AudioHelm
             enabled = true;
         }
 
-        public override void StartScheduled(double dspTime)
-        {
-            /*
-            if (reference != IntPtr.Zero)
-            {
-                syncTime = dspTime;
-                const float lookaheadTime = 0.5f;
-                Native.SyncSequencerStart(reference, syncTime);
-                float waitToEnable = (float)(dspTime - AudioSettings.dspTime - lookaheadTime);
-                Invoke("EnableComponent", waitToEnable);
-            }
-            */
-        }
-
         public override void StartOnNextCycle()
         {
-            /*
-            double timeSinceSync = AudioSettings.dspTime - syncTime;
-            double sequenceLength = (length * GetSixteenthTime());
-            int cyclesSinceSync = (int)(timeSinceSync / sequenceLength);
-            StartScheduled(syncTime + (cyclesSinceSync + 1) * sequenceLength);
-            */
+            UpdateBeatTime();
+            int cyclesCompleted = (int)(GetSequencerTime() / length);
+            double beatAtNextCycle = ((cyclesCompleted + 1) * length) / Utils.kSixteenthsPerBeat;
+            Native.SetSequencerStart(reference, beatAtNextCycle - 0.01);
+            enabled = true;
         }
 
         void FixedUpdate()

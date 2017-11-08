@@ -188,12 +188,8 @@ namespace AudioHelm
         /// <param name="note">The MIDI keyboard note to turn off. [0, 127]</param>
         public abstract void NoteOff(int note);
 
-        /// <summary>
-        /// Starts the sequencer at a given time in the future.
-        /// This is synced to AudioSettings.dspTime.
-        /// </summary>
-        /// <param name="dspTime">The time to start the sequencer, synced to AudioSettings.dspTime.</param>
-        public abstract void StartScheduled(double dspTime);
+        [Obsolete("StartScheduled is deprecated. Use AudioHelmClock.StartScheduled instead.")]
+        public void StartScheduled(double dspTime) { }
 
         /// <summary>
         /// Starts the sequencer on the start next cycle.
@@ -600,13 +596,13 @@ namespace AudioHelm
             currentIndex = nextIndex;
         }
 
-        void UpdateBeatTime()
+        protected void UpdateBeatTime()
         {
             double globalBeatTime = AudioHelmClock.GetGlobalBeatTime();
             double bpm = AudioHelmClock.GetGlobalBpm();
-            double time = AudioSettings.dspTime;
             double lastUpdate = AudioHelmClock.GetLastSampledTime();
 
+            double time = AudioSettings.dspTime;
             beatTime = globalBeatTime + bpm * (time - lastUpdate) / Utils.kSecondsPerMinute;
         }
 

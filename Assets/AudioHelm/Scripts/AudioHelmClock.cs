@@ -71,6 +71,14 @@ namespace AudioHelm
             }
         }
 
+        public void StartScheduled(double timeToStart)
+        {
+            lastSampledTime = AudioSettings.dspTime;
+            double deltaTime = timeToStart - lastSampledTime;
+            globalBeatTime = -deltaTime * globalBpm / SECONDS_PER_MIN;
+            Native.SetBeatTime(globalBeatTime);
+        }
+
         /// <summary>
         /// Resets time and all sequencers from the beginning.
         /// </summary>
