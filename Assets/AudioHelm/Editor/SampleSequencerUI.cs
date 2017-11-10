@@ -63,7 +63,8 @@ namespace AudioHelm
             float seqHeight = Mathf.Min(sequencerHeight, sequencer.GetMaxHeight());
             Rect rect = GUILayoutUtility.GetRect(minWidth, seqHeight, GUILayout.ExpandWidth(true));
 
-            sequencer.DoSequencerEvents(rect, sampleSequencer, allNotes);
+            if (sequencer.DoSequencerEvents(rect, sampleSequencer, allNotes))
+                Repaint();
 
             float startWindow = sequencer.GetMinVisibleTime() / length.intValue;
             float endWindow = sequencer.GetMaxVisibleTime(rect.width) / length.intValue;
