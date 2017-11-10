@@ -1,7 +1,6 @@
 ﻿// Copyright 2017 Matt Tytel
 
 using UnityEngine;
-using UnityEngine.Audio;
 
 namespace AudioHelm
 {

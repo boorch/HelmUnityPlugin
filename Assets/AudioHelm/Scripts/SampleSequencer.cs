@@ -108,7 +108,10 @@ namespace AudioHelm
 
             double windowMax = position + lookaheadTime / sixteenthTime;
             if (windowMax <= lastWindowTime)
+            {
+                lastWindowTime = windowMax;
                 return;
+            }
 
             int cycles = (int)(windowMax / length);
 
