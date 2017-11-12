@@ -14,6 +14,8 @@ namespace Helm {
   const int MAX_NOTES = 128;
   const int MAX_MODULATIONS = 16;
   const int VALUES_PER_MODULATION = 3;
+  const int MAX_UNITY_CHANNELS = 2;
+  const int MAX_UNITY_BUFFER_SIZE = 2048;
   const float MODULATION_RANGE = 1000000.0f;
   const double SIXTEENTHS_PER_BEAT = 4.0;
   const double SECONDS_PER_MINUTE = 60.0;
@@ -43,6 +45,9 @@ namespace Helm {
     double current_beat;
     double last_global_beat_sync;
     bool active;
+    bool silent;
+    float send_data[MAX_UNITY_CHANNELS * MAX_UNITY_BUFFER_SIZE];
+    int num_send_channels;
   };
 
   Mutex instance_mutex;
@@ -145,8 +150,11 @@ namespace Helm {
 
     effect_data->synth_engine.setSampleRate(state->samplerate);
     effect_data->active = false;
+    effect_data->silent = false;
     effect_data->current_beat = 0.0;
     effect_data->last_global_beat_sync = 0.0;
+    effect_data->num_send_channels = 0;
+    memset(effect_data->send_data, 0, MAX_UNITY_CHANNELS * MAX_UNITY_BUFFER_SIZE * sizeof(float));
 
     state->effectdata = effect_data;
     MutexScopeLock mutex_instance_lock(instance_mutex);
@@ -401,6 +409,12 @@ namespace Helm {
       processAudio(data->synth_engine, in_buffer, out_buffer, in_channels, out_channels, current_samples, b);
     }
 
+    data->num_send_channels = out_channels;
+    memcpy(data->send_data, out_buffer, num_samples * out_channels * sizeof(float));
+
+    if (data->silent)
+      memset(out_buffer, 0, num_samples * out_channels * sizeof(float));
+
     return UNITY_AUDIODSP_OK;
   }
 
@@ -517,6 +531,37 @@ namespace Helm {
         connection->destination = dest;
         connection->amount.set(amount);
         data->synth_engine.connectModulation(connection);
+      }
+    }
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmSilence(int channel, bool silent) {
+    for (auto synth : instance_map) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel)
+        data->silent = silent;
+    }
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmGetBufferData(int channel, float* buffer, int samples, int channels) {
+    for (auto synth : instance_map) {
+      EffectData* data = synth.second;
+      int send_channels = data->num_send_channels;
+      const float* send_buffer = data->send_data;
+
+      if (((int)data->parameters[kChannel]) == channel && data->active && send_channels > 0) {
+
+        if (channels == send_channels)
+          memcpy(buffer, data->send_data, samples * channels * sizeof(float));
+        else {
+          for (int i = 0; i < samples; ++i) {
+            for (int c = 0; c < channels; ++c) {
+              int send_channel = c % send_channels;
+              buffer[i * channels + c] = send_buffer[i * send_channels + send_channel];
+            }
+          }
+        }
+        return;
       }
     }
   }

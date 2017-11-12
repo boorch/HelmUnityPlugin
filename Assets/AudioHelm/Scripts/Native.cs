@@ -75,7 +75,7 @@ namespace AudioHelm
           [DllImport("AudioPluginHelm")]
         #endif
         public static extern float HelmGetParameterMinimum(int index);
-       
+
         #if UNITY_IOS
           [DllImport("__Internal")]
         #else
@@ -115,6 +115,20 @@ namespace AudioHelm
           [DllImport("__Internal")]
         #else
           [DllImport("AudioPluginHelm")]
+        #endif
+        public static extern bool HelmSilence(int channel, bool silent);
+
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+          [DllImport("AudioPluginHelm")]
+        #endif
+        public static extern bool HelmGetBufferData(int channel, float[] buffer, int samples, int numAudioChannels);
+
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+        [DllImport("AudioPluginHelm")]
         #endif
         public static extern void SetBpm(float bpm);
 
