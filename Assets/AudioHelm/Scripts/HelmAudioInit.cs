@@ -39,12 +39,14 @@ namespace AudioHelm
             return 0;
         }
 
+#if UNITY_5_6_OR_NEWER
         void SetupSpatialization(AudioSource audioComponent)
         {
             if (synthesizerMixerGroup == null || spatializerMixerGroup == null)
             {
                 Debug.LogWarning("If spatialization is enabled on the Audio Source you must set the " +
                                  "synthesizer and spatializer mixer groups on the HelmAudioInit component!");
+                audioComponent.spatialize = false;
                 return;
             }
 
@@ -62,6 +64,14 @@ namespace AudioHelm
             Utils.InitAudioSource(sendAudioSource);
             sendAudioSource.outputAudioMixerGroup = synthesizerMixerGroup;
         }
+#else
+        void SetupSpatialization(AudioSource audioComponent)
+        {
+            Debug.LogWarning("Synthesizer spatialization routing will glitch with versions before Unity 5.6. " +
+                             "Disabling plugin spatialization for this synth");
+            audioComponent.spatialize = false;
+        }
+#endif
 
         void Awake()
         {
