@@ -24,7 +24,6 @@ namespace AudioHelm
         public AudioMixerGroup spatializerMixerGroup;
 
         AudioSource sendAudioSource = null;
-        HelmAudioReceive receiveAudio = null;
 
         int GetChannel()
         {
@@ -40,6 +39,8 @@ namespace AudioHelm
         }
 
 #if UNITY_5_6_OR_NEWER
+        HelmAudioReceive receiveAudio = null;
+
         void SetupSpatialization(AudioSource audioComponent)
         {
             if (synthesizerMixerGroup == null || spatializerMixerGroup == null)
