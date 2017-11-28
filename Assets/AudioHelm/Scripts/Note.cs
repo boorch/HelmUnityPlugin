@@ -144,10 +144,7 @@ namespace AudioHelm
             if (!HasNativeNote() || !HasNativeSequencer())
                 return;
 
-            Native.ChangeNoteEnd(parent.Reference(), reference, end);
-            Native.ChangeNoteStart(parent.Reference(), reference, start);
-            Native.ChangeNoteKey(parent.Reference(), reference, note);
-            Native.ChangeNoteVelocity(reference, velocity);
+            Native.ChangeNoteValues(parent.Reference(), reference, note, start, end, velocity);
         }
 
         bool HasNativeNote()

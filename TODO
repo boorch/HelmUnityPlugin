@@ -1,11 +1,14 @@
 # TODO
 
-Syncopation
+PlayNoteScheduled
+PlayNoteNextBeat
+StopScheduled
+EnableLoop
 
 
 ## Future Features
 
-PlayNoteScheduled
+Syncopation
 Sequencer references player instead of on same game object?
 Synth UI widgets for better tweaking in Unity?
 Load patches from previous versions

@@ -243,10 +243,6 @@ namespace AudioHelm
 
                     activeNote.start = newStart;
                 }
-
-                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote],
-                                                allNotes.GetArrayElementAtIndex(pressNote));
-                sequencer.NoteOff(pressNote);
             }
             else if (mode == Mode.kDraggingEnd)
             {
@@ -259,10 +255,6 @@ namespace AudioHelm
 
                     activeNote.end = newEnd;
                 }
-                
-                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote],
-                                                allNotes.GetArrayElementAtIndex(pressNote));
-                sequencer.NoteOff(pressNote);
             }
             else if (mode == Mode.kAdding)
             {
@@ -274,16 +266,11 @@ namespace AudioHelm
                                             endDragIndex * divisionLength);
                 for (int i = startDragIndex; i < endDragIndex; ++i)
                     sequencer.AddNote(pressNote, i * divisionLength, (i + 1) * divisionLength, defaultVelocity);
-
-                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote],
-                                                allNotes.GetArrayElementAtIndex(pressNote));
-                sequencer.NoteOff(pressNote);
             }
             else if (mode == Mode.kDeleting)
             {
                 Undo.RecordObject(sequencer, "Delete Sequencer Notes");
                 sequencer.RemoveNotesInRange(pressNote, startTime, endTime);
-                sequencer.NoteOff(pressNote);
             }
             mode = Mode.kWaiting;
         }

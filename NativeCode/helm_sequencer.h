@@ -26,6 +26,7 @@ namespace Helm {
 
       Note* addNote(int midi_note, double velocity, double start, double end);
       void deleteNote(Note* note);
+      bool isNotePlaying(Note* note);
       void changeNoteStart(Note* note, double start);
       void changeNoteEnd(Note* note, double end);
       void changeNoteKey(Note* note, int midi_key);
@@ -38,6 +39,8 @@ namespace Helm {
       double start_beat() { return start_beat_; }
       void setLength(double length) { num_sixteenths_ = length; }
       void setChannel(int channel) { channel_ = channel; }
+      double current_position() { return current_position_; }
+      void updatePosition(double position) { current_position_ = position; }
 
       void setStartBeat(double start_beat) {
         start_beat_ = start_beat;
@@ -49,6 +52,7 @@ namespace Helm {
       event_map off_events_;
       double num_sixteenths_;
       double start_beat_;
+      double current_position_;
   };
 
 } // Helm

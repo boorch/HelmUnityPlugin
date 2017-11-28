@@ -193,14 +193,22 @@ namespace AudioHelm
         #else
           [DllImport("AudioPluginHelm")]
         #endif
-        public static extern IntPtr ChangeNoteStart(IntPtr sequencer, IntPtr note, float start);
+        public static extern IntPtr ChangeNoteStart(IntPtr sequencer, IntPtr note, float newStart);
 
         #if UNITY_IOS
           [DllImport("__Internal")]
         #else
           [DllImport("AudioPluginHelm")]
         #endif
-        public static extern IntPtr ChangeNoteEnd(IntPtr sequencer, IntPtr note, float end);
+        public static extern IntPtr ChangeNoteEnd(IntPtr sequencer, IntPtr note, float newEnd);
+
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+          [DllImport("AudioPluginHelm")]
+        #endif
+        public static extern IntPtr ChangeNoteValues(IntPtr sequencer, IntPtr note,
+                                                     int newMidiKey, float newStart, float newEnd, float newVelocity);
 
         #if UNITY_IOS
           [DllImport("__Internal")]

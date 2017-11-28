@@ -24,6 +24,7 @@ namespace AudioHelm
         public AudioMixerGroup spatializerMixerGroup;
 
         AudioSource sendAudioSource = null;
+        bool wasSpatialized = false;
 
         int GetChannel()
         {
@@ -83,13 +84,18 @@ namespace AudioHelm
                 AudioSource audioComponent = GetComponent<AudioSource>();
                 if (audioComponent.spatialize)
                     SetupSpatialization(audioComponent);
+                wasSpatialized = audioComponent.spatialize;
             }
         }
 
         void Update()
         {
             AudioSource audioComponent = GetComponent<AudioSource>();
-            Native.HelmSilence(GetChannel(), audioComponent.spatialize);
+            if (audioComponent.spatialize != wasSpatialized)
+            {
+                wasSpatialized = audioComponent.spatialize;
+                Native.HelmSilence(GetChannel(), audioComponent.spatialize);
+            }
 
             // Make sure AudioSource is setup correctly.
             if (Application.isPlaying && audioComponent.outputAudioMixerGroup == null)

@@ -8,8 +8,9 @@ namespace Helm {
 
   HelmSequencer::HelmSequencer() {
     channel_ = 0;
-    start_beat_ = 0.0f;
+    start_beat_ = 0.0;
     num_sixteenths_ = kDefaultNumSixteenths;
+    current_position_ = 0.0;
   }
 
   HelmSequencer::~HelmSequencer() {
@@ -35,6 +36,10 @@ namespace Helm {
     on_events_.erase(std::pair<double, int>(note->time_on, note->midi_note));
     off_events_.erase(std::pair<double, int>(note->time_off, note->midi_note));
     delete note;
+  }
+
+  bool HelmSequencer::isNotePlaying(Note* note) {
+    return note->time_off >= current_position_ && note->time_on < current_position_;
   }
 
   void HelmSequencer::changeNoteStart(Note* note, double start) {

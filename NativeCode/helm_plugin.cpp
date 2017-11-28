@@ -315,6 +315,8 @@ namespace Helm {
 
     for (int i = 0; i < MAX_NOTES && data->sequencer_events[i]; ++i)
       data->synth_engine.noteOn(data->sequencer_events[i]->midi_note, data->sequencer_events[i]->velocity);
+
+    sequencer->updatePosition(end);
   }
 
   void processSequencerNotes(EffectData* data, double current_beat, double end_beat) {
@@ -419,6 +421,16 @@ namespace Helm {
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOn(int channel, int note, float velocity) {
+    for (auto synth : instance_map) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
+        synth.second->note_events.enqueue(std::pair<int, float>(note, velocity));
+      }
+    }
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmNoteOnScheduled(int channel, int note, float velocity,
+                                                                double start_time, double end_time) {
     for (auto synth : instance_map) {
       EffectData* data = synth.second;
       if (((int)data->parameters[kChannel]) == channel && data->active) {
@@ -653,21 +665,45 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void DeleteNote(
       HelmSequencer* sequencer, HelmSequencer::Note* note) {
-    HelmNoteOff(sequencer->channel(), note->midi_note);
     MutexScopeLock mutex_lock(sequencer_mutex);
+    if (sequencer->isNotePlaying(note))
+      HelmNoteOff(sequencer->channel(), note->midi_note);
+
     sequencer->deleteNote(note);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteStart(
       HelmSequencer* sequencer, HelmSequencer::Note* note, float new_start) {
     MutexScopeLock mutex_lock(sequencer_mutex);
+    bool wasPlaying = sequencer->isNotePlaying(note);
     sequencer->changeNoteStart(note, new_start);
+
+    if (wasPlaying && !sequencer->isNotePlaying(note))
+      HelmNoteOff(sequencer->channel(), note->midi_note);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteEnd(
       HelmSequencer* sequencer, HelmSequencer::Note* note, float new_end) {
     MutexScopeLock mutex_lock(sequencer_mutex);
+    bool wasPlaying = sequencer->isNotePlaying(note);
     sequencer->changeNoteEnd(note, new_end);
+
+    if (wasPlaying && !sequencer->isNotePlaying(note))
+      HelmNoteOff(sequencer->channel(), note->midi_note);
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteValues(
+      HelmSequencer* sequencer, HelmSequencer::Note* note,
+      int new_midi_key, float new_start, float new_end, float new_velocity) {
+    MutexScopeLock mutex_lock(sequencer_mutex);
+    bool wasPlaying = sequencer->isNotePlaying(note);
+    sequencer->changeNoteKey(note, new_midi_key);
+    sequencer->changeNoteStart(note, new_start);
+    sequencer->changeNoteEnd(note, new_end);
+    note->velocity = new_velocity;
+
+    if (wasPlaying && !sequencer->isNotePlaying(note))
+      HelmNoteOff(sequencer->channel(), note->midi_note);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteVelocity(HelmSequencer::Note* note, float new_velocity) {
@@ -677,6 +713,9 @@ namespace Helm {
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteKey(
       HelmSequencer* sequencer, HelmSequencer::Note* note, int midi_key) {
     MutexScopeLock mutex_lock(sequencer_mutex);
+    if (sequencer->isNotePlaying(note))
+      HelmNoteOff(sequencer->channel(), note->midi_note);
+
     sequencer->changeNoteKey(note, midi_key);
   }
 
