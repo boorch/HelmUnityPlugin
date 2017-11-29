@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Matt Tytel
+// Copyright 2017 Matt Tytel
 
 using UnityEditor;
 using UnityEngine;
@@ -273,6 +273,12 @@ namespace AudioHelm
                 sequencer.RemoveNotesInRange(pressNote, startTime, endTime);
             }
             mode = Mode.kWaiting;
+
+            if (!Application.isPlaying)
+            {
+                CopyNoteRowToSerializedProperty(sequencer.allNotes[pressNote],
+                                                allNotes.GetArrayElementAtIndex(pressNote));
+            }
         }
 
         public bool DoSequencerEvents(Rect rect, Sequencer sequencer, SerializedProperty allNotes)
