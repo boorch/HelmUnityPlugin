@@ -257,12 +257,12 @@ namespace AudioHelm
         /// </summary>
         /// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
         /// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
-        /// <param name="timeToStart">Time from now to start the note.</param>
-        /// <param name="timeToEnd">Time from now to end the note.</param>
+        /// <param name="timeToStart">DSP time to start the note.</param>
+        /// <param name="timeToEnd">DSP time to end the note.</param>
         public void NoteOnScheduled(int note, float velocity, double timeToStart, double timeToEnd)
         {
             List<AudioSource> audioSources = GetPreppedAudioSources(note, velocity);
-            activeNotes.Add(new ActiveNote(note, audioSources, AudioSettings.dspTime + timeToStart));
+            activeNotes.Add(new ActiveNote(note, audioSources, timeToStart));
 
             double length = timeToEnd - timeToStart;
             if (!useNoteOff)
@@ -273,9 +273,9 @@ namespace AudioHelm
                 if (!audioSource.loop)
                     length = Math.Min(length, (audioSource.clip.length - endEarlyTime) / audioSource.pitch);
 
-                audioSource.PlayScheduled(AudioSettings.dspTime + timeToStart);
+                audioSource.PlayScheduled(timeToStart);
                 if (!useNoteOff)
-                    audioSource.SetScheduledEndTime(AudioSettings.dspTime + timeToStart + length);
+                    audioSource.SetScheduledEndTime(timeToStart + length);
             }
 
             if (useNoteOff)

@@ -139,14 +139,13 @@ namespace AudioHelm
                 double startTime = sixteenthTime * note.start;
 
                 // Check if we wrapped around.
-                if (note.start < startSearch)
+                if (startTime < currentTime)
                     startTime += sequencerTime;
 
                 double endTime = startTime + sixteenthTime * (note.end - note.start);
 
-                double delayedTime = AudioSettings.dspTime - updateStartTime;
-                double timeToStart = startTime - currentTime - delayedTime;
-                double timeToEnd = endTime - currentTime - delayedTime;
+                double timeToStart = startTime - currentTime + updateStartTime;
+                double timeToEnd = endTime - currentTime + updateStartTime;
                 GetComponent<Sampler>().NoteOnScheduled(note.note, note.velocity, timeToStart, timeToEnd);
             }
 
