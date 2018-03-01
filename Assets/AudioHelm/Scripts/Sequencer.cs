@@ -368,6 +368,15 @@ namespace AudioHelm
         }
 
         /// <summary>
+        /// Get all Note objects in the sequencer.
+        /// </summary>
+        /// <returns>A list of all Note objects sorted by their start time.</returns>
+        public List<Note> GetAllNotes()
+        {
+            return new List<Note>(sortedNoteOns.Values);
+        }
+
+        /// <summary>
         /// Get all Note objects that have a note on in the given range in this sequencer.
         /// </summary>
         /// <returns>A list of all Note objects with note ons in the given range.</returns>
@@ -478,6 +487,23 @@ namespace AudioHelm
 
             AddSortedNoteEvents(noteObject);
             return noteObject;
+        }
+
+        /// <summary>
+        /// Transposes all the notes in the sequencer up by number of semitones.
+        /// Negative transpose moves notes down semitones.
+        /// </summary>
+        /// <param name="transpose">The number of semitones to transpose by.</param>
+        public void TransposeNotes(int transpose)
+        {
+            List<Note> notes = GetAllNotes();
+            foreach (Note note in notes)
+            {
+                int new_note = note.note + transpose;
+                new_note = new_note >= Utils.kMidiSize ? Utils.kMidiSize - 1 : new_note;
+                new_note = new_note < 0 ? 0 : new_note;
+                note.note = new_note;
+            }
         }
 
         void ReadMidiData(MidiFile.MidiData midiData)
