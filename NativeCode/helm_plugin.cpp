@@ -170,10 +170,13 @@ namespace Helm {
 
   UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ReleaseCallback(UnityAudioEffectState* state) {
     EffectData* data = state->GetEffectData<EffectData>();
-    MutexScopeLock mutex_lock(data->mutex);
+    data->mutex.Lock();
+
     MutexScopeLock mutex_instance_lock(instance_mutex);
     data->synth_engine.allNotesOff();
     clearInstance(data->instance_id);
+
+    data->mutex.Unlock();
 
     delete[] data->parameters;
     delete[] data->value_lookup;
