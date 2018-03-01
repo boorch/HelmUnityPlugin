@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
-#if !UNITY_IOS || UNITY_EDITOR
+#if UNITY_EDITOR
 using Sanford.Multimedia.Midi;
 #endif
 
@@ -29,14 +29,14 @@ namespace AudioHelm
 
         public static MidiData LoadMidiData(Stream midiStream)
         {
-            #if !UNITY_IOS || UNITY_EDITOR
+            #if UNITY_EDITOR
             return ReadMidiFile(midiStream);
             #else
             return new MidiData();
             #endif
         }
 
-        #if !UNITY_IOS || UNITY_EDITOR
+        #if UNITY_EDITOR
         static MidiData ReadMidiFile(Stream midiStream)
         {
             MidiData midiData = new MidiData();
