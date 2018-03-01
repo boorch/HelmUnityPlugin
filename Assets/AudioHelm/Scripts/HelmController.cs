@@ -41,6 +41,7 @@ namespace AudioHelm
         public List<HelmParameter> synthParameters = new List<HelmParameter>();
 
         Dictionary<int, int> pressedNotes = new Dictionary<int, int>();
+        Dictionary<float, int> pressedFrequencies = new Dictionary<float, int>();
 
         void OnDestroy()
         {
@@ -141,7 +142,7 @@ namespace AudioHelm
         {
             if (index >= synthParameters.Count)
                 return;
-            
+
             // Note: These are listed out to support Unity animations.
             switch (index)
             {
@@ -339,6 +340,7 @@ namespace AudioHelm
         {
             Native.HelmAllNotesOff(channel);
             pressedNotes.Clear();
+            pressedFrequencies.Clear();
         }
 
         /// <summary>
@@ -352,6 +354,16 @@ namespace AudioHelm
         }
 
         /// <summary>
+        /// Checks if a frequency is currently on.
+        /// </summary>
+        /// <returns><c>true</c>, if the frequency is currently on, <c>false</c> otherwise.</returns>
+        /// <param name="frequency">Frequency in hertz.</param>
+        public bool IsFrequencyOn(float frequency)
+        {
+            return pressedFrequencies.ContainsKey(frequency);
+        }
+
+        /// <summary>
         /// Gets a Dictionary of all the currently pressed notes.
         /// </summary>
         /// <returns>The pressed notes where the key is the MIDI number and the value is the number of active note on events.</returns>
@@ -361,7 +373,7 @@ namespace AudioHelm
         }
 
         /// <summary>
-        /// Triggers a note on event for the Helm instance(s) this points to.
+        /// Triggers a note-on event for the Helm instance(s) this points to.
         /// After length amount of seconds, will automatically trigger a note off event.
         /// </summary>
         /// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
@@ -373,24 +385,24 @@ namespace AudioHelm
             StartCoroutine(WaitNoteOff(note, length));
         }
 
-        IEnumerator WaitNoteOff(int note, float length)
-        {
-            yield return new WaitForSeconds(length);
-            NoteOff(note);
-        }
-
-		/// <summary>
-		/// Triggers a note on event for the Helm instance(s) this points to.
+        /// <summary>
+        /// Triggers a note on event for the Helm instance(s) this points to.
         /// You must trigger a note off event later for this note by calling NoteOff.
-		/// </summary>
-		/// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
-		/// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
-		public void NoteOn(int note, float velocity = 1.0f)
+        /// </summary>
+        /// <param name="note">The MIDI keyboard note to play. [0, 127]</param>
+        /// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
+        public void NoteOn(int note, float velocity = 1.0f)
         {
             int number = 0;
             pressedNotes.TryGetValue(note, out number);
             pressedNotes[note] = number + 1;
             Native.HelmNoteOn(channel, note, velocity);
+        }
+
+        IEnumerator WaitNoteOff(int note, float length)
+        {
+            yield return new WaitForSeconds(length);
+            NoteOff(note);
         }
 
         /// <summary>
@@ -408,6 +420,59 @@ namespace AudioHelm
             }
             else
                 pressedNotes[note] = number - 1;
+        }
+
+        /// <summary>
+        /// Triggers a note-on event for the Helm instance(s) this points to.
+        /// Instead of a midi note, uses a frequency measured in hertz.
+        /// After length amount of seconds, will automatically trigger a note off event.
+        /// </summary>
+        /// <param name="frequency">The frequency in hertz to play.</param>
+        /// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
+        /// <param name="length">The time in seconds the note should play for.</param>
+        public void FrequencyOn(float frequency, float velocity, float length)
+        {
+            FrequencyOn(frequency, velocity);
+            StartCoroutine(WaitFrequencyOff(frequency, length));
+        }
+
+        /// <summary>
+        /// Triggers a note on event for the Helm instance(s) this points to.
+        /// Instead of a midi note, uses a frequency measured in hertz.
+        /// You must trigger a note off event later for this note by calling NoteOff.
+        /// </summary>
+        /// <param name="frequency">The frequency in hertz to play.</param>
+        /// <param name="velocity">How hard you hit the key. [0.0, 1.0]</param>
+        public void FrequencyOn(float frequency, float velocity = 1.0f)
+        {
+            int number = 0;
+            pressedFrequencies.TryGetValue(frequency, out number);
+            pressedFrequencies[frequency] = number + 1;
+            Native.HelmFrequencyOn(channel, frequency, velocity);
+        }
+
+        IEnumerator WaitFrequencyOff(float frequency, float length)
+        {
+            yield return new WaitForSeconds(length);
+            FrequencyOff(frequency);
+        }
+
+        /// <summary>
+        /// Triggers a note off event for the Helm instance(s) this points to.
+        /// Instead of a midi note, uses a frequency measured in hertz.
+        /// </summary>
+        /// <param name="frequency">The frequency measured in hertz to turn off.</param>
+        public void FrequencyOff(float frequency)
+        {
+            int number = 0;
+            pressedFrequencies.TryGetValue(frequency, out number);
+            if (number <= 1)
+            {
+                pressedFrequencies.Remove(frequency);
+                Native.HelmFrequencyOff(channel, frequency);
+            }
+            else
+                pressedFrequencies[frequency] = number - 1;
         }
 
         /// <summary>

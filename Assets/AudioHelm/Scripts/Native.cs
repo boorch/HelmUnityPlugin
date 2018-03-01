@@ -32,6 +32,20 @@ namespace AudioHelm
         #else
           [DllImport("AudioPluginHelm")]
         #endif
+        public static extern void HelmFrequencyOn(int channel, float frequency, float velocity);
+
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+          [DllImport("AudioPluginHelm")]
+        #endif
+        public static extern void HelmFrequencyOff(int channel, float frequency);
+
+        #if UNITY_IOS
+          [DllImport("__Internal")]
+        #else
+          [DllImport("AudioPluginHelm")]
+        #endif
         public static extern void HelmAllNotesOff(int channel);
 
         #if UNITY_IOS

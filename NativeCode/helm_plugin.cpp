@@ -34,7 +34,7 @@ namespace Helm {
     int num_synth_parameters;
     HelmSequencer::Note* sequencer_events[MAX_NOTES];
     mopo::ModulationConnection* modulations[MAX_MODULATIONS];
-    moodycamel::ConcurrentQueue<std::pair<int, float>> note_events;
+    moodycamel::ConcurrentQueue<std::pair<float, float>> note_events;
     moodycamel::ConcurrentQueue<std::pair<int, float>> value_events;
     float* parameters;
     mopo::Value** value_lookup;
@@ -353,7 +353,7 @@ namespace Helm {
   }
 
   void processQueuedNotes(EffectData* data) {
-    std::pair<int, float> event;
+    std::pair<float, float> event;
     while (data->note_events.try_dequeue(event)) {
       if (event.second)
         data->synth_engine.noteOn(event.first, event.second);
@@ -427,7 +427,18 @@ namespace Helm {
     for (auto synth : instance_map) {
       EffectData* data = synth.second;
       if (((int)data->parameters[kChannel]) == channel && data->active) {
-        synth.second->note_events.enqueue(std::pair<int, float>(note, velocity));
+        synth.second->note_events.enqueue(std::pair<float, float>(note, velocity));
+      }
+    }
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmFrequencyOn(int channel, float frequency,
+                                                            float velocity) {
+    float note = mopo::utils::frequencyToMidiNote(frequency);
+    for (auto synth : instance_map) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
+        synth.second->note_events.enqueue(std::pair<float, float>(note, velocity));
       }
     }
   }
@@ -437,7 +448,7 @@ namespace Helm {
     for (auto synth : instance_map) {
       EffectData* data = synth.second;
       if (((int)data->parameters[kChannel]) == channel && data->active) {
-        synth.second->note_events.enqueue(std::pair<int, float>(note, velocity));
+        synth.second->note_events.enqueue(std::pair<float, float>(note, velocity));
       }
     }
   }
@@ -446,7 +457,17 @@ namespace Helm {
     for (auto synth : instance_map) {
       EffectData* data = synth.second;
       if (((int)data->parameters[kChannel]) == channel) {
-        synth.second->note_events.enqueue(std::pair<int, float>(note, 0.0f));
+        synth.second->note_events.enqueue(std::pair<float, float>(note, 0.0f));
+      }
+    }
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void HelmFrequencyOff(int channel, float frequency) {
+    float note = mopo::utils::frequencyToMidiNote(frequency);
+    for (auto synth : instance_map) {
+      EffectData* data = synth.second;
+      if (((int)data->parameters[kChannel]) == channel && data->active) {
+        synth.second->note_events.enqueue(std::pair<float, float>(note, 0.0f));
       }
     }
   }
@@ -456,7 +477,7 @@ namespace Helm {
       EffectData* data = synth.second;
       if (((int)data->parameters[kChannel]) == channel) {
         MutexScopeLock mutex_lock(synth.second->mutex);
-        std::pair<int, float> event;
+        std::pair<float, float> event;
 
         while (synth.second->note_events.try_dequeue(event))
           ;
