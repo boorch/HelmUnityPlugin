@@ -4,6 +4,10 @@ PlayNoteScheduled
 PlayNoteNextBeat
 StopScheduled
 EnableLoop
+FrequencyOn
+FrequencyOff
+TransposeSequencer
+ChangeSequencerKey
 
 
 ## Future Features
