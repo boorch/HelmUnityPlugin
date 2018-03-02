@@ -497,6 +497,9 @@ namespace AudioHelm
         public void TransposeNotes(int transpose)
         {
             List<Note> notes = GetAllNotes();
+            if (transpose > 0)
+                notes.Reverse();
+
             foreach (Note note in notes)
             {
                 int new_note = note.note + transpose;
