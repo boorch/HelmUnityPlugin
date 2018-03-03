@@ -86,6 +86,7 @@
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\EnableAfterTime.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\GroundKey.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\GroundKeyboard.cs" />
+    <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\MaterialOnOff.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\MaterialPulse.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\NoteBlaster.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\Oscillate.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\SetSleepThreshold.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\SyncAudioAndSequencers.cs" />
     <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\ToggleParameter.cs" />
+    <Compile Include="Assets\AudioHelm\Demos\Assets\Scripts\TriggerVisibleNotes.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\AudioHelmClock.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\HelmAudioInit.cs" />
     <Compile Include="Assets\AudioHelm\Scripts\HelmAudioReceive.cs" />

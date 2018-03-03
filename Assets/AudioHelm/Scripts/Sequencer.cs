@@ -653,16 +653,6 @@ namespace AudioHelm
                 return;
             }
 
-            List<Note> noteOns = GetAllNoteOnsInRange(lastSequencerPosition, nextPosition);
-            foreach (Note note in noteOns)
-            {
-                if (OnNoteOn != null)
-                    OnNoteOn(note);
-                if (noteOnEvent != null)
-                    noteOnEvent.Invoke(note);
-                note.TriggerNoteOnEvent();
-            }
-
             List<Note> noteOffs = GetAllNoteOffsInRange(lastSequencerPosition, nextPosition);
             foreach (Note note in noteOffs)
             {
@@ -671,6 +661,16 @@ namespace AudioHelm
                 if (noteOffEvent != null)
                     noteOffEvent.Invoke(note);
                 note.TriggerNoteOffEvent();
+            }
+
+            List<Note> noteOns = GetAllNoteOnsInRange(lastSequencerPosition, nextPosition);
+            foreach (Note note in noteOns)
+            {
+                if (OnNoteOn != null)
+                    OnNoteOn(note);
+                if (noteOnEvent != null)
+                    noteOnEvent.Invoke(note);
+                note.TriggerNoteOnEvent();
             }
 
             lastSequencerPosition = nextPosition;
