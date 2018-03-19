@@ -258,7 +258,7 @@ namespace AudioHelm
             Component copy = destination.AddComponent(type);
 
             BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
-                                 BindingFlags.Default | BindingFlags.DeclaredOnly;
+                                 BindingFlags.DeclaredOnly;
             PropertyInfo[] properties = type.GetProperties(flags);
             foreach (PropertyInfo property in properties)
             {
