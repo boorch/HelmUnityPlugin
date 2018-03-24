@@ -710,7 +710,7 @@ namespace AudioHelm
             int noteOffIndex = 0;
 
             while (noteOnIndex < noteOns.Count && noteOffIndex < noteOffs.Count) {
-                if (noteOns[noteOnIndex].start <= noteOns[noteOnIndex].end)
+                if (noteOns[noteOnIndex].start < noteOffs[noteOffIndex].end)
                     SendNoteOn(noteOns[noteOnIndex++]);
                 else
                     SendNoteOff(noteOffs[noteOffIndex++]);
