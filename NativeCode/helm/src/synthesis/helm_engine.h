@@ -40,7 +40,8 @@ namespace mopo {
 
       void process() override;
       void setBufferSize(int buffer_size) override;
-
+      void setSampleRate(int sample_rate) override;
+    
       std::set<ModulationConnection*> getModulationConnections() { return mod_connections_; }
       bool isModulationActive(ModulationConnection* connection);
       CircularQueue<mopo::mopo_float>& getPressedNotes();
