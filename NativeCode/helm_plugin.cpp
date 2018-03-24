@@ -54,6 +54,7 @@ namespace Helm {
   int instance_counter = 0;
   double bpm = 120.0;
   double global_beat = 0.0;
+  bool global_pause = false;
   std::map<int, EffectData*> instance_map;
 
   Mutex sequencer_mutex;
@@ -305,9 +306,11 @@ namespace Helm {
 
     double start_beat = mopo::utils::max(sequencer_start_beat, current_beat);
     double start = beatToSixteenth(start_beat);
-    start = wrap(start, sequencer->length());
     double end = beatToSixteenth(end_beat);
-    end = wrap(end, sequencer->length());
+    if (sequencer->loop()) {
+      start = wrap(start, sequencer->length());
+      end = wrap(end, sequencer->length());
+    }
 
     sequencer->getNoteOffs(data->sequencer_events, start, end);
 
@@ -378,14 +381,16 @@ namespace Helm {
     double delta_time = (1.0 * num_samples) / state->samplerate;
     double delta_beat = timeToBeat(delta_time, state->samplerate);
     double next_beat = last_beat + delta_beat;
-    if (data->last_global_beat_sync != global_beat)
-    {
-      next_beat = global_beat + delta_beat;
-      delta_beat = next_beat - last_beat;
-      data->last_global_beat_sync = global_beat;
-    }
+    if (!global_pause) {
+      if (data->last_global_beat_sync != global_beat)
+      {
+        next_beat = global_beat + delta_beat;
+        delta_beat = next_beat - last_beat;
+        data->last_global_beat_sync = global_beat;
+      }
 
-    data->current_beat = next_beat;
+      data->current_beat = next_beat;
+    }
 
     bool silent = mopo::utils::isSilentf(in_buffer, num_samples * out_channels);
     if (state->flags & UnityAudioEffectStateFlags_IsPaused || silent) {
@@ -408,7 +413,7 @@ namespace Helm {
       if (b + synth_samples >= num_samples)
         end_beat = next_beat;
 
-      if (end_beat > start_beat)
+      if (end_beat > start_beat && !global_pause)
         processSequencerNotes(data, start_beat, end_beat);
       processQueuedNotes(data);
       processAudio(data->synth_engine, in_buffer, out_buffer, in_channels, out_channels, current_samples, b);
@@ -669,6 +674,10 @@ namespace Helm {
     global_beat = beat;
   }
 
+  extern "C" UNITY_AUDIODSP_EXPORT_API void Pause(bool pause) {
+    global_pause = pause;
+  }
+
   extern "C" UNITY_AUDIODSP_EXPORT_API void DeleteSequencer(HelmSequencer* sequencer) {
     sequencer_mutex.Lock();
     sequencer_lookup.erase(sequencer);
@@ -763,6 +772,11 @@ namespace Helm {
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeSequencerLength(HelmSequencer* sequencer, float length) {
     MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer->setLength(length);
+  }
+
+  extern "C" UNITY_AUDIODSP_EXPORT_API void LoopSequencer(HelmSequencer* sequencer, bool loop) {
+    MutexScopeLock mutex_lock(sequencer_mutex);
+    sequencer->loop(loop);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void SetBpm(float new_bpm) {

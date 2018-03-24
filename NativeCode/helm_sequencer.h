@@ -38,6 +38,8 @@ namespace Helm {
       int channel() { return channel_; }
       double start_beat() { return start_beat_; }
       void setLength(double length) { num_sixteenths_ = length; }
+      void loop(bool loop) { loop_ = loop; }
+      bool loop() { return loop_; }
       void setChannel(int channel) { channel_ = channel; }
       double current_position() { return current_position_; }
       void updatePosition(double position) { current_position_ = position; }
@@ -48,6 +50,7 @@ namespace Helm {
 
     private:
       int channel_;
+      bool loop_;
       event_map on_events_;
       event_map off_events_;
       double num_sixteenths_;

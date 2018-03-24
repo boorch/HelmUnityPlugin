@@ -23,6 +23,7 @@ namespace AudioHelm
             AudioHelmClock clock = target as AudioHelmClock;
             serialized.Update();
             clock.bpm = EditorGUILayout.Slider("BPM", clock.bpm, kMinBpm, kMaxBpm);
+            clock.pause = EditorGUILayout.Toggle("Pause", clock.pause);
             serialized.ApplyModifiedProperties();
         }
     }

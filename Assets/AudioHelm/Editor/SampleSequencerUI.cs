@@ -13,6 +13,7 @@ namespace AudioHelm
         const float scrollWidth = 15.0f;
 
         SerializedProperty length;
+        SerializedProperty loop;
         SerializedProperty division;
         SerializedProperty allNotes;
         SerializedProperty zoom;
@@ -31,6 +32,7 @@ namespace AudioHelm
         void OnEnable()
         {
             length = serializedObject.FindProperty("length");
+            loop = serializedObject.FindProperty("loop");
             division = serializedObject.FindProperty("division");
             allNotes = serializedObject.FindProperty("allNotes");
             zoom = serializedObject.FindProperty("zoom");
@@ -99,6 +101,7 @@ namespace AudioHelm
             }
 
             EditorGUILayout.PropertyField(length);
+            EditorGUILayout.PropertyField(loop);
             sampleSequencer.length = Mathf.Max(sampleSequencer.length, 1);
 
             GUILayout.Space(5f);

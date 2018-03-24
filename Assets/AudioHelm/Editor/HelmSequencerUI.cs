@@ -16,6 +16,7 @@ namespace AudioHelm
         SequencerPositionUI sequencerPosition = new SequencerPositionUI(keyboardWidth, scrollWidth);
         SerializedProperty channel;
         SerializedProperty length;
+        SerializedProperty loop;
         SerializedProperty zoom;
         SerializedProperty division;
         SerializedProperty autoScroll;
@@ -32,6 +33,7 @@ namespace AudioHelm
         {
             channel = serializedObject.FindProperty("channel");
             length = serializedObject.FindProperty("length");
+            loop = serializedObject.FindProperty("loop");
             division = serializedObject.FindProperty("division");
             autoScroll = serializedObject.FindProperty("autoScroll");
             allNotes = serializedObject.FindProperty("allNotes");
@@ -83,6 +85,7 @@ namespace AudioHelm
 
             EditorGUILayout.IntSlider(channel, 0, Utils.kMaxChannels - 1);
             EditorGUILayout.PropertyField(length);
+            EditorGUILayout.PropertyField(loop);
             helmSequencer.length = Mathf.Max(helmSequencer.length, 1);
 
             GUILayout.Space(5f);

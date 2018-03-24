@@ -64,6 +64,8 @@ namespace AudioHelm
         [Tooltip("Triggered when a beat happens. Passes the index of the division starting at 0.")]
         public BeatEvent beatEvent;
 
+        List<Note> activeNotes = new List<Note>();
+
         class NoteComparer : IComparer<Note>
         {
             public int Compare(Note left, Note right)
@@ -130,7 +132,13 @@ namespace AudioHelm
         /// </summary>
         public int currentIndex = -1;
 
+        /// <summary>
+        /// If the sequencer loops back to the beginning on finish.
+        /// </summary>
+        public bool loop = true;
+
         protected double beatTime = 0.0;
+        protected bool paused = false;
 
         /// <summary>
         /// All notes in the seqeuncer.
@@ -173,7 +181,18 @@ namespace AudioHelm
         /// <summary>
         /// Triggers note off events for all notes currently on in the instrument.
         /// </summary>
-        public abstract void AllNotesOff();
+        public virtual void AllNotesOff()
+        {
+            foreach (Note note in activeNotes)
+            {
+                if (OnNoteOff != null)
+                    OnNoteOff(note);
+                if (noteOffEvent != null)
+                    noteOffEvent.Invoke(note);
+                note.TriggerNoteOffEvent();
+            }
+            activeNotes.Clear();
+        }
 
         /// <summary>
         /// Triggers a note on event for the instrument.
@@ -210,8 +229,9 @@ namespace AudioHelm
             if (clock)
                 clock.OnReset += AllNotesOff;
 
-            UpdateBeatTime();
-            UpdateIndex();
+            UpdatePosition();
+            AllNotesOff();
+            activeNotes.Clear();
         }
 
         protected virtual void OnDisable()
@@ -587,7 +607,9 @@ namespace AudioHelm
         public double GetSequencerPosition()
         {
             double sequencerTime = GetSequencerTime();
-            int cycles = (int)(sequencerTime / length);
+            int cycles = 0;
+            if (loop)
+                cycles = (int)(sequencerTime / length);
             return sequencerTime - cycles * length;
         }
 
@@ -638,40 +660,67 @@ namespace AudioHelm
             beatTime = globalBeatTime + bpm * (time - lastUpdate) / Utils.kSecondsPerMinute;
         }
 
+        void SendNoteOff(Note note)
+        {
+            if (OnNoteOff != null)
+                OnNoteOff(note);
+            if (noteOffEvent != null)
+                noteOffEvent.Invoke(note);
+            note.TriggerNoteOffEvent();
+            activeNotes.Remove(note);
+        }
+
+        void SendNoteOn(Note note) 
+        {
+            if (OnNoteOn != null)
+                OnNoteOn(note);
+            if (noteOnEvent != null)
+                noteOnEvent.Invoke(note);
+            note.TriggerNoteOnEvent();
+            activeNotes.Add(note);
+        }
+
         /// <summary>
         /// Update the position of the sequencer and fire any events that have occurred.
         /// </summary>
         protected void UpdatePosition()
         {
+            if (AudioHelmClock.GetGlobalPause()) {
+                if (!paused)
+                    AllNotesOff();
+                paused = true;
+                return;
+            }
+            paused = false;
+
             UpdateBeatTime();
             UpdateIndex();
             float nextPosition = (float)GetSequencerPosition();
 
-            if (nextPosition < 0.0f)
+            if (nextPosition < 0.0f || nextPosition < lastSequencerPosition)
             {
                 lastSequencerPosition = nextPosition;
                 return;
             }
 
+            List<Note> noteOns = GetAllNoteOnsInRange(lastSequencerPosition, nextPosition);
             List<Note> noteOffs = GetAllNoteOffsInRange(lastSequencerPosition, nextPosition);
-            foreach (Note note in noteOffs)
-            {
-                if (OnNoteOff != null)
-                    OnNoteOff(note);
-                if (noteOffEvent != null)
-                    noteOffEvent.Invoke(note);
-                note.TriggerNoteOffEvent();
+
+            int noteOnIndex = 0;
+            int noteOffIndex = 0;
+
+            while (noteOnIndex < noteOns.Count && noteOffIndex < noteOffs.Count) {
+                if (noteOns[noteOnIndex].start <= noteOns[noteOnIndex].end)
+                    SendNoteOn(noteOns[noteOnIndex++]);
+                else
+                    SendNoteOff(noteOffs[noteOffIndex++]);
             }
 
-            List<Note> noteOns = GetAllNoteOnsInRange(lastSequencerPosition, nextPosition);
-            foreach (Note note in noteOns)
-            {
-                if (OnNoteOn != null)
-                    OnNoteOn(note);
-                if (noteOnEvent != null)
-                    noteOnEvent.Invoke(note);
-                note.TriggerNoteOnEvent();
-            }
+            for (; noteOnIndex < noteOns.Count; ++noteOnIndex)
+                SendNoteOn(noteOns[noteOnIndex]);
+            
+            for (; noteOffIndex < noteOffs.Count; ++noteOffIndex)
+                SendNoteOff(noteOffs[noteOffIndex]);
 
             lastSequencerPosition = nextPosition;
         }

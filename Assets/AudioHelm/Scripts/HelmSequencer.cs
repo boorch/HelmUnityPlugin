@@ -26,6 +26,7 @@ namespace AudioHelm
         IntPtr reference = IntPtr.Zero;
         int currentChannel = -1;
         int currentLength = -1;
+        bool currentLoop = true;
 
         void CreateNativeSequencer()
         {
@@ -56,6 +57,7 @@ namespace AudioHelm
             CreateNativeSequencer();
             Native.ChangeSequencerChannel(reference, channel);
             Native.ChangeSequencerLength(reference, length);
+            Native.LoopSequencer(reference, loop);
 
             for (int i = 0; i < allNotes.Length; ++i)
             {
@@ -99,6 +101,7 @@ namespace AudioHelm
         public override void AllNotesOff()
         {
             Native.HelmAllNotesOff(channel);
+            base.AllNotesOff();
         }
 
         /// <summary>
@@ -137,6 +140,16 @@ namespace AudioHelm
 
         void FixedUpdate()
         {
+            DoUpdate();
+        }
+
+        void Update()
+        {
+            DoUpdate();
+        }
+
+        void DoUpdate()
+        {
             UpdatePosition();
 
             if (length != currentLength)
@@ -156,6 +169,12 @@ namespace AudioHelm
                     Native.ChangeSequencerChannel(reference, channel);
                 }
                 currentChannel = channel;
+            }
+            if (loop != currentLoop)
+            {
+                if (reference != IntPtr.Zero)
+                    Native.LoopSequencer(reference, loop);
+                currentLoop = loop;
             }
         }
     }

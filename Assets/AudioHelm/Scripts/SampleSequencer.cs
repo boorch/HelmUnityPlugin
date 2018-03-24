@@ -62,6 +62,7 @@ namespace AudioHelm
         public override void AllNotesOff()
         {
             GetComponent<Sampler>().AllNotesOff();
+            base.AllNotesOff();
         }
 
         /// <summary>
@@ -99,8 +100,17 @@ namespace AudioHelm
 
         void FixedUpdate()
         {
+            DoUpdate();
+        }
+
+        void DoUpdate()
+        {
             double updateStartTime = AudioSettings.dspTime;
             UpdatePosition();
+
+            if (AudioHelmClock.GetGlobalPause())
+                return;
+            
             double position = GetSequencerTime();
             float sixteenthTime = GetSixteenthTime();
             double currentTime = GetSequencerPosition() * sixteenthTime;

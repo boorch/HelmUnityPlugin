@@ -13,6 +13,7 @@ namespace AudioHelm
     public class AudioHelmClock : MonoBehaviour
     {
         static float globalBpm = 120.0f;
+        static bool globalPause = false;
         static double globalBeatTime = 0.0;
         static double lastSampledTime = 0.0;
         static AudioHelmClock singleton;
@@ -33,6 +34,9 @@ namespace AudioHelm
         [SerializeField]
         float bpm_ = 120.0f;
 
+        [SerializeField]
+        bool pause_ = false;
+
         /// <summary>
         /// Gets or sets the beats per minute.
         /// </summary>
@@ -50,6 +54,23 @@ namespace AudioHelm
             }
         }
 
+        /// <summary>
+        /// Gets or sets the pause state
+        /// </summary>
+        /// <value>The new pause state.</value>
+        public bool pause
+        {
+            get
+            {
+                return pause_;
+            }
+            set
+            {
+                pause_ = value;
+                SetGlobalPause();
+            }
+        }
+
         public static AudioHelmClock GetInstance()
         {
             return singleton;
@@ -60,6 +81,12 @@ namespace AudioHelm
             singleton = this;
             SetGlobalBpm();
             Reset();
+            Native.Pause(globalPause);
+        }
+
+        void OnDestroy()
+        {
+            Native.Pause(false);
         }
 
         void SetGlobalBpm()
@@ -69,6 +96,14 @@ namespace AudioHelm
                 Native.SetBpm(bpm_);
                 globalBpm = bpm_;
             }
+        }
+
+        void SetGlobalPause()
+        {
+            Native.SetBeatTime(globalBeatTime);
+            Native.Pause(pause_);
+            lastSampledTime = AudioSettings.dspTime;
+            globalPause = pause_;
         }
 
         public void StartScheduled(double timeToStart)
@@ -109,6 +144,14 @@ namespace AudioHelm
         }
 
         /// <summary>
+        /// Gets the global pause state.
+        /// </summary>
+        public static bool GetGlobalPause()
+        {
+            return globalPause;
+        }
+
+        /// <summary>
         /// Get the last time the clock was updated.
         /// </summary>
         public static double GetLastSampledTime()
@@ -118,6 +161,9 @@ namespace AudioHelm
 
         void FixedUpdate()
         {
+            if (pause_)
+                return;
+            
             double time = AudioSettings.dspTime;
             double deltaTime = time - lastSampledTime;
             lastSampledTime = time;

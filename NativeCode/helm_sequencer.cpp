@@ -8,6 +8,7 @@ namespace Helm {
 
   HelmSequencer::HelmSequencer() {
     channel_ = 0;
+    loop_ = true;
     start_beat_ = 0.0;
     num_sixteenths_ = kDefaultNumSixteenths;
     current_position_ = 0.0;
