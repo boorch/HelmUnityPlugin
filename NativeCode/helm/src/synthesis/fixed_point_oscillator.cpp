@@ -62,7 +62,7 @@ namespace mopo {
         }
       }
 
-      unsigned int max_samples = -phase_ / phase_inc + 1;
+      unsigned int max_samples = phase_ / phase_inc + 1;
       unsigned int samples = std::min(buffer_size, i + max_samples);
       for (; i < samples; ++i) {
         phase_ += phase_inc;

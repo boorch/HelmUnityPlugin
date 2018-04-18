@@ -1,0 +1,392 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="helm">
+      <UniqueIdentifier>{efac773c-8cea-4486-a098-91769201c7ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helm\concurrentqueue">
+      <UniqueIdentifier>{b39b83c6-dc8f-4461-886f-435f451e79f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helm\src">
+      <UniqueIdentifier>{fe9b129a-5b47-46c8-8f73-d53cf45aead3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helm\src\common">
+      <UniqueIdentifier>{235642f6-4ece-4ff3-a823-32a70d60fb7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helm\src\synthesis">
+      <UniqueIdentifier>{d2208866-cced-4b8c-856f-02134e7ad4c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mopo">
+      <UniqueIdentifier>{206df3d5-3c92-40d4-9718-273c6ba2f3e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mopo\src">
+      <UniqueIdentifier>{80cdce2c-e90b-4a03-8cd0-6ca156ca75c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="plugin">
+      <UniqueIdentifier>{45dea3a4-e6fb-479c-8e29-e1fbc6ebeeae}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="AudioPluginHelm.cpp" />
+    <ClCompile Include="..\helm\src\common\helm_common.cpp">
+      <Filter>helm\src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\dc_filter.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\detune_lookup.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\fixed_point_oscillator.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\fixed_point_wave.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\gate.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\helm_engine.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\helm_lfo.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\helm_module.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\helm_oscillators.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\helm_voice_handler.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\noise_oscillator.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\peak_meter.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\resonance_cancel.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\trigger_random.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\src\synthesis\value_switch.cpp">
+      <Filter>helm\src\synthesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\alias.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\arpeggiator.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\biquad_filter.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\bit_crush.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\bypass_router.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\delay.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\distortion.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\envelope.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\feedback.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\formant_manager.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\ladder_filter.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\linear_slope.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\magnitude_lookup.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\memory.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\midi_lookup.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\mono_panner.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\operators.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\oscillator.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\portamento_slope.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\processor.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\processor_router.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\resonance_lookup.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\reverb.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\reverb_all_pass.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\reverb_comb.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\sample_decay_lookup.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\simple_delay.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\smooth_filter.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\smooth_value.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\state_variable_filter.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\step_generator.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\stutter.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\trigger_operators.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\value.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm\mopo\src\voice_handler.cpp">
+      <Filter>mopo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AudioPluginUtil.cpp">
+      <Filter>plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\helm_plugin.cpp" />
+    <ClCompile Include="..\helm_sequencer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AudioPluginHelm.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="..\helm\concurrentqueue\blockingconcurrentqueue.h">
+      <Filter>helm\concurrentqueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\concurrentqueue\concurrentqueue.h">
+      <Filter>helm\concurrentqueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\common\helm_common.h">
+      <Filter>helm\src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\dc_filter.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\detune_lookup.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\fixed_point_oscillator.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\fixed_point_wave.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\gate.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\helm_engine.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\helm_lfo.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\helm_module.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\helm_oscillators.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\helm_voice_handler.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\noise_oscillator.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\peak_meter.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\resonance_cancel.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\trigger_random.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\src\synthesis\value_switch.h">
+      <Filter>helm\src\synthesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\alias.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\arpeggiator.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\biquad_filter.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\bit_crush.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\bypass_router.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\circular_queue.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\common.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\delay.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\distortion.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\envelope.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\feedback.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\formant_manager.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\ladder_filter.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\linear_slope.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\magnitude_lookup.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\memory.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\midi_lookup.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\mono_panner.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\mopo.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\note_handler.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\operators.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\oscillator.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\portamento_slope.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\processor.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\processor_router.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\resonance_lookup.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\reverb.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\reverb_all_pass.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\reverb_comb.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\reverb_tuning.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\sample_decay_lookup.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\simple_delay.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\smooth_filter.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\smooth_value.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\state_variable_filter.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\step_generator.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\stutter.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\tick_router.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\trigger_operators.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\utils.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\value.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\voice_handler.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm\mopo\src\wave.h">
+      <Filter>mopo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AudioPluginInterface.h">
+      <Filter>plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AudioPluginUtil.h">
+      <Filter>plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PluginList.h">
+      <Filter>plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\helm_sequencer.h" />
+  </ItemGroup>
+</Project>
