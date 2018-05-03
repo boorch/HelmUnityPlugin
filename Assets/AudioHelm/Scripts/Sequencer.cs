@@ -259,6 +259,8 @@ namespace AudioHelm
 
         protected void AddSortedNoteEvents(Note note)
         {
+            if (sortedNoteOns.ContainsKey(NoteOnPosition(note)))
+                return;
             sortedNoteOns.Add(NoteOnPosition(note), note);
             NotePosition offPosition = NoteOffPosition(note);
             if (!sortedNoteOffs.ContainsKey(offPosition))
@@ -488,6 +490,7 @@ namespace AudioHelm
         /// <param name="velocity">The velocity of the note (how hard the key is hit).</param>
         public Note AddNote(int note, float start, float end, float velocity = 1.0f)
         {
+            ClampNotesInRange(note, start, end);
             note = Mathf.Clamp(note, 0, Utils.kMidiSize - 1);
             Note noteObject = new Note()
             {
@@ -710,7 +713,7 @@ namespace AudioHelm
             int noteOffIndex = 0;
 
             while (noteOnIndex < noteOns.Count && noteOffIndex < noteOffs.Count) {
-                if (noteOns[noteOnIndex].start <= noteOns[noteOnIndex].end)
+                if (noteOns[noteOnIndex].start < noteOffs[noteOffIndex].end)
                     SendNoteOn(noteOns[noteOnIndex++]);
                 else
                     SendNoteOff(noteOffs[noteOffIndex++]);

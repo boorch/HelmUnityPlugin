@@ -4,7 +4,7 @@
 char* strnew(const char* src)
 {
   char* newstr = new char[strlen(src) + 1];
-  strcpy(newstr, src);
+  strcpy_s(newstr, sizeof(char) * (strlen(src) + 1), src);
   return newstr;
 }
 
