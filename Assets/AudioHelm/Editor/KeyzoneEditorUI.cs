@@ -33,7 +33,8 @@ namespace AudioHelm
         Color keyzoneRangeColor = new Color(1.0f, 0.6f, 0.2f);
         const int keyboardHeight = 18;
         const int rowHeight = 32;
-        const int keyzoneWidth = 150;
+        const int keyzoneWidth = 200;
+        const int velocityWidth = 60;
         const int minKeyWidth = 6;
         const int buttonBuffer = 17;
         const int resizeHandleWidth = 5;
@@ -264,8 +265,8 @@ namespace AudioHelm
             foreach (Keyzone keyzone in sampler.keyzones)
             {
                 Rect buttonRect = new Rect(0, y, height, height);
-                Rect clipRect = new Rect(buttonRect.xMax, y, keyzoneWidth - buttonRect.width, height);
-                Rect mixerRect = new Rect(buttonRect.xMax, y + height, keyzoneWidth - buttonRect.width, height);
+                Rect clipRect = new Rect(buttonRect.xMax, y, keyzoneWidth - velocityWidth - buttonRect.width, height);
+                Rect mixerRect = new Rect(buttonRect.xMax, y + height, keyzoneWidth - velocityWidth - buttonRect.width, height);
 
                 if (GUI.Button(buttonRect, "X", style))
                     remove = keyzone;
@@ -274,6 +275,11 @@ namespace AudioHelm
                                  as AudioClip;
                 AudioMixerGroup mixer = EditorGUI.ObjectField(mixerRect, keyzone.mixer, typeof(AudioMixerGroup), false)
                                         as AudioMixerGroup;
+
+                Rect velocityMinRect = new Rect(clipRect.xMax, y, velocityWidth, height);
+                Rect velocityMaxRect = new Rect(mixerRect.xMax, y + height, velocityWidth, height);
+                float minVelocity = Mathf.Clamp(EditorGUI.FloatField(velocityMinRect, keyzone.minVelocity), 0.0f, 1.0f);
+                float maxVelocity = Mathf.Clamp(EditorGUI.FloatField(velocityMaxRect, keyzone.maxVelocity), 0.0f, 1.0f);
 
                 if (clip != keyzone.audioClip)
                 {
@@ -290,6 +296,16 @@ namespace AudioHelm
                     else
                         Undo.RecordObject(sampler, "Change AudioMixerGroup in Keyzone");
                     keyzone.mixer = mixer;
+                }
+                if (minVelocity != keyzone.minVelocity)
+                {
+                    Undo.RecordObject(sampler, "Change Keyzone Minimum Velocity");
+                    keyzone.minVelocity = minVelocity;
+                }
+                if (maxVelocity != keyzone.maxVelocity)
+                {
+                    Undo.RecordObject(sampler, "Change Keyzone Maximum Velocity");
+                    keyzone.maxVelocity = maxVelocity;
                 }
                 y += rowHeight;
             }
@@ -395,12 +411,15 @@ namespace AudioHelm
 
             GUI.BeginGroup(rect);
             DrawClips(sampler, keyzones);
-            Rect buttonRect = new Rect(0, 0, keyzoneWidth - buttonBuffer, keyboardHeight);
+            Rect buttonRect = new Rect(0, 0, keyzoneWidth - velocityWidth - buttonBuffer, keyboardHeight);
             if (GUI.Button(buttonRect, "Add Keyzone"))
             {
                 Undo.RecordObject(sampler, "Add Keyzone");
                 AddKeyzone(sampler, keyzones);
             }
+            Rect velocityRect = new Rect(buttonRect.xMax + buttonBuffer, 0, velocityWidth, keyboardHeight);
+            GUI.Label(velocityRect, "Vel. Range");
+
 
             Rect keySection = new Rect(keyzoneWidth, 0, rect.width - keyzoneWidth, rect.height);
             Rect keyboardScroll = new Rect(0, 0, scrollableWidth, rect.height - scrollWidth);

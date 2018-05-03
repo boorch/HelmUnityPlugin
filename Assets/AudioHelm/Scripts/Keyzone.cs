@@ -52,6 +52,11 @@ namespace AudioHelm
         public float maxVelocity = 1.0f;
 
         /// <summary>
+        /// The last Audio time that this keyzone was scheduled to play.
+        /// </summary>
+        public double lastScheduled = 0.0f;
+
+        /// <summary>
         /// Checks if the keyzone will play for the current note.
         /// </summary>
         /// <returns><c>true</c>, if for note is within the kezone, <c>false</c> otherwise.</returns>

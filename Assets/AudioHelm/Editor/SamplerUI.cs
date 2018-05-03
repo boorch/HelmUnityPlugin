@@ -13,6 +13,7 @@ namespace AudioHelm
         KeyboardUI keyboard = new KeyboardUI();
         KeyzoneEditorUI keyzonesUI = new KeyzoneEditorUI(scrollWidth);
         SerializedProperty numVoices;
+        SerializedProperty keyzonePlayMode;
         SerializedProperty velocityTracking;
         SerializedProperty useNoteOff;
         SerializedProperty keyzones;
@@ -24,6 +25,7 @@ namespace AudioHelm
         void OnEnable()
         {
             numVoices = serializedObject.FindProperty("numVoices");
+            keyzonePlayMode = serializedObject.FindProperty("keyzonePlayMode");
             velocityTracking = serializedObject.FindProperty("velocityTracking");
             useNoteOff = serializedObject.FindProperty("useNoteOff_");
             keyzones = serializedObject.FindProperty("keyzones");
@@ -57,6 +59,7 @@ namespace AudioHelm
             GUI.backgroundColor = prev_color;
 
             EditorGUILayout.IntSlider(numVoices, 2, 20);
+            EditorGUILayout.PropertyField(keyzonePlayMode);
             EditorGUILayout.Slider(velocityTracking, 0.0f, 1.0f);
             EditorGUI.BeginChangeCheck();
             useNoteOff.boolValue = EditorGUILayout.Toggle("Use Note Off", useNoteOff.boolValue);

@@ -18,6 +18,19 @@ namespace AudioHelm
     [HelpURL("http://tytel.org/audiohelm/manual/class_audio_helm_1_1_sampler.html")]
     public class Sampler : MonoBehaviour, NoteHandler
     {
+        /// <summary>
+        /// How Keyzones will play when multiple Keyzones match the input note.
+        /// kAll - all keyzones will play.
+        /// kRoundRobin - keyzones will not repeat until all are played.
+        /// kRandom - a random keyzone is chosen to playfrom the valid keyzones.
+        /// </summary>
+        public enum KeyzonePlayMode
+        {
+            kAll,
+            kRoundRobin,
+            kRandom,
+        }
+
         class ActiveNote
         {
             public int note = 0;
@@ -36,6 +49,11 @@ namespace AudioHelm
         /// List of all the keyzones in the sampler.
         /// </summary>
         public List<Keyzone> keyzones = new List<Keyzone>() { new Keyzone() };
+
+        /// <summary>
+        /// How Keyzones will play when multiple Keyzones match the input note.
+        /// </summary>
+        public KeyzonePlayMode keyzonePlayMode = KeyzonePlayMode.kAll;
 
         /// <summary>
         /// How much the velocity of a note on event affects the volume of the samples.
@@ -126,12 +144,12 @@ namespace AudioHelm
             return index;
         }
 
-        AudioSource GetNextAudioSource()
+        AudioSource GetNextAudioSource(List<AudioSource> ignore)
         {
             AudioSource[] audios = GetComponents<AudioSource>();
             foreach (AudioSource audioSource in audios)
             {
-                if (!audioSource.isPlaying)
+                if (!audioSource.isPlaying && !ignore.Contains(audioSource))
                     return audioSource;
             }
             audioIndex = (audioIndex + 1) % audios.Length;
@@ -146,6 +164,7 @@ namespace AudioHelm
 
         void PrepNote(AudioSource audioSource, Keyzone keyzone, int note, float velocity)
         {
+            keyzone.lastScheduled = AudioSettings.dspTime;
             audioSource.pitch = Utils.MidiChangeToRatio(note - keyzone.rootKey);
             audioSource.clip = keyzone.audioClip;
             audioSource.outputAudioMixerGroup = keyzone.mixer;
@@ -163,13 +182,44 @@ namespace AudioHelm
             return validKeyzones;
         }
 
+        List<Keyzone> GetKeyzonesToPlay(List<Keyzone> validKeyzones)
+        {
+            if (keyzonePlayMode == KeyzonePlayMode.kAll || validKeyzones.Count == 0)
+                return validKeyzones;
+
+            List<Keyzone> toPlay = new List<Keyzone>();
+            if (keyzonePlayMode == KeyzonePlayMode.kRoundRobin)
+            {
+                Keyzone oldest = validKeyzones[0];
+                double oldestTime = oldest.lastScheduled;
+                foreach (Keyzone keyzone in validKeyzones)
+                {
+                    if (oldestTime > keyzone.lastScheduled)
+                    {
+                        oldest = keyzone;
+                        oldestTime = keyzone.lastScheduled;
+                    }
+                }
+                toPlay.Add(oldest);
+            }
+            else if (keyzonePlayMode == KeyzonePlayMode.kRandom)
+            {
+                int index = UnityEngine.Random.Range(0, validKeyzones.Count);
+                toPlay.Add(validKeyzones[index]);
+            }
+
+            return toPlay;
+        }
+
         List<AudioSource> GetPreppedAudioSources(int note, float velocity)
         {
             List<AudioSource> audioSources = new List<AudioSource>();
             List<Keyzone> validKeyzones = GetValidKeyzones(note, velocity);
-            foreach (Keyzone keyzone in validKeyzones)
+            List<Keyzone> playingKeyzones = GetKeyzonesToPlay(validKeyzones);
+
+            foreach (Keyzone keyzone in playingKeyzones)
             {
-                AudioSource audioSource = GetNextAudioSource();
+                AudioSource audioSource = GetNextAudioSource(audioSources);
                 PrepNote(audioSource, keyzone, note, velocity);
                 audioSources.Add(audioSource);
             }
