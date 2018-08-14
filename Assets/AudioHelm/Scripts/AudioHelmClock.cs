@@ -106,6 +106,10 @@ namespace AudioHelm
             globalPause = pause_;
         }
 
+        /// <summary>
+        /// Starts the clock at the scheduled dsp audio (AudioSettings.dspTime) time.
+        /// </summary>
+        /// <param name="timeToStart">The audio thread time to start.</param>
         public void StartScheduled(double timeToStart)
         {
             lastSampledTime = AudioSettings.dspTime;
