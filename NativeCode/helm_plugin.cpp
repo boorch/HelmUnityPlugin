@@ -657,7 +657,8 @@ namespace Helm {
       else {
         float range = data->range_lookup[index].second - data->range_lookup[index].first;
         float value = HelmGetParameterValue(channel, index);
-        return mopo::utils::clamp(value - data->range_lookup[index].first, 0.0f, 1.0f) / range;
+        float percent = (value - data->range_lookup[index].first) / range;
+        return mopo::utils::clamp(percent, 0.0f, 1.0f);
       }
     }
     return 0.0f;
