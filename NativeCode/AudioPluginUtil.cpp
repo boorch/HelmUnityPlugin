@@ -3,8 +3,10 @@
 
 char* strnew(const char* src)
 {
-  char* newstr = new char[strlen(src) + 1];
-  strcpy_s(newstr, sizeof(char) * (strlen(src) + 1), src);
+  int length = strlen(src);
+  char* newstr = new char[length + 1];
+  memset(newstr, 0, (length + 1) * sizeof(char));
+  memcpy(newstr, src, sizeof(char) * length);
   return newstr;
 }
 
