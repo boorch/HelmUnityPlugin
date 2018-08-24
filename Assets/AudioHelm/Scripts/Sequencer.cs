@@ -714,13 +714,14 @@ namespace AudioHelm
             UpdateIndex();
             float nextPosition = (float)GetSequencerPosition();
 
-            if (nextPosition < 0.0f)
+            int cycles = Mathf.FloorToInt((float)GetSequencerTime() / length);
+
+            if (nextPosition < 0.0f || cycles < numCycles)
             {
                 lastSequencerPosition = nextPosition;
+                numCycles = cycles;
                 return;
             }
-
-            int cycles = (int)(GetSequencerTime() / length);
 
             if (cycles > numCycles)
             {
