@@ -136,6 +136,7 @@ namespace AudioHelm
             double beatAtNextCycle = ((cyclesCompleted + 1) * length) / Utils.kSixteenthsPerBeat;
             Native.SetSequencerStart(reference, beatAtNextCycle - 0.01);
             enabled = true;
+            WaitForNextCycle();
         }
 
         void FixedUpdate()

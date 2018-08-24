@@ -177,6 +177,8 @@ namespace AudioHelm
             new SortedList<NotePosition, Note>(notePositionComparer);
 
         float lastSequencerPosition = -1.0f;
+        bool waitTillNextCycle = false;
+        int numCycles = -1;
 
         /// <summary>
         /// Triggers note off events for all notes currently on in the instrument.
@@ -229,7 +231,7 @@ namespace AudioHelm
             if (clock)
                 clock.OnReset += AllNotesOff;
 
-            UpdatePosition();
+            UpdatePosition(false);
             AllNotesOff();
             activeNotes.Clear();
         }
@@ -239,6 +241,18 @@ namespace AudioHelm
             AudioHelmClock clock = AudioHelmClock.GetInstance();
             if (clock)
                 clock.OnReset -= AllNotesOff;
+            waitTillNextCycle = false;
+        }
+
+        protected void WaitForNextCycle()
+        {
+            waitTillNextCycle = true;
+            numCycles = (int)(GetSequencerTime() / length);
+        }
+
+        protected bool WaitingForNextCycle()
+        {
+            return waitTillNextCycle;
         }
 
         NotePosition NoteOnPosition(Note note)
@@ -686,7 +700,7 @@ namespace AudioHelm
         /// <summary>
         /// Update the position of the sequencer and fire any events that have occurred.
         /// </summary>
-        protected void UpdatePosition()
+        protected void UpdatePosition(bool sendEvents = true)
         {
             if (AudioHelmClock.GetGlobalPause()) {
                 if (!paused)
@@ -700,7 +714,21 @@ namespace AudioHelm
             UpdateIndex();
             float nextPosition = (float)GetSequencerPosition();
 
-            if (nextPosition < 0.0f || nextPosition < lastSequencerPosition)
+            if (nextPosition < 0.0f)
+            {
+                lastSequencerPosition = nextPosition;
+                return;
+            }
+
+            int cycles = (int)(GetSequencerTime() / length);
+
+            if (cycles > numCycles)
+            {
+                numCycles = cycles;
+                waitTillNextCycle = false;
+            }
+
+            if (waitTillNextCycle || !sendEvents)
             {
                 lastSequencerPosition = nextPosition;
                 return;

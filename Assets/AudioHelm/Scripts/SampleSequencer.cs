@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Matt Tytel
+// Copyright 2017 Matt Tytel
 
 using UnityEngine;
 using System.Collections.Generic;
@@ -16,14 +16,11 @@ namespace AudioHelm
     public class SampleSequencer : Sequencer
     {
         double lastWindowTime = -0.01;
-        int numCycles = 0;
-        bool waitTillNextCycle = false;
 
         const float lookaheadTime = 0.1f;
 
         void Awake()
         {
-            numCycles = -1;
             InitNoteRows();
             AllNotesOff();
         }
@@ -53,7 +50,6 @@ namespace AudioHelm
             base.OnDisable();
 
             AllNotesOff();
-            waitTillNextCycle = false;
         }
 
         /// <summary>
@@ -94,11 +90,15 @@ namespace AudioHelm
         public override void StartOnNextCycle()
         {
             enabled = true;
-            waitTillNextCycle = true;
-            numCycles = (int)(GetSequencerTime() / length);
+            WaitForNextCycle();
         }
 
         void FixedUpdate()
+        {
+            DoUpdate();
+        }
+
+        void Update()
         {
             DoUpdate();
         }
@@ -123,15 +123,7 @@ namespace AudioHelm
                 return;
             }
 
-            int cycles = (int)(windowMax / length);
-
-            if (cycles > numCycles)
-            {
-                numCycles = cycles;
-                waitTillNextCycle = false;
-            }
-
-            if (waitTillNextCycle)
+            if (WaitingForNextCycle())
             {
                 lastWindowTime = windowMax;
                 return;
