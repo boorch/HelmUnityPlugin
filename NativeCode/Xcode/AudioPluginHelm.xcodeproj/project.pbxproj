@@ -61,8 +61,22 @@
 		D16777CD1F13BCD6006907C1 /* trigger_random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777BC1F13BCD6006907C1 /* trigger_random.cpp */; };
 		D16777CE1F13BCD6006907C1 /* value_switch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D16777BE1F13BCD6006907C1 /* value_switch.cpp */; };
 		D171C37C1E6F3A6F000987FD /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D171C37B1E6F3A6F000987FD /* Accelerate.framework */; };
+		D17FD087215C287A00DCB19C /* AudioPluginHelm.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D576316048677EA00EA77CD /* AudioPluginHelm.bundle */; };
 		D1CAEEE21E6F74F10053B7E0 /* helm_sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1CAEEE01E6F74F10053B7E0 /* helm_sequencer.cpp */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D17FD086215C284400DCB19C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /Users/mtytel/HelmUnityPlugin/Assets/AudioHelm/Plugins;
+			dstSubfolderSpec = 0;
+			files = (
+				D17FD087215C287A00DCB19C /* AudioPluginHelm.bundle in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0AA1909FFE8422F4C02AAC07 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
@@ -452,6 +466,7 @@
 				8D57630F048677EA00EA77CD /* Resources */,
 				8D576311048677EA00EA77CD /* Sources */,
 				8D576313048677EA00EA77CD /* Frameworks */,
+				D17FD086215C284400DCB19C /* CopyFiles */,
 			);
 			buildRules = (
 			);

@@ -61,6 +61,8 @@
 		D153687A1FAE98E200B1AB05 /* trigger_operators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368521FAE98E200B1AB05 /* trigger_operators.cpp */; };
 		D153687B1FAE98E200B1AB05 /* value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368551FAE98E200B1AB05 /* value.cpp */; };
 		D153687C1FAE98E200B1AB05 /* voice_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D15368571FAE98E200B1AB05 /* voice_handler.cpp */; };
+		D17FD082215C242800DCB19C /* AudioPluginInterface.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = D11F48AC1F155E5000CF9A13 /* AudioPluginInterface.h */; };
+		D17FD085215C261C00DCB19C /* libAudioPluginHelm.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = D11F489E1F155DB700CF9A13 /* libAudioPluginHelm.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -70,6 +72,8 @@
 			dstPath = /Users/mtytel/HelmUnityPlugin/Assets/AudioHelm/Plugins/iOS;
 			dstSubfolderSpec = 0;
 			files = (
+				D17FD085215C261C00DCB19C /* libAudioPluginHelm.a in CopyFiles */,
+				D17FD082215C242800DCB19C /* AudioPluginInterface.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,7 +439,6 @@
 				D11F489A1F155DB700CF9A13 /* Sources */,
 				D11F489B1F155DB700CF9A13 /* Frameworks */,
 				D11F489C1F155DB700CF9A13 /* CopyFiles */,
-				D11F49651F15682E00CF9A13 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -478,22 +481,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		D11F49651F15682E00CF9A13 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "mv ../../Assets/AudioHelm/Plugins/iOS/Release-iphoneos/libAudioPluginHelm.a ../../Assets/AudioHelm/Plugins/iOS/\ncp ../AudioPluginInterface.h ../../Assets/AudioHelm/Plugins/iOS/\nrmdir ../../Assets/AudioHelm/Plugins/iOS/Release-iphoneos/";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D11F489A1F155DB700CF9A13 /* Sources */ = {
