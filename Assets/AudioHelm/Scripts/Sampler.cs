@@ -272,7 +272,6 @@ namespace AudioHelm
 
         IEnumerator TurnVoiceOffInSeconds(int note, float seconds)
         {
-            Debug.Log(seconds);
             yield return new WaitForSeconds(seconds);
 
             DoNoteOff(note);
