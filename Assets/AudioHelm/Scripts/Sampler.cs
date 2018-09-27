@@ -272,6 +272,7 @@ namespace AudioHelm
 
         IEnumerator TurnVoiceOffInSeconds(int note, float seconds)
         {
+            Debug.Log(seconds);
             yield return new WaitForSeconds(seconds);
 
             DoNoteOff(note);
@@ -329,7 +330,7 @@ namespace AudioHelm
             }
 
             if (useNoteOff)
-                StartCoroutine(TurnVoiceOffInSeconds(note, (float)(timeToStart + length)));
+                StartCoroutine(TurnVoiceOffInSeconds(note, (float)(timeToEnd - timeToStart + length)));
         }
 
         ActiveNote FindActiveNote(int note)
