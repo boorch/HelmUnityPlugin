@@ -259,6 +259,16 @@ namespace AudioHelm
         }
 
         /// <summary>
+        /// Checks if a note is currently on.
+        /// </summary>
+        /// <returns><c>true</c>, if note is currently on (held down), <c>false</c> otherwise.</returns>
+        /// <param name="note">Note.</param>
+        public void IsNoteOn(int note)
+        {
+            return FindActiveNote(note) != null;
+        }
+
+        /// <summary>
         /// Triggers note off events for all notes currently on in the sampler.
         /// </summary>
         public void AllNotesOff()
