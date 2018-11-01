@@ -263,7 +263,7 @@ namespace AudioHelm
         /// </summary>
         /// <returns><c>true</c>, if note is currently on (held down), <c>false</c> otherwise.</returns>
         /// <param name="note">Note.</param>
-        public void IsNoteOn(int note)
+        public bool IsNoteOn(int note)
         {
             return FindActiveNote(note) != null;
         }
