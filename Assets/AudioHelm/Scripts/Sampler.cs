@@ -339,7 +339,7 @@ namespace AudioHelm
             }
 
             if (useNoteOff)
-                StartCoroutine(TurnVoiceOffInSeconds(note, (float)(timeToStart + length)));
+                StartCoroutine(TurnVoiceOffInSeconds(note, (float)(timeToEnd - timeToStart + length)));
         }
 
         ActiveNote FindActiveNote(int note)
