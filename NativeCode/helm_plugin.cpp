@@ -292,9 +292,9 @@ namespace Helm {
     return beatToSixteenth(timeToBeat(time, sample_rate));
   }
 
-  double wrap(double value, double length) {
-    int wrap = value / length;
-    return value - wrap * length;
+  double wrap(double value, double length, int& num_wraps) {
+    num_wraps = value / length;
+    return value - num_wraps * length;
   }
 
   void processNotes(EffectData* data, HelmSequencer* sequencer, double current_beat, double end_beat) {
@@ -306,10 +306,15 @@ namespace Helm {
 
     double start_beat = mopo::utils::max(sequencer_start_beat, current_beat);
     double start = beatToSixteenth(start_beat);
-    double end = beatToSixteenth(end_beat);
+    double end = std::max(start, beatToSixteenth(end_beat));
     if (sequencer->loop()) {
-      start = wrap(start, sequencer->length());
-      end = wrap(end, sequencer->length());
+      int start_num_wraps = 0;
+      int end_num_wraps = 0;
+      start = wrap(start, sequencer->length(), start_num_wraps);
+      end = wrap(end, sequencer->length(), end_num_wraps);
+
+      if (start_num_wraps == end_num_wraps)
+        end = std::max(start, end);
     }
 
     sequencer->getNoteOffs(data->sequencer_events, start, end);
@@ -382,8 +387,7 @@ namespace Helm {
     double delta_beat = timeToBeat(delta_time, state->samplerate);
     double next_beat = last_beat + delta_beat;
     if (!global_pause) {
-      if (data->last_global_beat_sync != global_beat)
-      {
+      if (data->last_global_beat_sync != global_beat) {
         next_beat = global_beat + delta_beat;
         delta_beat = next_beat - last_beat;
         data->last_global_beat_sync = global_beat;
