@@ -303,9 +303,6 @@ namespace AudioHelm
             }
 
             int note = (int)sequencerPosition.y;
-            if (note > maxKey || note < minKey)
-                return false;
-
             Rect ignoreScrollRect = new Rect(rect);
             ignoreScrollRect.width -= rightPadding;
             ignoreScrollRect.height -= bottomPadding;
@@ -313,7 +310,12 @@ namespace AudioHelm
             {
                 ignoreScrollRect.height -= velocitySectionHeight;
                 if (ignoreScrollRect.Contains(evt.mousePosition))
+                {
+                    if (note > maxKey || note < minKey)
+                        return false;
+
                     MouseDown(note, time, sequencer, allNotes);
+                }
                 else
                 {
                     mode = Mode.kChangingVelocity;

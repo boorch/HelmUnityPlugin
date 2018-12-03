@@ -1,5 +1,9 @@
 # TODO
 
+Have IsNoteOn inside NoteHandler.
+Fix GetParameterMin/Max.
+
+# BACK LOG
 PlayNoteScheduled
 PlayNoteNextBeat
 StopScheduled
