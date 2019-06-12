@@ -9,6 +9,8 @@ namespace AudioHelm
     class HelmAudioInitUI : Editor
     {
         SerializedObject serialized;
+        SerializedProperty spatialize;
+        SerializedProperty spatializeWithPlugin;
         SerializedProperty synthesizerGroup;
         SerializedProperty spatializerGroup;
 
@@ -18,20 +20,21 @@ namespace AudioHelm
         void OnEnable()
         {
             serialized = new SerializedObject(target);
+            spatialize = serialized.FindProperty("spatialize");
+            spatializeWithPlugin = serialized.FindProperty("spatializeWithPlugin");
             synthesizerGroup = serialized.FindProperty("synthesizerMixerGroup");
             spatializerGroup = serialized.FindProperty("spatializerMixerGroup");
         }
 
         public override void OnInspectorGUI()
         {
-            HelmAudioInit audioInit = target as HelmAudioInit;
-            AudioSource audioSource = audioInit.GetComponent<AudioSource>();
-            audioInit.spatialize = EditorGUILayout.Toggle("Spatialize", audioInit.spatialize);
             serialized.Update();
+            HelmAudioInit audioInit = target as HelmAudioInit;
+            EditorGUILayout.PropertyField(spatialize);
 
             if (audioInit.spatialize)
             {
-                audioInit.spatializeWithPlugin = EditorGUILayout.Toggle("With Plugin", audioInit.spatializeWithPlugin);
+                EditorGUILayout.PropertyField(spatializeWithPlugin);
                 EditorGUILayout.PropertyField(synthesizerGroup);
                 EditorGUILayout.PropertyField(spatializerGroup);
             }
