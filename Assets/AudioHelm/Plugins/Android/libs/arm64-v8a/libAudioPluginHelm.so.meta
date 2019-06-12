@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 022cb24dd389bce43b87cb8c65510223
-timeCreated: 1520029322
+guid: e8c213916abde5b4f847f7f4245fd101
+timeCreated: 1560368521
 licenseType: Free
 PluginImporter:
   serializedVersion: 1
@@ -10,13 +10,13 @@ PluginImporter:
   isOverridable: 0
   platformData:
     Android:
-      enabled: 1
+      enabled: 0
       settings:
         CPU: ARMv7
     Any:
       enabled: 0
       settings:
-        Exclude Android: 0
+        Exclude Android: 1
         Exclude Editor: 1
         Exclude Linux: 1
         Exclude Linux64: 1
@@ -27,7 +27,6 @@ PluginImporter:
         Exclude Win: 1
         Exclude Win64: 1
         Exclude WindowsStoreApps: 1
-        Exclude iOS: 1
     Editor:
       enabled: 0
       settings:
@@ -37,19 +36,27 @@ PluginImporter:
     Linux:
       enabled: 0
       settings:
-        CPU: x86
+        CPU: None
     Linux64:
       enabled: 0
       settings:
-        CPU: x86_64
+        CPU: None
+    LinuxUniversal:
+      enabled: 0
+      settings:
+        CPU: None
     OSXIntel:
       enabled: 0
       settings:
-        CPU: AnyCPU
+        CPU: None
     OSXIntel64:
       enabled: 0
       settings:
-        CPU: AnyCPU
+        CPU: None
+    OSXUniversal:
+      enabled: 0
+      settings:
+        CPU: None
     Win:
       enabled: 0
       settings:
@@ -66,11 +73,6 @@ PluginImporter:
         PlaceholderPath: 
         SDK: AnySDK
         ScriptingBackend: AnyScriptingBackend
-    iOS:
-      enabled: 0
-      settings:
-        CompileFlags: 
-        FrameworkDependencies: 
   userData: 
   assetBundleName: 
   assetBundleVariant: 

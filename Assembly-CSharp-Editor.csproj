@@ -62,6 +62,9 @@
      <Compile Include="Assets\AudioHelm\Editor\SequencerPositionUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\SequencerUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\SequencerVelocityUI.cs" />
+ <Reference Include="UnityEngine.Advertisements">
+ <HintPath>D:/Unity/Unity550/Editor/Data/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>D:/Unity/Unity550/Editor/Data/UnityExtensions/Unity/Advertisements/Editor/UnityEditor.Advertisements.dll</HintPath>
  </Reference>
@@ -104,6 +107,9 @@
  <Reference Include="UnityEngine.HoloLens">
  <HintPath>D:/Unity/Unity550/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
  </Reference>
+ <Reference Include="UnityEngine.Purchasing">
+ <HintPath>D:/Unity/Unity550/Editor/Data/UnityExtensions/Unity/UnityPurchasing/UnityEngine.Purchasing.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEditor.VR">
  <HintPath>D:/Unity/Unity550/Editor/Data/UnityExtensions/Unity/UnityVR/Editor/UnityEditor.VR.dll</HintPath>
  </Reference>
@@ -121,6 +127,9 @@
  </Reference>
  <Reference Include="UnityEditor.Graphs">
  <HintPath>D:/Unity/Unity550/Editor/Data/Managed/UnityEditor.Graphs.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.Android.Extensions">
+ <HintPath>D:/Unity/Unity550/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.WSA.Extensions">
  <HintPath>D:/Unity/Unity550/Editor/Data/PlaybackEngines/MetroSupport/UnityEditor.WSA.Extensions.dll</HintPath>

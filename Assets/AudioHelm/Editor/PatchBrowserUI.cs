@@ -1,4 +1,4 @@
-﻿// Copyright 2017 Matt Tytel
+// Copyright 2017 Matt Tytel
 
 using UnityEditor;
 using UnityEngine;
@@ -40,6 +40,15 @@ namespace AudioHelm
 
         public static string GetFullPatchesPath()
         {
+            DirectoryInfo assets = new DirectoryInfo(Application.dataPath);
+            DirectoryInfo[] directories = assets.GetDirectories("AudioHelm", SearchOption.AllDirectories);
+
+            foreach (DirectoryInfo directory in directories) {
+                DirectoryInfo[] presetFolders = directory.GetDirectories("Presets", SearchOption.TopDirectoryOnly);
+                if (presetFolders.Length > 0)
+                    return presetFolders[0].ToString();
+            }
+
             const string patchesPath = "/AudioHelm/Presets/";
             return Application.dataPath + patchesPath;
         }
