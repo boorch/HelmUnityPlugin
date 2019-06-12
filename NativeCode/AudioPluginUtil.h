@@ -27,7 +27,6 @@ inline float FastMax(float a, float b) { return (a + b + fabsf(a - b)) * 0.5f; }
 inline int FastFloor(float x) { return (int)floorf(x); } // TODO: Optimize
 
 char* strnew(const char* src);
-char* tmpstr(int index, const char* fmtstr, ...);
 
 class Mutex
 {
