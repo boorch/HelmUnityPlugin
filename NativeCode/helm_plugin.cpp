@@ -8,7 +8,6 @@
 #include "concurrentqueue.h"
 
 namespace Helm {
-
   const int MAX_CHARACTERS = 15;
   const int MAX_CHANNELS = 16;
   const int MAX_NOTES = 128;
