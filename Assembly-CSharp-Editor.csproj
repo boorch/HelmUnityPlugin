@@ -62,9 +62,6 @@
      <Compile Include="Assets\AudioHelm\Editor\SequencerPositionUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\SequencerUI.cs" />
      <Compile Include="Assets\AudioHelm\Editor\SequencerVelocityUI.cs" />
- <Reference Include="UnityEngine.Advertisements">
- <HintPath>D:/Unity/Unity550/Editor/Data/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
- </Reference>
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>D:/Unity/Unity550/Editor/Data/UnityExtensions/Unity/Advertisements/Editor/UnityEditor.Advertisements.dll</HintPath>
  </Reference>
@@ -107,9 +104,6 @@
  <Reference Include="UnityEngine.HoloLens">
  <HintPath>D:/Unity/Unity550/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
  </Reference>
- <Reference Include="UnityEngine.Purchasing">
- <HintPath>D:/Unity/Unity550/Editor/Data/UnityExtensions/Unity/UnityPurchasing/UnityEngine.Purchasing.dll</HintPath>
- </Reference>
  <Reference Include="UnityEditor.VR">
  <HintPath>D:/Unity/Unity550/Editor/Data/UnityExtensions/Unity/UnityVR/Editor/UnityEditor.VR.dll</HintPath>
  </Reference>
@@ -121,9 +115,6 @@
  </Reference>
  <Reference Include="AssetStoreToolsExtra">
  <HintPath>C:/HelmUnityPlugin/Assets/AssetStoreTools/Editor/AssetStoreToolsExtra.dll</HintPath>
- </Reference>
- <Reference Include="Sanford.Multimedia.Midi">
- <HintPath>C:/HelmUnityPlugin/Assets/AudioHelm/Plugins/Sanford.Multimedia.Midi.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Graphs">
  <HintPath>D:/Unity/Unity550/Editor/Data/Managed/UnityEditor.Graphs.dll</HintPath>
@@ -139,6 +130,9 @@
  </Reference>
  <Reference Include="UnityEditor.WindowsStandalone.Extensions">
  <HintPath>D:/Unity/Unity550/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
+ </Reference>
+ <Reference Include="Sanford.Multimedia.Midi">
+ <HintPath>C:/HelmUnityPlugin/Assets/AudioHelm/Plugins/Sanford.Multimedia.Midi.dll</HintPath>
  </Reference>
  <Reference Include="Mono.Cecil">
  <HintPath>D:/Unity/Unity550/Editor/Data/Managed/Mono.Cecil.dll</HintPath>

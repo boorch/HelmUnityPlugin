@@ -40,13 +40,13 @@ namespace AudioHelm
 
         public static string GetFullPatchesPath()
         {
-            DirectoryInfo assets = new DirectoryInfo(Application.dataPath);
-            DirectoryInfo[] directories = assets.GetDirectories("AudioHelm", SearchOption.AllDirectories);
-
-            foreach (DirectoryInfo directory in directories) {
-                DirectoryInfo[] presetFolders = directory.GetDirectories("Presets", SearchOption.TopDirectoryOnly);
-                if (presetFolders.Length > 0)
-                    return presetFolders[0].ToString();
+            foreach (string directory in Directory.GetDirectories(Application.dataPath, "*", SearchOption.AllDirectories)) {
+                if (directory.Contains("AudioHelm")) {
+                    foreach (string subDirectory in Directory.GetDirectories(directory)) {
+                        if (subDirectory.Contains("Presets"))
+                            return subDirectory;
+                    }
+                }
             }
 
             const string patchesPath = "/AudioHelm/Presets/";
