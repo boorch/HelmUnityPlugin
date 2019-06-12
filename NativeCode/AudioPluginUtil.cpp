@@ -1,8 +1,9 @@
 #include "AudioPluginUtil.h"
 #include <stdarg.h>
 
-char* strnew(const char* src)
-{
+#define ENABLE_TESTS ((PLATFORM_WIN || PLATFORM_OSX) && 1)
+
+char* strnew(const char* src) {
   int length = strlen(src);
   char* newstr = new char[length + 1];
   memset(newstr, 0, (length + 1) * sizeof(char));
@@ -10,67 +11,69 @@ char* strnew(const char* src)
   return newstr;
 }
 
+char* tmpstr(int index, const char* fmtstr, ...)
+{
+    static char buf[4][1024];
+    va_list args;
+    va_start(args, fmtstr);
+    vsprintf(buf[index], fmtstr, args);
+    va_end(args);
+    return buf[index];
+}
+
+template<typename T> void UnitySwap(T& a, T& b) { T t = a; a = b; b = t; }
+
 Mutex::Mutex()
 {
-#if UNITY_WIN
-#if UNITY_WINRT
+#if PLATFORM_WIN
+#if PLATFORM_WINRT
     BOOL const result = InitializeCriticalSectionEx(&crit_sec, 0, CRITICAL_SECTION_NO_DEBUG_INFO);
     assert(FALSE != result);
 #else
     InitializeCriticalSection(&crit_sec);
 #endif
 #else
-# if !UNITY_SPU
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&mutex, &attr);
     pthread_mutexattr_destroy(&attr);
-# endif
 #endif
 }
 
 Mutex::~Mutex()
 {
-#if UNITY_WIN
+#if PLATFORM_WIN
     DeleteCriticalSection(&crit_sec);
 #else
-# if !UNITY_SPU
     pthread_mutex_destroy(&mutex);
-# endif
 #endif
 }
 
 bool Mutex::TryLock()
 {
-#if UNITY_WIN
+#if PLATFORM_WIN
     return TryEnterCriticalSection(&crit_sec) != 0;
 #else
-# if !UNITY_SPU
     return pthread_mutex_trylock(&mutex) == 0;
-# endif
 #endif
 }
 
 void Mutex::Lock()
 {
-#if UNITY_WIN
+#if PLATFORM_WIN
     EnterCriticalSection(&crit_sec);
 #else
-# if !UNITY_SPU
     pthread_mutex_lock(&mutex);
-# endif
 #endif
 }
 
 void Mutex::Unlock()
 {
-#if UNITY_WIN
+#if PLATFORM_WIN
     LeaveCriticalSection(&crit_sec);
 #else
-# if !UNITY_SPU
     pthread_mutex_unlock(&mutex);
-# endif
 #endif
 }
 
@@ -101,6 +104,7 @@ void RegisterParameter(
         definition.numparameters = enumvalue + 1;
 }
 
+// Helper function to fill default values from the effect definition into the params array -- called by Create callbacks
 void InitParametersFromDefinitions(
     InternalEffectDefinitionRegistrationCallback registereffectdefcallback,
     float* params
@@ -114,7 +118,7 @@ void InitParametersFromDefinitions(
         params[n] = definition.paramdefs[n].defaultval;
         delete[] definition.paramdefs[n].description;
     }
-    delete[] definition.paramdefs;
+    delete[] definition.paramdefs; // assumes that definition.paramdefs was allocated by registereffectdefcallback or is NULL
 }
 
 void DeclareEffect(
@@ -144,14 +148,7 @@ void DeclareEffect(
     registereffectdefcallback(definition);
 }
 
-#if UNITY_PS3
-    #define DECLARE_EFFECT(namestr,ns) \
-    extern char _binary_spu_ ## ns ## _spu_elf_start[];
-    #include "PluginList.h"
-    #undef DECLARE_EFFECT
-#endif
-
-#define DECLARE_EFFECT(namestr,ns) \
+#define DECLARE_EFFECT(namestr, ns) \
     namespace ns \
     { \
     UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK CreateCallback            (UnityAudioEffectState* state); \
@@ -165,33 +162,19 @@ void DeclareEffect(
 #include "PluginList.h"
 #undef DECLARE_EFFECT
 
-#if UNITY_PS3
-    #define DECLARE_EFFECT(namestr,ns) \
-    DeclareEffect( \
-    definition[numeffects++], \
-    namestr, \
-    ns::CreateCallback, \
-    ns::ReleaseCallback, \
-    (UnityAudioEffect_ProcessCallback)_binary_spu_ ## ns ## _spu_elf_start, \
-    ns::SetFloatParameterCallback, \
-    ns::GetFloatParameterCallback, \
-    ns::GetFloatBufferCallback, \
-    ns::InternalRegisterEffectDefinition);
-#else
-    #define DECLARE_EFFECT(namestr,ns) \
-    DeclareEffect( \
-    definition[numeffects++], \
-    namestr, \
-    ns::CreateCallback, \
-    ns::ReleaseCallback, \
-    ns::ProcessCallback, \
-    ns::SetFloatParameterCallback, \
-    ns::GetFloatParameterCallback, \
-    ns::GetFloatBufferCallback, \
-    ns::InternalRegisterEffectDefinition);
-#endif
+#define DECLARE_EFFECT(namestr, ns) \
+DeclareEffect( \
+definition[numeffects++], \
+namestr, \
+ns::CreateCallback, \
+ns::ReleaseCallback, \
+ns::ProcessCallback, \
+ns::SetFloatParameterCallback, \
+ns::GetFloatParameterCallback, \
+ns::GetFloatBufferCallback, \
+ns::InternalRegisterEffectDefinition);
 
-extern "C" UNITY_AUDIODSP_EXPORT_API int UnityGetAudioEffectDefinitions(UnityAudioEffectDefinition*** definitionptr)
+extern "C" UNITY_AUDIODSP_EXPORT_API int AUDIO_CALLING_CONVENTION UnityGetAudioEffectDefinitions(UnityAudioEffectDefinition*** definitionptr)
 {
     static UnityAudioEffectDefinition definition[256];
     static UnityAudioEffectDefinition* definitionp[256];
@@ -205,3 +188,27 @@ extern "C" UNITY_AUDIODSP_EXPORT_API int UnityGetAudioEffectDefinitions(UnityAud
     *definitionptr = definitionp;
     return numeffects;
 }
+
+// Simplistic unit-test framework
+#if ENABLE_TESTS
+    #define NAP_TESTSUITE(name) \
+        namespace testsuite_##name { inline const char* GetSuiteName() { return #name; } }\
+        namespace testsuite_##name
+    #define NAP_UNITTEST(name) \
+        struct NAP_Test_##name { NAP_Test_##name(const char* testname); };\
+        static NAP_Test_##name test_##name(#name);\
+        NAP_Test_##name::NAP_Test_##name(const char* testname)
+    #define NAP_CHECK(...) \
+        do\
+        {\
+            if(!(__VA_ARGS__))\
+            {\
+                printf("%s(%d): Unit test '%s' failed for expression '%s'.\n", __FILE__, __LINE__, testname, #__VA_ARGS__);\
+                assert(false && "Unit test in native audio plugin framework failed!");\
+            }\
+        } while(false)
+#else
+    #define NAP_TESTSUITE(name) namespace testsuite_##name
+    #define NAP_UNITTEST(name) static void test_##name()
+    #define NAP_CHECK(...) do {} while(false)
+#endif

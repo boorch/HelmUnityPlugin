@@ -19,6 +19,6 @@ SYNTHESIS_CPPS := $(wildcard $(SYNTHESIS_DIR)/*.cpp)
 LOCAL_CPPS := $(wildcard $(LOCAL_DIR)/*.cpp)
 
 LOCAL_SRC_FILES := $(MOPO_CPPS) $(SYNTHESIS_CPPS) $(HELM_COMMON_DIR)/helm_common.cpp $(LOCAL_CPPS)
-LOCAL_LDLIBS    := -llog -latomic -O3 -std=c++11 -mfpu=neon
+LOCAL_LDLIBS    := -llog -O3 -std=c++11 -mfpu=neon
 
 include $(BUILD_SHARED_LIBRARY)
