@@ -15,6 +15,9 @@ namespace AudioHelm
     [HelpURL("http://tytel.org/audiohelm/manual/class_audio_helm_1_1_helm_audio_init.html")]
     public class HelmAudioInit : MonoBehaviour
     {
+        public bool spatialize = false;
+        public bool spatializeWithPlugin = false;
+
         bool warnedNoAudioGroup = false;
 
         [Tooltip("The Audio Mixer Group where the Helm synthesizer instance is running.")]
@@ -82,7 +85,7 @@ namespace AudioHelm
             if (Application.isPlaying)
             {
                 AudioSource audioComponent = GetComponent<AudioSource>();
-                if (audioComponent.spatialize)
+                if (spatialize)
                     SetupSpatialization(audioComponent);
                 wasSpatialized = audioComponent.spatialize;
             }
@@ -91,11 +94,15 @@ namespace AudioHelm
         void Update()
         {
             AudioSource audioComponent = GetComponent<AudioSource>();
-            if (audioComponent.spatialize != wasSpatialized)
+            if (spatialize != wasSpatialized)
             {
-                wasSpatialized = audioComponent.spatialize;
-                Native.HelmSilence(GetChannel(), audioComponent.spatialize);
+                wasSpatialized = spatialize;
+                if (spatialize && sendAudioSource == null && Application.isPlaying)
+                    SetupSpatialization(audioComponent);
+                Native.HelmSilence(GetChannel(), spatialize);
             }
+
+            audioComponent.spatialize = spatialize && spatializeWithPlugin;
 
             // Make sure AudioSource is setup correctly.
             if (Application.isPlaying && audioComponent.outputAudioMixerGroup == null)
@@ -116,7 +123,14 @@ namespace AudioHelm
                 sendAudioSource.priority = audioComponent.priority;
                 sendAudioSource.volume = audioComponent.volume;
                 sendAudioSource.panStereo = audioComponent.panStereo;
-                sendAudioSource.spatialBlend = 0.0f;
+                if (spatializeWithPlugin || !spatialize) {
+                    sendAudioSource.spatialBlend = 0.0f;
+                    audioComponent.spatialBlend = 1.0f;
+                }
+                else {
+                    sendAudioSource.spatialBlend = 1.0f;
+                    audioComponent.spatialBlend = 0.0f;
+                }
             }
         }
     }

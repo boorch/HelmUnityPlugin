@@ -26,15 +26,16 @@ namespace AudioHelm
         {
             HelmAudioInit audioInit = target as HelmAudioInit;
             AudioSource audioSource = audioInit.GetComponent<AudioSource>();
-            audioSource.spatialize = EditorGUILayout.Toggle("Spatialize", audioSource.spatialize);
+            audioInit.spatialize = EditorGUILayout.Toggle("Spatialize", audioInit.spatialize);
+            serialized.Update();
 
-            if (audioSource.spatialize)
+            if (audioInit.spatialize)
             {
-                serialized.Update();
+                audioInit.spatializeWithPlugin = EditorGUILayout.Toggle("With Plugin", audioInit.spatializeWithPlugin);
                 EditorGUILayout.PropertyField(synthesizerGroup);
                 EditorGUILayout.PropertyField(spatializerGroup);
-                serialized.ApplyModifiedProperties();
             }
+            serialized.ApplyModifiedProperties();
         }
     }
 }
