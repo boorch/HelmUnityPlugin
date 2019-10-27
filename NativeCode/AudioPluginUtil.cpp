@@ -3,78 +3,78 @@
 
 #define ENABLE_TESTS ((PLATFORM_WIN || PLATFORM_OSX) && 1)
 
-char* strnew(const char* src) {
-  int length = strlen(src);
-  char* newstr = new char[length + 1];
-  memset(newstr, 0, (length + 1) * sizeof(char));
-  memcpy(newstr, src, sizeof(char) * length);
-  return newstr;
-}
+namespace AudioHelm {
+  char* strnew(const char* src) {
+    int length = strlen(src);
+    char* newstr = new char[length + 1];
+    memset(newstr, 0, (length + 1) * sizeof(char));
+    memcpy(newstr, src, sizeof(char) * length);
+    return newstr;
+  }
 
-char* tmpstr(int index, const char* fmtstr, ...)
-{
-    static char buf[4][1024];
-    va_list args;
-    va_start(args, fmtstr);
-    vsprintf(buf[index], fmtstr, args);
-    va_end(args);
-    return buf[index];
-}
+  char* tmpstr(int index, const char* fmtstr, ...)
+  {
+      static char buf[4][1024];
+      va_list args;
+      va_start(args, fmtstr);
+      vsprintf(buf[index], fmtstr, args);
+      va_end(args);
+      return buf[index];
+  }
 
-template<typename T> void UnitySwap(T& a, T& b) { T t = a; a = b; b = t; }
+  Mutex::Mutex()
+  {
+  #if PLATFORM_WIN
+  #if PLATFORM_WINRT
+      BOOL const result = InitializeCriticalSectionEx(&crit_sec, 0, CRITICAL_SECTION_NO_DEBUG_INFO);
+      assert(FALSE != result);
+  #else
+      InitializeCriticalSection(&crit_sec);
+  #endif
+  #else
+      pthread_mutexattr_t attr;
+      pthread_mutexattr_init(&attr);
+      pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+      pthread_mutex_init(&mutex, &attr);
+      pthread_mutexattr_destroy(&attr);
+  #endif
+  }
 
-Mutex::Mutex()
-{
-#if PLATFORM_WIN
-#if PLATFORM_WINRT
-    BOOL const result = InitializeCriticalSectionEx(&crit_sec, 0, CRITICAL_SECTION_NO_DEBUG_INFO);
-    assert(FALSE != result);
-#else
-    InitializeCriticalSection(&crit_sec);
-#endif
-#else
-    pthread_mutexattr_t attr;
-    pthread_mutexattr_init(&attr);
-    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-    pthread_mutex_init(&mutex, &attr);
-    pthread_mutexattr_destroy(&attr);
-#endif
-}
+  Mutex::~Mutex()
+  {
+  #if PLATFORM_WIN
+      DeleteCriticalSection(&crit_sec);
+  #else
+      pthread_mutex_destroy(&mutex);
+  #endif
+  }
 
-Mutex::~Mutex()
-{
-#if PLATFORM_WIN
-    DeleteCriticalSection(&crit_sec);
-#else
-    pthread_mutex_destroy(&mutex);
-#endif
-}
+  bool Mutex::TryLock()
+  {
+  #if PLATFORM_WIN
+      return TryEnterCriticalSection(&crit_sec) != 0;
+  #else
+      return pthread_mutex_trylock(&mutex) == 0;
+  #endif
+  }
 
-bool Mutex::TryLock()
-{
-#if PLATFORM_WIN
-    return TryEnterCriticalSection(&crit_sec) != 0;
-#else
-    return pthread_mutex_trylock(&mutex) == 0;
-#endif
-}
+  void Mutex::Lock()
+  {
+  #if PLATFORM_WIN
+      EnterCriticalSection(&crit_sec);
+  #else
+      pthread_mutex_lock(&mutex);
+  #endif
+  }
 
-void Mutex::Lock()
-{
-#if PLATFORM_WIN
-    EnterCriticalSection(&crit_sec);
-#else
-    pthread_mutex_lock(&mutex);
-#endif
-}
-
-void Mutex::Unlock()
-{
-#if PLATFORM_WIN
-    LeaveCriticalSection(&crit_sec);
-#else
-    pthread_mutex_unlock(&mutex);
-#endif
+  void Mutex::Unlock()
+  {
+  #if PLATFORM_WIN
+      LeaveCriticalSection(&crit_sec);
+  #else
+      pthread_mutex_unlock(&mutex);
+  #endif
+  }
 }
 
 void RegisterParameter(
@@ -94,7 +94,7 @@ void RegisterParameter(
     assert(defaultval <= maxval);
     strcpy_s(definition.paramdefs[enumvalue].name, name);
     strcpy_s(definition.paramdefs[enumvalue].unit, unit);
-    definition.paramdefs[enumvalue].description = (description != NULL) ? strnew(description) : (name != NULL) ? strnew(name) : NULL;
+    definition.paramdefs[enumvalue].description = (description != NULL) ? AudioHelm::strnew(description) : (name != NULL) ? AudioHelm::strnew(name) : NULL;
     definition.paramdefs[enumvalue].defaultval = defaultval;
     definition.paramdefs[enumvalue].displayscale = displayscale;
     definition.paramdefs[enumvalue].displayexponent = displayexponent;
@@ -113,7 +113,7 @@ void InitParametersFromDefinitions(
     UnityAudioEffectDefinition definition;
     memset(&definition, 0, sizeof(definition));
     registereffectdefcallback(definition);
-    for (UInt32 n = 0; n < definition.numparameters; n++)
+    for (int n = 0; n < definition.numparameters; n++)
     {
         params[n] = definition.paramdefs[n].defaultval;
         delete[] definition.paramdefs[n].description;

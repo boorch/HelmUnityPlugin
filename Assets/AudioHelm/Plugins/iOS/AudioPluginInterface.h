@@ -25,134 +25,6 @@
 #   define PLATFORM_ARCH_32 1
 #endif
 
-#ifndef SInt16_defined
-#   define SInt16_defined
-typedef signed short SInt16;
-#endif
-
-#ifndef UInt16_defined
-#   define UInt16_defined
-typedef unsigned short UInt16;
-#endif
-
-#ifndef UInt8_defined
-#   define UInt8_defined
-typedef unsigned char UInt8;
-#endif
-
-#ifndef SInt8_defined
-#   define SInt8_defined
-typedef signed char SInt8;
-#endif
-
-#if PLATFORM_ARCH_64
-#   if PLATFORM_LINUX
-#       ifndef SInt32_defined
-#           define SInt32_defined
-typedef signed int SInt32;
-#       endif
-#       ifndef UInt32_defined
-#           define UInt32_defined
-typedef unsigned int UInt32;
-#       endif
-#       ifndef UInt64_defined
-#           define UInt64_defined
-typedef unsigned long UInt64;
-#       endif
-#       ifndef SInt64_defined
-#           define SInt64_defined
-typedef signed long SInt64;
-#       endif
-#   elif PLATFORM_OSX
-#       ifndef SInt32_defined
-#           define SInt32_defined
-typedef signed int SInt32;
-#       endif
-#       ifndef UInt32_defined
-#           define UInt32_defined
-typedef unsigned int UInt32;
-#       endif
-#       ifndef UInt64_defined
-#           define UInt64_defined
-typedef unsigned long long UInt64;
-#       endif
-#       ifndef SInt64_defined
-#           define SInt64_defined
-typedef signed long long SInt64;
-#       endif
-#   elif PLATFORM_WIN
-#       ifndef SInt32_defined
-#           define SInt32_defined
-typedef signed long SInt32;
-#       endif
-#       ifndef UInt32_defined
-#           define UInt32_defined
-typedef unsigned long UInt32;
-#       endif
-#       ifndef UInt64_defined
-#           define UInt64_defined
-typedef unsigned long long UInt64;
-#       endif
-#       ifndef SInt64_defined
-#           define SInt64_defined
-typedef signed long long SInt64;
-#       endif
-#   elif PLATFORM_LUMIN
-#       ifndef SInt32_defined
-#           define SInt32_defined
-typedef signed int SInt32;
-#       endif
-#       ifndef UInt32_defined
-#           define UInt32_defined
-typedef unsigned int UInt32;
-#       endif
-#       ifndef UInt64_defined
-#           define UInt64_defined
-typedef unsigned long long UInt64;
-#       endif
-#       ifndef SInt64_defined
-#           define SInt64_defined
-typedef signed long long SInt64;
-#       endif
-#   elif PLATFORM_ANDROID
-#       ifndef SInt32_defined
-#           define SInt32_defined
-typedef signed int SInt32;
-#       endif
-#       ifndef UInt32_defined
-#           define UInt32_defined
-typedef unsigned int UInt32;
-#       endif
-#       ifndef UInt64_defined
-#           define UInt64_defined
-typedef unsigned long long UInt64;
-#       endif
-#       ifndef SInt64_defined
-#           define SInt64_defined
-typedef signed long long SInt64;
-#       endif
-#   else
-#       error("AudioPluginInterface: Unknown platform! (64 bit)")
-#   endif
-#else
-#       ifndef SInt32_defined
-#           define SInt32_defined
-typedef signed int SInt32;
-#       endif
-#       ifndef UInt32_defined
-#           define UInt32_defined
-typedef unsigned int UInt32;
-#       endif
-#       ifndef UInt64_defined
-#           define UInt64_defined
-typedef unsigned long long UInt64;
-#       endif
-#       ifndef SInt64_defined
-#           define SInt64_defined
-typedef signed long long SInt64;
-#       endif
-#endif
-
 #endif
 
 #if PLATFORM_WINRT
@@ -263,21 +135,21 @@ struct UnityAudioEffectState
     {
         struct
         {
-            UInt32                             structsize;         // Size of this struct
-            UInt32                             samplerate;         // System sample rate
-            UInt64                             currdsptick;        // Pointer to a sample counter marking the start of the current block being processed
-            UInt64                             prevdsptick;        // Used for determining when DSPs are bypassed and so sidechain info becomes invalid
+            uint32_t                           structsize;         // Size of this struct
+            uint32_t                           samplerate;         // System sample rate
+            unsigned long long                 currdsptick;        // Pointer to a sample counter marking the start of the current block being processed
+            unsigned long long                 prevdsptick;        // Used for determining when DSPs are bypassed and so sidechain info becomes invalid
             float*                             sidechainbuffer;    // Side-chain buffers to read from
             void*                              effectdata;         // Internal data for the effect
-            UInt32                             flags;              // Various flags through which information can be queried from the host
+            uint32_t                           flags;              // Various flags through which information can be queried from the host
             void*                              internal;           // Internal data, do not touch!
 
             // Version 1.0 of the plugin API only contains data up to here, so perform a state->structsize >= sizeof(UnityAudioEffectState) in your code before you
             // access any of this data in order to detect whether the host API is older than the plugin.
 
             UnityAudioSpatializerData*         spatializerdata;    // Data for spatializers
-            UInt32                             dspbuffersize;      // Number of frames being processed per process callback. Use this to allocate temporary buffers before processing starts.
-            UInt32                             hostapiversion;     // Version of plugin API used by host
+            uint32_t                           dspbuffersize;      // Number of frames being processed per process callback. Use this to allocate temporary buffers before processing starts.
+            uint32_t                           hostapiversion;     // Version of plugin API used by host
 
             UnityAudioAmbisonicData*           ambisonicdata;      // Data for ambisonic plugins. Added in Unity 2017.1, with UNITY_AUDIO_PLUGIN_API_VERSION 0x010400.
         };
@@ -308,13 +180,13 @@ struct UnityAudioParameterDefinition
 
 struct UnityAudioEffectDefinition
 {
-    UInt32                                     structsize;         // Size of this struct
-    UInt32                                     paramstructsize;    // Size of paramdesc fields
-    UInt32                                     apiversion;         // Plugin API version
-    UInt32                                     pluginversion;      // Version of this plugin
-    UInt32                                     channels;           // Number of channels. Effects should set this to 0 and process any number of input/output channels they get in the process callback. Generator elements should specify a >0 value here.
-    UInt32                                     numparameters;      // The number of parameters exposed by this plugin.
-    UInt64                                     flags;              // Various capabilities and requirements of the plugin.
+    uint32_t                                   structsize;         // Size of this struct
+    uint32_t                                   paramstructsize;    // Size of paramdesc fields
+    uint32_t                                   apiversion;         // Plugin API version
+    uint32_t                                   pluginversion;      // Version of this plugin
+    uint32_t                                   channels;           // Number of channels. Effects should set this to 0 and process any number of input/output channels they get in the process callback. Generator elements should specify a >0 value here.
+    uint32_t                                   numparameters;      // The number of parameters exposed by this plugin.
+    unsigned long long                         flags;              // Various capabilities and requirements of the plugin.
     char                                       name[32];           // Name used for registration of the effect. This name will also be displayed in the GUI.
     UnityAudioEffect_CreateCallback            create;             // The create callback is called when DSP unit is created and can be null.
     UnityAudioEffect_ReleaseCallback           release;            // The release callback is called just before the plugin is freed and should free any data associated with this specific instance of the plugin. No further callbacks related to the instance will happen after this function has been called.

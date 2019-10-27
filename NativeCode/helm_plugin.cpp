@@ -40,7 +40,7 @@ namespace Helm {
     std::pair<float, float>* range_lookup;
     int instance_id;
     mopo::HelmEngine synth_engine;
-    Mutex mutex;
+    AudioHelm::Mutex mutex;
     double current_beat;
     double last_global_beat_sync;
     bool active;
@@ -49,14 +49,14 @@ namespace Helm {
     int num_send_channels;
   };
 
-  Mutex instance_mutex;
+  AudioHelm::Mutex instance_mutex;
   int instance_counter = 0;
   double bpm = 120.0;
   double global_beat = 0.0;
   bool global_pause = false;
   std::map<int, EffectData*> instance_map;
 
-  Mutex sequencer_mutex;
+  AudioHelm::Mutex sequencer_mutex;
   std::map<HelmSequencer*, bool> sequencer_lookup;
 
   std::string getValueName(std::string full_name) {
@@ -157,7 +157,7 @@ namespace Helm {
     memset(effect_data->send_data, 0, MAX_UNITY_CHANNELS * MAX_UNITY_BUFFER_SIZE * sizeof(float));
 
     state->effectdata = effect_data;
-    MutexScopeLock mutex_instance_lock(instance_mutex);
+    AudioHelm::MutexScopeLock mutex_instance_lock(instance_mutex);
     effect_data->instance_id = instance_counter;
     instance_map[instance_counter] = effect_data;
     instance_counter++;
@@ -172,7 +172,7 @@ namespace Helm {
     EffectData* data = state->GetEffectData<EffectData>();
     data->mutex.Lock();
 
-    MutexScopeLock mutex_instance_lock(instance_mutex);
+    AudioHelm::MutexScopeLock mutex_instance_lock(instance_mutex);
     data->synth_engine.allNotesOff();
     clearInstance(data->instance_id);
 
@@ -207,7 +207,7 @@ namespace Helm {
 
     int modulation_start = kNumParams + data->num_synth_parameters;
     if (index >= modulation_start) {
-      MutexScopeLock mutex_lock(data->mutex);
+      AudioHelm::MutexScopeLock mutex_lock(data->mutex);
 
       int mod_param = index - modulation_start;
       int mod_index = mod_param / VALUES_PER_MODULATION;
@@ -297,7 +297,7 @@ namespace Helm {
   }
 
   void processNotes(EffectData* data, HelmSequencer* sequencer, double current_beat, double end_beat) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     double sequencer_start_beat = sequencer->start_beat();
 
     if (sequencer_start_beat >= end_beat)
@@ -405,7 +405,7 @@ namespace Helm {
     data->active = true;
 
     int synth_samples = num_samples > mopo::MAX_BUFFER_SIZE ? mopo::MAX_BUFFER_SIZE : num_samples;
-    MutexScopeLock mutex_lock(data->mutex);
+    AudioHelm::MutexScopeLock mutex_lock(data->mutex);
     processQueuedFloatChanges(data);
 
     for (int b = 0; b < num_samples; b += synth_samples) {
@@ -484,7 +484,7 @@ namespace Helm {
     for (auto synth : instance_map) {
       EffectData* data = synth.second;
       if (((int)data->parameters[kChannel]) == channel) {
-        MutexScopeLock mutex_lock(synth.second->mutex);
+        AudioHelm::MutexScopeLock mutex_lock(synth.second->mutex);
         std::pair<float, float> event;
 
         while (synth.second->note_events.try_dequeue(event))
@@ -547,7 +547,7 @@ namespace Helm {
     for (auto synth : instance_map) {
       EffectData* data = synth.second;
       if (((int)data->parameters[kChannel]) == channel && data->active) {
-        MutexScopeLock mutex_lock(data->mutex);
+        AudioHelm::MutexScopeLock mutex_lock(data->mutex);
 
         for (int i = 0; i < MAX_MODULATIONS; ++i) {
           mopo::ModulationConnection* connection = data->modulations[i];
@@ -568,7 +568,7 @@ namespace Helm {
     for (auto synth : instance_map) {
       EffectData* data = synth.second;
       if (((int)data->parameters[kChannel]) == channel && data->active) {
-        MutexScopeLock mutex_lock(data->mutex);
+        AudioHelm::MutexScopeLock mutex_lock(data->mutex);
 
         mopo::ModulationConnection* connection = data->modulations[index];
         connection->source = source;
@@ -669,7 +669,7 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API HelmSequencer* CreateSequencer() {
     HelmSequencer* sequencer = new HelmSequencer();
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer_lookup[sequencer] = false;
     return sequencer;
   }
@@ -690,19 +690,19 @@ namespace Helm {
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void EnableSequencer(HelmSequencer* sequencer, bool enable) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer_lookup[sequencer] = enable;
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API HelmSequencer::Note* CreateNote(
       HelmSequencer* sequencer, int note, float velocity, float start, float end) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     return sequencer->addNote(note, velocity, start, end);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void DeleteNote(
       HelmSequencer* sequencer, HelmSequencer::Note* note) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     if (sequencer->isNotePlaying(note))
       HelmNoteOff(sequencer->channel(), note->midi_note);
 
@@ -711,7 +711,7 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteStart(
       HelmSequencer* sequencer, HelmSequencer::Note* note, float new_start) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     bool wasPlaying = sequencer->isNotePlaying(note);
     sequencer->changeNoteStart(note, new_start);
 
@@ -721,7 +721,7 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteEnd(
       HelmSequencer* sequencer, HelmSequencer::Note* note, float new_end) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     bool wasPlaying = sequencer->isNotePlaying(note);
     sequencer->changeNoteEnd(note, new_end);
 
@@ -732,7 +732,7 @@ namespace Helm {
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteValues(
       HelmSequencer* sequencer, HelmSequencer::Note* note,
       int new_midi_key, float new_start, float new_end, float new_velocity) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     bool wasPlaying = sequencer->isNotePlaying(note);
     sequencer->changeNoteKey(note, new_midi_key);
     sequencer->changeNoteStart(note, new_start);
@@ -749,7 +749,7 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeNoteKey(
       HelmSequencer* sequencer, HelmSequencer::Note* note, int midi_key) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     if (sequencer->isNotePlaying(note))
       HelmNoteOff(sequencer->channel(), note->midi_note);
 
@@ -758,7 +758,7 @@ namespace Helm {
 
   extern "C" UNITY_AUDIODSP_EXPORT_API bool ChangeSequencerChannel(
       HelmSequencer* sequencer, int channel) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer->setChannel(channel);
 
     for (auto sequencer : sequencer_lookup) {
@@ -769,17 +769,17 @@ namespace Helm {
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void SetSequencerStart(HelmSequencer* sequencer, double start_beat) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer->setStartBeat(start_beat);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void ChangeSequencerLength(HelmSequencer* sequencer, float length) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer->setLength(length);
   }
 
   extern "C" UNITY_AUDIODSP_EXPORT_API void LoopSequencer(HelmSequencer* sequencer, bool loop) {
-    MutexScopeLock mutex_lock(sequencer_mutex);
+    AudioHelm::MutexScopeLock mutex_lock(sequencer_mutex);
     sequencer->loop(loop);
   }
 
