@@ -10,17 +10,21 @@ SYNTHESIS_OBJS := $(patsubst $(SYNTHESIS_DIR)/%.cpp,$(OUTPUT_DIR)/$(SYNTHESIS_DI
 LOCAL_OBJS := $(patsubst $(LOCAL_DIR)/%.cpp,$(OUTPUT_DIR)/$(LOCAL_DIR)/%.o, $(wildcard $(LOCAL_DIR)/*.cpp))
 
 OUTPUT=libAudioPluginHelm.so
-CXXFLAGS= -I . -I $(MOPO_DIR) -I $(SYNTHESIS_DIR) -I $(HELM_COMMON_DIR) -I $(QUEUE_DIR) -O3 -fPIC -std=c++11 -msse2 --fast-math -ftree-vectorize -ftree-slp-vectorize
-LDFLAGS= -shared -rdynamic -fPIC -msse2 --fast-math -ftree-vectorize -ftree-slp-vectorize
+CXXFLAGS= -I . -I $(MOPO_DIR) -I $(SYNTHESIS_DIR) -I $(HELM_COMMON_DIR) -I $(QUEUE_DIR) -O3 -fPIC -std=c++11 -msse2 -ffast-math -ftree-vectorize -ftree-slp-vectorize
+LDFLAGS= -shared -rdynamic -fPIC -ffast-math -ftree-vectorize -ftree-slp-vectorize -framework Accelerate
 DESTINATION=../Assets/AudioHelm/Plugins
 ifeq ($(ARCH),32)
 	CXXFLAGS:= $(CXXFLAGS) -m32
 	LDFLAGS:= $(LDFLAGS) -m32
 	DESTINATION:=$(DESTINATION)/x86
-else
+else ifeq ($(ARCH),64)
 	CXXFLAGS:= $(CXXFLAGS) -m64
 	LDFLAGS:= $(LDFLAGS) -m64
 	DESTINATION:=$(DESTINATION)/x86_64
+else ifeq ($(ARCH),arm64)
+	CXXFLAGS:= $(CXXFLAGS) -target arm64-apple-macos11
+	LDFLAGS:= $(LDFLAGS) -target arm64-apple-macos11
+	DESTINATION:=$(DESTINATION)/arm64
 endif
 CXX=g++
 
